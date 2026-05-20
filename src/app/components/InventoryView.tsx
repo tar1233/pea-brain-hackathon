@@ -125,6 +125,15 @@ export default function InventoryView() {
                     <div>Lead time: {material.leadTimeWeeks} สัปดาห์</div>
                     <div>ROP: {material.reorderPoint.toLocaleString()} {material.unit}</div>
                   </div>
+                  <div className="mt-3 flex items-center justify-end border-t border-red-200/40 pt-2.5">
+                    <button 
+                      type="button"
+                      onClick={() => alert(`✅ ออกใบเสนอสั่งซื้อเร่งด่วนสำหรับ ${material.id} จำนวน ${gap.toLocaleString()} ${material.unit} เรียบร้อย`)}
+                      className="px-2.5 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+                    >
+                      สั่งซื้อเร่งด่วน (Urgent PO)
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -156,6 +165,7 @@ export default function InventoryView() {
                 <th className="px-3 py-3">Monthly Demand</th>
                 <th className="px-3 py-3">EOQ</th>
                 <th className="px-3 py-3">Inventory Value</th>
+                <th className="px-3 py-3 text-center">การดำเนินการ</th>
               </tr>
             </thead>
             <tbody>
@@ -176,6 +186,15 @@ export default function InventoryView() {
                       <div className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${coverage < 100 ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
                         Coverage {coverage}%
                       </div>
+                    </td>
+                    <td className="px-3 py-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => alert(`📦 รายการ ${material.id} (${material.name}):\n• สต๊อกคงเหลือ: ${material.currentStock.toLocaleString()} ${material.unit}\n• จุดสั่งซื้อใหม่ (ROP): ${material.reorderPoint.toLocaleString()} ${material.unit}\n• ปริมาณสั่งซื้อที่เหมาะสม (EOQ): ${material.eoq.toLocaleString()} ${material.unit}\n• มูลค่าคงคลัง: ${formatCurrency(material.currentStock * material.unitPrice)}`)}
+                        className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+                      >
+                        ดูรายละเอียด
+                      </button>
                     </td>
                   </tr>
                 );

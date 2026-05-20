@@ -74,13 +74,15 @@ function Watermark() {
 }
 
 
+import ActivityView from "./components/ActivityView";
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard />;
+        return <Dashboard setActiveTab={setActiveTab} />;
       case "forecast":
         return <ForecastView />;
       case "inventory":
@@ -93,6 +95,8 @@ export default function Home() {
         return <BudgetView />;
       case "reports":
         return <ReportsView />;
+      case "activity":
+        return <ActivityView />;
       case "risk":
       default:
         return <AlertsView />;

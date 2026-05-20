@@ -3,7 +3,7 @@
 import {
   LayoutDashboard, TrendingUp, AlertTriangle,
   ShoppingCart, Settings, Sparkles,
-  Package, BarChart3, Shield
+  Package, BarChart3, Shield, Clock3, Landmark, FileText
 } from "lucide-react";
 import Image from "next/image";
 import { criticalAlerts } from "../data/mockData";
@@ -20,8 +20,9 @@ const menuItems = [
   { id: "risk", label: "แจ้งเตือนความเสี่ยง", icon: AlertTriangle, badge: 2 },
   { id: "procurement", label: "จัดซื้อจัดจ้างอัจฉริยะ", icon: ShoppingCart },
   { id: "warehouse", label: "พัสดุคงคลัง", icon: Shield },
-  { id: "budget", label: "วิเคราะห์งบประมาณ", icon: BarChart3 },
-  { id: "reports", label: "รายงานผู้บริหาร", icon: BarChart3 },
+  { id: "budget", label: "วิเคราะห์งบประมาณ", icon: Landmark },
+  { id: "reports", label: "รายงานผู้บริหาร", icon: FileText },
+  { id: "activity", label: "ประวัติกิจกรรม (Logs)", icon: Clock3 },
 ];
 
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {

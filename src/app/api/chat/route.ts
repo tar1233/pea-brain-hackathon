@@ -8,6 +8,8 @@ import {
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
 
+export const dynamic = "force-dynamic";
+
 // us-east-1 for both KB and Nova Pro Model (First-party model, no marketplace subscription needed)
 const REGION = "us-east-1";
 

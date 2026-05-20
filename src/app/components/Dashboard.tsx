@@ -20,7 +20,7 @@ function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
 }
 
-export default function Dashboard() {
+export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
   const [data, setData] = useState<{
     materials: Material[];
     riskAlerts: RiskAlert[];
@@ -248,7 +248,11 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <button className="mt-6 inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-[#a30787] transition-colors hover:bg-slate-50">
+          <button 
+            type="button"
+            onClick={() => setActiveTab?.("activity")}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-[#a30787] transition-colors hover:bg-slate-50 cursor-pointer"
+          >
             เปิด Activity Log
             <ArrowRight size={15} />
           </button>

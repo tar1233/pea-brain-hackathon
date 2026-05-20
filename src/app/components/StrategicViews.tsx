@@ -87,6 +87,20 @@ export function ProcurementView() {
               <div>Safety {item.material?.safetyStock.toLocaleString()}</div>
               <div className={item.severity === "critical" ? "font-semibold text-red-700" : "font-semibold text-amber-700"}>Impact {formatCurrency(item.costImpact)}</div>
             </div>
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+              <span className="text-[11px] text-slate-400">Confidence: <span className="font-semibold text-emerald-600">{item.confidence}%</span></span>
+              <button 
+                type="button"
+                onClick={() => alert(`✅ สร้างใบสั่งซื้อ (PO) สำหรับ ${item.materialId} สำเร็จแล้ว!\nระบบได้ส่งคำร้องไปยัง SAP`)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shadow-sm text-white ${
+                  item.severity === "critical" 
+                    ? "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 shadow-red-500/10" 
+                    : "bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-50 hover:to-orange-600 shadow-amber-500/10"
+                }`}
+              >
+                ออกใบสั่งซื้อ (PO)
+              </button>
+            </div>
           </article>
         ))}
       </section>
@@ -171,13 +185,22 @@ export function BudgetView() {
               const colorSet = riskColors[index] || riskColors[2];
               const [textColor, bgColor] = colorSet.split(" ");
               return (
-                <div key={material.id} className={`rounded-2xl p-4 ${bgColor}`}>
-                  <div className="text-sm font-bold text-slate-900">{material.id}</div>
-                  <div className="mt-1 text-sm text-slate-600">{material.name}</div>
-                  <div className={`mt-3 text-[14px] font-black ${textColor}`}>
-                    {formatCurrency(material.annualDemand * material.budgetPrice)}
+                <div key={material.id} className={`rounded-2xl p-5 ${bgColor} flex flex-col justify-between border border-transparent hover:border-slate-200 transition-all`}>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900">{material.id}</div>
+                    <div className="mt-1 text-xs text-slate-600">{material.name}</div>
+                    <div className={`mt-3 text-[14px] font-black ${textColor}`}>
+                      {formatCurrency(material.annualDemand * material.budgetPrice)}
+                    </div>
+                    <div className="mt-1 text-[10px] text-slate-500">Annual demand x budget price</div>
                   </div>
-                  <div className="mt-1 text-xs text-slate-500">Annual demand x budget price</div>
+                  <button 
+                    type="button"
+                    onClick={() => alert(`📊 ระบบได้จำลองการเกลี่ยงบประมาณสำหรับ ${material.id} เรียบร้อยแล้ว (PoC Phase)`)}
+                    className="mt-4 w-max px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+                  >
+                    ปรับปรุงแผนงบ
+                  </button>
                 </div>
               );
             })}
@@ -225,12 +248,21 @@ export function ReportsView() {
         ].map((item) => {
           const Icon = item.icon;
           return (
-            <article key={item.title} className={`rounded-3xl border border-slate-200 p-5 shadow-sm ${item.cardBg}`}>
-              <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${item.iconBg}`}>
-                <Icon size={18} className={item.iconColor} />
+            <article key={item.title} className={`rounded-3xl border border-slate-200 p-5 shadow-sm ${item.cardBg} flex flex-col justify-between`}>
+              <div>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${item.iconBg}`}>
+                  <Icon size={18} className={item.iconColor} />
+                </div>
+                <div className="mt-4 text-[14px] font-bold text-slate-900">{item.title}</div>
+                <div className="mt-2 text-sm leading-6 text-slate-600">{item.text}</div>
               </div>
-              <div className="mt-4 text-[14px] font-bold text-slate-900">{item.title}</div>
-              <div className="mt-2 text-sm leading-6 text-slate-600">{item.text}</div>
+              <button 
+                type="button" 
+                onClick={() => alert(`📊 จำลองการสร้างและพรีวิวสไลด์ในหัวข้อ "${item.title}" (PoC Phase)`)}
+                className="mt-4 w-max px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+              >
+                ดูพรีวิวสไลด์
+              </button>
             </article>
           );
         })}

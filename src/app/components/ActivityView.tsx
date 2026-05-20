@@ -64,15 +64,26 @@ export default function ActivityView() {
           <h2 className="text-[16px] font-bold text-slate-900">Recommendation Log</h2>
           <div className="mt-5 space-y-3">
             {aiRecommendations.map((recommendation) => (
-              <div key={recommendation.id} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-bold text-slate-900">{recommendation.title}</div>
-                  <div className="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">
-                    ลดเสี่ยง {recommendation.reduction}
+              <div key={recommendation.id} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm font-bold text-slate-900">{recommendation.title}</div>
+                    <div className="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shrink-0">
+                      ลดเสี่ยง {recommendation.reduction}
+                    </div>
+                  </div>
+                  <div className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">
+                    {recommendation.description}
                   </div>
                 </div>
-                <div className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">
-                  {recommendation.description}
+                <div className="mt-4 flex items-center justify-end border-t border-slate-100 pt-3">
+                  <button 
+                    type="button" 
+                    onClick={() => alert(`✅ อนุมัติการดำเนินการสำหรับ "${recommendation.title}" เรียบร้อยแล้ว (PoC Phase)`)}
+                    className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+                  >
+                    อนุมัติการดำเนินงาน
+                  </button>
                 </div>
               </div>
             ))}

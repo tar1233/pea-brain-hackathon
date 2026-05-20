@@ -37,6 +37,10 @@ const tabConfig: Record<string, { title: string; subtitle: string }> = {
     title: "รายงานผู้บริหาร",
     subtitle: "Presentation-ready summary",
   },
+  activity: {
+    title: "ประวัติกิจกรรม (System Logs)",
+    subtitle: "AI recommendation audit trail & system timeline",
+  },
 };
 
 interface TopBarProps {
