@@ -45,7 +45,10 @@ interface TopBarProps {
 
 export default function TopBar({ activeTab }: TopBarProps) {
   const [now, setNow] = useState(new Date());
+  const [isMounted, setIsMounted] = useState(false);
+  
   useEffect(() => {
+    setIsMounted(true);
     const t = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(t);
   }, []);
@@ -53,10 +56,10 @@ export default function TopBar({ activeTab }: TopBarProps) {
   const current = tabConfig[activeTab] ?? tabConfig.risk;
   const alertBadge = activeTab === "risk" ? criticalAlerts.length : null;
 
-  const dateStr = now.toLocaleDateString("th-TH", {
+  const dateStr = isMounted ? now.toLocaleDateString("th-TH", {
     day: "numeric", month: "long", year: "numeric",
-  });
-  const timeStr = now.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+  }) : "";
+  const timeStr = isMounted ? now.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }) : "";
 
   return (
     <header className="flex h-[72px] shrink-0 items-center gap-4 border-b border-gray-100/60 bg-white/60 px-8 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_4px_30px_rgb(0,0,0,0.02)]">
