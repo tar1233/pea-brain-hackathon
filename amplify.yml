@@ -1,0 +1,19 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - echo "PEA_AWS_ACCESS_KEY_ID=$PEA_AWS_ACCESS_KEY_ID" >> .env.production
+        - echo "PEA_AWS_SECRET_ACCESS_KEY=$PEA_AWS_SECRET_ACCESS_KEY" >> .env.production
+        - echo "PEA_AWS_REGION=us-east-1" >> .env.production
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
