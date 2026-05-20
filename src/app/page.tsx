@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Loader2, Printer, X } from "lucide-react";
+import { FileText, Loader2, Printer, X, AlertCircle, CheckCircle2, Info } from "lucide-react";
 import { materials } from "./data/mockData";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -92,6 +92,31 @@ export default function Home() {
   }
 
   const [poProgress, setPoProgress] = useState<POPending | null>(null);
+
+  interface AlertModalState {
+    isOpen: boolean;
+    title: string;
+    content: string;
+    type?: "info" | "success" | "warning";
+  }
+
+  const [alertModal, setAlertModal] = useState<AlertModalState | null>(null);
+
+  useEffect(() => {
+    const handleShowAlert = (e: Event) => {
+      const customEvent = e as CustomEvent<{ title: string; content: string; type?: "info" | "success" | "warning" }>;
+      const { title, content, type } = customEvent.detail;
+      setAlertModal({
+        isOpen: true,
+        title: title || "รายละเอียด",
+        content: content || "",
+        type: type || "info"
+      });
+    };
+
+    window.addEventListener("show-alert", handleShowAlert);
+    return () => window.removeEventListener("show-alert", handleShowAlert);
+  }, []);
 
   useEffect(() => {
     const handleCreatePO = (e: Event) => {
@@ -371,6 +396,52 @@ export default function Home() {
               )}
             </div>
 
+          </div>
+        </div>
+      )}
+      {/* Custom Alert/Info Modal */}
+      {alertModal && alertModal.isOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
+          <div className="w-full max-w-md rounded-[28px] bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
+                  alertModal.type === "success" 
+                    ? "bg-emerald-50 text-emerald-600" 
+                    : alertModal.type === "warning" 
+                    ? "bg-amber-50 text-amber-600" 
+                    : "bg-purple-50 text-[#A80689]"
+                }`}>
+                  {alertModal.type === "success" ? (
+                    <CheckCircle2 size={20} />
+                  ) : alertModal.type === "warning" ? (
+                    <AlertCircle size={20} />
+                  ) : (
+                    <Info size={20} />
+                  )}
+                </div>
+                <h4 className="font-extrabold text-[15px] text-slate-900 tracking-tight">{alertModal.title}</h4>
+              </div>
+              <button 
+                onClick={() => setAlertModal(null)} 
+                className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div className="text-[13px] leading-relaxed text-slate-600 whitespace-pre-line font-medium p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50 max-h-[60vh] overflow-y-auto">
+              {alertModal.content}
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button 
+                onClick={() => setAlertModal(null)}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-95 text-xs font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10"
+              >
+                ตกลง
+              </button>
+            </div>
           </div>
         </div>
       )}

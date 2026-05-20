@@ -133,7 +133,13 @@ export default function WarehouseView() {
             <h2 className="text-[15px] font-extrabold text-gray-900 tracking-tight border-l-4 border-l-red-500 pl-3">รายการที่ต้องตัดสินใจก่อน</h2>
             <div className="flex items-center gap-3 text-xs font-semibold">
               <span className="text-red-500 bg-red-50 px-2.5 py-1.5 rounded-md">3 Critical</span>
-              <span onClick={() => alert('แสดงทั้งหมด 6 รายการ (Demo Phase 2)')} className="text-[#A80689] cursor-pointer hover:underline flex items-center">ดูทั้งหมด <ArrowRight className="w-3 h-3 ml-1" /></span>
+              <span onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                detail: {
+                  title: "รายการความเสี่ยงทั้งหมด",
+                  content: "🔍 ระบบกำลังติดตามและประเมินรายการพัสดุในคลังทั้งหมด\n\n(Demo Phase 2: ในระบบจริงจะเปิดหน้าตารางกรองผลลัพธ์แยกตามพื้นที่ความรับผิดชอบ)",
+                  type: "info"
+                }
+              }))} className="text-[#A80689] cursor-pointer hover:underline flex items-center">ดูทั้งหมด <ArrowRight className="w-3 h-3 ml-1" /></span>
             </div>
           </div>
 
@@ -202,7 +208,13 @@ export default function WarehouseView() {
                 >
                   สร้าง PO <ArrowRight className="w-4 h-4" />
                 </button>
-                <span onClick={() => alert('📝 MAT-10066: สั่งซื้อเพิ่ม 315 เครื่อง จาก Vendor A01 (โรงงานอยุธยา)\n\nเหตุผล: สต๊อกเหลือ 8 เครื่อง ต่ำกว่า Safety Stock 320 เครื่อง\nมูลค่าความเสี่ยง: ฿13.8 ล้าน\nLead time: 12 สัปดาห์\nConfidence: 91%')} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline">ดูรายละเอียด <ArrowRight className="inline w-3 h-3" /></span>
+                <span onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                  detail: {
+                    title: "รายละเอียดข้อเสนอแนะ MAT-10066",
+                    content: "📝 รายละเอียดข้อแนะนำจัดซื้อ:\n• พัสดุ: หม้อแปลง 100 kVA (3 เฟส)\n• สั่งซื้อเพิ่ม: 315 เครื่อง จาก Vendor A01 (โรงงานอยุธยา)\n\n• เหตุผล: สต๊อกในคลังเหลือ 8 เครื่อง ซึ่งต่ำกว่าระดับ Safety Stock (320 เครื่อง) อย่างวิกฤต\n• มูลค่าความเสี่ยง (VaR): ฿13.8 ล้าน\n• ระยะเวลาจัดส่ง (Lead time): 12 สัปดาห์\n• ความมั่นใจของการคาดการณ์ (Confidence): 91%",
+                    type: "info"
+                  }
+                }))} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline">ดูรายละเอียด <ArrowRight className="inline w-3 h-3" /></span>
               </div>
             </div>
           </div>
@@ -256,10 +268,22 @@ export default function WarehouseView() {
                 <div className="text-sm text-gray-500 mt-0.5">ไปคลังเชียงใหม่</div>
               </div>
               <div className="flex flex-col gap-3 items-end">
-                <button onClick={() => alert('🚚 แผนโอนย้าย CT-400/5A\n\nต้นทาง: คลังชลบุรี → คลังเชียงใหม่\nจำนวน: 120 ตัว\nประหยัดค่าส่วนเกิน: ฿4.2 ล้าน\n\nส่งใบโอนย้ายไปยัง SAP (Demo Phase 2)')} className="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-orange-500/20 transition-all flex items-center gap-2 cursor-pointer">
+                <button onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                  detail: {
+                    title: "🚚 แผนโอนย้ายพัสดุ CT-400/5A",
+                    content: "รายละเอียดแผนการโอนย้ายสต๊อกส่วนเกินเพื่อลดความเสี่ยง:\n\n• ต้นทาง: คลังชลบุรี\n• ปลายทาง: คลังเชียงใหม่\n• จำนวน: 120 ตัว\n• ผลประโยชน์เชิงงบประมาณ: ลดมูลค่าสต๊อกส่วนเกิน (Overstock) ฿4.2 ล้าน\n\n(Demo Phase 2: ระบบได้ส่งแบบคำขอโอนย้ายไปยังระบบ SAP ERP เพื่อรอการยืนยันปลายทาง)",
+                    type: "success"
+                  }
+                }))} className="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-orange-500/20 transition-all flex items-center gap-2 cursor-pointer">
                   ดูแผนโอนย้าย <ArrowRight className="w-4 h-4" />
                 </button>
-                <span onClick={() => alert('📝 CT-400/5A: ชะลอการสั่งซื้อ โอนย้าย 120 ตัว ไปคลังเชียงใหม่\n\nเหตุผล: สต๊อกเกิน Safety Stock 120 ตัว\nมูลค่าส่วนเกิน: ฿4.2 ล้าน\nLead time: 8 สัปดาห์\nConfidence: 76%')} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline">ดูรายละเอียด <ArrowRight className="inline w-3 h-3" /></span>
+                <span onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                  detail: {
+                    title: "รายละเอียดข้อเสนอแนะ CT-400/5A",
+                    content: "📝 รายละเอียดข้อแนะนำบริหารสต๊อก:\n• พัสดุ: หม้อแปลงกระแส CT-400/5A\n• คำแนะนำ: ชะลอการสั่งซื้อเพิ่มเติม และโอนย้ายสต๊อกส่วนเกิน 120 ตัว ไปยังคลังเชียงใหม่เพื่อตอบรับ Demand ที่สูงกว่า\n\n• เหตุผล: สต๊อกในคลังปัจจุบันเกินระดับ Safety Stock ไป 120 ตัว (คิดเป็นมูลค่าส่วนเกิน ฿4.2 ล้าน)\n• ระยะเวลาจัดส่ง (Lead time): 8 สัปดาห์\n• ความมั่นใจของการคาดการณ์ (Confidence): 76%",
+                    type: "info"
+                  }
+                }))} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline">ดูรายละเอียด <ArrowRight className="inline w-3 h-3" /></span>
               </div>
             </div>
           </div>
@@ -273,7 +297,13 @@ export default function WarehouseView() {
                 <Package className="w-5 h-5 text-[#A80689]" />
                 <h2 className="text-[15px] font-bold text-gray-900 tracking-tight">ภาพรวมคลัง</h2>
               </div>
-              <span onClick={() => alert('🗺️ แผนที่คลัง: อยุธยา, ชลบุรี, เชียงใหม่, ขอนแก่น (Demo Phase 2)')} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline flex items-center">ดูแผนที่คลัง <ArrowRight className="w-3 h-3 ml-1" /></span>
+              <span onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                detail: {
+                  title: "🗺️ แผนที่คลังพัสดุ PEA",
+                  content: "แสดงพื้นที่ครอบคลุมคลังพัสดุและเครือข่ายส่งกำลังไฟฟ้า:\n\n• คลังอยุธยา (ภาคกลาง) - คลังหลัก\n• คลังชลบุรี (ภาคตะวันออก)\n• คลังเชียงใหม่ (ภาคเหนือ)\n• คลังนครราชสีมา (ภาคอีสาน)\n• คลังสุราษฎร์ธานี (ภาคใต้)\n\n(Demo Phase 2: ในระบบจริงจะเปิด Interactive Map แสดงจุดพิกัดและเส้นทางขนส่งพัสดุเชื่อมโยงระหว่างกัน)",
+                  type: "info"
+                }
+              }))} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline flex items-center">ดูแผนที่คลัง <ArrowRight className="w-3 h-3 ml-1" /></span>
             </div>
 
             <div className="overflow-x-auto">
@@ -407,7 +437,13 @@ export default function WarehouseView() {
                 <RotateCw className="w-4 h-4 text-[#A80689]" />
                 ข้อเสนอแนะการปรับสมดุลสต๊อก <span className="text-gray-400 font-normal">(Rebalancing Suggestions)</span>
               </h2>
-              <span onClick={() => alert('ข้อเสนอแนะปรับสมดุลทั้งหมด 15 รายการ มูลค่ารวม ฿82.2 ล้าน (Demo Phase 2)')} className="text-xs font-bold text-gray-400 hover:text-[#A80689] cursor-pointer flex items-center transition">ดูทั้งหมด <ArrowRight className="w-3 h-3 ml-1" /></span>
+              <span onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                detail: {
+                  title: "ข้อเสนอแนะการปรับสมดุลทั้งหมด",
+                  content: "🔄 ระบบตรวจพบบทความปรับสมดุลและถ่ายโอนพัสดุส่วนเกินเพิ่มเติมเพื่อลดขีดความเสี่ยงสะสมคลังพัสดุภูมิภาค:\n\n• ทั้งหมด: 15 รายการ\n• มูลค่าส่วนลดสะสม: ฿82.2 ล้าน\n\n(Demo Phase 2: ในระบบจริงจะเปิดหน้าตารางข้อเสนอแนะในการปรับความสมดุลทั้งหมดแยกตามหมวดพัสดุและพื้นที่)",
+                  type: "info"
+                }
+              }))} className="text-xs font-bold text-gray-400 hover:text-[#A80689] cursor-pointer flex items-center transition">ดูทั้งหมด <ArrowRight className="w-3 h-3 ml-1" /></span>
             </div>
 
             <div className="flex flex-col gap-4 relative z-10">

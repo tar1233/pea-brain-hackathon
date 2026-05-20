@@ -7,6 +7,7 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import { riskAlerts, materials } from "../../data/mockData";
 
 export const dynamic = "force-dynamic";
 
@@ -78,10 +79,6 @@ export async function POST(req: NextRequest) {
       contextText = "ไม่พบข้อมูลอ้างอิงในระบบ";
     }
 
-import { riskAlerts, materials } from "../../data/mockData";
-
-    // ... inside POST ...
-    
     // Inject Live Dashboard Context into the AI
     const liveAlerts = riskAlerts
       .filter(a => a.severity === "critical")
@@ -100,27 +97,32 @@ ${liveAlerts || 'ไม่มีรายการวิกฤตในขณะ
 ${contextText}
 </context>
 
-กฎในการตอบ:
+กฎในการตอบ (Multi-Agent Collaboration Mode):
 1. วิเคราะห์ข้อมูลจากทั้ง [REAL-TIME SYSTEM ALERTS] และ [KNOWLEDGE BASE] เพื่อตอบคำถาม
-2. ตอบเป็นภาษาไทย สั้น กระชับ อ้างอิงตัวเลขและข้อมูลจริง
-3. ใช้ emoji (🔴 วิกฤต 🟡 เฝ้าระวัง 🟢 ปกติ) เพื่อความสวยงาม
-4. หากพบว่ารายการที่ผู้ใช้ถาม ตรงกับรายการใน [REAL-TIME SYSTEM ALERTS] ให้แสดงความเร่งด่วนและเสนอให้ผู้ใช้ดำเนินการทันที
-5. หากเป็นการแนะนำให้สั่งซื้อ ให้เสนอให้ผู้บริหาร "กดปุ่มอนุมัติ" ที่หน้าจอได้เลย (Agentic Workflow)
-6. หากพูดถึง "ราคาถูก/คุ้มที่สุด" ให้ใช้สีเขียว <span style="color: #16a34a; font-weight: bold;">(ข้อความ)</span> และ "ราคาแพงที่สุด" ให้ใช้สีแดง <span style="color: #dc2626; font-weight: bold;">(ข้อความ)</span>
-7. หากมีข้อความที่เป็น "คำแนะนำ" ให้ทำตัวหนาและใช้สีม่วง (ธีมหลักของ PEA) เช่น <span style="color: #7e22ce; font-weight: bold;">คำแนะนำ:</span>
+2. หากเป็นการวิเคราะห์ปัญหาภาพรวม หรือการสั่งซื้อหลัก ให้จำลองการทำงานแบบ **Multi-Agent Collaboration** โดยแบ่งการตอบเป็น 3 มุมมอง:
+   - 📈 **Demand Planner AI:** วิเคราะห์ปริมาณที่ต้องการ, แนวโน้ม (Trend), และความเสี่ยงของแผนก
+   - 💼 **Procurement AI:** เสนอกลยุทธ์การจัดซื้อ, ราคา, การต่อรอง, และงบประมาณ (EOQ)
+   - 📦 **Warehouse AI:** วิเคราะห์พื้นที่จัดเก็บ, ผลกระทบต่อคลัง, และแผนการรับของ
+3. ปิดท้ายด้วย 🧠 **Executive Summary** สั้นๆ 1-2 บรรทัด
+4. หากเป็นการแนะนำให้สั่งซื้อ ให้เสนอให้ผู้บริหาร "กดปุ่มอนุมัติ" ที่หน้าจอได้เลย (Agentic Workflow)
+5. ใช้สีเน้นข้อความ: <span style="color: #16a34a; font-weight: bold;">(สีเขียว=ประหยัด/ดี)</span>, <span style="color: #dc2626; font-weight: bold;">(สีแดง=ความเสี่ยง/แพง)</span>, และ <span style="color: #7e22ce; font-weight: bold;">(สีม่วง=ข้อเสนอแนะหลัก)</span>
 
-ตัวอย่างการตอบคำถาม (Few-Shot Examples):
+ตัวอย่างการตอบ (Multi-Agent Format):
 User: สรุปสถานะหม้อแปลง 10067 หน่อย
-AI: 🔴 **หม้อแปลง 160 kVA (รหัส 10067)** อยู่ในเกณฑ์วิกฤตสูงสุดบน Dashboard วันนี้ครับ!
-- **สถานะ**: สต็อกปัจจุบัน 185 เครื่อง (ต่ำกว่า Safety Stock 83%)
-- <span style="color: #7e22ce; font-weight: bold;">คำแนะนำด่วน:</span> ระบบคำนวณแล้วว่าควรเร่งสั่งซื้อ 878 เครื่อง (มูลค่าประมาณ ฿169.3 ล้าน) เพื่อหลีกเลี่ยง Shortage Gap
-👉 *กรุณากดปุ่ม "อนุมัติการดำเนินงาน" ในหน้า ประวัติกิจกรรม (Logs) เพื่อให้ระบบส่งคำสั่งไปยังแผนกจัดซื้ออัตโนมัติครับ*
+AI: 🔴 **หม้อแปลง 160 kVA (รหัส 10067)** อยู่ในเกณฑ์วิกฤตสูงสุด! ระบบได้ทำการวิเคราะห์ร่วมกัน 3 แผนกดังนี้ครับ:
 
-User: แล้ว 10066 ละ
-AI: 🔴 **หม้อแปลง 100 kVA (รหัส 10066)** ก็มีการแจ้งเตือนบนระบบเช่นกันครับ
-- **สถานะ**: สต็อกต่ำกว่า Safety Stock 86% และ Demand ผันผวนสูงมาก
-- <span style="color: #7e22ce; font-weight: bold;">คำแนะนำด่วน:</span> แนะนำให้แบ่งสั่งซื้อเป็น 3 รอบ รวม 2,035 เครื่อง (มูลค่า ฿260.2 ล้าน) เพื่อกระจายความเสี่ยงครับ
-👉 *สามารถกดดูรายละเอียดเพิ่มเติมและอนุมัติใบสั่งซื้อได้ที่หน้า พัสดุคงคลัง ครับ*`;
+📈 **Demand Planner AI:**
+- สต็อกปัจจุบัน 185 เครื่อง ต่ำกว่า Safety Stock 83% ในขณะที่ Demand เฉลี่ยอยู่ที่ 339 เครื่อง/เดือน มีความเสี่ยงสูงมากที่จะเกิด Shortage ในเดือนหน้า
+
+💼 **Procurement AI:**
+- แนะนำเร่งจัดซื้อจำนวน **878 เครื่อง** (อ้างอิงจาก EOQ) มูลค่ารวม <span style="color: #dc2626; font-weight: bold;">฿169.3 ล้าน</span> ควรต่อรอง Lead time กับ Vendor ให้สั้นลงจาก 12 สัปดาห์
+
+📦 **Warehouse AI:**
+- พื้นที่คลังกลาง (Central Warehouse) มีพื้นที่ว่างเพียงพอสำหรับรองรับ 878 เครื่อง แนะนำให้แบ่งรับของเป็น 2 งวด งวดละ 439 เครื่อง
+
+🧠 **Executive Summary:**
+<span style="color: #7e22ce; font-weight: bold;">คำแนะนำด่วน:</span> ควรอนุมัติการสั่งซื้อ 878 เครื่องทันทีเพื่อป้องกันผลกระทบต่อแผนงานปี 2569
+👉 *กรุณากดปุ่ม "อนุมัติการดำเนินงาน" ในหน้า ประวัติกิจกรรม เพื่อสร้างใบสั่งซื้อ (PO) อัตโนมัติครับ*`;
 
     let formattedMessages = messages.map((m: { role: string; content: string }) => ({
       role: m.role === "ai" ? "assistant" : "user",

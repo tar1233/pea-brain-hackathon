@@ -101,14 +101,26 @@ export default function TopBar({ activeTab }: TopBarProps) {
       {/* Export & Share */}
       <div className="flex items-center gap-2">
         <button 
-          onClick={() => alert("📄 กำลังสร้างไฟล์ PDF รายงานสรุปความเสี่ยง... (Demo Phase 2)")}
+          onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+            detail: {
+              title: "กำลังสร้างรายงาน PDF",
+              content: "📄 ระบบกำลังรวบรวมข้อมูลความพร้อมคลังพัสดุและสรุปการวิเคราะห์ความเสี่ยงเพื่อสร้างรายงาน PDF...\n\n(Demo Phase 2: เอกสารฉบับเต็มกำลังดาวน์โหลดลงบนอุปกรณ์ของคุณ)",
+              type: "info"
+            }
+          }))}
           className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#d9dfeb] bg-white hover:bg-primary-50 text-[11px] font-semibold text-[#475569] transition-colors cursor-pointer shadow-sm"
         >
           <Download size={13} />
           Export PDF
         </button>
         <button 
-          onClick={() => alert("✅ ระบบได้ทำการส่งสรุปความเสี่ยง 10067 และ 10066 เข้า LINE กลุ่ม 'ผู้บริหาร PEA จัดซื้อ' เรียบร้อยแล้ว!")}
+          onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+            detail: {
+              title: "ส่งข้อมูลไปยัง LINE สำเร็จ",
+              content: "✅ ระบบได้ทำการส่งสรุปสถานะความเสี่ยงของหม้อแปลง 10067 และ 10066 เข้า LINE กลุ่ม 'ผู้บริหาร PEA จัดซื้อ' เรียบร้อยแล้ว เพื่อแจ้งเตือนและประกอบการตัดสินใจของบเพิ่มเติม!",
+              type: "success"
+            }
+          }))}
           className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#06c755]/20 bg-[#06c755]/10 hover:bg-[#06c755]/20 text-[11px] font-bold text-[#05a546] transition-colors cursor-pointer shadow-sm"
         >
           <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">

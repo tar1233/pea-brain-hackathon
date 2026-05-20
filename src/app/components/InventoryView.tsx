@@ -199,7 +199,13 @@ export default function InventoryView() {
                     <td className="px-3 py-4 text-center">
                       <button
                         type="button"
-                        onClick={() => alert(`📦 รายการ ${material.id} (${material.name}):\n• สต๊อกคงเหลือ: ${material.currentStock.toLocaleString()} ${material.unit}\n• จุดสั่งซื้อใหม่ (ROP): ${material.reorderPoint.toLocaleString()} ${material.unit}\n• ปริมาณสั่งซื้อที่เหมาะสม (EOQ): ${material.eoq.toLocaleString()} ${material.unit}\n• มูลค่าคงคลัง: ${formatCurrency(material.currentStock * material.unitPrice)}`)}
+                        onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                          detail: {
+                            title: `รายละเอียดพัสดุ ${material.id}`,
+                            content: `📦 ชื่อพัสดุ: ${material.name}\n\n• สต๊อกคงเหลือ: ${material.currentStock.toLocaleString()} ${material.unit}\n• จุดสั่งซื้อใหม่ (ROP): ${material.reorderPoint.toLocaleString()} ${material.unit}\n• ปริมาณสั่งซื้อที่เหมาะสม (EOQ): ${material.eoq.toLocaleString()} ${material.unit}\n• มูลค่าคงคลัง: ${formatCurrency(material.currentStock * material.unitPrice)}`,
+                            type: "info"
+                          }
+                        }))}
                         className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
                       >
                         ดูรายละเอียด

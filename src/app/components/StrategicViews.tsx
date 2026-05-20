@@ -205,7 +205,13 @@ export function BudgetView() {
                   </div>
                   <button 
                     type="button"
-                    onClick={() => alert(`📊 ระบบได้จำลองการเกลี่ยงบประมาณสำหรับ ${material.id} เรียบร้อยแล้ว (PoC Phase)`)}
+                    onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                      detail: {
+                        title: "ปรับปรุงแผนงบประมาณสำเร็จ",
+                        content: `📊 ระบบได้จำลองการเกลี่ยงบประมาณสำหรับพัสดุ ${material.id} เรียบร้อยแล้ว\n\n(PoC Phase: ข้อมูลจำลองการปรับแผนและประเมินผลกระทบเชิงงบประมาณได้ถูกส่งไปยังระบบวางแผนงบประมาณส่วนกลาง)`,
+                        type: "success"
+                      }
+                    }))}
                     className="mt-4 w-max px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
                   >
                     ปรับปรุงแผนงบ
@@ -267,7 +273,13 @@ export function ReportsView() {
               </div>
               <button 
                 type="button" 
-                onClick={() => alert(`📊 จำลองการสร้างและพรีวิวสไลด์ในหัวข้อ "${item.title}" (PoC Phase)`)}
+                onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
+                  detail: {
+                    title: `พรีวิวสไลด์รายงานผู้บริหาร`,
+                    content: `📊 จำลองการสร้างและดึงข้อมูลสรุปผลพยากรณ์รวมถึงความเสี่ยงพัสดุในหัวข้อ:\n"${item.title}"\n\n(PoC Phase: ระบบได้ประกอบสไลด์นำเสนออัตโนมัติ พร้อมสำหรับการดึงไปใช้ประกอบการรายงานผู้บริหารระดับสูง)`,
+                    type: "info"
+                  }
+                }))}
                 className="mt-4 w-max px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
               >
                 ดูพรีวิวสไลด์

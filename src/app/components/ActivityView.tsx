@@ -99,7 +99,13 @@ export default function ActivityView() {
                           } 
                         }));
                       } else {
-                        alert(`✅ อนุมัติการดำเนินการสำหรับ "${recommendation.title}" เรียบร้อยแล้ว (PoC Phase)`);
+                        window.dispatchEvent(new CustomEvent("show-alert", { 
+                          detail: { 
+                            title: "อนุมัติการดำเนินงานสำเร็จ", 
+                            content: `ระบบได้ทำการอนุมัติการดำเนินการสำหรับ "${recommendation.title}" เรียบร้อยแล้ว (PoC Phase)`,
+                            type: "success"
+                          } 
+                        }));
                       }
                     }}
                     className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
