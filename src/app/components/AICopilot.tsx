@@ -88,7 +88,7 @@ export default function AICopilot() {
 
         setMessages([...newMessages, { id: (Date.now() + 1).toString(), role: "ai", content: finalContent }]);
       } else {
-        setMessages([...newMessages, { id: (Date.now() + 1).toString(), role: "ai", content: "ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI" }]);
+        setMessages([...newMessages, { id: (Date.now() + 1).toString(), role: "ai", content: `ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI\n\n**Error Details:** ${data.error || 'Unknown Error'}` }]);
       }
     } catch (error) {
       console.error(error);
