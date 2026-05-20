@@ -1,0 +1,708 @@
+{
+  "materials": [
+    {
+      "materialId": "10066",
+      "materialName": "หม้อแปลง 100 kVA (3 เฟส)",
+      "avgDemand": 530.1,
+      "stdDemand": 939.2,
+      "leadTimeWeeks": 10,
+      "safetyStock": 2355,
+      "reorderPoint": 3579,
+      "eoq": 19,
+      "unitPrice": 127900,
+      "annualDemand": 699,
+      "coverageMonths": 4.4,
+      "plan2569_rpm": 58
+    },
+    {
+      "materialId": "10067",
+      "materialName": "หม้อแปลง 160 kVA (3 เฟส)",
+      "avgDemand": 339.4,
+      "stdDemand": 387.1,
+      "leadTimeWeeks": 12,
+      "safetyStock": 1063,
+      "reorderPoint": 2004,
+      "eoq": 29,
+      "unitPrice": 192800,
+      "annualDemand": 2454,
+      "coverageMonths": 3.1,
+      "plan2569_rpm": 205
+    },
+    {
+      "materialId": "10138",
+      "materialName": "หม้อแปลง 250 kVA (3 เฟส)",
+      "avgDemand": 135.5,
+      "stdDemand": 152.1,
+      "leadTimeWeeks": 10,
+      "safetyStock": 381,
+      "reorderPoint": 694,
+      "eoq": 6,
+      "unitPrice": 145300,
+      "annualDemand": 90,
+      "coverageMonths": 2.8,
+      "plan2569_rpm": 8
+    },
+    {
+      "materialId": "10139",
+      "materialName": "หม้อแปลง 500 kVA (3 เฟส)",
+      "avgDemand": 71.9,
+      "stdDemand": 98.4,
+      "leadTimeWeeks": 12,
+      "safetyStock": 270,
+      "reorderPoint": 470,
+      "eoq": 14,
+      "unitPrice": 198200,
+      "annualDemand": 619,
+      "coverageMonths": 3.8,
+      "plan2569_rpm": 52
+    },
+    {
+      "materialId": "11",
+      "materialName": "หม้อแปลง 30 kVA (1 เฟส)",
+      "avgDemand": 764.7,
+      "stdDemand": 1133.2,
+      "leadTimeWeeks": 8,
+      "safetyStock": 2541,
+      "reorderPoint": 3954,
+      "eoq": 78,
+      "unitPrice": 100000,
+      "annualDemand": 9176.5,
+      "coverageMonths": 3.3,
+      "plan2569_rpm": 0
+    },
+    {
+      "materialId": "206",
+      "materialName": "หม้อแปลง 50 kVA (3 เฟส)",
+      "avgDemand": 118.3,
+      "stdDemand": 140.6,
+      "leadTimeWeeks": 8,
+      "safetyStock": 315,
+      "reorderPoint": 534,
+      "eoq": 31,
+      "unitPrice": 100000,
+      "annualDemand": 1419.75,
+      "coverageMonths": 2.7,
+      "plan2569_rpm": 0
+    }
+  ],
+  "priceTrends": {
+    "10066": [
+      {
+        "period": "2024-01",
+        "avg_price": 127013.04347826086,
+        "qty": 157
+      },
+      {
+        "period": "2024-02",
+        "avg_price": 124705.20408163265,
+        "qty": 1033
+      },
+      {
+        "period": "2024-03",
+        "avg_price": 116489.61038961039,
+        "qty": 268
+      },
+      {
+        "period": "2024-04",
+        "avg_price": 125476.38888888889,
+        "qty": 3825
+      },
+      {
+        "period": "2024-05",
+        "avg_price": 123924.24242424243,
+        "qty": 285
+      },
+      {
+        "period": "2024-06",
+        "avg_price": 124562.16216216216,
+        "qty": 2168
+      },
+      {
+        "period": "2024-07",
+        "avg_price": 126792.29629629629,
+        "qty": 42
+      },
+      {
+        "period": "2024-08",
+        "avg_price": 122914.28571428571,
+        "qty": 33
+      },
+      {
+        "period": "2024-09",
+        "avg_price": 120600.0,
+        "qty": 17
+      },
+      {
+        "period": "2024-10",
+        "avg_price": 120600.0,
+        "qty": 8
+      },
+      {
+        "period": "2024-11",
+        "avg_price": 125348.33333333333,
+        "qty": 714
+      },
+      {
+        "period": "2024-12",
+        "avg_price": 124750.0,
+        "qty": 674
+      },
+      {
+        "period": "2025-02",
+        "avg_price": 127000.0,
+        "qty": 2
+      },
+      {
+        "period": "2025-03",
+        "avg_price": 108580.0,
+        "qty": 81
+      },
+      {
+        "period": "2025-04",
+        "avg_price": 125477.77777777778,
+        "qty": 531
+      },
+      {
+        "period": "2025-05",
+        "avg_price": 125025.0,
+        "qty": 742
+      },
+      {
+        "period": "2025-07",
+        "avg_price": 101042.5,
+        "qty": 15
+      },
+      {
+        "period": "2025-08",
+        "avg_price": 126600.0,
+        "qty": 1
+      },
+      {
+        "period": "2025-09",
+        "avg_price": 126400.0,
+        "qty": 6
+      },
+      {
+        "period": "2025-10",
+        "avg_price": 122167.29,
+        "qty": 1
+      }
+    ],
+    "10067": [
+      {
+        "period": "2024-01",
+        "avg_price": 185496.01470588235,
+        "qty": 144
+      },
+      {
+        "period": "2024-02",
+        "avg_price": 183484.0,
+        "qty": 386
+      },
+      {
+        "period": "2024-03",
+        "avg_price": 180144.05940594058,
+        "qty": 326
+      },
+      {
+        "period": "2024-04",
+        "avg_price": 179346.31578947368,
+        "qty": 604
+      },
+      {
+        "period": "2024-05",
+        "avg_price": 187668.3615819209,
+        "qty": 888
+      },
+      {
+        "period": "2024-06",
+        "avg_price": 187860.31746031746,
+        "qty": 512
+      },
+      {
+        "period": "2024-07",
+        "avg_price": 188973.07692307694,
+        "qty": 1138
+      },
+      {
+        "period": "2024-08",
+        "avg_price": 185967.56756756757,
+        "qty": 127
+      },
+      {
+        "period": "2024-09",
+        "avg_price": 191300.0,
+        "qty": 28
+      },
+      {
+        "period": "2024-10",
+        "avg_price": 178350.0,
+        "qty": 11
+      },
+      {
+        "period": "2024-11",
+        "avg_price": 182536.36363636365,
+        "qty": 462
+      },
+      {
+        "period": "2024-12",
+        "avg_price": 186563.63636363635,
+        "qty": 455
+      },
+      {
+        "period": "2025-01",
+        "avg_price": 189425.0,
+        "qty": 7
+      },
+      {
+        "period": "2025-02",
+        "avg_price": 187050.0,
+        "qty": 59
+      },
+      {
+        "period": "2025-03",
+        "avg_price": 187600.0,
+        "qty": 69
+      },
+      {
+        "period": "2025-04",
+        "avg_price": 190370.37037037036,
+        "qty": 1115
+      },
+      {
+        "period": "2025-05",
+        "avg_price": 189427.77777777778,
+        "qty": 1213
+      },
+      {
+        "period": "2025-06",
+        "avg_price": 188615.7894736842,
+        "qty": 34
+      },
+      {
+        "period": "2025-07",
+        "avg_price": 186335.0,
+        "qty": 41
+      },
+      {
+        "period": "2025-08",
+        "avg_price": 184407.14285714287,
+        "qty": 140
+      },
+      {
+        "period": "2025-09",
+        "avg_price": 189509.52380952382,
+        "qty": 111
+      },
+      {
+        "period": "2025-10",
+        "avg_price": 186965.8536585366,
+        "qty": 90
+      },
+      {
+        "period": "2025-11",
+        "avg_price": 188175.32467532466,
+        "qty": 139
+      },
+      {
+        "period": "2025-12",
+        "avg_price": 190100.0,
+        "qty": 47
+      }
+    ],
+    "10138": [
+      {
+        "period": "2024-01",
+        "avg_price": 139542.60333333333,
+        "qty": 31
+      },
+      {
+        "period": "2024-02",
+        "avg_price": 143000.0,
+        "qty": 17
+      },
+      {
+        "period": "2024-03",
+        "avg_price": 115300.0,
+        "qty": 89
+      },
+      {
+        "period": "2024-04",
+        "avg_price": 147100.0,
+        "qty": 197
+      },
+      {
+        "period": "2024-05",
+        "avg_price": 143737.5,
+        "qty": 94
+      },
+      {
+        "period": "2024-06",
+        "avg_price": 145666.66666666666,
+        "qty": 9
+      },
+      {
+        "period": "2024-07",
+        "avg_price": 139000.0,
+        "qty": 63
+      },
+      {
+        "period": "2024-08",
+        "avg_price": 117000.0,
+        "qty": 154
+      },
+      {
+        "period": "2025-01",
+        "avg_price": 135917.5,
+        "qty": 526
+      },
+      {
+        "period": "2025-03",
+        "avg_price": 141166.66666666666,
+        "qty": 175
+      }
+    ],
+    "10139": [
+      {
+        "period": "2024-01",
+        "avg_price": 204608.6425,
+        "qty": 40
+      },
+      {
+        "period": "2024-02",
+        "avg_price": 200551.70833333334,
+        "qty": 47
+      },
+      {
+        "period": "2024-03",
+        "avg_price": 190805.55555555556,
+        "qty": 114
+      },
+      {
+        "period": "2024-04",
+        "avg_price": 198500.0,
+        "qty": 163
+      },
+      {
+        "period": "2024-05",
+        "avg_price": 197000.0,
+        "qty": 1
+      },
+      {
+        "period": "2024-06",
+        "avg_price": 204591.33333333334,
+        "qty": 310
+      },
+      {
+        "period": "2024-07",
+        "avg_price": 189691.355,
+        "qty": 147
+      },
+      {
+        "period": "2024-08",
+        "avg_price": 196000.0,
+        "qty": 2
+      },
+      {
+        "period": "2024-09",
+        "avg_price": 197000.0,
+        "qty": 1
+      },
+      {
+        "period": "2024-10",
+        "avg_price": 196000.0,
+        "qty": 1
+      },
+      {
+        "period": "2025-01",
+        "avg_price": 195750.0,
+        "qty": 31
+      },
+      {
+        "period": "2025-02",
+        "avg_price": 192000.0,
+        "qty": 1
+      },
+      {
+        "period": "2025-03",
+        "avg_price": 193466.66666666666,
+        "qty": 284
+      },
+      {
+        "period": "2025-05",
+        "avg_price": 195600.0,
+        "qty": 3
+      },
+      {
+        "period": "2025-07",
+        "avg_price": 188000.0,
+        "qty": 121
+      },
+      {
+        "period": "2025-10",
+        "avg_price": 194000.0,
+        "qty": 3
+      },
+      {
+        "period": "2025-11",
+        "avg_price": 192533.33333333334,
+        "qty": 6
+      },
+      {
+        "period": "2025-12",
+        "avg_price": 192060.0,
+        "qty": 19
+      }
+    ],
+    "11": [
+      {
+        "period": "2024-01",
+        "avg_price": 74684.0,
+        "qty": 252
+      },
+      {
+        "period": "2024-02",
+        "avg_price": 79228.85714285714,
+        "qty": 1714
+      },
+      {
+        "period": "2024-03",
+        "avg_price": 81213.80952380953,
+        "qty": 497
+      },
+      {
+        "period": "2024-04",
+        "avg_price": 81736.25,
+        "qty": 130
+      },
+      {
+        "period": "2024-05",
+        "avg_price": 81043.75,
+        "qty": 470
+      },
+      {
+        "period": "2024-06",
+        "avg_price": 82960.46511627907,
+        "qty": 4117
+      },
+      {
+        "period": "2024-07",
+        "avg_price": 83769.6875,
+        "qty": 226
+      },
+      {
+        "period": "2024-08",
+        "avg_price": 83921.875,
+        "qty": 71
+      },
+      {
+        "period": "2024-09",
+        "avg_price": 83224.0,
+        "qty": 198
+      },
+      {
+        "period": "2024-10",
+        "avg_price": 83928.78787878787,
+        "qty": 167
+      },
+      {
+        "period": "2024-11",
+        "avg_price": 83947.05882352941,
+        "qty": 241
+      },
+      {
+        "period": "2024-12",
+        "avg_price": 83319.51219512195,
+        "qty": 1307
+      },
+      {
+        "period": "2025-01",
+        "avg_price": 83933.92857142857,
+        "qty": 144
+      },
+      {
+        "period": "2025-02",
+        "avg_price": 83490.3125,
+        "qty": 152
+      },
+      {
+        "period": "2025-03",
+        "avg_price": 82852.31597560976,
+        "qty": 2998
+      },
+      {
+        "period": "2025-04",
+        "avg_price": 82743.56589147287,
+        "qty": 3380
+      },
+      {
+        "period": "2025-05",
+        "avg_price": 82709.5081967213,
+        "qty": 308
+      },
+      {
+        "period": "2025-06",
+        "avg_price": 82127.01923076923,
+        "qty": 306
+      },
+      {
+        "period": "2025-07",
+        "avg_price": 82347.76315789473,
+        "qty": 362
+      },
+      {
+        "period": "2025-08",
+        "avg_price": 82758.95161290323,
+        "qty": 567
+      },
+      {
+        "period": "2025-09",
+        "avg_price": 81710.27027027027,
+        "qty": 186
+      },
+      {
+        "period": "2025-10",
+        "avg_price": 82961.5,
+        "qty": 126
+      },
+      {
+        "period": "2025-11",
+        "avg_price": 92905.71428571429,
+        "qty": 229
+      },
+      {
+        "period": "2025-12",
+        "avg_price": 82963.15789473684,
+        "qty": 205
+      }
+    ],
+    "206": [
+      {
+        "period": "2024-02",
+        "avg_price": 84170.0,
+        "qty": 11
+      },
+      {
+        "period": "2024-05",
+        "avg_price": 73804.3,
+        "qty": 159
+      },
+      {
+        "period": "2024-07",
+        "avg_price": 92900.0,
+        "qty": 214
+      },
+      {
+        "period": "2024-08",
+        "avg_price": 91400.0,
+        "qty": 10
+      },
+      {
+        "period": "2024-09",
+        "avg_price": 91400.0,
+        "qty": 5
+      },
+      {
+        "period": "2024-11",
+        "avg_price": 92550.0,
+        "qty": 199
+      },
+      {
+        "period": "2025-02",
+        "avg_price": 89182.0,
+        "qty": 306
+      },
+      {
+        "period": "2025-03",
+        "avg_price": 91950.0,
+        "qty": 10
+      },
+      {
+        "period": "2025-05",
+        "avg_price": 92000.0,
+        "qty": 485
+      },
+      {
+        "period": "2025-06",
+        "avg_price": 91000.0,
+        "qty": 2
+      },
+      {
+        "period": "2025-07",
+        "avg_price": 90700.0,
+        "qty": 8
+      },
+      {
+        "period": "2025-08",
+        "avg_price": 90975.0,
+        "qty": 11
+      },
+      {
+        "period": "2025-09",
+        "avg_price": 90500.0,
+        "qty": 10
+      },
+      {
+        "period": "2025-10",
+        "avg_price": 90936.25,
+        "qty": 81
+      },
+      {
+        "period": "2025-11",
+        "avg_price": 90673.18181818182,
+        "qty": 210
+      },
+      {
+        "period": "2025-12",
+        "avg_price": 90136.92307692308,
+        "qty": 172
+      }
+    ]
+  },
+  "summary": {
+    "totalRecords": 3208,
+    "totalSpend": 4870104885.349999,
+    "uniqueMaterials": 6,
+    "uniqueVendors": 174,
+    "uniqueUnits": 174,
+    "dateRange": "2024-01-03 to 2025-12-30"
+  },
+  "plan2569": {
+    "00011": {
+      "demand": 4010,
+      "rpm": 334,
+      "price_plan": 83760,
+      "price_budget": 87000
+    },
+    "00206": {
+      "demand": 530,
+      "rpm": 44,
+      "price_plan": 92870,
+      "price_budget": 96900
+    },
+    "10066": {
+      "demand": 699,
+      "rpm": 58,
+      "price_plan": 127900,
+      "price_budget": 131900
+    },
+    "10067": {
+      "demand": 2454,
+      "rpm": 205,
+      "price_plan": 192800,
+      "price_budget": 198900
+    },
+    "10138": {
+      "demand": 90,
+      "rpm": 8,
+      "price_plan": 145300,
+      "price_budget": 151600
+    },
+    "10139": {
+      "demand": 619,
+      "rpm": 52,
+      "price_plan": 198200,
+      "price_budget": 204300
+    }
+  }
+}

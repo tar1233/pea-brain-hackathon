@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  /* ===== Color System – PEA BRAIN ===== */
+  --color-primary-50: #FDF4FA;
+  --color-primary-100: #FAE6F3;
+  --color-primary-200: #F3C3E1;
+  --color-primary-300: #EC9ACD;
+  --color-primary-400: #DE53A8;
+  --color-primary-500: #A80689; /* PEA Official Magenta */
+  --color-primary-600: #8C0572;
+  --color-primary-700: #690455;
+  --color-primary-800: #560346;
+  --color-primary-900: #48033A;
+
+  --color-critical-50: #FEF2F2;
+  --color-critical-100: #FEE2E2;
+  --color-critical-200: #FECACA;
+  --color-critical-500: #EF4444;
+  --color-critical-600: #DC2626;
+  --color-critical-700: #B91C1C;
+
+  --color-warning-50: #FFFBEB;
+  --color-warning-100: #FEF3C7;
+  --color-warning-500: #F59E0B;
+  --color-warning-600: #D97706;
+
+  --color-success-50: #F0FDF4;
+  --color-success-100: #DCFCE7;
+  --color-success-500: #22C55E;
+  --color-success-600: #16A34A;
+
+  --color-info-50: #EFF6FF;
+  --color-info-100: #DBEAFE;
+  --color-info-500: #3B82F6;
+  --color-info-600: #2563EB;
+
+  --color-surface: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
+
+  --font-sans: "Prompt", "Inter", sans-serif;
+}
+
+/* ===== Base ===== */
+html, body {
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(139,92,246,.25); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,.45); }
+
+/* ===== Animations ===== */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .45; }
+}
+
+@keyframes ring-grow {
+  from { stroke-dashoffset: 251; }
+}
+
+.animate-fade-in {
+  animation: fade-in .45s cubic-bezier(.22,1,.36,1);
+}
+.animate-slide-in {
+  animation: slide-in-right .4s cubic-bezier(.22,1,.36,1);
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* ===== Watermark diagonal text ===== */
+.watermark-text {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.watermark-text::before {
+  content: "PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  PEA BRAIN  •  AI FOR SMART SUPPLY CHAIN  •  ";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  line-height: 72px;
+  color: rgba(109, 40, 217, 0.04);
+  transform: rotate(-25deg);
+  white-space: nowrap;
+  word-spacing: 30px;
+}
+

@@ -1,0 +1,345 @@
+{
+  "generated_at": "2026-05-20",
+  "data_source": "s3://pea-hackathon-data1",
+  "total_transactions": 3208,
+  "forecast": {
+    "10066": {
+      "name": "หม้อแปลง 100 kVA (3 เฟส)",
+      "best_method": "Linear Trend",
+      "best_mape": 70.02,
+      "forecast_monthly": 293,
+      "actual_monthly": 172,
+      "train_months": 12,
+      "test_months": 8,
+      "all_methods": {
+        "Moving Avg (3M)": {
+          "forecast": 465,
+          "mape": 169.95
+        },
+        "Weighted MA": {
+          "forecast": 353,
+          "mape": 104.79
+        },
+        "Exp Smoothing": {
+          "forecast": 524,
+          "mape": 204.21
+        },
+        "Linear Trend": {
+          "forecast": 293,
+          "mape": 70.02
+        }
+      }
+    },
+    "10067": {
+      "name": "หม้อแปลง 160 kVA (3 เฟส)",
+      "best_method": "Weighted MA",
+      "best_mape": 7.95,
+      "forecast_monthly": 235,
+      "actual_monthly": 255,
+      "train_months": 12,
+      "test_months": 12,
+      "all_methods": {
+        "Moving Avg (3M)": {
+          "forecast": 309,
+          "mape": 21.11
+        },
+        "Weighted MA": {
+          "forecast": 235,
+          "mape": 7.95
+        },
+        "Exp Smoothing": {
+          "forecast": 365,
+          "mape": 42.93
+        },
+        "Linear Trend": {
+          "forecast": 363,
+          "mape": 42.31
+        }
+      }
+    },
+    "10139": {
+      "name": "หม้อแปลง 500 kVA (3 เฟส)",
+      "best_method": "Linear Trend",
+      "best_mape": 14.19,
+      "forecast_monthly": 50,
+      "actual_monthly": 58,
+      "train_months": 10,
+      "test_months": 8,
+      "all_methods": {
+        "Moving Avg (3M)": {
+          "forecast": 1,
+          "mape": 97.72
+        },
+        "Weighted MA": {
+          "forecast": 2,
+          "mape": 97.44
+        },
+        "Exp Smoothing": {
+          "forecast": 49,
+          "mape": 15.72
+        },
+        "Linear Trend": {
+          "forecast": 50,
+          "mape": 14.19
+        }
+      }
+    },
+    "11": {
+      "name": "หม้อแปลง 30 kVA (1 เฟส)",
+      "best_method": "Exp Smoothing",
+      "best_mape": 7.78,
+      "forecast_monthly": 689,
+      "actual_monthly": 747,
+      "train_months": 12,
+      "test_months": 12,
+      "all_methods": {
+        "Moving Avg (3M)": {
+          "forecast": 572,
+          "mape": 23.46
+        },
+        "Weighted MA": {
+          "forecast": 417,
+          "mape": 44.14
+        },
+        "Exp Smoothing": {
+          "forecast": 689,
+          "mape": 7.78
+        },
+        "Linear Trend": {
+          "forecast": 585,
+          "mape": 21.74
+        }
+      }
+    },
+    "206": {
+      "name": "หม้อแปลง 50 kVA (3 เฟส)",
+      "best_method": "Linear Trend",
+      "best_mape": 1.88,
+      "forecast_monthly": 127,
+      "actual_monthly": 130,
+      "train_months": 6,
+      "test_months": 10,
+      "all_methods": {
+        "Moving Avg (3M)": {
+          "forecast": 71,
+          "mape": 44.92
+        },
+        "Weighted MA": {
+          "forecast": 46,
+          "mape": 64.25
+        },
+        "Exp Smoothing": {
+          "forecast": 98,
+          "mape": 24.68
+        },
+        "Linear Trend": {
+          "forecast": 127,
+          "mape": 1.88
+        }
+      }
+    }
+  },
+  "safety_stock": {
+    "10066": {
+      "name": "หม้อแปลง 100 kVA (3 เฟส)",
+      "current_ss": 1590,
+      "ai_ss": 2355,
+      "dynamic_ss": 1649,
+      "current_value": 196396627,
+      "optimized_value": 203575882,
+      "reduction_pct": -3.7,
+      "savings": -7179255
+    },
+    "10067": {
+      "name": "หม้อแปลง 160 kVA (3 เฟส)",
+      "current_ss": 1018,
+      "ai_ss": 1063,
+      "dynamic_ss": 744,
+      "current_value": 189489386,
+      "optimized_value": 138509899,
+      "reduction_pct": 26.9,
+      "savings": 50979487
+    },
+    "10138": {
+      "name": "หม้อแปลง 250 kVA (3 เฟส)",
+      "current_ss": 406,
+      "ai_ss": 381,
+      "dynamic_ss": 479,
+      "current_value": 54995585,
+      "optimized_value": 64810522,
+      "reduction_pct": -17.8,
+      "savings": -9814937
+    },
+    "10139": {
+      "name": "หม้อแปลง 500 kVA (3 เฟส)",
+      "current_ss": 216,
+      "ai_ss": 270,
+      "dynamic_ss": 273,
+      "current_value": 42282708,
+      "optimized_value": 53586900,
+      "reduction_pct": -26.7,
+      "savings": -11304192
+    },
+    "11": {
+      "name": "หม้อแปลง 30 kVA (1 เฟส)",
+      "current_ss": 2294,
+      "ai_ss": 2541,
+      "dynamic_ss": 1779,
+      "current_value": 190339151,
+      "optimized_value": 147598832,
+      "reduction_pct": 22.5,
+      "savings": 42740318
+    },
+    "206": {
+      "name": "หม้อแปลง 50 kVA (3 เฟส)",
+      "current_ss": 355,
+      "ai_ss": 315,
+      "dynamic_ss": 221,
+      "current_value": 31647361,
+      "optimized_value": 19678920,
+      "reduction_pct": 37.8,
+      "savings": 11968441
+    }
+  },
+  "price_analysis": {
+    "10066": {
+      "name": "หม้อแปลง 100 kVA (3 เฟส)",
+      "avg_price": 123612,
+      "cheapest_month": 3,
+      "cheapest_price": 116007,
+      "expensive_month": 1,
+      "expensive_price": 127013,
+      "volatility_pct": 8.9,
+      "monthly_prices": {
+        "1": 127013,
+        "2": 124728,
+        "3": 116007,
+        "4": 125477,
+        "5": 123987,
+        "6": 124562,
+        "7": 123470,
+        "8": 123375,
+        "9": 123500,
+        "10": 121122,
+        "11": 125348,
+        "12": 124750
+      }
+    },
+    "10067": {
+      "name": "หม้อแปลง 160 kVA (3 เฟส)",
+      "avg_price": 186242,
+      "cheapest_month": 3,
+      "cheapest_price": 181670,
+      "expensive_month": 9,
+      "expensive_price": 189907,
+      "volatility_pct": 4.4,
+      "monthly_prices": {
+        "1": 185714,
+        "2": 183673,
+        "3": 181670,
+        "4": 181786,
+        "5": 187831,
+        "6": 187959,
+        "7": 188621,
+        "8": 185028,
+        "9": 189907,
+        "10": 186200,
+        "11": 187470,
+        "12": 189049
+      }
+    },
+    "10138": {
+      "name": "หม้อแปลง 250 kVA (3 เฟส)",
+      "avg_price": 136710,
+      "cheapest_month": 8,
+      "cheapest_price": 117000,
+      "expensive_month": 4,
+      "expensive_price": 147100,
+      "volatility_pct": 22.0,
+      "monthly_prices": {
+        "1": 136906,
+        "2": 143000,
+        "3": 121269,
+        "4": 147100,
+        "5": 143738,
+        "6": 145667,
+        "7": 139000,
+        "8": 117000
+      }
+    },
+    "10139": {
+      "name": "หม้อแปลง 500 kVA (3 เฟส)",
+      "avg_price": 196209,
+      "cheapest_month": 7,
+      "cheapest_price": 188966,
+      "expensive_month": 6,
+      "expensive_price": 204591,
+      "volatility_pct": 8.0,
+      "monthly_prices": {
+        "1": 202837,
+        "2": 200102,
+        "3": 191186,
+        "4": 198500,
+        "5": 196067,
+        "6": 204591,
+        "7": 188966,
+        "8": 196000,
+        "9": 197000,
+        "10": 194667,
+        "11": 192533,
+        "12": 192060
+      }
+    },
+    "11": {
+      "name": "หม้อแปลง 30 kVA (1 เฟส)",
+      "avg_price": 82992,
+      "cheapest_month": 2,
+      "cheapest_price": 81264,
+      "expensive_month": 11,
+      "expensive_price": 87122,
+      "volatility_pct": 7.1,
+      "monthly_prices": {
+        "1": 82532,
+        "2": 81264,
+        "3": 82518,
+        "4": 82632,
+        "5": 82363,
+        "6": 82646,
+        "7": 82898,
+        "8": 82892,
+        "9": 82321,
+        "10": 83564,
+        "11": 87122,
+        "12": 83148
+      }
+    },
+    "206": {
+      "name": "หม้อแปลง 50 kVA (3 เฟส)",
+      "avg_price": 89208,
+      "cheapest_month": 5,
+      "cheapest_price": 76837,
+      "expensive_month": 3,
+      "expensive_price": 91950,
+      "volatility_pct": 16.9,
+      "monthly_prices": {
+        "2": 86676,
+        "3": 91950,
+        "5": 76837,
+        "6": 91000,
+        "7": 91800,
+        "8": 91188,
+        "9": 90800,
+        "10": 90936,
+        "11": 90755,
+        "12": 90137
+      }
+    }
+  },
+  "summary": {
+    "overall_mape": 20.4,
+    "inventory_reduction_pct": 11.0,
+    "inventory_savings": 77389863,
+    "total_current_inventory_value": 705150818,
+    "total_optimized_inventory_value": 627760955
+  }
+}
