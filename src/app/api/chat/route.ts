@@ -11,12 +11,19 @@ import {
 // us-east-1 for both KB and Nova Pro Model (First-party model, no marketplace subscription needed)
 const REGION = "us-east-1";
 
+const credentials = {
+  accessKeyId: process.env.PEA_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || "",
+  secretAccessKey: process.env.PEA_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || "",
+};
+
 const agentClient = new BedrockAgentRuntimeClient({
   region: REGION,
+  credentials: credentials.accessKeyId ? credentials : undefined,
 });
 
 const runtimeClient = new BedrockRuntimeClient({
   region: REGION,
+  credentials: credentials.accessKeyId ? credentials : undefined,
 });
 
 const KNOWLEDGE_BASE_ID = "8HWXS46GOZ";
