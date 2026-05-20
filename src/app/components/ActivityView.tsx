@@ -79,7 +79,29 @@ export default function ActivityView() {
                 <div className="mt-4 flex items-center justify-end border-t border-slate-100 pt-3">
                   <button 
                     type="button" 
-                    onClick={() => alert(`✅ อนุมัติการดำเนินการสำหรับ "${recommendation.title}" เรียบร้อยแล้ว (PoC Phase)`)}
+                    onClick={() => {
+                      if (recommendation.id === "rec-1") {
+                        window.dispatchEvent(new CustomEvent("create-po", { 
+                          detail: { 
+                            materialId: "MAT-10067", 
+                            qty: 878, 
+                            name: "หม้อแปลง 160 kVA (3 เฟส)",
+                            price: 192800 
+                          } 
+                        }));
+                      } else if (recommendation.id === "rec-2") {
+                        window.dispatchEvent(new CustomEvent("create-po", { 
+                          detail: { 
+                            materialId: "MAT-10066", 
+                            qty: 678, 
+                            name: "หม้อแปลง 100 kVA (3 เฟส)",
+                            price: 127900 
+                          } 
+                        }));
+                      } else {
+                        alert(`✅ อนุมัติการดำเนินการสำหรับ "${recommendation.title}" เรียบร้อยแล้ว (PoC Phase)`);
+                      }
+                    }}
                     className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
                   >
                     อนุมัติการดำเนินงาน

@@ -271,7 +271,18 @@ export default function AlertTable() {
                             <div className="flex items-center gap-3">
                               {isCritical && (
                                 <button type="button" className="px-4 py-2 rounded-xl text-[11px] font-bold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 shadow-sm transition-all cursor-pointer"
-                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.alert(`✅ สร้าง PO สำหรับ ${alert.materialId} เรียบร้อย (Demo)`); }}>สร้างใบสั่งซื้อ (PO)</button>
+                                  onClick={(e) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    window.dispatchEvent(new CustomEvent("create-po", { 
+                                      detail: { 
+                                        materialId: alert.materialId, 
+                                        qty: material?.eoq, 
+                                        name: alert.materialName,
+                                        price: material?.unitPrice 
+                                      } 
+                                    })); 
+                                  }}>สร้างใบสั่งซื้อ (PO)</button>
                               )}
                               <button type="button" className="px-4 py-2 rounded-xl text-[11px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all cursor-pointer"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpandedId(null); }}>ปิดรายละเอียด</button>

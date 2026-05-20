@@ -186,7 +186,20 @@ export default function WarehouseView() {
                 <div className="text-sm text-gray-500 mt-0.5">ภายในสัปดาห์นี้</div>
               </div>
               <div className="flex flex-col gap-3 items-end">
-                <button onClick={() => alert('✅ สร้างใบสั่งซื้อ (PO) สำหรับ MAT-10066 เรียบร้อย!\n\nพัสดุ: หม้อแปลง 100 kVA (3 เฟส)\nจำนวน: 315 เครื่อง\nมูลค่าประมาณ: ฿260.2 ล้าน\n\nส่งไปยัง SAP เพื่ออนุมัติต่อ (Demo Phase 2)')} className="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-red-500/20 transition-all flex items-center gap-2 cursor-pointer">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent("create-po", { 
+                      detail: { 
+                        materialId: "MAT-10066", 
+                        qty: 315, 
+                        name: "หม้อแปลง 100 kVA (3 เฟส)",
+                        price: 127900
+                      } 
+                    }));
+                  }}
+                  className="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-red-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
                   สร้าง PO <ArrowRight className="w-4 h-4" />
                 </button>
                 <span onClick={() => alert('📝 MAT-10066: สั่งซื้อเพิ่ม 315 เครื่อง จาก Vendor A01 (โรงงานอยุธยา)\n\nเหตุผล: สต๊อกเหลือ 8 เครื่อง ต่ำกว่า Safety Stock 320 เครื่อง\nมูลค่าความเสี่ยง: ฿13.8 ล้าน\nLead time: 12 สัปดาห์\nConfidence: 91%')} className="text-xs font-bold text-[#A80689] cursor-pointer hover:underline">ดูรายละเอียด <ArrowRight className="inline w-3 h-3" /></span>

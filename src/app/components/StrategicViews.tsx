@@ -91,7 +91,16 @@ export function ProcurementView() {
               <span className="text-[11px] text-slate-400">Confidence: <span className="font-semibold text-emerald-600">{item.confidence}%</span></span>
               <button 
                 type="button"
-                onClick={() => alert(`✅ สร้างใบสั่งซื้อ (PO) สำหรับ ${item.materialId} สำเร็จแล้ว!\nระบบได้ส่งคำร้องไปยัง SAP`)}
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent("create-po", { 
+                    detail: { 
+                      materialId: item.materialId, 
+                      qty: item.material?.eoq, 
+                      name: item.materialName,
+                      price: item.material?.unitPrice 
+                    } 
+                  }));
+                }}
                 className={`px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shadow-sm text-white ${
                   item.severity === "critical" 
                     ? "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 shadow-red-500/10" 

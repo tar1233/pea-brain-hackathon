@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { FileText, Loader2, Printer, X } from "lucide-react";
+import { materials } from "./data/mockData";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 import AICopilot from "./components/AICopilot";
@@ -79,6 +81,60 @@ import ActivityView from "./components/ActivityView";
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
 
+  interface POPending {
+    isOpen: boolean;
+    step: number;
+    materialId: string;
+    materialName: string;
+    qty: number;
+    price: number;
+    poNumber: string;
+  }
+
+  const [poProgress, setPoProgress] = useState<POPending | null>(null);
+
+  useEffect(() => {
+    const handleCreatePO = (e: Event) => {
+      const customEvent = e as CustomEvent<{ materialId: string; qty?: number; name?: string; price?: number }>;
+      const { materialId, qty, name, price } = customEvent.detail;
+      
+      const material = materials.find(m => m.id === materialId);
+      const mName = name || material?.name || materialId;
+      const mQty = qty || material?.eoq || 100;
+      const mPrice = price || material?.unitPrice || 150000;
+      const poNum = "PO-2569-" + Math.floor(100000 + Math.random() * 900000);
+
+      setPoProgress({
+        isOpen: true,
+        step: 1,
+        materialId,
+        materialName: mName,
+        qty: mQty,
+        price: mPrice,
+        poNumber: poNum
+      });
+    };
+
+    window.addEventListener("create-po", handleCreatePO);
+    return () => window.removeEventListener("create-po", handleCreatePO);
+  }, []);
+
+  useEffect(() => {
+    if (!poProgress || !poProgress.isOpen || poProgress.step >= 3) return;
+
+    const timer = setTimeout(() => {
+      setPoProgress(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          step: prev.step + 1
+        };
+      });
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [poProgress]);
+
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
@@ -126,6 +182,198 @@ export default function Home() {
         {/* AI Copilot Panel */}
         <AICopilot />
       </div>
+
+      {/* PO Creation Progress/Document Modal */}
+      {poProgress && poProgress.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
+          <div className="w-full max-w-2xl rounded-[32px] bg-white p-8 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 animate-scale-in max-h-[95vh] flex flex-col">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <FileText className="text-purple-600 animate-pulse" size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 leading-tight">ระบบสร้างใบสั่งซื้ออัจฉริยะ (PEA PO Generator)</h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    สถานะ: {poProgress.step === 1 ? "🔍 กำลังวิเคราะห์คงคลัง..." : poProgress.step === 2 ? "🔌 กำลังส่งข้อมูลไปยัง SAP ERP..." : "✅ เสร็จสมบูรณ์"}
+                  </p>
+                </div>
+              </div>
+              {poProgress.step === 3 && (
+                <button 
+                  onClick={() => setPoProgress(null)}
+                  className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* Content Area */}
+            <div className="py-6 flex-1 overflow-y-auto min-h-0">
+              {poProgress.step < 3 ? (
+                <div className="flex flex-col items-center justify-center py-12 space-y-6">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full border-4 border-purple-100 border-t-purple-600 animate-spin" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Loader2 className="text-purple-600 animate-spin" size={24} />
+                    </div>
+                  </div>
+                  
+                  <div className="w-full max-w-sm space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${poProgress.step >= 1 ? "bg-purple-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                        {poProgress.step > 1 ? "✓" : "1"}
+                      </div>
+                      <span className={`text-sm ${poProgress.step === 1 ? "font-bold text-purple-600" : "text-slate-500 font-medium"}`}>
+                        ตรวจสอบประวัติคงคลังและงบประมาณ
+                      </span>
+                    </div>
+                    <div className="h-6 w-0.5 bg-slate-200 ml-3" />
+                    <div className="flex items-center gap-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${poProgress.step >= 2 ? "bg-purple-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                        {poProgress.step > 2 ? "✓" : "2"}
+                      </div>
+                      <span className={`text-sm ${poProgress.step === 2 ? "font-bold text-purple-600" : "text-slate-500 font-medium"}`}>
+                        บันทึกข้อมูลและเชื่อมโยง ERP SAP
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Step 3: Show PO Document */
+                <div className="space-y-6">
+                  {/* Success Banner */}
+                  <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                      ✓
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-emerald-800">สร้างเอกสารใบสั่งซื้อเสร็จสมบูรณ์!</h4>
+                      <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">เลขที่ PO: {poProgress.poNumber} • ส่งข้อมูลเข้าฐานข้อมูลระบบ SAP ของ PEA เรียบร้อยแล้ว</p>
+                    </div>
+                  </div>
+
+                  {/* Premium PO Document Sheet */}
+                  <div className="border border-slate-200 rounded-2xl bg-slate-50/50 p-6 shadow-inner font-sans text-xs text-slate-800 space-y-4">
+                    
+                    {/* PO Header */}
+                    <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+                      <div className="flex items-center gap-3">
+                        <img src="/pea-official-logo.png" alt="PEA Logo" className="w-12 h-12 object-contain" />
+                        <div>
+                          <h5 className="font-extrabold text-[13px] text-slate-900">การไฟฟ้าส่วนภูมิภาค</h5>
+                          <p className="text-[10px] text-slate-500">PROVINCIAL ELECTRICITY AUTHORITY</p>
+                          <p className="text-[9px] text-slate-400 mt-1">200 ถนนงามวงศ์วาน ลาดยาว จตุจักร กรุงเทพฯ 10900</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <h5 className="font-extrabold text-[14px] text-[#A80689]">ใบสั่งซื้อพัสดุ / Purchase Order</h5>
+                        <p className="font-bold text-[11px] text-slate-700 mt-1">เลขที่ PO: {poProgress.poNumber}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">วันที่ออกเอกสาร: {new Date().toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" })}</p>
+                      </div>
+                    </div>
+
+                    {/* Vendor & Delivery info */}
+                    <div className="grid grid-cols-2 gap-6 border-b border-slate-200 pb-4">
+                      <div>
+                        <h6 className="font-bold text-slate-500 uppercase tracking-wider text-[9px] mb-1">ผู้ขาย / Vendor:</h6>
+                        <p className="font-bold text-slate-900 text-[11px]">บริษัท ร่วมค้าผู้ผลิตหม้อแปลงไฟฟ้าไทย จำกัด</p>
+                        <p className="text-slate-500 mt-1">112/4 เขตอุตสาหกรรมบางปู จ.สมุทรปราการ</p>
+                        <p className="text-slate-500">โทร: 02-345-6789 • อีเมล: contact@thaitransformer.co.th</p>
+                      </div>
+                      <div>
+                        <h6 className="font-bold text-slate-500 uppercase tracking-wider text-[9px] mb-1">สถานที่จัดส่ง / Delivery Location:</h6>
+                        <p className="font-bold text-slate-900 text-[11px]">คลังพัสดุกลาง การไฟฟ้าส่วนภูมิภาค (PEA Central Warehouse)</p>
+                        <p className="text-slate-500 mt-1">แผนกคลังพัสดุและจัดเก็บรักษา กองพัสดุ</p>
+                        <p className="text-slate-500">กำหนดส่งมอบ: ภายในระยะเวลาจัดซื้อ {materials.find(m => m.id === poProgress.materialId)?.leadTimeWeeks ?? 10} สัปดาห์</p>
+                      </div>
+                    </div>
+
+                    {/* Items Table */}
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-300 text-[9px] uppercase tracking-wider text-slate-400 font-bold">
+                          <th className="py-2">รหัสพัสดุ (SAP)</th>
+                          <th className="py-2">รายการ</th>
+                          <th className="py-2 text-right">จำนวน</th>
+                          <th className="py-2 text-right">ราคาต่อหน่วย</th>
+                          <th className="py-2 text-right">จำนวนเงินรวม</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-slate-200 text-[11px] text-slate-900 font-medium">
+                          <td className="py-3 font-bold">{poProgress.materialId}</td>
+                          <td className="py-3">
+                            <div>{poProgress.materialName}</div>
+                            <div className="text-[9px] text-slate-400 mt-0.5">ประเภท: หม้อแปลงไฟฟ้ากำลัง (PEA Spec)</div>
+                          </td>
+                          <td className="py-3 text-right font-bold">{poProgress.qty.toLocaleString()} เครื่อง</td>
+                          <td className="py-3 text-right">฿{poProgress.price.toLocaleString()}</td>
+                          <td className="py-3 text-right font-bold">฿{(poProgress.qty * poProgress.price).toLocaleString()}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    {/* Totals */}
+                    <div className="flex justify-end pt-2">
+                      <div className="w-64 space-y-1.5 text-right">
+                        <div className="flex justify-between text-slate-500">
+                          <span>มูลค่ารวม (Subtotal):</span>
+                          <span className="font-semibold text-slate-700">฿{(poProgress.qty * poProgress.price).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-slate-500">
+                          <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+                          <span className="font-semibold text-slate-700">฿{(poProgress.qty * poProgress.price * 0.07).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-slate-900 font-bold border-t border-slate-200 pt-2 text-[13px]">
+                          <span>ยอดเงินสุทธิ (Total Value):</span>
+                          <span className="text-[#A80689]">฿{Math.round(poProgress.qty * poProgress.price * 1.07).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Signature / Approval */}
+                    <div className="border-t border-slate-200 pt-4 flex items-center justify-between text-[10px] text-slate-500">
+                      <div>
+                        <span className="font-semibold text-slate-400">ระบบอนุมัติอัตโนมัติ:</span>
+                        <span className="ml-1 text-emerald-600 font-bold">ผ่านเกณฑ์ Risk Mitigation & EOQ Limits</span>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-slate-900 border-b border-dashed border-slate-400 pb-1 px-4 mb-1">
+                          อนุมัติผ่านระบบกองจัดหาพัสดุ (PEA AI-Sign)
+                        </div>
+                        <span>ผู้มีอำนาจสั่งซื้อ / Authorized Signature</span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Modal Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-2 shrink-0">
+                    <button 
+                      onClick={() => window.print()}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-600 transition cursor-pointer shadow-sm"
+                    >
+                      <Printer size={13} />
+                      พิมพ์เอกสาร
+                    </button>
+                    <button 
+                      onClick={() => setPoProgress(null)}
+                      className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-90 text-[11px] font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10"
+                    >
+                      ปิดหน้าต่าง
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -128,7 +128,16 @@ export default function InventoryView() {
                   <div className="mt-3 flex items-center justify-end border-t border-red-200/40 pt-2.5">
                     <button 
                       type="button"
-                      onClick={() => alert(`✅ ออกใบเสนอสั่งซื้อเร่งด่วนสำหรับ ${material.id} จำนวน ${gap.toLocaleString()} ${material.unit} เรียบร้อย`)}
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent("create-po", { 
+                          detail: { 
+                            materialId: material.id, 
+                            qty: gap, 
+                            name: material.name,
+                            price: material.unitPrice 
+                          } 
+                        }));
+                      }}
                       className="px-2.5 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
                     >
                       สั่งซื้อเร่งด่วน (Urgent PO)
