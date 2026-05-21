@@ -1,48 +1,61 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import {
-  aiRecommendations,
-  dataSummary,
-} from '../../data/mockData';
+import { SAPConnector } from '../../../services/sap-erp';
+import { WMSConnector } from '../../../services/wms-system';
+import { AIOrchestrator } from '../../../services/ai-orchestrator';
 
+// Initialize core database connection
 const prisma = new PrismaClient();
 
+// Instantiate Plugin Connectors
+const sapPlugin = new SAPConnector(prisma);
+const wmsPlugin = new WMSConnector(prisma);
+const aiCore = new AIOrchestrator(prisma);
+
 export async function GET() {
-  // Simulate a slight network delay to show loading states
+  // Simulate network latency for API Gateway routing
   await new Promise(resolve => setTimeout(resolve, 600));
 
   try {
-    const materialsData = await prisma.material.findMany();
-    const riskAlertsData = await prisma.riskAlert.findMany();
-    const timelineEventsData = await prisma.timelineEvent.findMany({
-      orderBy: { time: 'desc' }
+    // 1. Fetch data from PEA existing systems via Plugins
+    const sapData = await sapPlugin.getProcurementData();
+    const wmsData = await wmsPlugin.getInventoryData();
+    
+    // Merge SAP (Financial/Procurement) + WMS (Inventory) data
+    const materials = wmsData.map(wmsItem => {
+      const sapItem = sapData.find(sap => sap.id === wmsItem.id);
+      return {
+        ...wmsItem,
+        ...sapItem, // merges unitPrice, budgetPrice, annualDemand
+        sparkline: JSON.parse(wmsItem.sparkline)
+      };
     });
 
-    // Parse sparkline JSON string back to array
-    const materials = materialsData.map(mat => ({
-      ...mat,
-      sparkline: JSON.parse(mat.sparkline)
-    }));
+    // 2. Fetch Multi-Agent Intelligence Layer
+    const riskAlertsData = await aiCore.getRiskAlerts();
+    const timelineEventsData = await aiCore.getTimelineEvents();
+    const { aiRecommendations, dataSummary } = await aiCore.getLayoutData();
 
-    // Re-compute derived values based on live database data
+    // 3. API Gateway Data Aggregation
     const criticalAlerts = riskAlertsData.filter(a => a.severity === 'critical');
     const warningAlerts = riskAlertsData.filter(a => a.severity === 'warning');
     const infoAlerts = riskAlertsData.filter(a => a.severity === 'info');
     const totalVaR = riskAlertsData.reduce((sum, a) => sum + a.costImpact, 0);
 
+    // Return unified payload to Frontend Dashboard
     return NextResponse.json({
       materials,
       riskAlerts: riskAlertsData,
-      aiRecommendations, // static layout data
+      aiRecommendations,
       timelineEvents: timelineEventsData,
       criticalAlerts,
       warningAlerts,
       infoAlerts,
       totalVaR,
-      dataSummary, // static layout data
+      dataSummary,
     });
   } catch (error) {
-    console.error("API Database Error:", error);
-    return NextResponse.json({ error: "Failed to fetch data from database" }, { status: 500 });
+    console.error("API Gateway Error:", error);
+    return NextResponse.json({ error: "API Gateway failed to connect to PEA Plugins" }, { status: 500 });
   }
 }
