@@ -1,0 +1,10 @@
+{
+  "name": "pea-brain-lambda-backend",
+  "version": "1.0.0",
+  "description": "AWS Lambda Orchestrator for PEA Brain",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}

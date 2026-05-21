@@ -27,7 +27,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("/api/data");
+        // Connect to AWS API Gateway if configured, otherwise fallback to local dev gateway
+        const apiUrl = process.env.NEXT_PUBLIC_API_GATEWAY_URL || "/api/data";
+        console.log("Fetching from:", apiUrl);
+        const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Failed to fetch data");
         const json = await res.json();
         setData(json);
