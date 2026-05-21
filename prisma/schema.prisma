@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Material {
+  id               String   @id
+  name             String
+  category         String
+  sapCode          String
+  currentStock     Int
+  safetyStock      Int
+  reorderPoint     Int
+  eoq              Int
+  unit             String
+  unitPrice        Float
+  leadTimeWeeks    Int
+  avgMonthlyDemand Int
+  annualDemand     Int
+  budgetPrice      Float
+  sparkline        String   // Stored as JSON string
+
+  alerts           RiskAlert[]
+}
+
+model RiskAlert {
+  id             String   @id @default(uuid())
+  materialId     String
+  materialName   String
+  severity       String   // "critical" | "warning" | "info"
+  message        String
+  recommendation String
+  confidence     Int
+  costImpact     Float
+  timestamp      String
+
+  material       Material @relation(fields: [materialId], references: [id])
+}
+
+model TimelineEvent {
+  id   String @id @default(uuid())
+  time String
+  text String
+}
