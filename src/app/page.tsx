@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Loader2, Printer, X, AlertCircle, CheckCircle2, Info } from "lucide-react";
+import { FileText, Loader2, Printer, X, AlertCircle, CheckCircle2, Info, AlertTriangle } from "lucide-react";
 import { useData } from "./context/DataContext";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -191,6 +191,26 @@ export default function Home() {
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-10 w-10 animate-spin text-[#A80689]" />
           <div className="text-sm font-bold text-slate-600">กำลังเชื่อมต่อระบบฐานข้อมูล PEA...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !materials) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#f6f5fb]">
+        <div className="flex flex-col items-center gap-4 text-center max-w-md px-6">
+          <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center mb-2">
+            <AlertTriangle className="h-6 w-6 text-red-600" />
+          </div>
+          <h2 className="text-lg font-bold text-slate-800">เกิดข้อผิดพลาดในการเชื่อมต่อ</h2>
+          <p className="text-sm text-slate-500 mb-4">{error || "ไม่สามารถโหลดข้อมูลจากระบบได้"}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-[#A80689] hover:bg-[#8A0570] text-white rounded-lg text-sm font-semibold transition-colors"
+          >
+            ลองใหม่อีกครั้ง
+          </button>
         </div>
       </div>
     );
