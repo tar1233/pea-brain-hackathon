@@ -35,7 +35,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
   const { materials, riskAlerts, timelineEvents, criticalAlerts } = data;
 
   const coverage = Math.round(
-    materials.reduce((sum, material) => sum + (material.currentStock / material.safetyStock) * 100, 0) / materials.length
+    materials.reduce((sum, material) => sum + (material.currentStock / material.safetyStock) * 100, 0) / (materials.length || 1)
   );
   const topRisks = [...riskAlerts].sort((a, b) => b.costImpact - a.costImpact).slice(0, 3);
   const totalAnnualDemand = materials.reduce((sum, material) => sum + material.annualDemand, 0);

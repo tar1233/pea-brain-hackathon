@@ -78,7 +78,7 @@ export default function InventoryView() {
   const totalInventoryValue = materials.reduce((sum, material) => sum + material.currentStock * material.unitPrice, 0);
   const atRiskMaterials = materials.filter((material) => material.currentStock < material.safetyStock);
   const averageCoverage = Math.round(
-    materials.reduce((sum, material) => sum + (material.currentStock / material.safetyStock) * 100, 0) / materials.length
+    materials.reduce((sum, material) => sum + (material.currentStock / material.safetyStock) * 100, 0) / (materials.length || 1)
   );
 
   return (

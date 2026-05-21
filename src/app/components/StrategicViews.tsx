@@ -64,7 +64,7 @@ export function ProcurementView() {
         {[
           { label: "วงเงินเสี่ยงที่ต้องกันงบ", value: formatCurrency(totalVaR), bg: "bg-gradient-to-br from-red-50/60 to-rose-50/60 border-red-100", valueColor: "text-red-800" },
           { label: "เคสพร้อมออก PO", value: `${recommendedOrders.length} รายการ`, bg: "bg-gradient-to-br from-purple-50/60 to-fuchsia-50/60 border-purple-100", valueColor: "text-purple-800" },
-          { label: "Lead time เฉลี่ย", value: `${Math.round(materials.reduce((sum, item) => sum + item.leadTimeWeeks, 0) / materials.length)} สัปดาห์`, bg: "bg-gradient-to-br from-blue-50/60 to-indigo-50/60 border-blue-100", valueColor: "text-blue-800" },
+          { label: "Lead time เฉลี่ย", value: `${Math.round(materials.reduce((sum, item) => sum + item.leadTimeWeeks, 0) / (materials.length || 1))} สัปดาห์`, bg: "bg-gradient-to-br from-blue-50/60 to-indigo-50/60 border-blue-100", valueColor: "text-blue-800" },
         ].map((item) => (
           <article key={item.label} className={`rounded-[20px] border p-4.5 shadow-[0_12px_24px_rgba(0,0,0,0.01)] backdrop-blur-sm ${item.bg}`}>
             <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">{item.label}</div>

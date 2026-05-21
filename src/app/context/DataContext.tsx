@@ -37,7 +37,30 @@ export function DataProvider({ children }: { children: ReactNode }) {
         
         // Handle Lambda payload (which might not include computed fields)
         if (!json.riskAlerts) json.riskAlerts = [];
+        json.riskAlerts = json.riskAlerts.map((a: any) => ({
+          ...a,
+          confidence: a.confidence || 95,
+          recommendation: a.recommendation || "รอการตัดสินใจจากผู้ดูแลระบบ",
+          timestamp: a.timestamp || new Date().toISOString(),
+          materialName: a.materialName || "Unknown Material",
+        }));
+        
         if (!json.materials) json.materials = [];
+        // Ensure all material fields exist to prevent UI crashes
+        json.materials = json.materials.map((m: any) => ({
+          ...m,
+          avgMonthlyDemand: m.avgMonthlyDemand || 40,
+          annualDemand: m.annualDemand || 480,
+          leadTimeWeeks: m.leadTimeWeeks || 12,
+          unit: m.unit || "EA",
+          reorderPoint: m.reorderPoint || 300,
+          eoq: m.eoq || 150,
+          currentStock: m.currentStock || 0,
+          safetyStock: m.safetyStock || 0,
+          budgetPrice: m.budgetPrice || 0,
+          unitPrice: m.unitPrice || 0,
+        }));
+
         if (!json.criticalAlerts) {
           json.criticalAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'critical');
         }
