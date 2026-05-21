@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { Boxes, PackageSearch, ShieldAlert, Sparkles, FileText } from "lucide-react";
 import { useData } from "../context/DataContext";
