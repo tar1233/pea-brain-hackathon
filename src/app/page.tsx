@@ -282,7 +282,7 @@ export default function Home() {
                   </div>
 
                   {/* Premium PO Document Sheet */}
-                  <div className="border border-slate-200 rounded-2xl bg-slate-50/50 p-6 shadow-inner font-sans text-xs text-slate-800 space-y-4">
+                  <div className="print-only-document border border-slate-200 rounded-2xl bg-slate-50/50 p-6 shadow-inner font-sans text-xs text-slate-800 space-y-4">
                     
                     {/* PO Header */}
                     <div className="flex items-start justify-between border-b border-slate-200 pb-4">

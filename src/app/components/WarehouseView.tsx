@@ -6,22 +6,22 @@ export default function WarehouseView() {
     <div className="flex flex-col gap-6 animate-in fade-in duration-500 pb-10">
       
       {/* ── Banner ── */}
-      <div className="bg-gradient-to-r from-[#4A108A] to-[#E85C38] rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden flex flex-col lg:flex-row items-center justify-between shadow-lg">
-        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('/power-grid.png')", backgroundSize: "cover", backgroundPosition: "center", mixBlendMode: "screen" }}></div>
+      <div className="bg-gradient-to-br from-[#2e0854] via-[#5c0670] to-[#b33617] rounded-3xl p-6 lg:p-8 text-white relative overflow-hidden flex flex-col lg:flex-row items-center justify-between shadow-[0_20px_50px_rgba(46,16,138,0.15)] border border-purple-500/10">
+        <div className="absolute inset-0 opacity-15 pointer-events-none" style={{ backgroundImage: "url('/power-grid.png')", backgroundSize: "cover", backgroundPosition: "center", mixBlendMode: "screen" }}></div>
         
         <div className="relative z-10 flex flex-col gap-4 max-w-xl">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-semibold w-max border border-white/20">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-widest w-max border border-white/20 uppercase">
             <Shield className="w-3.5 h-3.5" />
             COMMAND CENTER
           </div>
           <div className="flex items-center gap-4">
-            <h1 className="text-[22px] font-bold tracking-tight">ความพร้อมคลังโดยรวม</h1>
-            <div className="bg-green-500/20 text-green-100 border border-green-400/30 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-green-400" />
+            <h1 className="text-[20px] font-bold tracking-tight">ความพร้อมคลังโดยรวม</h1>
+            <div className="bg-green-500/20 text-green-200 border border-green-400/30 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
               พร้อมปฏิบัติงาน 6%
             </div>
           </div>
-          <p className="text-white/80 text-sm leading-relaxed max-w-md mt-1">
+          <p className="text-white/80 text-[12px] leading-relaxed max-w-md mt-1 font-medium">
             ภาพรวมความพร้อมของคลังและระดับความเสี่ยงของสินค้าสำคัญ 
             ควรเร่งดำเนินการตามคำแนะนำเพื่อรักษาระดับความพร้อมของคลังและลดความเสี่ยงการขาดแคลน
           </p>
@@ -29,21 +29,21 @@ export default function WarehouseView() {
 
         <div className="relative z-10 flex gap-4 mt-6 lg:mt-0 w-full lg:w-auto">
           {/* Card 1 */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-5 flex flex-col gap-1 min-w-[220px]">
-            <div className="text-white/80 text-xs font-medium uppercase tracking-wider mb-1">มูลค่าความเสี่ยงรวม</div>
-            <div className="text-[22px] font-extrabold tracking-tight leading-none">฿664.3 <span className="text-sm font-bold">ล้าน</span></div>
-            <div className="text-white/70 text-xs mt-1">จากความเสี่ยง shortage<br/>และ overstock</div>
-            <button onClick={() => document.getElementById('wh-priority')?.scrollIntoView({ behavior: 'smooth' })} className="mt-4 bg-white text-[#A80689] hover:bg-white/90 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 w-max cursor-pointer">
+          <div className="bg-white/15 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col gap-1 min-w-[210px] shadow-[0_12px_24px_rgba(0,0,0,0.05)]">
+            <div className="text-white/70 text-[10px] font-bold uppercase tracking-wider mb-1">มูลค่าความเสี่ยงรวม</div>
+            <div className="text-[20px] font-bold tracking-tight leading-none">฿664.3 <span className="text-xs font-medium opacity-80">ล้าน</span></div>
+            <div className="text-white/60 text-[11px] mt-1 font-medium">จากความเสี่ยง shortage<br/>และ overstock</div>
+            <button onClick={() => document.getElementById('wh-priority')?.scrollIntoView({ behavior: 'smooth' })} className="mt-4 bg-white/95 text-[#7C3AED] hover:bg-white hover:scale-[1.02] border border-white/20 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm w-max cursor-pointer">
               ดูรายละเอียดความเสี่ยง <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
           
           {/* Card 2 */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-5 flex flex-col gap-1 min-w-[220px]">
-            <div className="text-white/80 text-xs font-medium uppercase tracking-wider mb-1">ช่องว่าง SAFETY STOCK</div>
-            <div className="text-[22px] font-extrabold tracking-tight leading-none">5,183 <span className="text-sm font-bold">รายการ</span></div>
-            <div className="text-white/70 text-xs mt-1">คิดเป็นมูลค่าประมาณ<br/>฿36.5 ล้าน</div>
-            <button className="mt-4 bg-white text-[#A80689] hover:bg-white/90 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 w-max">
+          <div className="bg-white/15 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col gap-1 min-w-[210px] shadow-[0_12px_24px_rgba(0,0,0,0.05)]">
+            <div className="text-white/70 text-[10px] font-bold uppercase tracking-wider mb-1">ช่องว่าง SAFETY STOCK</div>
+            <div className="text-[20px] font-bold tracking-tight leading-none">5,183 <span className="text-xs font-medium opacity-80">รายการ</span></div>
+            <div className="text-white/60 text-[11px] mt-1 font-medium">คิดเป็นมูลค่าประมาณ<br/>฿36.5 ล้าน</div>
+            <button className="mt-4 bg-white/95 text-[#7C3AED] hover:bg-white hover:scale-[1.02] border border-white/20 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm w-max">
               ดูรายการช่องว่าง <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -53,73 +53,73 @@ export default function WarehouseView() {
       {/* ── KPI Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1 */}
-        <div className="bg-gradient-to-r from-red-600 to-rose-500 rounded-2xl p-6 shadow-[0_8px_30px_rgb(220,38,38,0.15)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(220,38,38,0.25)]">
+        <div className="bg-gradient-to-br from-[#4e091b] via-[#750e26] to-[#b91c1c] rounded-3xl p-5 border border-rose-500/20 shadow-[0_15px_35px_rgba(185,28,28,0.1)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(185,28,28,0.18)]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white">
-              <AlertTriangle className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center text-white shadow-sm">
+              <AlertTriangle className="w-4.5 h-4.5" />
             </div>
-            <span className="font-semibold text-white">รายการเร่งด่วน</span>
+            <span className="font-bold text-[13px] text-white/95">รายการเร่งด่วน</span>
           </div>
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-[22px] font-extrabold text-white tracking-tight">3</span>
-            <span className="text-white/80 font-medium ml-1">รายการ</span>
+            <span className="text-[20px] font-bold text-white tracking-tight">3</span>
+            <span className="text-white/70 text-xs font-semibold ml-0.5">รายการ</span>
           </div>
-          <div className="text-xs text-white/70 mb-4">ต้องตัดสินใจก่อนส่งผลกระทบ</div>
-          <div onClick={() => document.getElementById('wh-priority')?.scrollIntoView({ behavior: 'smooth' })} className="mt-auto flex items-center text-xs font-bold text-white bg-white/20 px-3 py-1.5 rounded-lg w-max hover:bg-white/30 cursor-pointer transition">
-            3 Critical <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          <div className="text-[11px] text-white/70 mb-4 font-medium">ต้องตัดสินใจก่อนส่งผลกระทบ</div>
+          <div onClick={() => document.getElementById('wh-priority')?.scrollIntoView({ behavior: 'smooth' })} className="mt-auto flex items-center text-[10px] font-bold text-white bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg w-max cursor-pointer transition-all border border-white/10">
+            3 Critical <ArrowRight className="w-3 h-3 ml-1" />
           </div>
         </div>
 
         {/* Metric 2 */}
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+        <div className="bg-gradient-to-br from-emerald-50/70 to-teal-50/40 rounded-3xl p-5 border border-emerald-100/60 shadow-[0_12px_24px_rgba(0,0,0,0.015)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(16,185,129,0.05)]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
-              <Shield className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
+              <Shield className="w-4.5 h-4.5" />
             </div>
-            <span className="font-semibold text-gray-700">Coverage เฉลี่ย</span>
+            <span className="font-bold text-[13px] text-slate-700">Coverage เฉลี่ย</span>
           </div>
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-[22px] font-extrabold text-emerald-700 tracking-tight">29%</span>
+            <span className="text-[20px] font-bold text-emerald-800 tracking-tight">29%</span>
           </div>
-          <div className="text-xs text-gray-500 mb-4">เฉลี่ยเทียบกับ safety stock</div>
-          <div className="mt-auto flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg w-max">
-            <TrendingUp className="w-3 h-3 mr-1" /> 8% จากเดือนก่อนหน้า
+          <div className="text-[11px] text-slate-500 mb-4 font-medium">เฉลี่ยเทียบกับ safety stock</div>
+          <div className="mt-auto flex items-center text-[10px] font-bold text-emerald-800 bg-emerald-50/80 border border-emerald-100/60 px-3 py-1.5 rounded-lg w-max">
+            <TrendingUp className="w-3.5 h-3.5 mr-1" /> 8% จากเดือนก่อนหน้า
           </div>
         </div>
 
         {/* Metric 3 */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+        <div className="bg-gradient-to-br from-blue-50/70 to-indigo-50/40 rounded-3xl p-5 border border-blue-100/60 shadow-[0_12px_24px_rgba(0,0,0,0.015)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(59,130,246,0.05)]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
-              <Scale className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
+              <Scale className="w-4.5 h-4.5" />
             </div>
-            <span className="font-semibold text-gray-700">รอบรับสมดุลสต๊อก</span>
+            <span className="font-bold text-[13px] text-slate-700">รอบรับสมดุลสต๊อก</span>
           </div>
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-[22px] font-extrabold text-blue-700 tracking-tight">15</span>
-            <span className="text-gray-500 font-medium ml-1">รายการ</span>
+            <span className="text-[20px] font-bold text-blue-800 tracking-tight">15</span>
+            <span className="text-slate-500 text-xs font-semibold ml-0.5">รายการ</span>
           </div>
-          <div className="text-xs text-gray-500 mb-4">มูลค่ารวม ฿82.2 ล้าน</div>
-          <div onClick={() => document.getElementById('wh-rebalancing')?.scrollIntoView({ behavior: 'smooth' })} className="mt-auto flex items-center text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg w-max cursor-pointer transition">
-            ดูข้อเสนอปรับสมดุล <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          <div className="text-[11px] text-slate-500 mb-4 font-medium">มูลค่ารวม ฿82.2 ล้าน</div>
+          <div onClick={() => document.getElementById('wh-rebalancing')?.scrollIntoView({ behavior: 'smooth' })} className="mt-auto flex items-center text-[10px] font-bold text-blue-800 bg-blue-50/80 hover:bg-blue-100/80 border border-blue-100/60 px-3 py-1.5 rounded-lg w-max cursor-pointer transition-all">
+            ดูข้อเสนอปรับสมดุล <ArrowRight className="w-3 h-3 ml-1" />
           </div>
         </div>
 
         {/* Metric 4 */}
-        <div className="bg-gradient-to-br from-orange-50 to-amber-100/50 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+        <div className="bg-gradient-to-br from-orange-50/70 to-amber-50/40 rounded-3xl p-5 border border-orange-100/60 shadow-[0_12px_24px_rgba(0,0,0,0.015)] flex flex-col relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(245,158,11,0.05)]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
-              <Package className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 shadow-sm">
+              <Package className="w-4.5 h-4.5" />
             </div>
-            <span className="font-semibold text-gray-700">SKU ติดตามสัปดาห์นี้</span>
+            <span className="font-bold text-[13px] text-slate-700">SKU ติดตามสัปดาห์นี้</span>
           </div>
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-[22px] font-extrabold text-orange-700 tracking-tight">42</span>
-            <span className="text-gray-500 font-medium ml-1">รายการ</span>
+            <span className="text-[20px] font-bold text-orange-800 tracking-tight">42</span>
+            <span className="text-slate-500 text-xs font-semibold ml-0.5">รายการ</span>
           </div>
-          <div className="text-xs text-gray-500 mb-4">ความเสี่ยงปานกลางถึงสูง</div>
-          <div onClick={() => document.getElementById('wh-overview')?.scrollIntoView({ behavior: 'smooth' })} className="mt-auto flex items-center text-xs font-bold text-orange-600 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg w-max cursor-pointer transition">
-            ดูรายการติดตาม <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          <div className="text-[11px] text-slate-500 mb-4 font-medium">ความเสี่ยงปานกลางถึงสูง</div>
+          <div onClick={() => document.getElementById('wh-overview')?.scrollIntoView({ behavior: 'smooth' })} className="mt-auto flex items-center text-[10px] font-bold text-orange-800 bg-orange-50/80 hover:bg-orange-100/80 border border-orange-100/60 px-3 py-1.5 rounded-lg w-max cursor-pointer transition-all">
+            ดูรายการติดตาม <ArrowRight className="w-3 h-3 ml-1" />
           </div>
         </div>
       </div>

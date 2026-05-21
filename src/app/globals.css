@@ -116,3 +116,26 @@ html, body {
   word-spacing: 30px;
 }
 
+/* ===== Print Styles ===== */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-only-document,
+  .print-only-document * {
+    visibility: visible;
+  }
+  
+  .print-only-document {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+}
