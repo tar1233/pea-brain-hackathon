@@ -16,7 +16,7 @@ export default function AlertHero() {
   return (
     <div className="rounded-2xl overflow-hidden animate-fade-in"
       style={{
-        background: "linear-gradient(135deg, #991B1B 0%, #B91C1C 40%, #DC2626 100%)",
+        background: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 40%, #b91c1c 100%)",
         animationDelay: "50ms", animationFillMode: "both",
       }}>
       <div className="px-5 py-4">
@@ -44,11 +44,16 @@ export default function AlertHero() {
                 Lead time ยาว {topMaterial?.leadTimeWeeks} สัปดาห์ — หากไม่ดำเนินการ ความเสี่ยง shortage จะเพิ่มขึ้น
               </p>
             </div>
-            <button onClick={() => document.querySelector('[class*="rounded-3xl bg-white shadow"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold border border-white/10 transition-all cursor-pointer">
-              <Sparkles size={12} />
-              ดูรายละเอียดทั้งหมด
-              <ArrowRight size={12} />
-            </button>
+            <div className="flex gap-2">
+              <button onClick={() => document.querySelector('[class*="rounded-3xl bg-white shadow"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold border border-white/10 transition-all cursor-pointer">
+                <Sparkles size={12} />
+                ดูรายละเอียดทั้งหมด
+              </button>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-400 text-white text-[11px] font-bold border border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.5)] animate-pulse transition-all cursor-pointer">
+                สั่งการ AI แก้ไขด่วน
+                <ArrowRight size={12} />
+              </button>
+            </div>
           </div>
 
           {/* Center — VaR */}

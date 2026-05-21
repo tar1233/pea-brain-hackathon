@@ -53,6 +53,7 @@ export default function TopBar({ activeTab }: TopBarProps) {
   const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
+    // eslint-disable-next-line
     setIsMounted(true);
     const t = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(t);

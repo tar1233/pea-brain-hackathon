@@ -1,69 +1,54 @@
 import { PrismaClient } from "@prisma/client";
-import { materials, riskAlerts, timelineEvents } from "../src/app/data/mockData";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database...");
+  console.log("Seeding PEA High-Impact Scenario...");
 
-  // 1. Seed Materials
-  for (const mat of materials) {
+  // 1. Seed Materials (WMS + SAP Merged Scenario)
+  const materials = [
+    { id: "10067", name: "160 kVA Transformer 3Ph", category: "Transformers", sapCode: "SAP-T160", budgetPrice: 150000, unitPrice: 192800, currentStock: 12, safetyStock: 250, reorderPoint: 300, eoq: 150, unit: "EA", leadTimeWeeks: 12, avgMonthlyDemand: 40, annualDemand: 480, sparkline: "[400, 380, 250, 150, 80, 12]" },
+    { id: "10066", name: "100 kVA Transformer 3Ph", category: "Transformers", sapCode: "SAP-T100", budgetPrice: 85000, unitPrice: 120500, currentStock: 5, safetyStock: 100, reorderPoint: 150, eoq: 80, unit: "EA", leadTimeWeeks: 10, avgMonthlyDemand: 20, annualDemand: 240, sparkline: "[120, 100, 80, 60, 40, 5]" },
+    { id: "20045", name: "Drop Out Fuse Cutout 24kV", category: "Switchgear", sapCode: "SAP-F24", budgetPrice: 4200, unitPrice: 4500, currentStock: 120, safetyStock: 5000, reorderPoint: 6000, eoq: 4000, unit: "EA", leadTimeWeeks: 4, avgMonthlyDemand: 1500, annualDemand: 18000, sparkline: "[6000, 5200, 4100, 3000, 2100, 120]" },
+  ];
+
+  for (const m of materials) {
     await prisma.material.upsert({
-      where: { id: mat.id },
-      update: {},
-      create: {
-        id: mat.id,
-        name: mat.name,
-        category: mat.category,
-        sapCode: mat.sapCode,
-        currentStock: mat.currentStock,
-        safetyStock: mat.safetyStock,
-        reorderPoint: mat.reorderPoint,
-        eoq: mat.eoq,
-        unit: mat.unit,
-        unitPrice: mat.unitPrice,
-        leadTimeWeeks: mat.leadTimeWeeks,
-        avgMonthlyDemand: mat.avgMonthlyDemand,
-        annualDemand: mat.annualDemand,
-        budgetPrice: mat.budgetPrice,
-        sparkline: JSON.stringify(mat.sparkline),
-      },
+      where: { id: m.id },
+      update: m,
+      create: m,
     });
   }
-  console.log("Materials seeded");
 
-  // 2. Seed Risk Alerts
-  for (const alert of riskAlerts) {
+  // 2. Seed Risk Alerts (Critical Storm Scenario)
+  const alerts = [
+    { id: "alt-1", severity: "critical", materialId: "10067", materialName: "160 kVA Transformer 3Ph", message: "พายุโซนร้อนเข้าภาคเหนือ หม้อแปลง 160kVA ขาดแคลนวิกฤต (12/250) เสี่ยงกระทบการกู้ไฟ 42,000 ครัวเรือน", recommendation: "โอนย้ายสต๊อกจากคลังภาคกลางด่วน (มีของ 800 ลูก)", confidence: 99, costImpact: 231360000, timestamp: new Date().toISOString() },
+    { id: "alt-2", severity: "critical", materialId: "10066", materialName: "100 kVA Transformer 3Ph", message: "สต๊อกหม้อแปลง 100kVA ต่ำกว่าเกณฑ์ (5/100) ไม่เพียงพอรับมือภัยพิบัติ", recommendation: "สั่งซื้อฉุกเฉิน (Emergency PR)", confidence: 95, costImpact: 114475000, timestamp: new Date().toISOString() },
+    { id: "alt-3", severity: "warning", materialId: "20045", materialName: "Drop Out Fuse Cutout 24kV", message: "Drop Out Fuse ขาดสต๊อก แต่ซัพพลายเออร์แจ้งส่งของล่าช้า 2 สัปดาห์", recommendation: "เจรจาขอยืมจากการไฟฟ้าส่วนภูมิภาคเขตข้างเคียง", confidence: 85, costImpact: 21960000, timestamp: new Date().toISOString() }
+  ];
+
+  for (const a of alerts) {
     await prisma.riskAlert.upsert({
-      where: { id: alert.id },
-      update: {},
-      create: {
-        id: alert.id,
-        materialId: alert.materialId,
-        materialName: alert.materialName,
-        severity: alert.severity,
-        message: alert.message,
-        recommendation: alert.recommendation,
-        confidence: alert.confidence,
-        costImpact: alert.costImpact,
-        timestamp: alert.timestamp,
-      },
+      where: { id: a.id },
+      update: a,
+      create: a,
     });
   }
-  console.log("Risk Alerts seeded");
 
   // 3. Seed Timeline Events
-  for (const event of timelineEvents) {
-    await prisma.timelineEvent.create({
-      data: {
-        time: event.time,
-        text: event.text,
-      },
-    });
-  }
-  console.log("Timeline Events seeded");
+  const events = [
+    { id: "evt-1", time: "08:00 AM", text: "กรมอุตุฯ แจ้งเตือนพายุโซนร้อนถล่มภาคเหนือ เสาไฟล้ม 180 ต้น" },
+    { id: "evt-2", time: "10:30 AM", text: "เบิกจ่ายหม้อแปลงไปแล้วกว่า 95% ของคลังเชียงใหม่" },
+    { id: "evt-3", time: "11:45 AM", text: "AI คาดการณ์หม้อแปลงจะหมดคลังภายใน 4 ชั่วโมงข้างหน้า" },
+    { id: "evt-4", time: "Now", text: "เตรียมสร้างใบสั่งโอนย้ายฉุกเฉินจากส่วนกลาง (รออนุมัติ)" },
+  ];
 
-  console.log("Database seeding completed!");
+  await prisma.timelineEvent.deleteMany({});
+  for (const e of events) {
+    await prisma.timelineEvent.create({ data: e });
+  }
+
+  console.log("Seeding completed successfully.");
 }
 
 main()

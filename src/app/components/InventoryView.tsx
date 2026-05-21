@@ -11,6 +11,7 @@ function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (

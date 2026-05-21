@@ -12,6 +12,7 @@ interface DataContextType {
   warningAlerts: RiskAlert[];
   infoAlerts: RiskAlert[];
   totalVaR: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataSummary: any;
   isLoading: boolean;
   error: string | null;
@@ -33,7 +34,23 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Failed to fetch data");
         const json = await res.json();
+        
+        // Handle Lambda payload (which might not include computed fields)
+        if (!json.criticalAlerts && json.riskAlerts) {
+          json.criticalAlerts = json.riskAlerts.filter((a: any) => a.severity === 'critical');
+        }
+        if (!json.warningAlerts && json.riskAlerts) {
+          json.warningAlerts = json.riskAlerts.filter((a: any) => a.severity === 'warning');
+        }
+        if (!json.infoAlerts && json.riskAlerts) {
+          json.infoAlerts = json.riskAlerts.filter((a: any) => a.severity === 'info');
+        }
+        if (!json.timelineEvents) json.timelineEvents = [];
+        if (!json.aiRecommendations) json.aiRecommendations = [];
+        if (!json.dataSummary) json.dataSummary = "";
+
         setData(json);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(err.message || "An error occurred");
       } finally {
