@@ -36,18 +36,21 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const json = await res.json();
         
         // Handle Lambda payload (which might not include computed fields)
-        if (!json.criticalAlerts && json.riskAlerts) {
+        if (!json.riskAlerts) json.riskAlerts = [];
+        if (!json.materials) json.materials = [];
+        if (!json.criticalAlerts) {
           json.criticalAlerts = json.riskAlerts.filter((a: any) => a.severity === 'critical');
         }
-        if (!json.warningAlerts && json.riskAlerts) {
+        if (!json.warningAlerts) {
           json.warningAlerts = json.riskAlerts.filter((a: any) => a.severity === 'warning');
         }
-        if (!json.infoAlerts && json.riskAlerts) {
+        if (!json.infoAlerts) {
           json.infoAlerts = json.riskAlerts.filter((a: any) => a.severity === 'info');
         }
         if (!json.timelineEvents) json.timelineEvents = [];
         if (!json.aiRecommendations) json.aiRecommendations = [];
         if (!json.dataSummary) json.dataSummary = "";
+        if (json.totalVaR === undefined) json.totalVaR = 0;
 
         setData(json);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
