@@ -39,13 +39,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
         if (!json.riskAlerts) json.riskAlerts = [];
         if (!json.materials) json.materials = [];
         if (!json.criticalAlerts) {
-          json.criticalAlerts = json.riskAlerts.filter((a: any) => a.severity === 'critical');
+          json.criticalAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'critical');
         }
         if (!json.warningAlerts) {
-          json.warningAlerts = json.riskAlerts.filter((a: any) => a.severity === 'warning');
+          json.warningAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'warning');
         }
         if (!json.infoAlerts) {
-          json.infoAlerts = json.riskAlerts.filter((a: any) => a.severity === 'info');
+          json.infoAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'info');
         }
         if (!json.timelineEvents) json.timelineEvents = [];
         if (!json.aiRecommendations) json.aiRecommendations = [];
