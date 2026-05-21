@@ -3,7 +3,8 @@
 import {
   LayoutDashboard, TrendingUp, AlertTriangle,
   ShoppingCart, Settings, Sparkles,
-  Package, BarChart3, Shield, Clock3, Landmark, FileText
+  Package, BarChart3, Shield, Clock3, Landmark, FileText,
+  Brain, PackageSearch, ShieldAlert
 } from "lucide-react";
 import Image from "next/image";
 import { useData } from "../context/DataContext";
@@ -13,20 +14,16 @@ interface SidebarProps {
   setActiveTab: (tab: string) => void;
 }
 
-const menuItems = [
-  { id: "dashboard", label: "ภาพรวม (Dashboard)", icon: LayoutDashboard },
-  { id: "forecast", label: "การพยากรณ์ (Demand)", icon: TrendingUp },
-  { id: "inventory", label: "พยากรณ์ความต้องการ", icon: Package },
-  { id: "risk", label: "แจ้งเตือนความเสี่ยง", icon: AlertTriangle, badge: 2 },
-  { id: "procurement", label: "จัดซื้อจัดจ้างอัจฉริยะ", icon: ShoppingCart },
-  { id: "warehouse", label: "พัสดุคงคลัง", icon: Shield },
-  { id: "budget", label: "วิเคราะห์งบประมาณ", icon: Landmark },
-  { id: "reports", label: "รายงานผู้บริหาร", icon: FileText },
-  { id: "activity", label: "ประวัติกิจกรรม (Logs)", icon: Clock3 },
-];
-
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { criticalAlerts } = useData();
+
+  const menuItems = [
+    { id: "ebidding", label: "e-Bidding Optimizer", icon: Brain, badge: "Track 1 Focus", bgBadge: "bg-[#A80689] text-white animate-pulse" },
+    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+    { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
+    { id: "inventory", label: "Inventory Analysis", icon: PackageSearch },
+  ];
+
   return (
     <aside className="w-[260px] shrink-0 sticky top-0 h-screen flex flex-col relative overflow-hidden border-r border-white/10 shadow-[12px_0_40px_rgba(83,0,93,0.15)]"
       style={{ background: "linear-gradient(180deg, #8c0aa8 0%, #6d108d 28%, #5b1f6b 58%, #7d365c 100%)" }}>

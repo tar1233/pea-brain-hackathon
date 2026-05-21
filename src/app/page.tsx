@@ -10,6 +10,7 @@ import Dashboard from "./components/Dashboard";
 import ForecastView from "./components/ForecastView";
 import InventoryView from "./components/InventoryView";
 import AlertsView from "./components/AlertsView";
+import EBiddingView from "./components/EBiddingView";
 import {
   BudgetView,
   ProcurementView,
@@ -79,7 +80,7 @@ function Watermark() {
 import ActivityView from "./components/ActivityView";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("ebidding");
   const { materials, isLoading, error } = useData();
 
   interface POPending {
@@ -163,6 +164,8 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activeTab) {
+      case "ebidding":
+        return <EBiddingView />;
       case "dashboard":
         return <Dashboard setActiveTab={setActiveTab} />;
       case "forecast":

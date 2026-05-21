@@ -12,6 +12,7 @@ interface DataContextType {
   warningAlerts: RiskAlert[];
   infoAlerts: RiskAlert[];
   totalVaR: number;
+  eBiddingData: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataSummary: any;
   isLoading: boolean;
@@ -74,6 +75,46 @@ export function DataProvider({ children }: { children: ReactNode }) {
         if (!json.aiRecommendations) json.aiRecommendations = [];
         if (!json.dataSummary) json.dataSummary = "";
         if (json.totalVaR === undefined) json.totalVaR = 0;
+        
+        json.eBiddingData = {
+          targetMaterial: "หม้อแปลง 160 kVA 3Ph (10067)",
+          totalRequirement: 800,
+          simulation: {
+            scenario: "Supplier ผันผวน (800 -> 500 -> 900)",
+            steps: [
+              {
+                id: 1,
+                title: "วิเคราะห์ความต้องการเบื้องต้น",
+                detail: "ระบบวิเคราะห์ Demand ว่าต้องใช้หม้อแปลง 800 เครื่องภายใน Q3",
+                aiAction: "แนะนำให้ประมูล 100% (800 เครื่อง) เพื่อประหยัดต้นทุน Economy of Scale",
+                status: "completed"
+              },
+              {
+                id: 2,
+                title: "Supplier แจ้งยอดส่งมอบจริง",
+                detail: "Supplier A ชนะการประกวดราคา แต่ยืนยันของได้แค่ 500 เครื่อง (ขาด 300)",
+                aiAction: "AI คำนวณ Buffer Time และพบว่าคลังยังมี Safety Stock พยุงได้อีก 2 เดือน แนะนำให้ 'รอดูสถานการณ์' แทนการเปิดประมูลฉุกเฉินซึ่งเสี่ยงได้ราคาแพง",
+                status: "active"
+              },
+              {
+                id: 3,
+                title: "วันส่งมอบจริง",
+                detail: "Supplier A สามารถผลิตและจัดหามาส่งได้ 900 เครื่อง (เกินความต้องการ 100 เครื่อง)",
+                aiAction: "AI แนะนำให้ชะลอการประกวดราคารอบถัดไป (Q4) ออกไปอีก 1 เดือน และทำ Dynamic Re-balancing เพื่อลดค่าใช้จ่ายการเก็บสต็อก",
+                status: "pending"
+              }
+            ],
+            priceTrend: [
+              { month: "Jan", price: 145000 },
+              { month: "Feb", price: 148000 },
+              { month: "Mar", price: 152000 },
+              { month: "Apr", price: 155000 },
+              { month: "May", price: 153000 },
+              { month: "Jun", price: 150000, projected: true },
+              { month: "Jul", price: 147000, projected: true },
+            ]
+          }
+        };
 
         setData(json);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
