@@ -80,7 +80,7 @@ import ActivityView from "./components/ActivityView";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const { materials, isLoading } = useData();
+  const { materials, isLoading, error } = useData();
 
   interface POPending {
     isOpen: boolean;
