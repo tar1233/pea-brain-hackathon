@@ -1,19 +1,21 @@
 "use client";
 
 import { Brain, CheckCircle2, Clock3, MessageSquareText, ShieldCheck } from "lucide-react";
-import { aiRecommendations, riskAlerts, timelineEvents } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 export default function ActivityView() {
+  const { aiRecommendations, riskAlerts, timelineEvents } = useData();
   return (
     <div className="space-y-5">
-      <section className="rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#fffbf2_0%,#ffffff_45%,#eff6ff_100%)] p-6 shadow-[0_15px_30px_rgba(0,0,0,0.015)]">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white/90 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-800 shadow-sm">
+      <section className="rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" />
+        <div className="max-w-3xl relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-md">
             <Brain size={14} />
             Audit Trail
           </div>
-          <h1 className="mt-4 text-[20px] font-bold tracking-tight text-slate-900">Activity Log และความเคลื่อนไหวของระบบ</h1>
-          <p className="mt-3 text-[12px] leading-relaxed text-slate-600 font-medium">
+          <h1 className="mt-4 text-[24px] font-bold tracking-tight text-white">Activity Log และความเคลื่อนไหวของระบบ</h1>
+          <p className="mt-3 text-[13px] leading-relaxed text-slate-300 font-medium">
             รวมลำดับเหตุการณ์ที่ AI วิเคราะห์ แจ้งเตือน และเสนอคำแนะนำ เพื่อใช้เป็นหลักฐานการตัดสินใจและอธิบาย flow ให้กรรมการเห็นแบบ end-to-end
           </p>
         </div>
@@ -21,21 +23,21 @@ export default function ActivityView() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          { icon: Clock3, label: "เหตุการณ์ล่าสุด", value: `${timelineEvents.length} logs`, tone: "text-blue-800", bg: "bg-gradient-to-br from-blue-50/60 to-indigo-50/60 border-blue-100", iconBg: "bg-blue-50 border border-blue-100" },
-          { icon: ShieldCheck, label: "Alerts in Scope", value: `${riskAlerts.length} รายการ`, tone: "text-red-800", bg: "bg-gradient-to-br from-red-50/60 to-rose-50/60 border-red-100", iconBg: "bg-red-50 border border-red-100" },
-          { icon: CheckCircle2, label: "AI Recommendations", value: `${aiRecommendations.length} actions`, tone: "text-emerald-800", bg: "bg-gradient-to-br from-emerald-50/60 to-green-50/60 border-emerald-100", iconBg: "bg-emerald-50 border border-emerald-100" },
-          { icon: MessageSquareText, label: "Review Readiness", value: "พร้อมเดโม", tone: "text-purple-800", bg: "bg-gradient-to-br from-purple-50/60 to-fuchsia-50/60 border-purple-100", iconBg: "bg-purple-50 border border-purple-100" },
+          { icon: Clock3, label: "เหตุการณ์ล่าสุด", value: `${timelineEvents.length} logs`, tone: "text-white", labelTone: "text-blue-100/90", bg: "bg-gradient-to-br from-[#1e3a8a] via-[#1d4ed8] to-[#2563eb] border-blue-500/20 shadow-[0_15px_35px_rgba(59,130,246,0.1)]", iconBg: "bg-white/10 border border-white/10", iconColor: "text-white" },
+          { icon: ShieldCheck, label: "Alerts in Scope", value: `${riskAlerts.length} รายการ`, tone: "text-white", labelTone: "text-red-100/90", bg: "bg-gradient-to-br from-[#4e091b] via-[#750e26] to-[#b91c1c] border-rose-500/20 shadow-[0_15px_35px_rgba(185,28,28,0.1)]", iconBg: "bg-white/10 border border-white/10", iconColor: "text-white" },
+          { icon: CheckCircle2, label: "AI Recommendations", value: `${aiRecommendations.length} actions`, tone: "text-white", labelTone: "text-emerald-100/90", bg: "bg-gradient-to-br from-[#064e3b] via-[#065f46] to-[#059669] border-emerald-500/20 shadow-[0_15px_35px_rgba(16,185,129,0.1)]", iconBg: "bg-white/10 border border-white/10", iconColor: "text-white" },
+          { icon: MessageSquareText, label: "Review Readiness", value: "พร้อมเดโม", tone: "text-white", labelTone: "text-purple-100/90", bg: "bg-gradient-to-br from-[#4c1d95] via-[#6d28d9] to-[#8b5cf6] border-[#8b5cf6]/20 shadow-[0_15px_35px_rgba(139,92,246,0.1)]", iconBg: "bg-white/10 border border-white/10", iconColor: "text-white" },
         ].map((card) => {
           const Icon = card.icon;
           return (
-            <article key={card.label} className={`rounded-[20px] border p-4.5 shadow-[0_12px_24px_rgba(0,0,0,0.01)] backdrop-blur-sm ${card.bg} transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}>
+            <article key={card.label} className={`rounded-[20px] border p-4.5 backdrop-blur-sm ${card.bg} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}>
               <div className="flex items-center gap-3">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.iconBg}`}>
-                  <Icon size={18} className={card.tone} />
+                  <Icon size={18} className={card.iconColor} />
                 </div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">{card.label}</div>
+                <div className={`text-[10px] font-bold uppercase tracking-[0.14em] ${card.labelTone}`}>{card.label}</div>
               </div>
-              <div className={`mt-3 text-[18px] font-bold ${card.tone}`}>{card.value}</div>
+              <div className={`mt-3 text-[18px] font-bold tracking-tight ${card.tone}`}>{card.value}</div>
             </article>
           );
         })}
@@ -108,7 +110,7 @@ export default function ActivityView() {
                         }));
                       }
                     }}
-                    className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+                    className="px-5 py-2 bg-gradient-to-r from-[#059669] to-[#0d9488] hover:from-[#047857] hover:to-[#0f766e] text-white rounded-full text-[12px] font-bold cursor-pointer transition shadow-sm shadow-emerald-500/20"
                   >
                     อนุมัติการดำเนินงาน
                   </button>

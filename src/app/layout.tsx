@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { DataProvider } from "./context/DataContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,7 +30,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <DataProvider>{children}</DataProvider>
+      </body>
     </html>
   );
 }

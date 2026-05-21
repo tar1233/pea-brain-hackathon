@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FileText, Loader2, Printer, X, AlertCircle, CheckCircle2, Info } from "lucide-react";
-import { materials } from "./data/mockData";
+import { useData } from "./context/DataContext";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 import AICopilot from "./components/AICopilot";
@@ -80,6 +80,7 @@ import ActivityView from "./components/ActivityView";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { materials, isLoading } = useData();
 
   interface POPending {
     isOpen: boolean;
@@ -142,7 +143,7 @@ export default function Home() {
 
     window.addEventListener("create-po", handleCreatePO);
     return () => window.removeEventListener("create-po", handleCreatePO);
-  }, []);
+  }, [materials]);
 
   useEffect(() => {
     if (!poProgress || !poProgress.isOpen || poProgress.step >= 3) return;
@@ -183,6 +184,17 @@ export default function Home() {
         return <AlertsView />;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#f6f5fb]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#A80689]" />
+          <div className="text-sm font-bold text-slate-600">กำลังเชื่อมต่อระบบฐานข้อมูล PEA...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f6f5fb]">

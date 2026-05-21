@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Bot, Sparkles, Send, User, AlertTriangle, Shield, Info, ArrowRight, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import { aiRecommendations } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 const sevIcons = { critical: AlertTriangle, warning: Shield, info: Info };
 const sevColors = {
@@ -26,6 +26,7 @@ const DEFAULT_WELCOME: ChatMessage = {
 };
 
 export default function AICopilot() {
+  const { aiRecommendations } = useData();
   const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_WELCOME]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);

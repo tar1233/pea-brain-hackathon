@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Bot, Send, User, X } from "lucide-react";
-import { materials, riskAlerts, totalVaR } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 type ChatMessage = {
   id: string;
@@ -29,6 +29,7 @@ function nowLabel() {
 }
 
 export default function ChatPanel({ onClose }: ChatPanelProps) {
+  const { materials, riskAlerts, totalVaR } = useData();
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);

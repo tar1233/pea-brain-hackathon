@@ -11,8 +11,8 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
-// We only import types from mockData, actual data comes from API
-import type { Material, RiskAlert, TimelineEvent } from "../data/mockData";
+// Actual data comes from the global context
+import { useData } from "../context/DataContext";
 
 function formatCurrency(value: number) {
   if (value >= 1e9) return `฿${(value / 1e9).toFixed(2)} พันล้าน`;
@@ -21,26 +21,13 @@ function formatCurrency(value: number) {
 }
 
 export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
-  const [data, setData] = useState<{
-    materials: Material[];
-    riskAlerts: RiskAlert[];
-    timelineEvents: TimelineEvent[];
-    criticalAlerts: RiskAlert[];
-    totalVaR: number;
-  } | null>(null);
+  const data = useData();
 
-  useEffect(() => {
-    fetch("/api/data")
-      .then(res => res.json())
-      .then(d => setData(d))
-      .catch(err => console.error("Failed to load dashboard data", err));
-  }, []);
-
-  if (!data) {
+  if (data.isLoading) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center space-y-4">
         <Sparkles size={32} className="animate-pulse text-primary-500" />
-        <div className="text-sm font-bold text-slate-500">กำลังเชื่อมต่อข้อมูลเรียลไทม์ผ่าน API...</div>
+        <div className="text-sm font-bold text-slate-500">กำลังดึงข้อมูล Dashboard เรียลไทม์...</div>
       </div>
     );
   }
@@ -125,52 +112,52 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
             label: "Coverage คงคลัง",
             value: `${coverage}%`,
             note: "เฉลี่ยเทียบกับ safety stock",
-            tone: "from-emerald-50/70 to-teal-50/40 border border-emerald-100/60 shadow-[0_12px_24px_rgba(0,0,0,0.015)]",
-            iconBg: "bg-emerald-50 border border-emerald-100",
-            iconColor: "text-emerald-600",
-            textColor: "text-emerald-800",
-            labelColor: "text-emerald-600",
-            noteColor: "text-gray-500",
+            tone: "from-[#064e3b] via-[#065f46] to-[#059669] border border-emerald-500/20 shadow-[0_15px_35px_rgba(16,185,129,0.1)]",
+            iconBg: "bg-white/10 border border-white/10",
+            iconColor: "text-white",
+            textColor: "text-white",
+            labelColor: "text-emerald-100/90",
+            noteColor: "text-emerald-100/70",
           },
           {
             icon: TrendingUp,
             label: "Demand ทั้งปี",
             value: totalAnnualDemand.toLocaleString(),
             note: "หน่วยรวมของพัสดุหลักปี 2569",
-            tone: "from-blue-50/70 to-indigo-50/40 border border-blue-100/60 shadow-[0_12px_24px_rgba(0,0,0,0.015)]",
-            iconBg: "bg-blue-50 border border-blue-100",
-            iconColor: "text-blue-600",
-            textColor: "text-blue-800",
-            labelColor: "text-blue-600",
-            noteColor: "text-gray-500",
+            tone: "from-[#1e3a8a] via-[#1d4ed8] to-[#2563eb] border border-blue-500/20 shadow-[0_15px_35px_rgba(59,130,246,0.1)]",
+            iconBg: "bg-white/10 border border-white/10",
+            iconColor: "text-white",
+            textColor: "text-white",
+            labelColor: "text-blue-100/90",
+            noteColor: "text-blue-100/70",
           },
           {
             icon: ClipboardList,
             label: "รายการที่ต้องตาม",
             value: `${materials.length} SKU`,
             note: "พร้อม drill-down ในหน้าวิเคราะห์รายรายการ",
-            tone: "from-purple-50/70 to-fuchsia-50/40 border border-purple-100/60 shadow-[0_12px_24px_rgba(0,0,0,0.015)]",
-            iconBg: "bg-purple-50 border border-purple-100",
-            iconColor: "text-purple-600",
-            textColor: "text-purple-800",
-            labelColor: "text-purple-600",
-            noteColor: "text-gray-500",
+            tone: "from-[#4c1d95] via-[#6d28d9] to-[#8b5cf6] border border-purple-500/20 shadow-[0_15px_35px_rgba(139,92,246,0.1)]",
+            iconBg: "bg-white/10 border border-white/10",
+            iconColor: "text-white",
+            textColor: "text-white",
+            labelColor: "text-purple-100/90",
+            noteColor: "text-purple-100/70",
           },
         ].map((card) => {
           const Icon = card.icon;
           return (
             <article
               key={card.label}
-              className={`rounded-3xl bg-gradient-to-br ${card.tone} p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+              className={`rounded-2xl bg-gradient-to-br ${card.tone} p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.iconBg} shadow-sm`}>
-                  <Icon size={18} className={card.iconColor} />
+              <div className="flex items-center gap-2.5">
+                <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${card.iconBg} shadow-sm`}>
+                  <Icon size={16} className={card.iconColor} />
                 </div>
                 <div className={`text-[10px] font-bold uppercase tracking-wider ${card.labelColor}`}>{card.label}</div>
               </div>
-              <div className={`mt-3 text-[20px] font-bold tracking-tight ${card.textColor}`}>{card.value}</div>
-              <div className={`mt-1 text-[11px] font-medium ${card.noteColor}`}>{card.note}</div>
+              <div className={`mt-2.5 text-[18px] font-bold tracking-tight ${card.textColor}`}>{card.value}</div>
+              <div className={`mt-0.5 text-[11px] font-medium ${card.noteColor}`}>{card.note}</div>
             </article>
           );
         })}
@@ -188,7 +175,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
             </div>
           </div>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 space-y-3">
             {topRisks.map((alert, index) => {
               const material = materials.find((item) => item.id === alert.materialId);
               const severityColor = alert.severity === 'critical' 
@@ -199,28 +186,28 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
               return (
                 <div
                   key={alert.id}
-                  className={`rounded-[24px] border border-gray-100 ${severityColor.bg} ${severityColor.border} border-l-4 p-5 transition-all hover:shadow-md`}
+                  className={`rounded-[20px] border border-gray-100 ${severityColor.bg} ${severityColor.border} border-l-4 p-4 transition-all hover:shadow-md`}
                 >
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${severityColor.rankBg} text-[11px] font-bold ${severityColor.rankText}`}>
+                        <span className={`flex h-7 w-7 items-center justify-center rounded-full ${severityColor.rankBg} text-[11px] font-bold ${severityColor.rankText}`}>
                           {index + 1}
                         </span>
                         <span className="text-[13px] font-bold text-slate-900">{alert.materialId}</span>
-                        <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-500 shadow-sm">
+                        <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-500 shadow-sm">
                           {material?.name}
                         </span>
                       </div>
-                      <div className="mt-3 text-[12px] font-semibold leading-relaxed text-slate-800">{alert.message}</div>
-                      <div className="mt-2 text-[12px] leading-relaxed text-slate-500 font-medium">{alert.recommendation}</div>
+                      <div className="mt-2 text-[12px] font-semibold leading-relaxed text-slate-800">{alert.message}</div>
+                      <div className="mt-1 text-[11px] leading-relaxed text-slate-500 font-medium">{alert.recommendation}</div>
                     </div>
 
-                    <div className={`min-w-[235px] rounded-[22px] border ${severityColor.impactBorder} ${severityColor.impactBg} p-5 shadow-sm`}>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">Impact</div>
-                      <div className={`mt-3 text-[16px] font-bold ${severityColor.impactValue}`}>{formatCurrency(alert.costImpact)}</div>
-                      <div className="mt-2 text-[12px] leading-6 text-slate-500 font-semibold">
-                        Lead time {material?.leadTimeWeeks ?? "-"} สัปดาห์ • confidence {alert.confidence}%
+                    <div className={`min-w-[210px] shrink-0 rounded-[16px] border ${severityColor.impactBorder} ${severityColor.impactBg} p-3.5 shadow-sm`}>
+                      <div className="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400">Impact</div>
+                      <div className={`mt-1.5 text-[15px] font-bold ${severityColor.impactValue}`}>{formatCurrency(alert.costImpact)}</div>
+                      <div className="mt-1 text-[10px] leading-relaxed text-slate-500 font-semibold">
+                        Lead time {material?.leadTimeWeeks ?? "-"} สัปดาห์ • conf {alert.confidence}%
                       </div>
                     </div>
                   </div>
@@ -230,31 +217,33 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
           </div>
         </article>
 
-        <article className="rounded-[30px] border border-[#dde4f0] bg-white p-6 shadow-[0_12px_30px_rgba(148,163,184,0.10)]">
-          <div className="flex items-center gap-2 text-slate-900">
-            <Sparkles size={16} className="text-primary-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">ความเคลื่อนไหวล่าสุดของระบบ</h2>
-          </div>
+        <article className="rounded-[30px] border border-[#dde4f0] bg-white p-6 shadow-[0_12px_30px_rgba(148,163,184,0.10)] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-slate-900">
+              <Sparkles size={16} className="text-primary-600" />
+              <h2 className="text-[14px] font-bold text-slate-900">ความเคลื่อนไหวล่าสุดของระบบ</h2>
+            </div>
 
-          <div className="mt-6 space-y-4">
-            {timelineEvents.map((event) => (
-              <div key={`${event.time}-${event.text}`} className="flex gap-3">
-                <div className="mt-2 h-3 w-3 rounded-full bg-[#b40e92]" />
-                <div className="flex-1 rounded-[24px] bg-[#f7f9fd] px-5 py-4">
-                  <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8ea0bd]">{event.time}</div>
-                  <div className="mt-2 text-[12px] leading-relaxed text-slate-700 font-medium">{event.text}</div>
+            <div className="mt-4 space-y-2.5">
+              {timelineEvents.map((event) => (
+                <div key={`${event.time}-${event.text}`} className="flex gap-3">
+                  <div className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[#b40e92]" />
+                  <div className="flex-1 rounded-[16px] bg-[#f7f9fd] px-4 py-2.5">
+                    <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#8ea0bd]">{event.time}</div>
+                    <div className="mt-1 text-[11px] leading-relaxed text-slate-700 font-medium">{event.text}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <button 
             type="button"
             onClick={() => setActiveTab?.("activity")}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-[#a30787] transition-colors hover:bg-slate-50 cursor-pointer"
+            className="mt-5 inline-flex w-max items-center justify-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-[12px] font-bold text-[#a30787] transition-colors hover:bg-slate-50 cursor-pointer"
           >
             เปิด Activity Log
-            <ArrowRight size={15} />
+            <ArrowRight size={14} />
           </button>
         </article>
       </section>

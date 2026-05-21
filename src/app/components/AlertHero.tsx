@@ -1,14 +1,17 @@
 "use client";
 
 import { AlertTriangle, ArrowRight, Clock, ShieldAlert, Sparkles } from "lucide-react";
-import { riskAlerts, criticalAlerts, totalVaR, materials } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 export default function AlertHero() {
+  const { riskAlerts, criticalAlerts, materials } = useData();
   const topAlert = riskAlerts[0];
-  const topMaterial = materials.find(m => m.id === topAlert.materialId);
+  const topMaterial = materials.find(m => m.id === topAlert?.materialId);
   const critCount = criticalAlerts.length;
-  const varMillions = (topAlert.costImpact / 1e6).toFixed(1);
+  const varMillions = topAlert ? (topAlert.costImpact / 1e6).toFixed(1) : "0.0";
   const stockPct = topMaterial ? Math.round((1 - topMaterial.currentStock / topMaterial.safetyStock) * 100) : 0;
+
+  if (!topAlert) return null;
 
   return (
     <div className="rounded-2xl overflow-hidden animate-fade-in"

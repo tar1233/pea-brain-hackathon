@@ -6,7 +6,7 @@ import {
   Package, BarChart3, Shield, Clock3, Landmark, FileText
 } from "lucide-react";
 import Image from "next/image";
-import { criticalAlerts } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 interface SidebarProps {
   activeTab: string;
@@ -26,6 +26,7 @@ const menuItems = [
 ];
 
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+  const { criticalAlerts } = useData();
   return (
     <aside className="w-[260px] shrink-0 sticky top-0 h-screen flex flex-col relative overflow-hidden border-r border-white/10 shadow-[12px_0_40px_rgba(83,0,93,0.15)]"
       style={{ background: "linear-gradient(180deg, #8c0aa8 0%, #6d108d 28%, #5b1f6b 58%, #7d365c 100%)" }}>

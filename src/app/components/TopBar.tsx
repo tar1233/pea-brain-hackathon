@@ -2,7 +2,7 @@
 
 import { Search, Bell, Download, ChevronDown, HelpCircle } from "lucide-react";
 import { useState, useEffect } from "react";
-import { criticalAlerts } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 const tabConfig: Record<string, { title: string; subtitle: string }> = {
   dashboard: {
@@ -48,6 +48,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ activeTab }: TopBarProps) {
+  const { criticalAlerts } = useData();
   const [now, setNow] = useState(new Date());
   const [isMounted, setIsMounted] = useState(false);
   

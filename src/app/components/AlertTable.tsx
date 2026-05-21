@@ -6,7 +6,7 @@ import {
   SlidersHorizontal, Sparkles
 } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { riskAlerts, materials } from "../data/mockData";
+import { useData } from "../context/DataContext";
 import type { RiskLevel } from "../data/mockData";
 
 const severityConfig: Record<RiskLevel, { label: string; color: string; bg: string; border: string }> = {
@@ -35,6 +35,7 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
 }
 
 export default function AlertTable() {
+  const { riskAlerts, materials } = useData();
   const [filter, setFilter] = useState("all");
   const [searchQ, setSearchQ] = useState("");
   const [page, setPage] = useState(1);

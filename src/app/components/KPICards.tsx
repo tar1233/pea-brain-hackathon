@@ -1,9 +1,10 @@
 "use client";
 
 import { AlertTriangle, Eye, Package, DollarSign, ShieldCheck } from "lucide-react";
-import { criticalAlerts, warningAlerts, riskAlerts, totalVaR, materials } from "../data/mockData";
+import { useData } from "../context/DataContext";
 
 export default function KPICards() {
+  const { criticalAlerts, warningAlerts, riskAlerts, totalVaR, materials } = useData();
   const avgCoverage = materials.length > 0
     ? Math.round(materials.reduce((sum, m) => sum + (m.currentStock / m.safetyStock) * 100, 0) / materials.length)
     : 0;
