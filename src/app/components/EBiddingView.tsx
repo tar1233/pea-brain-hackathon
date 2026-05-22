@@ -9,7 +9,7 @@ function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
 }
 
-export default function EBiddingView({ targetMaterialId = "10067", setActiveTab }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void }) {
+export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void }) {
   const { eBiddingData, materials } = useData();
 
   if (!eBiddingData) return null;
@@ -172,9 +172,10 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab 
                     } 
                   }));
                   // Optional: switch to activity tab after a delay to see tracking
+                  if (onClose) onClose();
                   setTimeout(() => {
                     setActiveTab?.("activity");
-                  }, 4000);
+                  }, 500);
                 }}
                 className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 text-[13px] font-bold text-white hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
               >

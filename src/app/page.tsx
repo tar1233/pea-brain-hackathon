@@ -80,8 +80,8 @@ function Watermark() {
 import ActivityView from "./components/ActivityView";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("ebidding");
-  const [targetMaterialId, setTargetMaterialId] = useState<string>("10067");
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [analyzingMaterialId, setAnalyzingMaterialId] = useState<string | null>(null);
   const { materials, isLoading, error } = useData();
 
   interface POPending {
@@ -150,8 +150,7 @@ export default function Home() {
   useEffect(() => {
     const handleAnalyzeMaterial = (e: Event) => {
       const customEvent = e as CustomEvent<{ materialId: string }>;
-      setTargetMaterialId(customEvent.detail.materialId);
-      setActiveTab("ebidding");
+      setAnalyzingMaterialId(customEvent.detail.materialId);
     };
     window.addEventListener("analyze-material", handleAnalyzeMaterial);
     return () => window.removeEventListener("analyze-material", handleAnalyzeMaterial);
@@ -175,8 +174,6 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "ebidding":
-        return <EBiddingView targetMaterialId={targetMaterialId} setActiveTab={setActiveTab} />;
       case "dashboard":
         return <Dashboard setActiveTab={setActiveTab} />;
       case "forecast":
@@ -253,6 +250,21 @@ export default function Home() {
         {/* AI Copilot Panel */}
         <AICopilot />
       </div>
+
+      {/* EBidding AI Action Plan Modal */}
+      {analyzingMaterialId && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 md:p-8">
+          <div className="w-full max-w-7xl max-h-full overflow-y-auto rounded-[32px] bg-white shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setAnalyzingMaterialId(null)}
+              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white transition z-50 cursor-pointer backdrop-blur-md border border-white/30 shadow-lg"
+            >
+              <X size={20} />
+            </button>
+            <EBiddingView targetMaterialId={analyzingMaterialId} setActiveTab={setActiveTab} onClose={() => setAnalyzingMaterialId(null)} />
+          </div>
+        </div>
+      )}
 
       {/* PO Creation Progress/Document Modal */}
       {poProgress && poProgress.isOpen && (

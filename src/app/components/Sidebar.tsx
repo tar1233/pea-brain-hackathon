@@ -18,7 +18,6 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { criticalAlerts } = useData();
 
   const menuItems = [
-    { id: "ebidding", label: "e-Bidding Optimizer", icon: Brain, badge: "Track 1 Focus", bgBadge: "bg-[#A80689] text-white animate-pulse" },
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
     { id: "inventory", label: "Inventory Analysis", icon: PackageSearch },
