@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Brain, TrendingDown, TrendingUp, AlertTriangle, CheckCircle2, Clock, PlayCircle } from "lucide-react";
+import { Brain, TrendingDown, TrendingUp, AlertTriangle, CheckCircle2, Clock, PlayCircle, ShieldAlert } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
@@ -171,6 +171,38 @@ export default function EBiddingView() {
             </div>
 
           </section>
+          <div className="mt-8 bg-slate-900 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
+            <h3 className="text-lg font-bold flex items-center gap-2 mb-4">
+              <ShieldAlert className="text-emerald-400" size={20} />
+              Enterprise AI Trust & Compliance (การรับรองระบบ)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <div className="text-blue-400 font-bold mb-2 flex items-center gap-2">
+                  <Brain size={16} /> 1. AWS Enterprise AI
+                </div>
+                <p className="text-[12px] text-slate-300 leading-relaxed">
+                  พยากรณ์ราคาแม่นยำด้วย <strong>Amazon Forecast</strong> (ระดับเดียวกับ Amazon Supply Chain) และ <strong>AWS Bedrock + RAG</strong> เชื่อมต่อ พ.ร.บ. จัดซื้อจัดจ้างฯ PEA เพื่อให้ AI วิเคราะห์ภายใต้กรอบกฎหมาย 100%
+                </p>
+              </div>
+              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <div className="text-emerald-400 font-bold mb-2 flex items-center gap-2">
+                  <TrendingUp size={16} /> 2. Backtesting Validation
+                </div>
+                <p className="text-[12px] text-slate-300 leading-relaxed">
+                  พิสูจน์ความแม่นยำด้วย <strong>Historical Backtesting</strong> นำข้อมูลจัดซื้อย้อนหลัง 3 ปีมาทดสอบกับ AI เพื่อหาค่า Cost-Saving จริง โดยไม่ต้องเสี่ยงทดสอบกับระบบใช้งานปัจจุบัน
+                </p>
+              </div>
+              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <div className="text-amber-400 font-bold mb-2 flex items-center gap-2">
+                  <CheckCircle2 size={16} /> 3. Human-in-the-Loop
+                </div>
+                <p className="text-[12px] text-slate-300 leading-relaxed">
+                  AI เป็นเพียง <strong>"เสนาธิการ"</strong> จัดเตรียม Executive Summary และ e-Bidding Scenario ให้ <strong>คณะกรรมการจัดซื้อ (มนุษย์)</strong> เป็นผู้ตัดสินใจและลงนามอนุมัติขั้นสุดท้ายเสมอ
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
