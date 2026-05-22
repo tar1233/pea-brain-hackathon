@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
-import { Boxes, PackageSearch, ShieldAlert, Sparkles, FileText } from "lucide-react";
+import { Boxes, PackageSearch, ShieldAlert, Sparkles, FileText, Brain } from "lucide-react";
 import { useData } from "../context/DataContext";
 
 function formatCurrency(value: number) {
@@ -20,11 +20,15 @@ const CustomTooltip = ({ active, payload }: any) => {
         <div className="space-y-1.5">
           <p className="flex justify-between gap-6">
             <span className="text-slate-500">สต๊อกปัจจุบัน:</span>
-            <span className="text-slate-800 font-bold">{payload[0].value.toLocaleString()} เครื่อง</span>
+            <span className="text-slate-800 font-bold">{payload[0].value.toLocaleString()}</span>
           </p>
           <p className="flex justify-between gap-6">
-            <span className="text-slate-500">ระดับ Safety Stock:</span>
-            <span className="text-slate-800 font-bold">{payload[1].value.toLocaleString()} เครื่อง</span>
+            <span className="text-purple-600">AI Forecast (3M):</span>
+            <span className="text-purple-700 font-bold">{payload[1].value.toLocaleString()}</span>
+          </p>
+          <p className="flex justify-between gap-6">
+            <span className="text-slate-500">Safety Stock:</span>
+            <span className="text-slate-800 font-bold">{payload[2].value.toLocaleString()}</span>
           </p>
         </div>
       </div>
@@ -36,16 +40,16 @@ const CustomTooltip = ({ active, payload }: any) => {
 const renderCustomLegend = () => (
   <div className="flex justify-end gap-6 text-[10px] font-bold text-slate-500 mb-5 mr-2">
     <span className="flex items-center gap-1.5">
-      <span className="w-2.5 h-2.5 rounded bg-gradient-to-b from-red-500 to-rose-600"></span>
-      สต๊อกต่ำกว่าเกณฑ์ (Critical)
+      <span className="w-2.5 h-2.5 rounded bg-gradient-to-b from-blue-500 to-blue-600"></span>
+      สต๊อกปัจจุบัน
     </span>
     <span className="flex items-center gap-1.5">
-      <span className="w-2.5 h-2.5 rounded bg-gradient-to-b from-[#a80689] to-[#690455]"></span>
-      สต๊อกปกติ (Adequate)
+      <span className="w-2.5 h-2.5 rounded bg-gradient-to-b from-purple-400 to-purple-600"></span>
+      AI คาดการณ์ (3 เดือน)
     </span>
     <span className="flex items-center gap-1.5">
       <span className="w-2.5 h-2.5 rounded bg-gradient-to-b from-slate-300 to-slate-400"></span>
-      ระดับ Safety Stock
+      Safety Stock
     </span>
   </div>
 );
@@ -70,6 +74,7 @@ export default function InventoryView() {
       materials.map((material) => ({
         name: material.id,
         stock: material.currentStock,
+        forecast: Math.max(0, material.currentStock - (material.avgMonthlyDemand * 3)),
         safety: material.safetyStock,
       })),
     []
@@ -118,23 +123,23 @@ export default function InventoryView() {
       <section className="grid gap-5 xl:grid-cols-[1fr_0.95fr]">
         <article className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-2 border-l-4 border-purple-500 pl-3">
-            <PackageSearch size={16} className="text-primary-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">Stock vs Safety Stock</h2>
+            <Sparkles size={16} className="text-purple-600" />
+            <h2 className="text-[14px] font-bold text-slate-900">AI Stock Forecast (3 Months)</h2>
           </div>
           <p className="mt-2 text-[12px] text-slate-500 font-medium">
-            เปรียบเทียบระดับ stock ปัจจุบันกับ safety stock เพื่อหาจุดที่ต้องเติมของทันที
+            AI จำลองสถานการณ์สต๊อกล่วงหน้า 3 เดือน หากไม่มีการรับของเข้า เพื่อช่วยวางแผนรับมือ
           </p>
           <div className="mt-4 h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stockChart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorCritical" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f43f5e" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#be123c" stopOpacity={1}/>
+                  <linearGradient id="colorStock" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#2563eb" stopOpacity={1}/>
                   </linearGradient>
-                  <linearGradient id="colorNormal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#a80689" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#70045b" stopOpacity={1}/>
+                  <linearGradient id="colorForecast" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#c084fc" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#9333ea" stopOpacity={1}/>
                   </linearGradient>
                   <linearGradient id="colorSafety" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#cbd5e1" stopOpacity={0.8}/>
@@ -158,21 +163,18 @@ export default function InventoryView() {
                 />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148,163,184,0.04)' }} />
                 <Legend verticalAlign="top" content={renderCustomLegend} />
-                <Bar dataKey="stock" radius={[4, 4, 0, 0]} maxBarSize={24}>
-                  {stockChart.map((item) => (
-                    <Cell key={item.name} fill={item.stock < item.safety ? "url(#colorCritical)" : "url(#colorNormal)"} />
-                  ))}
-                </Bar>
-                <Bar dataKey="safety" fill="url(#colorSafety)" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                <Bar dataKey="stock" fill="url(#colorStock)" radius={[4, 4, 0, 0]} maxBarSize={20} />
+                <Bar dataKey="forecast" fill="url(#colorForecast)" radius={[4, 4, 0, 0]} maxBarSize={20} />
+                <Bar dataKey="safety" fill="url(#colorSafety)" radius={[4, 4, 0, 0]} maxBarSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </article>
 
-        <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
+        <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm flex flex-col">
           <div className="flex items-center gap-2 border-l-4 border-red-500 pl-3">
-            <ShieldAlert size={16} className="text-red-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">รายการที่ต้องตามใกล้ชิด</h2>
+            <Brain size={16} className="text-red-600" />
+            <h2 className="text-[14px] font-bold text-slate-900">⚠️ AI Alert: ความเสี่ยงสต๊อกขาด</h2>
           </div>
           <div className="mt-4 space-y-2.5">
             {atRiskMaterials.map((material) => {
@@ -194,22 +196,20 @@ export default function InventoryView() {
                     <div>LT: {material.leadTimeWeeks} สัปดาห์</div>
                     <div>ROP: {material.reorderPoint.toLocaleString()}</div>
                   </div>
-                  <div className="mt-2 flex items-center justify-end border-t border-red-200/40 pt-2">
+                  <div className="mt-2 flex items-center justify-between border-t border-red-200/40 pt-2">
+                    <div className="flex-1 mr-2 text-[9px] text-red-800/80 leading-tight">
+                      💡 แนะนำให้ AI วิเคราะห์แผนรับมือ
+                    </div>
                     <button 
                       type="button"
                       onClick={() => {
-                        window.dispatchEvent(new CustomEvent("create-po", { 
-                          detail: { 
-                            materialId: material.id, 
-                            qty: gap, 
-                            name: material.name,
-                            price: material.unitPrice 
-                          } 
+                        window.dispatchEvent(new CustomEvent("analyze-material", { 
+                          detail: { materialId: material.id } 
                         }));
                       }}
-                      className="px-2 py-1 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg text-[9px] font-bold cursor-pointer transition shadow-sm"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm whitespace-nowrap"
                     >
-                      สั่งซื้อเร่งด่วน (Urgent PO)
+                      <Sparkles size={12} className="text-blue-300" /> ให้ AI วางแผน
                     </button>
                   </div>
                 </div>
