@@ -132,7 +132,14 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
 
                 return (
                   <React.Fragment key={alert.id}>
-                    <tr className={`border-b border-border/60 hover:bg-gray-50/70 transition-colors ${isCritical ? "bg-critical-50/30" : ""}`}>
+                    <tr 
+                      className={`border-b border-border/60 hover:bg-gray-50/70 transition-colors ${isCritical ? "bg-critical-50/30" : ""} ${planData ? "cursor-pointer" : ""}`}
+                      onClick={() => {
+                        if (planData) {
+                          setExpandedId(prev => prev === alert.id ? null : alert.id);
+                        }
+                      }}
+                    >
                       <td className="px-3 py-3 text-center">
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mx-auto
                           ${isCritical ? "bg-red-500 text-white" : alert.severity === "warning" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
@@ -280,6 +287,22 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                               <div className="bg-white rounded-xl p-3 border border-emerald-100">
                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider">💰 งบประมาณ (Financial)</div>
                                 <div className="text-[14px] font-bold text-emerald-700 mt-1">{planData.financial}</div>
+                              </div>
+                            </div>
+
+                            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100 mb-4">
+                              <div className="text-[11px] font-bold text-blue-700 mb-2">📦 คาดการณ์สต็อก (Supply Forecast)</div>
+                              <div className="text-[12px] text-slate-700 leading-relaxed">{planData.supplyForecast || '-'}</div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                              <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+                                <div className="text-[11px] font-bold text-red-700 mb-2">⚠️ ความเสี่ยงที่อาจเกิดขึ้น</div>
+                                <div className="text-[12px] text-red-900 leading-relaxed">{planData.risk}</div>
+                              </div>
+                              <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                                <div className="text-[11px] font-bold text-purple-700 mb-2">🛡️ แผนรับมือความเสี่ยง (Mitigation)</div>
+                                <div className="text-[12px] text-slate-700 leading-relaxed">{planData.mitigation || '-'}</div>
                               </div>
                             </div>
 

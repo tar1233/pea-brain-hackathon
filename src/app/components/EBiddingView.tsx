@@ -575,7 +575,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
                 <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end">
                   <button 
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.futureImpact, qty: aiResult.planA.qty, risk: aiResult.planA.riskScenarios, financial: aiResult.planA.costAnalysis, unitPrice: material?.unitPrice || 0 } }));
+                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.futureImpact, qty: aiResult.planA.qty, risk: aiResult.planA.riskScenarios, financial: aiResult.planA.costAnalysis, supplyForecast: aiResult.planA.supplyForecast, mitigation: aiResult.planA.mitigation, unitPrice: material?.unitPrice || 0 } }));
                       if (onClose) onClose();
                       setTimeout(() => setActiveTab?.("activity"), 300);
                     }}
@@ -621,7 +621,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
                 <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end">
                   <button 
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.futureImpact, qty: aiResult.planB.qty, risk: aiResult.planB.riskScenarios, financial: aiResult.planB.costAnalysis, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
+                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.futureImpact, qty: aiResult.planB.qty, risk: aiResult.planB.riskScenarios, financial: aiResult.planB.costAnalysis, supplyForecast: aiResult.planB.supplyForecast, mitigation: aiResult.planB.mitigation, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
                       if (onClose) onClose();
                       setTimeout(() => setActiveTab?.("activity"), 300);
                     }}

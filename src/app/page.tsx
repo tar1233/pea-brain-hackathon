@@ -93,6 +93,8 @@ export default function Home() {
     qty: number;
     risk: string;
     financial: string;
+    supplyForecast?: string;
+    mitigation?: string;
     unitPrice: number;
   }
   const [approvedPlans, setApprovedPlans] = useState<ApprovedPlanData[]>([]);
