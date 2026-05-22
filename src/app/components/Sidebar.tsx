@@ -4,7 +4,7 @@ import {
   LayoutDashboard, TrendingUp, AlertTriangle,
   ShoppingCart, Settings, Sparkles,
   Package, BarChart3, Shield, Clock3, Landmark, FileText,
-  Brain, PackageSearch, ShieldAlert
+  Brain, PackageSearch, ShieldAlert, Map
 } from "lucide-react";
 import Image from "next/image";
 import { useData } from "../context/DataContext";
@@ -21,6 +21,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
     { id: "activity", label: "Procurement Planning", icon: Clock3 },
+    { id: "roadmap", label: "Project Roadmap", icon: Map },
   ];
 
   return (

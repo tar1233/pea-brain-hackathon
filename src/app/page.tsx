@@ -17,6 +17,7 @@ import {
   ReportsView,
 } from "./components/StrategicViews";
 import WarehouseView from "./components/WarehouseView";
+import ProjectRoadmap from "./components/ProjectRoadmap";
 
 /* ─── Watermark: Logo + Name + Grid ─── */
 function Watermark() {
@@ -244,6 +245,8 @@ export default function Home() {
         return <ReportsView />;
       case "activity":
         return <ActivityView approvedPlans={approvedPlans} />;
+      case "roadmap":
+        return <ProjectRoadmap />;
       case "risk":
       default:
         return <AlertsView approvedPlans={approvedPlans} />;
