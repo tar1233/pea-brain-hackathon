@@ -111,12 +111,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <Settings size={13} className="text-white/70" />
           <span className="text-[10px] text-white/72">ตั้งค่า</span>
         </div>
-        <div className="mt-3 mx-2 px-3 py-3 rounded-2xl bg-white/6 border border-white/8">
-          <div className="text-[8px] text-white/65 leading-relaxed">
-            🟢 ระบบทำงานปกติ 15 วัน<br/>
-            PEA Brain v1.0 • PoC Phase
-          </div>
-        </div>
+
       </div>
     </aside>
   );
