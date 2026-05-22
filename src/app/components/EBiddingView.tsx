@@ -62,82 +62,78 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
     const monthsOfStock = mat ? (mat.currentStock / mat.avgMonthlyDemand).toFixed(1) : '0';
     const stockVsSafety = mat ? Math.round(((mat.safetyStock - mat.currentStock) / mat.safetyStock) * 100) : 0;
     const demandVariation = mat ? Math.round((mat.stdMonthlyDemand / mat.avgMonthlyDemand) * 100) : 0;
+    const leadTimeDays = mat ? Math.round(mat.leadTimeWeeks * 7) : 0;
+    const gapDays = leadTimeDays - daysOfStock;
+    const shortfallQty = mat ? Math.round((gapDays / 30) * mat.avgMonthlyDemand) : 0;
 
-    const prompt = `คุณเป็น AI ที่ปรึกษาการจัดซื้อระดับ Enterprise ของ PEA (การไฟฟ้าส่วนภูมิภาค)
-เจ้าหน้าที่จัดซื้อต้องการให้คุณวิเคราะห์ข้อมูลจริงต่อไปนี้ แล้วออกแผนจัดซื้อที่ปฏิบัติได้จริง พร้อมเหตุผลว่าทำไม
+    const prompt = `คุณเป็นที่ปรึกษาจัดซื้อระดับ Enterprise ของ PEA (การไฟฟ้าส่วนภูมิภาค)
 
-═══ ข้อมูลพัสดุ: ${mat?.name || 'Unknown'} (รหัส ${targetMaterialId}) ═══
-📦 สต็อก: ${mat?.currentStock?.toLocaleString() || '?'} ${mat?.unit} (ใช้ได้อีก ${daysOfStock} วัน หรือ ${monthsOfStock} เดือน)
-🔴 Safety Stock: ${mat?.safetyStock?.toLocaleString() || '?'} ${mat?.unit} → ปัจจุบันขาด ${stockVsSafety}% จากเกณฑ์
-📈 เบิกจ่ายเฉลี่ย: ${mat?.avgMonthlyDemand?.toLocaleString() || '?'} ${mat?.unit}/เดือน (ค่าเบี่ยงเบน: ${demandVariation}% → ${demandVariation > 50 ? 'ผันผวนมาก' : 'ค่อนข้างคงที่'})
-⏱️ Lead Time: ${mat?.leadTimeWeeks || '?'} สัปดาห์ (≈${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน)
-💰 ราคาต่อหน่วย: ฿${mat?.unitPrice?.toLocaleString() || '?'} | ราคากลาง: ฿${mat?.budgetPrice?.toLocaleString() || '?'}
-🎯 แผน 2569 ต้องการ: ${mat?.annualDemand?.toLocaleString() || '?'} ${mat?.unit} (งบ ≈ ฿${annualBudget.toLocaleString()})
-📊 ประวัติเบิกจ่าย 12 เดือน: [${mat?.sparkline?.join(', ') || '?'}]
-${alert ? `⚠️ แจ้งเตือน: ${alert.message}` : ''}
-${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''}
+═══ ข้อมูลพัสดุ: ${mat?.name} (${targetMaterialId}) ═══
+สต็อก: ${mat?.currentStock} ${mat?.unit} (ใช้ได้อีก ${daysOfStock} วัน = ${monthsOfStock} เดือน)
+Safety Stock: ${mat?.safetyStock} ${mat?.unit} | ขาด: ${stockVsSafety}%
+เบิกจ่าย: ${mat?.avgMonthlyDemand} ${mat?.unit}/เดือน (ค่าเบี่ยงเบน ${demandVariation}%)
+Lead Time: ${mat?.leadTimeWeeks} สัปดาห์ (${leadTimeDays} วัน)
+ราคา: ฿${mat?.unitPrice?.toLocaleString()}/หน่วย | ราคากลาง: ฿${mat?.budgetPrice?.toLocaleString()}
+แผน 2569: ${mat?.annualDemand} ${mat?.unit} (งบ ≈ ฿${annualBudget.toLocaleString()})
+EOQ: ${mat?.eoq} ${mat?.unit}
+ประวัติเบิกจ่าย 12 เดือน: [${mat?.sparkline?.join(', ')}]
+${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำเดิม: ${alert.recommendation}` : ''}
 
+⚠️ วิกฤต: สต็อกเหลือ ${daysOfStock} วัน แต่ Lead Time ${leadTimeDays} วัน → ช่องว่าง ${gapDays} วัน ที่จะไม่มีของใช้!
+ระหว่างช่องว่างนี้จะขาดของ ≈ ${shortfallQty} ${mat?.unit}
 
-═══ ⚠️ CRITICAL: วิเคราะห์ช่องว่างวิกฤต (Emergency Gap Analysis) ═══
-🚨 สต็อกใช้ได้อีก: ${daysOfStock} วัน
-⏱️ Lead Time: ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน
-📏 ช่องว่างวิกฤต: ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วัน ที่สต็อกจะหมดก่อนของมาถึง!
-❓ ระหว่าง ${daysOfStock} วันนี้ถึงวันที่ของมาถึง (~${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน) ต้องทำอะไร? ขอยืมจากคลังอื่นได้ไหม? ต้องจัดซื้อเร่งด่วนหรือไม่? มีผลกระทบอะไรบ้างถ้าของขาด?
+═══ กฎ: ห้ามถามคำถามกลับ ห้ามเขียน "...ไหม?" ต้องตอบเป็นข้อสรุปเท่านั้น ═══
+═══ กฎ: ทุก field ต้องมีคำตอบจริง ห้ามเว้นว่าง ห้ามเขียนว่า "-" ═══
+═══ กฎ: ทุกคำตอบต้องมีเหตุผลกำกับว่า "เพราะ..." ═══
 
-═══ สิ่งที่ต้องวิเคราะห์ (บังคับ) ═══
-1. ทำไมต้องสั่ง? — ดูจากสต็อกที่เหลือ vs Demand ที่จะเกิดขึ้น (ใช้ได้อีกกี่วัน?)
-2. ต้องสั่งเมื่อไหร่? — คำนวณจาก Lead Time ว่าต้องเริ่มกระบวนการจัดซื้อวันไหนเพื่อไม่ให้ของขาด
-3. ช่องว่างวิกฤต — สต็อกจะหมดก่อนของใหม่มาถึง ต้องแก้ปัญหายังไง? (ยืมจากคลังอื่น, จัดซื้อเร่งด่วน, ลดปริมาณการเบิก)
-4. ถ้าสั่งไม่ทัน — จะเกิดผลกระทบอะไรกับระบบไฟฟ้า? ต้องแจ้งหน่วยงานไหนบ้าง?
-5. แผนฉุกเฉิน — ระหว่างรอของใหม่ ต้องทำยังไง? มีทางลัดอะไรที่ทำได้ตามระเบียบ?
-
-ตอบเป็น JSON เท่านั้น (ไม่ต้อง markdown code block) ตามโครงสร้างนี้:
+ตอบ JSON ตามนี้ (ห้ามมี markdown ห้ามมี text อื่น):
 {
-  "demandAnalysis": "วิเคราะห์จากข้อมูลจริง: ทำไมต้องสั่ง? สต็อก ${daysOfStock} วัน vs Lead Time ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน → มีช่องว่าง ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วันที่สต็อกจะหมด! Demand เฉลี่ย ${mat?.avgMonthlyDemand} ต่อเดือน คำนวณว่าจะขาดกี่ชิ้น (อ้างอิงตัวเลข)",
-  "marketAnalysis": "วิเคราะห์จากราคา: ควรเปิดประกวดราคาช่วงไหน? ราคาตลาดเป็นอย่างไร? ถ้าจัดซื้อเร่งด่วนราคาจะแพงขึ้นกี่%? (อ้างอิงตัวเลข)",
-  "supplierAnalysis": "วิเคราะห์ Supplier: Lead Time ${mat?.leadTimeWeeks} สัปดาห์ แต่สต็อกเหลือแค่ ${daysOfStock} วัน ช่องว่าง ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วัน → ต้องเจรจาให้ส่งเร็วขึ้นได้ไหม? ถ้าเร่งได้จะเหลือกี่สัปดาห์? มี Supplier สำรองไหม? (อ้างอิงตัวเลข)",
-  "emergencyPlan": "แผนฉุกเฉิน: ระหว่างรอของใหม่ ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน สต็อกจะหมดใน ${daysOfStock} วัน → ต้องทำอะไรบ้าง? เช่น 1) ขอยืมจากคลังอื่น กี่ชิ้น 2) จัดซื้อเร่งด่วน (วิธีพิเศษ) 3) ปรับลดปริมาณเบิกจ่ายชั่วคราว 4) แจ้งหน่วยงานที่ได้รับผลกระทบ — ระบุเป็นขั้นตอนชัดเจน",
+  "demandAnalysis": "[ตอบ] สต็อก ${mat?.currentStock} ชิ้น ใช้ได้อีก X วัน เพราะ Demand เฉลี่ย ${mat?.avgMonthlyDemand} ต่อเดือน ≈ X ต่อวัน → ต้องสั่งทันทีเพราะ... (ระบุเหตุผลจากตัวเลข)",
+  "marketAnalysis": "[ตอบ] ราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString()} สูงกว่าราคากลาง ฿${mat?.budgetPrice?.toLocaleString()} อยู่ X% เพราะ... ควรเปิดประกวดราคาเดือน X เพราะ... ถ้าจัดซื้อเร่งด่วนราคาจะแพงขึ้น X% เพราะ...(ระบุเหตุผลจริง เช่น ราคาทองแดงโลกขึ้น, ค่าขนส่งสูง, ไม่มี competitive bidding)",
+  "supplierAnalysis": "[ตอบ] Lead Time ${mat?.leadTimeWeeks} สัปดาห์ = ${leadTimeDays} วัน แต่สต็อกเหลือ ${daysOfStock} วัน → ช่องว่าง ${gapDays} วัน ต้องเจรจา Supplier ให้ส่งเร็วขึ้นเหลือ X สัปดาห์ เพราะ... หรือหา Supplier สำรองที่ส่งได้ใน X สัปดาห์",
+  "emergencyPlan": "[ตอบเป็นข้อ]\n1. ขอยืมจากคลังภูมิภาคอื่น จำนวน ${shortfallQty} ชิ้น เพื่ออุดช่องว่าง ${gapDays} วัน เพราะ...\n2. ยื่นจัดซื้อเร่งด่วนตามระเบียบพัสดุ มาตรา X เพราะ...\n3. ปรับลดการเบิกจ่ายเหลือ X ชิ้น/เดือน (ลดลง X%) โดยจัดลำดับความสำคัญ เพราะ...\n4. แจ้งหน่วยงาน X, Y, Z ว่าอาจได้รับผลกระทบ เพราะ...",
   "planA": {
-    "title": "ชื่อแผน (สั้นกระชับ)",
-    "qty": ตัวเลขจำนวนสั่งซื้อ,
-    "futureImpact": "ถ้าเลือกแผนนี้ อนาคตจะเป็นยังไง? สต็อกจะเพียงพออีกกี่เดือน? ความต้องการทั้งปีจะถูกตอบสนองไหม? (อ้างอิงตัวเลข คำนวณ Demand เทียบกับจำนวนที่สั่ง)",
-    "supplyForecast": "สั่งแล้วสต็อกจะอยู่ได้อีกกี่เดือน? ต้องสั่งเพิ่มอีกไหม? ถ้าต้องสั่งอีกควรสั่งเมื่อไหร่? ปัญหาขาดแคลนจบหรือไม่? (คำนวณจาก Demand/เดือน เทียบกับจำนวนที่สั่ง)",
-    "costAnalysis": "ต้นทุนรวมเท่าไหร่? เทียบกับราคากลางแล้วประหยัดกี่%? ถ้าราคาขึ้นอีกจะกระทบงบยังไง? คุ้มค่าไหมเทียบกับการไม่ทำอะไรเลย?",
-    "riskScenarios": "สถานการณ์เลวร้ายที่อาจเกิดขึ้น 2-3 สถานการณ์: เช่น Demand พุ่งสูงกว่าคาด, ราคาขึ้น, Supplier ส่งของช้า — แต่ละสถานการณ์จะเกิดอะไรขึ้น?",
-    "mitigation": "ถ้าเกิดความเสี่ยง ต้องรับมือยังไง? ต้องสั่งเพิ่มอีกไหม? ระบุขั้นตอนชัดเจน",
-    "problemResolved": "ปัญหาจบหรือไม่? สต็อกจะกลับมาอยู่เหนือ Safety Stock ไหม? ถ้ายังไม่จบ ต้องทำอะไรต่อ? (ตอบชัดเจน)"
+    "title": "ชื่อแผนสั้นๆ",
+    "qty": ตัวเลข,
+    "futureImpact": "[ตอบ] สั่ง X ชิ้น → สต็อกรวมจะเป็น X ชิ้น ใช้ได้อีก X เดือน (คำนวณ: X ÷ ${mat?.avgMonthlyDemand} = X เดือน) ความต้องการทั้งปี ${mat?.annualDemand} ชิ้น ครอบคลุม X% เพราะ...",
+    "supplyForecast": "[ตอบ] สั่ง X ชิ้น + สต็อกเดิม ${mat?.currentStock} = X ชิ้น ÷ ${mat?.avgMonthlyDemand} ต่อเดือน = อยู่ได้อีก X เดือน ต้องสั่งเพิ่มอีกรอบเดือน X เพราะ... ปัญหาขาดแคลนจะจบใน X เดือน เพราะ...",
+    "costAnalysis": "[ตอบ] ต้นทุนรวม = X ชิ้น × ฿${mat?.unitPrice?.toLocaleString()} = ฿X ประหยัดกว่าราคากลาง X% = ฿X เพราะ... คุ้มค่ากว่าไม่ทำอะไร เพราะถ้าไม่สั่งจะเกิด...",
+    "riskScenarios": "[ตอบ] 1) Demand พุ่ง 20%: สต็อกจะหมดเร็วขึ้น X เดือน ต้องสั่งเพิ่มอีก X ชิ้น 2) ราคาขึ้น 15%: งบจะเพิ่ม ฿X ต้องขออนุมัติเพิ่ม 3) Supplier ส่งช้า 2 สัปดาห์: ต้องยืมจากคลังอื่น X ชิ้น",
+    "mitigation": "[ตอบ] 1) ถ้า Demand พุ่ง → สั่งเพิ่มอีก X ชิ้นในเดือน X โดยใช้วิธี... 2) ถ้าราคาขึ้น → ล็อคราคาล่วงหน้ากับ Supplier โดย... 3) ถ้าส่งช้า → ยืมจากคลัง X จำนวน X ชิ้น แล้วคืนเมื่อของมาถึง",
+    "problemResolved": "[ตอบ] สั่ง X ชิ้น → สต็อก X ชิ้น เหนือ Safety Stock ${mat?.safetyStock} ชิ้น → ปัญหาจบ/ไม่จบ เพราะ... ถ้ายังไม่จบ ต้องสั่งเพิ่มอีก X ชิ้นในเดือน X"
   },
   "planB": {
     "title": "ชื่อแผนสำรอง",
-    "qty": ตัวเลขจำนวนสั่งซื้อ,
-    "futureImpact": "ถ้าเลือกแผนสำรองนี้ อนาคตจะเป็นยังไง?",
-    "supplyForecast": "สต็อกอยู่ได้อีกกี่เดือน? ต้องสั่งอีกไหม?",
-    "costAnalysis": "ต้นทุนรวม? คุ้มค่าไหม?",
-    "riskScenarios": "สถานการณ์เลวร้ายที่อาจเกิดขึ้น",
-    "mitigation": "วิธีรับมือเมื่อเกิดปัญหา",
-    "problemResolved": "ปัญหาจบหรือไม่? ต้องทำอะไรต่อ?"
+    "qty": ตัวเลข,
+    "futureImpact": "[ตอบ] สั่ง X ชิ้น → สต็อกอยู่ได้ X เดือน ครอบคลุม X% ของแผนปี เพราะ...",
+    "supplyForecast": "[ตอบ] อยู่ได้ X เดือน ต้องสั่งเพิ่มอีกเดือน X เพราะ... ปัญหาจะจบใน X เดือน",
+    "costAnalysis": "[ตอบ] ต้นทุน ฿X ประหยัด/แพงกว่า Plan A อยู่ ฿X เพราะ...",
+    "riskScenarios": "[ตอบ] 1) ความเสี่ยง X: จะเกิดผลกระทบ Y เพราะ... 2) ความเสี่ยง X: จะเกิดผลกระทบ Y เพราะ...",
+    "mitigation": "[ตอบ] 1) ถ้าเกิดความเสี่ยง X → ทำ Y เพราะ... 2) ถ้าเกิดความเสี่ยง X → ทำ Y เพราะ...",
+    "problemResolved": "[ตอบ] สต็อกจะกลับมาเหนือ Safety Stock ใน X เดือน เพราะ... ต้องสั่งเพิ่มอีก X ครั้ง"
   },
   "priceForecast": {
-    "threeMonth": "คาดการณ์ราคาอีก 3 เดือนข้างหน้า: ขึ้นหรือลง กี่%? เพราะอะไร? (อ้างอิงจากราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString() || '?'})",
-    "oneYear": "คาดการณ์ราคาอีก 1 ปีข้างหน้า: ขึ้นหรือลง กี่%?",
-    "bestTimeToBuy": "ช่วงเวลาที่ดีที่สุดในการซื้อ"
+    "threeMonth": "[ตอบ] ราคาจะขึ้น/ลง X% จาก ฿${mat?.unitPrice?.toLocaleString()} เป็น ฿X เพราะ... (ระบุเหตุผลเช่น ราคาวัตถุดิบ, อัตราแลกเปลี่ยน, สถานการณ์ตลาดโลก)",
+    "oneYear": "[ตอบ] ราคาจะขึ้น/ลง X% เป็น ฿X เพราะ... (ระบุปัจจัยที่มีผล 2-3 ปัจจัย)",
+    "bestTimeToBuy": "[ตอบ] ช่วง เดือน X-Y เพราะ... (ระบุเหตุผล 2-3 ข้อ เช่น ราคาวัตถุดิบลดลง, สิ้นปีงบ Supplier ลดราคา)"
   },
   "lotStrategy": {
-    "recommendation": "แนะนำว่าควรสั่งแบบไหน: 'สั่ง Lot เดียวใหญ่' หรือ 'ซอยหลาย Lot' พร้อมเหตุผลว่าทำไม (วิเคราะห์จาก EOQ, Demand, คลัง, ราคา)",
-    "totalQty": จำนวนที่ต้องสั่งทั้งหมด,
-    "numLots": จำนวนรอบที่แนะนำ,
-    "qtyPerLot": จำนวนต่อรอบ,
-    "reason": "เหตุผลเชิงลึกว่าทำไมถึงคุ้มค่าที่สุด (ด้านต้นทุน, คลัง, ความเสี่ยง)",
-    "savings": "ประหยัดได้เท่าไหร่เมื่อเทียบกับการสั่งทีเดียว (ระบุจำนวนเงิน)"
+    "recommendation": "[ตอบ] แนะนำสั่ง X Lot เพราะ... (ถ้าแนะนำ 1 Lot ห้ามเขียนว่าประหยัดเทียบกับสั่งทีเดียว)",
+    "totalQty": ตัวเลข,
+    "numLots": ตัวเลข,
+    "qtyPerLot": ตัวเลข,
+    "reason": "[ตอบ] คุ้มค่าที่สุดเพราะ... (ระบุเหตุผลด้านต้นทุน คลัง ความเสี่ยง)",
+    "savings": "[ตอบ] ประหยัด ฿X เทียบกับวิธีอื่น เพราะ... (ถ้าสั่ง 1 Lot ให้เทียบกับการซอยหลาย Lot)"
   },
   "lotSchedule": [
-    { "lot": 1, "qty": จำนวนต่อ Lot, "orderMonth": "เดือนที่ต้องเริ่มกระบวนการจัดซื้อ (คำนวณจาก Lead Time ${mat?.leadTimeWeeks} สัปดาห์)", "receiveMonth": "เดือนที่คาดว่าจะได้รับของ", "action": "สิ่งที่ต้องทำในรอบนี้" },
-    { "lot": 2, "qty": จำนวน, "orderMonth": "เดือน", "receiveMonth": "เดือน", "action": "สิ่งที่ต้องทำ" }
+    { "lot": 1, "qty": ตัวเลข, "orderMonth": "เดือน X ปี 2569", "receiveMonth": "เดือน X ปี 2569 (คำนวณจาก Lead Time ${mat?.leadTimeWeeks} สัปดาห์)", "action": "ทำ TOR → เปิดประกวดราคา → ออก PO" }
   ],
-  "executiveSummary": "สรุปสำหรับผู้บริหาร: สต็อกเหลือ ${daysOfStock} วัน แต่ Lead Time ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน ช่องว่าง ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วัน → ทำไมต้องทำทันที ถ้าไม่ทำจะเกิดอะไรขึ้น (2-3 ประโยค อ้างอิงตัวเลข)"
+  "executiveSummary": "[ตอบ] สต็อกเหลือ ${daysOfStock} วัน แต่ Lead Time ${leadTimeDays} วัน ช่องว่าง ${gapDays} วัน → ต้องดำเนินการทันที เพราะ... ถ้าไม่ทำจะเกิด... (สรุป 2-3 ประโยค อ้างอิงตัวเลข)"
 }
 
-สำคัญมาก: ตอบเป็น JSON เท่านั้น ห้ามมี text อื่นนอก JSON ห้ามมี markdown code block`;
+สำคัญมาก: ตอบเป็น JSON เท่านั้น ห้ามมี text อื่นนอก JSON ห้ามมี markdown
+กฎเด็ดขาด: ทุกคำตอบต้องเป็น "ข้อสรุป" ที่มีเหตุผลว่า "เพราะ..." ห้ามถามคำถามกลับ ห้ามเขียน "...ไหม?" "...หรือไม่?" ห้ามเว้นว่าง ห้ามใช้ "-"
+ถ้าแนะนำ 1 Lot ให้เทียบประหยัดกับซอยหลาย Lot ถ้าแนะนำหลาย Lot ให้เทียบกับสั่งทีเดียว`;
 
     try {
       const res = await fetch("/api/chat", {
