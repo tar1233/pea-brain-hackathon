@@ -99,19 +99,19 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
         </div>
         
         <div className="flex gap-4 shrink-0 relative z-10">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-white/20 transition shadow-[0_8px_30px_rgb(0,0,0,0.12)]" onClick={() => setActiveTab?.("risk")}>
-            <div className="text-[10px] font-bold text-red-300 uppercase flex justify-center items-center gap-1 drop-shadow-sm">
+          <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("risk")}>
+            <div className="text-[10.5px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1">
               <AlertTriangle size={12} /> ความเสี่ยงที่ต้องจัดการ
             </div>
-            <div className="text-[24px] font-black text-white mt-1 leading-none drop-shadow-md tracking-tight">{riskAlerts.filter(a => a.severity === 'critical').length} <span className="text-[14px]">รายการ</span></div>
-            <div className="text-[10px] font-semibold text-red-200 mt-2">มูลค่าความเสี่ยง ฿145.2M</div>
+            <div className="text-[28px] font-black text-slate-900 mt-1 leading-none tracking-tight">{riskAlerts.filter(a => a.severity === 'critical').length} <span className="text-[14px]">รายการ</span></div>
+            <div className="text-[10px] font-bold text-red-500 mt-2">มูลค่าความเสี่ยง ฿145.2M</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-white/20 transition shadow-[0_8px_30px_rgb(0,0,0,0.12)]" onClick={() => setActiveTab?.("ebidding")}>
-            <div className="text-[10px] font-bold text-emerald-300 uppercase flex justify-center items-center gap-1 drop-shadow-sm">
+          <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("ebidding")}>
+            <div className="text-[10.5px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1">
               <CheckCircle2 size={12} /> แก้ไขแล้วด้วย AI
             </div>
-            <div className="text-[24px] font-black text-white mt-1 leading-none drop-shadow-md tracking-tight">{approvedPlansCount} <span className="text-[14px]">แผน</span></div>
-            <div className="text-[10px] font-semibold text-emerald-200 mt-2">พร้อมดำเนินการทันที</div>
+            <div className="text-[28px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[14px]">แผน</span></div>
+            <div className="text-[10px] font-bold text-emerald-600 mt-2">พร้อมดำเนินการทันที</div>
           </div>
         </div>
       </section>

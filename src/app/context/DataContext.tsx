@@ -74,7 +74,22 @@ export function DataProvider({ children }: { children: ReactNode }) {
           json.infoAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'info');
         }
         if (!json.timelineEvents) json.timelineEvents = [];
-        if (!json.aiRecommendations) json.aiRecommendations = [];
+        if (!json.aiRecommendations || json.aiRecommendations.length === 0) {
+          json.aiRecommendations = [
+            {
+              id: "rec1",
+              title: "สรุปสถานะหม้อแปลง 10067",
+              description: "AI พบว่าสต็อกหม้อแปลง 160 kVA กำลังจะหมดใน 15 วัน ควรเร่งกระบวนการจัดซื้อ (e-Bidding)",
+              severity: "critical"
+            },
+            {
+              id: "rec2",
+              title: "Demand ของปี 2569 คือกี่เครื่อง",
+              description: "วิเคราะห์แนวโน้มการใช้งานหม้อแปลงจากข้อมูลย้อนหลังและการขยายตัวของเขตพื้นที่",
+              severity: "info"
+            }
+          ];
+        }
         if (!json.dataSummary) json.dataSummary = "";
         if (json.totalVaR === undefined) json.totalVaR = 0;
 
