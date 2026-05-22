@@ -344,18 +344,27 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
                   </div>
 
                   <div className="mt-5 border-t border-emerald-200/50 pt-4 flex items-center justify-between">
-                    <div className="text-[11px] text-emerald-700 font-medium">สั่งซื้อ: {aiResult.planA.qty.toLocaleString()} {material?.unit || 'เครื่อง'} ({formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))})</div>
+                    <div className="text-[11px] text-emerald-700 font-medium">จำนวน: {aiResult.planA.qty.toLocaleString()} {material?.unit || 'เครื่อง'} • มูลค่าประมาณ {formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))}</div>
                     <button 
                       onClick={() => {
-                        window.dispatchEvent(new CustomEvent("create-po", { 
-                          detail: { materialId: targetMaterialId, qty: aiResult.planA.qty, name: material?.name || targetMaterialId, price: material?.unitPrice } 
+                        window.dispatchEvent(new CustomEvent("approve-plan", { 
+                          detail: { 
+                            materialId: targetMaterialId, 
+                            materialName: material?.name || targetMaterialId,
+                            planName: `Plan A: ${aiResult.planA.title}`,
+                            action: aiResult.planA.action,
+                            qty: aiResult.planA.qty,
+                            risk: aiResult.planA.risk,
+                            financial: aiResult.planA.financial,
+                            unitPrice: material?.unitPrice || 0
+                          } 
                         }));
                         if (onClose) onClose();
-                        setTimeout(() => setActiveTab?.("activity"), 500);
+                        setTimeout(() => setActiveTab?.("activity"), 300);
                       }}
                       className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
                     >
-                      <CheckCircle2 size={16} /> อนุมัติ Plan A
+                      <CheckCircle2 size={16} /> เลือกแผนนี้ → เข้าสู่การวางแผนจัดซื้อ
                     </button>
                   </div>
                 </div>
@@ -380,18 +389,27 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
                   </div>
 
                   <div className="mt-5 border-t border-slate-200 pt-4 flex items-center justify-between">
-                    <div className="text-[11px] text-slate-500 font-medium">สั่งซื้อ: {aiResult.planB.qty.toLocaleString()} {material?.unit || 'เครื่อง'} ({formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))})</div>
+                    <div className="text-[11px] text-slate-500 font-medium">จำนวน: {aiResult.planB.qty.toLocaleString()} {material?.unit || 'เครื่อง'} • มูลค่าประมาณ {formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))}</div>
                     <button 
                       onClick={() => {
-                        window.dispatchEvent(new CustomEvent("create-po", { 
-                          detail: { materialId: targetMaterialId, qty: aiResult.planB.qty, name: material?.name || targetMaterialId, price: (material?.unitPrice || 150000) * 1.15 } 
+                        window.dispatchEvent(new CustomEvent("approve-plan", { 
+                          detail: { 
+                            materialId: targetMaterialId, 
+                            materialName: material?.name || targetMaterialId,
+                            planName: `Plan B: ${aiResult.planB.title}`,
+                            action: aiResult.planB.action,
+                            qty: aiResult.planB.qty,
+                            risk: aiResult.planB.risk,
+                            financial: aiResult.planB.financial,
+                            unitPrice: (material?.unitPrice || 150000) * 1.15
+                          } 
                         }));
                         if (onClose) onClose();
-                        setTimeout(() => setActiveTab?.("activity"), 500);
+                        setTimeout(() => setActiveTab?.("activity"), 300);
                       }}
                       className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-300 px-5 py-2.5 text-[12px] font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                     >
-                      <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B
+                      <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B → เข้าสู่การวางแผนจัดซื้อ
                     </button>
                   </div>
                 </div>

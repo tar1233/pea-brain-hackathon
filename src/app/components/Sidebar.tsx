@@ -21,7 +21,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
     { id: "inventory", label: "Inventory Analysis", icon: PackageSearch },
-    { id: "activity", label: "PO Tracking", icon: Clock3 },
+    { id: "activity", label: "Procurement Planning", icon: Clock3 },
   ];
 
   return (
