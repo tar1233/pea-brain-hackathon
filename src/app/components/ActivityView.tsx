@@ -20,25 +20,17 @@ interface RiskMitigation {
   plan: string | null;
 }
 
-export default function ActivityView() {
+export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: ApprovedPlan[] }) {
   const { materials, riskAlerts } = useData();
-  const [approvedPlans, setApprovedPlans] = useState<ApprovedPlan[]>([]);
   const [expandedMaterial, setExpandedMaterial] = useState<string | null>(null);
   const [riskMitigations, setRiskMitigations] = useState<Record<string, RiskMitigation>>({});
 
+  // Auto-expand the first approved material
   useEffect(() => {
-    const handleApprove = (e: Event) => {
-      const ev = e as CustomEvent<ApprovedPlan>;
-      setApprovedPlans(prev => {
-        const exists = prev.find(p => p.materialId === ev.detail.materialId);
-        if (exists) return prev.map(p => p.materialId === ev.detail.materialId ? ev.detail : p);
-        return [...prev, ev.detail];
-      });
-      setExpandedMaterial(ev.detail.materialId);
-    };
-    window.addEventListener("approve-plan", handleApprove);
-    return () => window.removeEventListener("approve-plan", handleApprove);
-  }, []);
+    if (approvedPlans.length > 0 && !expandedMaterial) {
+      setExpandedMaterial(approvedPlans[approvedPlans.length - 1].materialId);
+    }
+  }, [approvedPlans, expandedMaterial]);
 
   // Simulate AI risk monitoring — auto-analyze when alert exists
   async function handleAIRiskAnalysis(materialId: string, alertMessage: string) {

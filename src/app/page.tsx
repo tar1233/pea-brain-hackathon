@@ -84,6 +84,32 @@ export default function Home() {
   const [analyzingMaterialId, setAnalyzingMaterialId] = useState<string | null>(null);
   const { materials, isLoading, error } = useData();
 
+  // Approved plans — persisted at page level so they survive tab switches
+  interface ApprovedPlanData {
+    materialId: string;
+    materialName: string;
+    planName: string;
+    action: string;
+    qty: number;
+    risk: string;
+    financial: string;
+    unitPrice: number;
+  }
+  const [approvedPlans, setApprovedPlans] = useState<ApprovedPlanData[]>([]);
+
+  useEffect(() => {
+    const handleApprove = (e: Event) => {
+      const ev = e as CustomEvent<ApprovedPlanData>;
+      setApprovedPlans(prev => {
+        const exists = prev.find(p => p.materialId === ev.detail.materialId);
+        if (exists) return prev.map(p => p.materialId === ev.detail.materialId ? ev.detail : p);
+        return [...prev, ev.detail];
+      });
+    };
+    window.addEventListener("approve-plan", handleApprove);
+    return () => window.removeEventListener("approve-plan", handleApprove);
+  }, []);
+
   interface POPending {
     isOpen: boolean;
     step: number;
@@ -189,10 +215,10 @@ export default function Home() {
       case "reports":
         return <ReportsView />;
       case "activity":
-        return <ActivityView />;
+        return <ActivityView approvedPlans={approvedPlans} />;
       case "risk":
       default:
-        return <AlertsView />;
+        return <AlertsView approvedPlans={approvedPlans} />;
     }
   };
 

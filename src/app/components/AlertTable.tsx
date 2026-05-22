@@ -34,7 +34,7 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
   );
 }
 
-export default function AlertTable() {
+export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any[] }) {
   const { riskAlerts, materials } = useData();
   const [filter, setFilter] = useState("all");
   const [searchQ, setSearchQ] = useState("");
@@ -195,20 +195,40 @@ export default function AlertTable() {
                         </div>
                       </td>
                       <td className="px-3 py-3 text-center">
-                        <button type="button" className={`px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shadow-sm
-                          ${isCritical
-                            ? "text-white bg-critical-600 hover:bg-critical-700"
-                            : alert.severity === "warning"
-                              ? "border border-warning-300 text-warning-700 hover:bg-warning-50"
-                              : "border border-primary-200 text-primary-700 hover:bg-primary-50"
-                          }`}
-                          onClick={(e) => { 
-                            e.preventDefault(); 
-                            e.stopPropagation(); 
-                            window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
-                          }}>
-                          ให้ AI เข้าไปวิเคราะห์
-                        </button>
+                        {(() => {
+                          const hasPlan = approvedPlans.some(p => p.materialId === alert.materialId || p.materialId === alert.materialId.replace('MAT-', ''));
+                          if (hasPlan) {
+                            return (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  // Jump to activity tab when clicking "มีแผนแล้ว"
+                                  window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
+                              >
+                                <Sparkles size={12} /> มีแผนแล้ว
+                              </button>
+                            );
+                          }
+                          return (
+                            <button type="button" className={`px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shadow-sm
+                              ${isCritical
+                                ? "text-white bg-critical-600 hover:bg-critical-700"
+                                : alert.severity === "warning"
+                                  ? "border border-warning-300 text-warning-700 hover:bg-warning-50"
+                                  : "border border-primary-200 text-primary-700 hover:bg-primary-50"
+                              }`}
+                              onClick={(e) => { 
+                                e.preventDefault(); 
+                                e.stopPropagation(); 
+                                window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                              }}>
+                              ให้ AI เข้าไปวิเคราะห์
+                            </button>
+                          );
+                        })()}
                       </td>
                     </tr>
 
