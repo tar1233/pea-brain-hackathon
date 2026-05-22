@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Brain, TrendingDown, TrendingUp, AlertTriangle, CheckCircle2, ShieldAlert, Loader2, Sparkles, RefreshCw } from "lucide-react";
+import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Loader2, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
@@ -26,11 +26,9 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
   const [error, setError] = useState<string | null>(null);
   const hasCalledRef = useRef(false);
 
-  // Find the actual material data
   const material = materials.find(m => m.id === targetMaterialId || m.sapCode === targetMaterialId);
   const alert = riskAlerts.find(a => a.materialId === targetMaterialId || a.materialId === `MAT-${targetMaterialId}`);
 
-  // Call AI on mount
   useEffect(() => {
     if (hasCalledRef.current) return;
     hasCalledRef.current = true;
@@ -45,9 +43,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
 
     const mat = material;
     const stockPercent = mat ? Math.round((mat.currentStock / mat.safetyStock) * 100) : 0;
-    const shortage = mat ? Math.max(0, mat.safetyStock - mat.currentStock) : 0;
     const annualBudget = mat ? mat.annualDemand * mat.unitPrice : 0;
-
     const daysOfStock = mat ? Math.round(mat.currentStock / (mat.avgMonthlyDemand / 30)) : 0;
     const monthsOfStock = mat ? (mat.currentStock / mat.avgMonthlyDemand).toFixed(1) : '0';
     const stockVsSafety = mat ? Math.round(((mat.safetyStock - mat.currentStock) / mat.safetyStock) * 100) : 0;
@@ -100,370 +96,280 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: prompt }],
-        }),
+        body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
       });
-
       if (!res.ok) throw new Error(`API Error: ${res.status}`);
-
       const data = await res.json();
       const content = data.content || "";
-
-      // Try to parse JSON from the AI response
       try {
-        // Strip markdown code fences if present
         const cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
         const parsed = JSON.parse(cleaned);
-        setAiResult({
-          demandAnalysis: parsed.demandAnalysis || "ไม่สามารถวิเคราะห์ได้",
-          marketAnalysis: parsed.marketAnalysis || "ไม่สามารถวิเคราะห์ได้",
-          supplierAnalysis: parsed.supplierAnalysis || "ไม่สามารถวิเคราะห์ได้",
-          planA: parsed.planA || { title: "Plan A", action: "-", financial: "-", risk: "-", qty: 0 },
-          planB: parsed.planB || { title: "Plan B", action: "-", financial: "-", risk: "-", qty: 0 },
-          executiveSummary: parsed.executiveSummary || "",
-          raw: content,
-        });
+        setAiResult({ ...parsed, raw: content });
       } catch {
-        // If JSON parsing fails, show the raw AI response
         setAiResult({
-          demandAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
-          marketAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
-          supplierAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
-          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", action: content.substring(0, 200), financial: "-", risk: "-", qty: mat?.eoq || 0 },
-          planB: { title: "ทางเลือกสำรอง", action: "กรุณาอ่านคำแนะนำ AI ด้านล่าง", financial: "-", risk: "-", qty: 0 },
-          executiveSummary: "",
-          raw: content,
+          demandAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)", marketAnalysis: "-", supplierAnalysis: "-",
+          planA: { title: "ดูคำแนะนำ AI", action: content.substring(0, 300), financial: "-", risk: "-", qty: mat?.eoq || 0 },
+          planB: { title: "ทางเลือกสำรอง", action: "กรุณาอ่านคำแนะนำ AI", financial: "-", risk: "-", qty: 0 },
+          executiveSummary: "", raw: content,
         });
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Unknown error";
-      setError(msg);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsAnalyzing(false);
     }
   }
 
   if (!eBiddingData) return null;
-
-  const { totalRequirement, simulation } = eBiddingData;
+  const { simulation } = eBiddingData;
+  const daysOfStock = material ? Math.round(material.currentStock / (material.avgMonthlyDemand / 30)) : 0;
+  const stockPercent = material ? Math.round((material.currentStock / material.safetyStock) * 100) : 0;
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <section className="rounded-[32px] border border-blue-500/10 bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81] px-8 py-10 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-400/20 via-transparent to-transparent"></div>
-        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold tracking-widest text-blue-200 uppercase">
-              <Brain size={14} />
-              AI-Powered Analysis • AWS Bedrock + RAG
+    <div className="min-h-screen bg-[#0f0f1a] text-white">
+      {/* ═══ HERO HEADER ═══ */}
+      <header className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1145] via-[#0f0f1a] to-[#0a192f]" />
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500 via-transparent to-transparent" />
+        
+        <div className="relative z-10 max-w-[1400px] mx-auto px-8 pt-8 pb-10">
+          {/* Back button */}
+          <button onClick={onClose} className="mb-6 inline-flex items-center gap-2 text-[12px] text-white/50 hover:text-white/80 transition font-medium cursor-pointer">
+            <ArrowLeft size={14} /> กลับหน้า Risk Management
+          </button>
+
+          <div className="flex items-start justify-between gap-8">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-[10px] font-bold tracking-widest text-purple-300 uppercase mb-4">
+                <Sparkles size={13} className="text-purple-400" />
+                AI-Powered Analysis • AWS Bedrock + RAG
+              </div>
+              <h1 className="text-[32px] font-extrabold leading-tight tracking-tight text-white">
+                {material?.name || targetMaterialId}
+              </h1>
+              <p className="mt-2 text-[14px] text-white/50 font-medium">
+                รหัส SAP: {material?.sapCode || targetMaterialId} • {material?.category || 'หม้อแปลงไฟฟ้า'}
+              </p>
             </div>
-            <h1 className="max-w-4xl text-[24px] font-bold leading-tight tracking-tight">
-              AI Strategy: {material?.name || targetMaterialId}
-            </h1>
-            <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-blue-100/80 font-medium">
-              วิเคราะห์โดย Amazon Nova Pro + PEA Knowledge Base • ข้อมูลสต็อก: <span className="text-white font-bold">{material?.currentStock?.toLocaleString() || '?'}</span> / Safety Stock: <span className="text-white font-bold">{material?.safetyStock?.toLocaleString() || '?'}</span> {material?.unit || 'เครื่อง'}
-            </p>
+
+            {/* Key Metrics */}
+            <div className="flex gap-4">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center min-w-[120px]">
+                <div className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">สต็อกเหลือ</div>
+                <div className={`text-[28px] font-black ${stockPercent < 30 ? 'text-red-400' : 'text-white'}`}>{daysOfStock}</div>
+                <div className="text-[11px] text-white/50 font-medium">วัน</div>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center min-w-[120px]">
+                <div className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Safety Stock</div>
+                <div className={`text-[28px] font-black ${stockPercent < 30 ? 'text-red-400' : 'text-amber-400'}`}>{stockPercent}%</div>
+                <div className="text-[11px] text-white/50 font-medium">ของเกณฑ์</div>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center min-w-[120px]">
+                <div className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">ราคาต่อหน่วย</div>
+                <div className="text-[22px] font-black text-white">{formatCurrency(material?.unitPrice || 0)}</div>
+                <div className="text-[11px] text-white/50 font-medium">Budget: {formatCurrency(material?.budgetPrice || 0)}</div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-end text-right">
-            <div className="text-[12px] text-blue-200 font-medium uppercase tracking-wider mb-1">ราคาต่อหน่วย</div>
-            <div className="text-[28px] font-black text-white">{formatCurrency(material?.unitPrice || 0)}</div>
-            <div className="text-[11px] text-blue-300 mt-1">งบประมาณทั้งปี: {formatCurrency((material?.annualDemand || 0) * (material?.unitPrice || 0))}</div>
+
+          {/* Live Data Bar */}
+          <div className="mt-6 flex flex-wrap gap-3 text-[11px]">
+            {[
+              { label: "สต็อก", value: `${material?.currentStock?.toLocaleString()} ${material?.unit}`, icon: "📦" },
+              { label: "Safety Stock", value: `${material?.safetyStock?.toLocaleString()} ${material?.unit}`, icon: "🔴" },
+              { label: "Demand/เดือน", value: `${material?.avgMonthlyDemand?.toLocaleString()} (σ=${material?.stdMonthlyDemand})`, icon: "📈" },
+              { label: "Lead Time", value: `${material?.leadTimeWeeks} สัปดาห์`, icon: "⏱️" },
+              { label: "EOQ", value: `${material?.eoq?.toLocaleString()} ${material?.unit}`, icon: "🎯" },
+              { label: "แผน 2569", value: `${material?.annualDemand?.toLocaleString()} ${material?.unit}`, icon: "📋" },
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2">
+                <span>{item.icon}</span>
+                <span className="text-white/40">{item.label}:</span>
+                <span className="font-bold text-white/90">{item.value}</span>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Main Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left Column: Price Trend & Strategy */}
-        <div className="space-y-6">
-          <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-[16px] font-bold text-slate-900">AI Price Benchmarking</h2>
-                <p className="text-[12px] text-slate-500 mt-1">วิเคราะห์พยากรณ์ราคาวัสดุเพื่อกำหนดจังหวะเปิดประมูล</p>
-                <div className="mt-2 text-[10px] text-slate-400 font-medium">
-                  <span className="font-semibold text-slate-500">แหล่งข้อมูล (Data Sources):</span> 1. ประวัติใบสั่งซื้อ PEA (SAP) 2. ดัชนีราคาโลหะโลก (LME) 3. ราคากลางกระทรวงพาณิชย์
-                </div>
-              </div>
-              <div className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700 flex items-center gap-1.5 border border-emerald-100">
-                <TrendingDown size={14} /> ราคาตลาดมีแนวโน้มลดลง
-              </div>
-            </div>
-            
-            <div className="h-[250px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={simulation.priceTrend} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} tickFormatter={(val) => `฿${(val/1000).toFixed(0)}k`} />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
-                    formatter={(value: any, name: any) => [
-                      formatCurrency(Number(value) || 0), 
-                      name === 'price' ? "ปีปัจจุบัน (Forecast)" : "ปีก่อนหน้า (Historical)"
-                    ]}
-                  />
-                  <ReferenceLine x="May" stroke="#cbd5e1" strokeDasharray="3 3" />
-                  <Line 
-                    type="monotone" 
-                    dataKey="lastYearPrice" 
-                    stroke="#94a3b8" 
-                    strokeWidth={2} 
-                    strokeDasharray="5 5"
-                    dot={false}
-                    activeDot={{ r: 4, strokeWidth: 0, fill: '#94a3b8' }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="price" 
-                    stroke="#4f46e5" 
-                    strokeWidth={3} 
-                    dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} 
-                    activeDot={{ r: 6, strokeWidth: 0, fill: '#4f46e5' }} 
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main className="max-w-[1400px] mx-auto px-8 py-8 space-y-8">
 
-            {/* Material Fact Sheet */}
-            <div className="mt-4 rounded-xl bg-slate-50 p-4 border border-slate-100">
-              <h3 className="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-3">📋 ข้อมูลจริงจากระบบ (Live Data)</h3>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12px]">
-                <div className="flex justify-between"><span className="text-slate-500">สต็อกปัจจุบัน:</span><span className="font-bold text-slate-900">{material?.currentStock?.toLocaleString() || '-'} {material?.unit}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Safety Stock:</span><span className="font-bold text-red-600">{material?.safetyStock?.toLocaleString() || '-'} {material?.unit}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Avg Demand/เดือน:</span><span className="font-bold text-slate-900">{material?.avgMonthlyDemand?.toLocaleString() || '-'}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Lead Time:</span><span className="font-bold text-slate-900">{material?.leadTimeWeeks || '-'} สัปดาห์</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">EOQ:</span><span className="font-bold text-slate-900">{material?.eoq?.toLocaleString() || '-'} {material?.unit}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">แผน 2569:</span><span className="font-bold text-slate-900">{material?.annualDemand?.toLocaleString() || '-'} {material?.unit}</span></div>
-              </div>
+        {/* Loading */}
+        {isAnalyzing && (
+          <div className="flex flex-col items-center justify-center py-24 space-y-6">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-full border-4 border-purple-900 border-t-purple-400 animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center"><Brain className="text-purple-400 animate-pulse" size={30} /></div>
             </div>
-          </section>
-        </div>
-
-        {/* Right Column: AI Real-time Analysis */}
-        <div className="space-y-6">
-          <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 flex flex-col">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
-                  <Sparkles className="text-purple-600" size={20} />
-                  AI Strategy Options (วิเคราะห์โดย Bedrock)
-                </h2>
-                <p className="text-[12px] text-slate-500 mt-1">ผลวิเคราะห์จาก Amazon Nova Pro + PEA Knowledge Base แบบ Real-time</p>
-              </div>
-              {!isAnalyzing && (
-                <button onClick={() => { hasCalledRef.current = false; callAI(); }} className="text-[11px] text-purple-600 font-semibold flex items-center gap-1 hover:underline cursor-pointer">
-                  <RefreshCw size={13} /> วิเคราะห์ใหม่
-                </button>
-              )}
+            <div className="text-center">
+              <div className="text-[18px] font-bold text-white">AI กำลังวิเคราะห์ข้อมูลจริง...</div>
+              <div className="text-[13px] text-white/50 mt-2">Amazon Nova Pro + PEA Knowledge Base (RAG)</div>
+              <div className="text-[12px] text-purple-400 mt-3 font-medium animate-pulse">ส่งข้อมูลสต็อก {material?.currentStock} {material?.unit}, Demand {material?.avgMonthlyDemand}/{material?.unit}/เดือน, Lead Time {material?.leadTimeWeeks} สัปดาห์...</div>
             </div>
+          </div>
+        )}
 
-            {/* Loading State */}
-            {isAnalyzing && (
-              <div className="flex-1 flex flex-col items-center justify-center py-16 space-y-4">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-full border-4 border-purple-100 border-t-purple-600 animate-spin" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Brain className="text-purple-600 animate-pulse" size={24} />
+        {/* Error */}
+        {error && (
+          <div className="flex flex-col items-center justify-center py-16 space-y-4">
+            <AlertTriangle className="text-amber-500" size={48} />
+            <div className="text-[15px] font-bold text-white">ไม่สามารถเชื่อมต่อ AI ได้</div>
+            <div className="text-[13px] text-white/50 max-w-md text-center">{error}</div>
+            <button onClick={() => { hasCalledRef.current = false; callAI(); }} className="mt-2 px-5 py-2.5 rounded-xl bg-purple-600 text-white text-[13px] font-bold cursor-pointer hover:bg-purple-700 transition">ลองอีกครั้ง</button>
+          </div>
+        )}
+
+        {/* ═══ AI RESULTS ═══ */}
+        {aiResult && !isAnalyzing && (
+          <>
+            {/* Row 1: Price Chart + 3 Analysis Cards */}
+            <div className="grid gap-6 lg:grid-cols-5">
+              {/* Price Chart — 3 cols */}
+              <div className="lg:col-span-3 rounded-2xl bg-white/[0.04] border border-white/10 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-[16px] font-bold text-white flex items-center gap-2"><BarChart3 size={18} className="text-blue-400" /> แนวโน้มราคาตลาด</h2>
+                    <p className="text-[11px] text-white/40 mt-1">แหล่งข้อมูล: ประวัติใบสั่งซื้อ PEA (SAP) • ดัชนีราคาโลหะโลก (LME) • ราคากลางกระทรวงพาณิชย์</p>
+                  </div>
+                  <div className="rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-400 flex items-center gap-1.5 border border-emerald-500/20">
+                    <TrendingDown size={13} /> ราคามีแนวโน้มลดลง
                   </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-[14px] font-bold text-slate-800">AI กำลังวิเคราะห์ข้อมูลจริง...</div>
-                  <div className="text-[12px] text-slate-500 mt-1">เรียกใช้ Amazon Nova Pro + Knowledge Base (RAG)</div>
-                  <div className="text-[11px] text-purple-600 mt-2 font-medium animate-pulse">กำลังส่งข้อมูลสต็อก, Demand, Lead Time, ราคาตลาด ไปให้ AI ประมวลผล...</div>
+                <div className="h-[240px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={simulation.priceTrend} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.4)' }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.4)' }} tickFormatter={(val) => `฿${(val/1000).toFixed(0)}k`} />
+                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', background: '#1e1b4b', color: '#fff' }} formatter={(value: any, name: any) => [formatCurrency(Number(value) || 0), name === 'price' ? "ปีปัจจุบัน" : "ปีก่อนหน้า"]} />
+                      <ReferenceLine x="May" stroke="rgba(255,255,255,0.15)" strokeDasharray="3 3" />
+                      <Line type="monotone" dataKey="lastYearPrice" stroke="rgba(255,255,255,0.2)" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                      <Line type="monotone" dataKey="price" stroke="#818cf8" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#1e1b4b' }} activeDot={{ r: 6, strokeWidth: 0, fill: '#818cf8' }} />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
+              </div>
+
+              {/* 3 Analysis Cards — 2 cols */}
+              <div className="lg:col-span-2 space-y-4">
+                <div className="rounded-2xl bg-blue-500/10 border border-blue-500/20 p-5">
+                  <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Target size={13} /> ทำไมต้องสั่ง? (Demand)</div>
+                  <p className="text-[13px] text-white/80 leading-relaxed font-medium">{aiResult.demandAnalysis}</p>
+                </div>
+                <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 p-5">
+                  <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5"><BarChart3 size={13} /> เปิดประมูลเมื่อไหร่? (Market)</div>
+                  <p className="text-[13px] text-white/80 leading-relaxed font-medium">{aiResult.marketAnalysis}</p>
+                </div>
+                <div className="rounded-2xl bg-red-500/10 border border-red-500/20 p-5">
+                  <div className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Zap size={13} /> ต้องเริ่มสั่งเมื่อไหร่? (Supplier)</div>
+                  <p className="text-[13px] text-white/80 leading-relaxed font-medium">{aiResult.supplierAnalysis}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Executive Summary */}
+            {aiResult.executiveSummary && (
+              <div className="rounded-2xl bg-purple-500/10 border border-purple-500/20 p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Brain size={18} className="text-purple-400" />
+                  <span className="text-[13px] font-bold text-purple-300 uppercase tracking-wider">สรุปสำหรับผู้บริหาร (Executive Summary)</span>
+                </div>
+                <p className="text-[15px] leading-relaxed font-semibold text-white/90">{aiResult.executiveSummary}</p>
               </div>
             )}
 
-            {/* Error State */}
-            {error && (
-              <div className="flex-1 flex flex-col items-center justify-center py-12 space-y-4">
-                <AlertTriangle className="text-amber-500" size={40} />
-                <div className="text-center">
-                  <div className="text-[14px] font-bold text-slate-800">ไม่สามารถเชื่อมต่อ AI ได้</div>
-                  <div className="text-[12px] text-slate-500 mt-1 max-w-sm">{error}</div>
-                  <button onClick={() => { hasCalledRef.current = false; callAI(); }} className="mt-4 px-4 py-2 rounded-xl bg-purple-600 text-white text-[12px] font-bold cursor-pointer hover:bg-purple-700 transition">
-                    ลองอีกครั้ง
+            {/* Row 2: Two Plans Side by Side */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Plan A */}
+              <div className="rounded-2xl border-2 border-emerald-500/50 bg-emerald-500/5 p-6 relative overflow-hidden hover:border-emerald-400 transition-all">
+                <div className="absolute top-0 right-0 bg-emerald-500 text-white px-4 py-1.5 text-[10px] font-bold rounded-bl-2xl flex items-center gap-1.5">
+                  <CheckCircle2 size={12} /> AI แนะนำ
+                </div>
+                <h3 className="text-[18px] font-bold text-emerald-300 mb-2">Plan A: {aiResult.planA.title}</h3>
+                
+                <div className="space-y-4 mt-4">
+                  <div>
+                    <div className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-wider mb-1">📋 ขั้นตอนปฏิบัติงาน</div>
+                    <p className="text-[13px] text-white/80 leading-relaxed">{aiResult.planA.action}</p>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-blue-400/70 uppercase tracking-wider mb-1">💰 ผลกระทบทางการเงิน</div>
+                    <p className="text-[13px] text-white/80 leading-relaxed">{aiResult.planA.financial}</p>
+                  </div>
+                  <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3">
+                    <div className="text-[10px] font-bold text-amber-400/70 uppercase tracking-wider mb-1 flex items-center gap-1"><AlertTriangle size={11} /> ความเสี่ยง & วิธีรับมือ</div>
+                    <p className="text-[12px] text-amber-200/80 leading-relaxed">{aiResult.planA.risk}</p>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-emerald-500/20 flex items-center justify-between">
+                  <div className="text-[12px] text-emerald-300/70 font-medium">จำนวน: {aiResult.planA.qty.toLocaleString()} {material?.unit} • {formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))}</div>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.action, qty: aiResult.planA.qty, risk: aiResult.planA.risk, financial: aiResult.planA.financial, unitPrice: material?.unitPrice || 0 } }));
+                      if (onClose) onClose();
+                      setTimeout(() => setActiveTab?.("activity"), 300);
+                    }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 text-[13px] font-bold text-white hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20 cursor-pointer"
+                  >
+                    <CheckCircle2 size={16} /> เลือกแผนนี้ → วางแผนจัดซื้อ
                   </button>
                 </div>
               </div>
-            )}
 
-            {/* AI Result */}
-            {aiResult && !isAnalyzing && (
-              <>
-                {/* Data Points from AI */}
-                <div className="mb-5 grid grid-cols-3 gap-3">
-                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                    <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-1">📈 Demand Analysis</div>
-                    <div className="text-[11px] font-semibold text-slate-700 leading-relaxed">{aiResult.demandAnalysis}</div>
+              {/* Plan B */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 relative overflow-hidden hover:border-white/20 transition-all">
+                <h3 className="text-[18px] font-bold text-white/80 mb-2">Plan B: {aiResult.planB.title}</h3>
+                
+                <div className="space-y-4 mt-4">
+                  <div>
+                    <div className="text-[10px] font-bold text-white/30 uppercase tracking-wider mb-1">📋 ขั้นตอนปฏิบัติงาน</div>
+                    <p className="text-[13px] text-white/60 leading-relaxed">{aiResult.planB.action}</p>
                   </div>
-                  <div className="bg-amber-50 p-3 rounded-xl border border-amber-100">
-                    <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">💰 Market Analysis</div>
-                    <div className="text-[11px] font-semibold text-slate-700 leading-relaxed">{aiResult.marketAnalysis}</div>
+                  <div>
+                    <div className="text-[10px] font-bold text-white/30 uppercase tracking-wider mb-1">💰 ผลกระทบทางการเงิน</div>
+                    <p className="text-[13px] text-white/60 leading-relaxed">{aiResult.planB.financial}</p>
                   </div>
-                  <div className="bg-red-50 p-3 rounded-xl border border-red-100">
-                    <div className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">🏭 Supplier Analysis</div>
-                    <div className="text-[11px] font-semibold text-slate-700 leading-relaxed">{aiResult.supplierAnalysis}</div>
+                  <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-3">
+                    <div className="text-[10px] font-bold text-red-400/70 uppercase tracking-wider mb-1 flex items-center gap-1"><ShieldAlert size={11} /> ความเสี่ยง & วิธีรับมือ</div>
+                    <p className="text-[12px] text-red-200/70 leading-relaxed">{aiResult.planB.risk}</p>
                   </div>
                 </div>
 
-                {/* Executive Summary */}
-                {aiResult.executiveSummary && (
-                  <div className="mb-5 rounded-xl bg-purple-50 p-4 border border-purple-100">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <Brain size={14} className="text-purple-600" />
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">🧠 Executive Summary</span>
-                    </div>
-                    <p className="text-[12px] leading-relaxed font-semibold text-purple-800">{aiResult.executiveSummary}</p>
-                  </div>
-                )}
-
-                {/* Plan A */}
-                <div className="mb-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/30 p-5 relative overflow-hidden transition-all hover:shadow-lg hover:shadow-emerald-500/10">
-                  <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl flex items-center gap-1">
-                    <CheckCircle2 size={12} /> AI Recommended
-                  </div>
-                  <h3 className="text-[15px] font-bold text-emerald-900 mb-1">Plan A: {aiResult.planA.title}</h3>
-                  
-                  <div className="space-y-3 mt-3">
-                    <div className="flex gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {aiResult.planA.action}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
-                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {aiResult.planA.financial}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={12} />
-                      <div className="text-[12px] text-slate-700"><span className="font-bold text-amber-600">Risk:</span> {aiResult.planA.risk}</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 border-t border-emerald-200/50 pt-4 flex items-center justify-between">
-                    <div className="text-[11px] text-emerald-700 font-medium">จำนวน: {aiResult.planA.qty.toLocaleString()} {material?.unit || 'เครื่อง'} • มูลค่าประมาณ {formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))}</div>
-                    <button 
-                      onClick={() => {
-                        window.dispatchEvent(new CustomEvent("approve-plan", { 
-                          detail: { 
-                            materialId: targetMaterialId, 
-                            materialName: material?.name || targetMaterialId,
-                            planName: `Plan A: ${aiResult.planA.title}`,
-                            action: aiResult.planA.action,
-                            qty: aiResult.planA.qty,
-                            risk: aiResult.planA.risk,
-                            financial: aiResult.planA.financial,
-                            unitPrice: material?.unitPrice || 0
-                          } 
-                        }));
-                        if (onClose) onClose();
-                        setTimeout(() => setActiveTab?.("activity"), 300);
-                      }}
-                      className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
-                    >
-                      <CheckCircle2 size={16} /> เลือกแผนนี้ → เข้าสู่การวางแผนจัดซื้อ
-                    </button>
-                  </div>
+                <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                  <div className="text-[12px] text-white/40 font-medium">จำนวน: {aiResult.planB.qty.toLocaleString()} {material?.unit} • {formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))}</div>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.action, qty: aiResult.planB.qty, risk: aiResult.planB.risk, financial: aiResult.planB.financial, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
+                      if (onClose) onClose();
+                      setTimeout(() => setActiveTab?.("activity"), 300);
+                    }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 px-5 py-3 text-[13px] font-bold text-white/80 hover:bg-white/20 transition-colors cursor-pointer"
+                  >
+                    <AlertTriangle size={16} className="text-amber-400" /> เลือก Plan B
+                  </button>
                 </div>
-
-                {/* Plan B */}
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 relative overflow-hidden transition-all hover:border-amber-300 hover:shadow-md">
-                  <h3 className="text-[15px] font-bold text-slate-800 mb-1">Plan B: {aiResult.planB.title}</h3>
-                  
-                  <div className="space-y-3 mt-3">
-                    <div className="flex gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {aiResult.planB.action}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {aiResult.planB.financial}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <ShieldAlert className="text-red-500 shrink-0 mt-0.5" size={12} />
-                      <div className="text-[12px] text-slate-700"><span className="font-bold text-red-600">Risk:</span> {aiResult.planB.risk}</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 border-t border-slate-200 pt-4 flex items-center justify-between">
-                    <div className="text-[11px] text-slate-500 font-medium">จำนวน: {aiResult.planB.qty.toLocaleString()} {material?.unit || 'เครื่อง'} • มูลค่าประมาณ {formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))}</div>
-                    <button 
-                      onClick={() => {
-                        window.dispatchEvent(new CustomEvent("approve-plan", { 
-                          detail: { 
-                            materialId: targetMaterialId, 
-                            materialName: material?.name || targetMaterialId,
-                            planName: `Plan B: ${aiResult.planB.title}`,
-                            action: aiResult.planB.action,
-                            qty: aiResult.planB.qty,
-                            risk: aiResult.planB.risk,
-                            financial: aiResult.planB.financial,
-                            unitPrice: (material?.unitPrice || 150000) * 1.15
-                          } 
-                        }));
-                        if (onClose) onClose();
-                        setTimeout(() => setActiveTab?.("activity"), 300);
-                      }}
-                      className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-300 px-5 py-2.5 text-[12px] font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                    >
-                      <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B → เข้าสู่การวางแผนจัดซื้อ
-                    </button>
-                  </div>
-                </div>
-
-                {/* Raw AI Response (collapsible) */}
-                {aiResult.raw && (
-                  <details className="mt-4 rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
-                    <summary className="px-4 py-3 text-[11px] font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition flex items-center gap-2">
-                      <Brain size={14} className="text-purple-500" /> ดู Raw AI Response (จาก Amazon Nova Pro)
-                    </summary>
-                    <div className="px-4 pb-4 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto font-mono">
-                      {aiResult.raw}
-                    </div>
-                  </details>
-                )}
-              </>
-            )}
-          </section>
-
-          {/* Trust Section */}
-          <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
-            <h3 className="text-lg font-bold flex items-center gap-2 mb-4">
-              <ShieldAlert className="text-emerald-400" size={20} />
-              Enterprise AI Trust & Compliance
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                <div className="text-blue-400 font-bold mb-2 flex items-center gap-2">
-                  <Brain size={16} /> 1. AWS Enterprise AI
-                </div>
-                <p className="text-[12px] text-slate-300 leading-relaxed">
-                  วิเคราะห์โดย <strong>Amazon Nova Pro</strong> + <strong>AWS Bedrock Knowledge Base (RAG)</strong> เชื่อมต่อ พ.ร.บ. จัดซื้อจัดจ้างฯ PEA 100%
-                </p>
-              </div>
-              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                <div className="text-emerald-400 font-bold mb-2 flex items-center gap-2">
-                  <TrendingUp size={16} /> 2. Live Data Analysis
-                </div>
-                <p className="text-[12px] text-slate-300 leading-relaxed">
-                  ข้อมูลสต็อก, Demand, Lead Time, ราคาตลาด ถูกส่งให้ AI วิเคราะห์แบบ <strong>Real-time</strong> ทุกครั้งที่กดปุ่ม ไม่ใช่ข้อมูล Mock
-                </p>
-              </div>
-              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                <div className="text-amber-400 font-bold mb-2 flex items-center gap-2">
-                  <CheckCircle2 size={16} /> 3. Human-in-the-Loop
-                </div>
-                <p className="text-[12px] text-slate-300 leading-relaxed">
-                  AI เป็นเพียง <strong>"เสนาธิการ"</strong> เสนอทางเลือก ให้ <strong>คณะกรรมการจัดซื้อ (มนุษย์)</strong> เป็นผู้ตัดสินใจขั้นสุดท้ายเสมอ
-                </p>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+
+            {/* Raw AI Response */}
+            {aiResult.raw && (
+              <details className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+                <summary className="px-6 py-4 text-[12px] font-bold text-white/40 cursor-pointer hover:bg-white/[0.03] transition flex items-center gap-2">
+                  <Brain size={14} className="text-purple-400" /> ดู Raw AI Response จาก Amazon Nova Pro
+                  {!isAnalyzing && (
+                    <button onClick={(e) => { e.preventDefault(); hasCalledRef.current = false; callAI(); }} className="ml-auto text-purple-400 hover:text-purple-300 flex items-center gap-1 text-[11px]">
+                      <RefreshCw size={12} /> วิเคราะห์ใหม่
+                    </button>
+                  )}
+                </summary>
+                <div className="px-6 pb-6 text-[11px] text-white/50 whitespace-pre-wrap leading-relaxed max-h-[400px] overflow-y-auto font-mono">{aiResult.raw}</div>
+              </details>
+            )}
+          </>
+        )}
+      </main>
     </div>
   );
 }

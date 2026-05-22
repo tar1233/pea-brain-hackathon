@@ -251,16 +251,16 @@ export default function Home() {
         <AICopilot />
       </div>
 
-      {/* EBidding AI Action Plan Modal */}
+      {/* EBidding AI Action Plan Modal — Full Screen */}
       {analyzingMaterialId && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 md:p-8">
-          <div className="w-full max-w-7xl max-h-full overflow-y-auto rounded-[32px] bg-white shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-            <button 
-              onClick={() => setAnalyzingMaterialId(null)}
-              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white transition z-50 cursor-pointer backdrop-blur-md border border-white/30 shadow-lg"
-            >
-              <X size={20} />
-            </button>
+        <div className="fixed inset-0 z-[90] bg-[#0f0f1a] overflow-y-auto">
+          <button 
+            onClick={() => setAnalyzingMaterialId(null)}
+            className="fixed top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition z-50 cursor-pointer backdrop-blur-md border border-white/20 shadow-lg"
+          >
+            <X size={22} />
+          </button>
+          <div className="min-h-screen">
             <EBiddingView targetMaterialId={analyzingMaterialId} setActiveTab={setActiveTab} onClose={() => setAnalyzingMaterialId(null)} />
           </div>
         </div>
