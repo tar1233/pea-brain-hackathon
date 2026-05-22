@@ -14,7 +14,67 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
 
   if (!eBiddingData) return null;
 
-  const { targetMaterial, totalRequirement, simulation } = eBiddingData;
+  const { totalRequirement, simulation } = eBiddingData;
+
+  // Dynamic AI Scenario mapping
+  const getScenarioData = (id: string) => {
+    switch(id) {
+      case "10066":
+        return {
+          title: `AI Strategy & Action Plan: สายไฟ THW 1x95 sq.mm. (${id})`,
+          demandData: "ยอดเบิกจ่ายพุ่ง +20% จากโครงการขยายเขต",
+          marketData: "ราคาทองแดงผันผวนสูง (High Volatility)",
+          supplierData: "ความเสี่ยงการส่งมอบ 45% (Liquidity Risk)",
+          planA_Title: "Strategic Sourcing (จัดหาแบบกระจายความเสี่ยง)",
+          planA_Action: "แบ่งสัญญาจัดซื้อเป็น 2 ส่วน (Split Award) เพื่อลดความเสี่ยงผูกขาด 50%",
+          planA_Financial: "ป้องกันความเสี่ยงของขาด 100% แต่ราคาเฉลี่ยอาจเพิ่ม 2%",
+          planA_Risk: "กระบวนการจัดซื้อซับซ้อนขึ้น ต้องจัดการ Supplier 2 ราย",
+          planA_Qty: 200,
+          planB_Title: "Hold & Wait (รอดูสถานการณ์ตลาด)",
+          planB_Action: "ชะลอการสั่งซื้อ และใช้สต๊อกเท่าที่มีไปก่อน",
+          planB_Financial: "ไม่เกิดค่าใช้จ่ายเพิ่ม ณ ตอนนี้",
+          planB_Risk: "มีความเสี่ยงของขาดคลัง 80% หากโครงการขยายเขตเร่งตัว",
+          planB_Qty: 0
+        };
+      case "20045":
+        return {
+          title: `AI Strategy & Action Plan: มิเตอร์ 15(45)A (${id})`,
+          demandData: "ความต้องการใช้คงที่ (Stable Demand)",
+          marketData: "ราคาตลาดมีแนวโน้มทรงตัวตลอดปี",
+          supplierData: "ไม่มีความเสี่ยงด้านการส่งมอบ (Reliability 98%)",
+          planA_Title: "Long-term Contract (ล็อกราคาและปริมาณ)",
+          planA_Action: "เซ็นสัญญาระยะยาว 2 ปีกับ Supplier ปัจจุบันแบบลดหลั่นราคาตามโวลุ่ม",
+          planA_Financial: "ล็อกราคาปัจจุบันได้ ประหยัดงบได้ 1.5% ต่อปี",
+          planA_Risk: "เสียโอกาสหากราคาตลาดตกลงอย่างฉับพลัน",
+          planA_Qty: 5000,
+          planB_Title: "Spot Purchase (ซื้อรายครั้ง)",
+          planB_Action: "จัดซื้อเป็นล็อตเล็กๆ ทุก 3 เดือน (Just-in-Time)",
+          planB_Financial: "ลดต้นทุนจมจากการเก็บสต๊อก (Holding Cost)",
+          planB_Risk: "ต้นทุนการจัดการสูงขึ้น (Ordering Cost) เสียเวลาทำเอกสารบ่อย",
+          planB_Qty: 1200
+        };
+      case "10067":
+      default:
+        return {
+          title: `AI Strategy & Action Plan: หม้อแปลง 160 kVA 3Ph (${id})`,
+          demandData: "แนวโน้มเบิกจ่ายพุ่ง +15% จากพายุฤดูฝน",
+          marketData: "ราคา LME ตลาดโลกลดลง 5% ใน Q4",
+          supplierData: "ประวัติ Supplier A มีความเสี่ยงส่งมอบช้า",
+          planA_Title: "Cost Optimization Strategy",
+          planA_Action: "โอนย้ายสต๊อกคงเหลือจากคลังภาคกลางมาช่วยแก้ขัด 150 เครื่อง และเปิด e-Bidding ใหม่ใน Q4 แทน",
+          planA_Financial: "ประหยัดงบจัดซื้อได้ประมาณ 3-5% (ลดความสูญเปล่า)",
+          planA_Risk: "คลังภาคกลางจะมี Stock ลดลงชั่วคราวเป็นเวลา 2 สัปดาห์ (AI ควบคุมและจัดการได้)",
+          planA_Qty: 150,
+          planB_Title: "Emergency Direct Purchase",
+          planB_Action: "ใช้วิธี \"จัดซื้อพิเศษ (Direct Purchase)\" ฉุกเฉินกับ Supplier สำรอง 300 เครื่องทันที",
+          planB_Financial: "ต้องใช้งบประมาณเพิ่มขึ้นประมาณ 15% จากราคากลางเนื่องจากความเร่งด่วน",
+          planB_Risk: "อาจถูก สตง. เพ่งเล็งเรื่องความโปร่งใส และต้นทุนสูงเกินความจำเป็น",
+          planB_Qty: 300
+        };
+    }
+  };
+
+  const scenario = getScenarioData(targetMaterialId);
 
   const renderTimelineIcon = (id: number) => {
     return <CheckCircle2 className="text-emerald-500" size={24} />;
@@ -32,7 +92,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
               e-Bidding AI Optimizer
             </div>
             <h1 className="max-w-4xl text-[24px] font-bold leading-tight tracking-tight">
-              AI Strategy & Action Plan: {targetMaterialId}
+              {scenario.title}
             </h1>
             <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-blue-100/80 font-medium">
               แผนยุทธศาสตร์จัดซื้อฉบับสมบูรณ์ วิเคราะห์โดย Multi-Agent AI (Demand Forecasting, Price Trend Analysis, และ Supplier Risk Management) พร้อมให้คุณพิจารณาอนุมัติ
@@ -123,15 +183,15 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
             <div className="mb-6 grid grid-cols-3 gap-3">
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Demand Data</div>
-                <div className="text-[12px] font-semibold text-slate-700">แนวโน้มเบิกจ่ายพุ่ง +15% จากพายุฤดูฝน</div>
+                <div className="text-[12px] font-semibold text-slate-700">{scenario.demandData}</div>
               </div>
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Market Data</div>
-                <div className="text-[12px] font-semibold text-slate-700">ราคา LME ตลาดโลกลดลง 5% ใน Q4</div>
+                <div className="text-[12px] font-semibold text-slate-700">{scenario.marketData}</div>
               </div>
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Supplier Data</div>
-                <div className="text-[12px] font-semibold text-slate-700">ประวัติ Supplier A มีความเสี่ยงส่งช้า</div>
+                <div className="text-[12px] font-semibold text-slate-700">{scenario.supplierData}</div>
               </div>
             </div>
 
@@ -140,21 +200,21 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
               <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl flex items-center gap-1">
                 <CheckCircle2 size={12} /> Highly Recommended
               </div>
-              <h3 className="text-[15px] font-bold text-emerald-900 mb-1">Plan A: Cost Optimization Strategy</h3>
-              <p className="text-[12px] text-emerald-700/80 font-medium mb-4">คุ้มค่าที่สุดระยะยาว • ชะลอการซื้อเพื่อรอราคาลง</p>
+              <h3 className="text-[15px] font-bold text-emerald-900 mb-1">Plan A: {scenario.planA_Title}</h3>
+              <p className="text-[12px] text-emerald-700/80 font-medium mb-4">กลยุทธ์ที่ AI แนะนำว่าคุ้มค่าที่สุดในระยะยาว</p>
               
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> โอนย้ายสต๊อกคงเหลือจากคลังภาคกลางมาช่วยแก้ขัด 150 เครื่อง และเปิด e-Bidding ใหม่ใน Q4 แทน</div>
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {scenario.planA_Action}</div>
                 </div>
                 <div className="flex gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> ประหยัดงบจัดซื้อได้ประมาณ 3-5% (ลดความสูญเปล่า)</div>
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {scenario.planA_Financial}</div>
                 </div>
                 <div className="flex gap-2">
                   <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={12} />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-amber-600">Risk:</span> คลังภาคกลางจะมี Stock ลดลงชั่วคราวเป็นเวลา 2 สัปดาห์ (AI ควบคุมและจัดการได้)</div>
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-amber-600">Risk:</span> {scenario.planA_Risk}</div>
                 </div>
               </div>
 
@@ -163,7 +223,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
                   onClick={() => {
                     const material = materials.find(m => m.id === targetMaterialId);
                     window.dispatchEvent(new CustomEvent("create-po", { 
-                      detail: { materialId: targetMaterialId, qty: 150, name: material?.name || targetMaterial, price: material?.unitPrice } 
+                      detail: { materialId: targetMaterialId, qty: scenario.planA_Qty, name: material?.name || scenario.title.split(": ")[1], price: material?.unitPrice } 
                     }));
                     if (onClose) onClose();
                     setTimeout(() => setActiveTab?.("activity"), 500);
@@ -177,21 +237,21 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
 
             {/* Plan B */}
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 relative overflow-hidden transition-all hover:border-amber-300 hover:shadow-md">
-              <h3 className="text-[15px] font-bold text-slate-800 mb-1">Plan B: Emergency Direct Purchase</h3>
-              <p className="text-[12px] text-slate-500 font-medium mb-4">แก้ปัญหาขาดแคลนไวที่สุด • จัดซื้อวิธีพิเศษเร่งด่วน</p>
+              <h3 className="text-[15px] font-bold text-slate-800 mb-1">Plan B: {scenario.planB_Title}</h3>
+              <p className="text-[12px] text-slate-500 font-medium mb-4">แผนสำรอง / ทางเลือกกรณีฉุกเฉิน</p>
               
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> ใช้วิธี "จัดซื้อพิเศษ (Direct Purchase)" ฉุกเฉินกับ Supplier สำรอง 300 เครื่องทันที</div>
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {scenario.planB_Action}</div>
                 </div>
                 <div className="flex gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> ต้องใช้งบประมาณเพิ่มขึ้นประมาณ 15% จากราคากลางเนื่องจากความเร่งด่วน</div>
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {scenario.planB_Financial}</div>
                 </div>
                 <div className="flex gap-2">
                   <ShieldAlert className="text-red-500 shrink-0 mt-0.5" size={12} />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-red-600">Risk:</span> อาจถูก สตง. เพ่งเล็งเรื่องความโปร่งใส และต้นทุนสูงเกินความจำเป็น</div>
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-red-600">Risk:</span> {scenario.planB_Risk}</div>
                 </div>
               </div>
 
@@ -200,7 +260,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
                   onClick={() => {
                     const material = materials.find(m => m.id === targetMaterialId);
                     window.dispatchEvent(new CustomEvent("create-po", { 
-                      detail: { materialId: targetMaterialId, qty: 300, name: material?.name || targetMaterial, price: (material?.unitPrice || 150000) * 1.15 } 
+                      detail: { materialId: targetMaterialId, qty: scenario.planB_Qty, name: material?.name || scenario.title.split(": ")[1], price: (material?.unitPrice || 150000) * 1.15 } 
                     }));
                     if (onClose) onClose();
                     setTimeout(() => setActiveTab?.("activity"), 500);
