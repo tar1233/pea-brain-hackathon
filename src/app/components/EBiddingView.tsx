@@ -1,12 +1,23 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap, Package } from "lucide-react";
+import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap, Package, Clock } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
 function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
+}
+
+interface PlanDetail {
+  title: string;
+  qty: number;
+  futureImpact: string;
+  supplyForecast: string;
+  costAnalysis: string;
+  riskScenarios: string;
+  mitigation: string;
+  problemResolved: string;
 }
 
 interface AIAnalysisResult {
@@ -15,8 +26,9 @@ interface AIAnalysisResult {
   supplierAnalysis: string;
   priceForecast: { threeMonth: string; oneYear: string; bestTimeToBuy: string };
   lotStrategy: { recommendation: string; totalQty: number; numLots: number; qtyPerLot: number; reason: string; savings: string };
-  planA: { title: string; action: string; financial: string; risk: string; qty: number };
-  planB: { title: string; action: string; financial: string; risk: string; qty: number };
+  lotSchedule: Array<{ lot: number; qty: number; orderMonth: string; receiveMonth: string; action: string }>;
+  planA: PlanDetail;
+  planB: PlanDetail;
   executiveSummary: string;
   raw?: string;
 }
@@ -77,18 +89,24 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
   "marketAnalysis": "วิเคราะห์จากราคา: ควรเปิดประกวดราคาช่วงไหน? ราคาตลาดเป็นอย่างไร? (อ้างอิงตัวเลข)",
   "supplierAnalysis": "วิเคราะห์ Supplier: มีความเสี่ยงอะไร? Lead Time นานแค่ไหน? ต้องเริ่มสั่งเมื่อไหร่จึงจะได้ของทัน? (อ้างอิงตัวเลข)",
   "planA": {
-    "title": "ชื่อแผน",
-    "action": "ขั้นตอนปฏิบัติงานจริง: สัปดาห์ที่ 1 ทำอะไร, สัปดาห์ที่ 2 ทำอะไร (ระบุ timeline ชัดเจน)",
-    "financial": "ผลกระทบทางการเงิน: ต้นทุนเท่าไหร่ ประหยัดเท่าไหร่ (ระบุจำนวนเงินจริงจากข้อมูล)",
-    "risk": "ความเสี่ยงของแผนนี้คืออะไร + วิธีรับมือเมื่อเกิดขึ้น",
-    "qty": ตัวเลขจำนวนสั่งซื้อ
+    "title": "ชื่อแผน (สั้นกระชับ)",
+    "qty": ตัวเลขจำนวนสั่งซื้อ,
+    "futureImpact": "ถ้าเลือกแผนนี้ อนาคตจะเป็นยังไง? สต็อกจะเพียงพออีกกี่เดือน? ความต้องการทั้งปีจะถูกตอบสนองไหม? (อ้างอิงตัวเลข คำนวณ Demand เทียบกับจำนวนที่สั่ง)",
+    "supplyForecast": "สั่งแล้วสต็อกจะอยู่ได้อีกกี่เดือน? ต้องสั่งเพิ่มอีกไหม? ถ้าต้องสั่งอีกควรสั่งเมื่อไหร่? ปัญหาขาดแคลนจบหรือไม่? (คำนวณจาก Demand/เดือน เทียบกับจำนวนที่สั่ง)",
+    "costAnalysis": "ต้นทุนรวมเท่าไหร่? เทียบกับราคากลางแล้วประหยัดกี่%? ถ้าราคาขึ้นอีกจะกระทบงบยังไง? คุ้มค่าไหมเทียบกับการไม่ทำอะไรเลย?",
+    "riskScenarios": "สถานการณ์เลวร้ายที่อาจเกิดขึ้น 2-3 สถานการณ์: เช่น Demand พุ่งสูงกว่าคาด, ราคาขึ้น, Supplier ส่งของช้า — แต่ละสถานการณ์จะเกิดอะไรขึ้น?",
+    "mitigation": "ถ้าเกิดความเสี่ยง ต้องรับมือยังไง? ต้องสั่งเพิ่มอีกไหม? ระบุขั้นตอนชัดเจน",
+    "problemResolved": "ปัญหาจบหรือไม่? สต็อกจะกลับมาอยู่เหนือ Safety Stock ไหม? ถ้ายังไม่จบ ต้องทำอะไรต่อ? (ตอบชัดเจน)"
   },
   "planB": {
     "title": "ชื่อแผนสำรอง",
-    "action": "ขั้นตอนปฏิบัติงานจริง (ระบุ timeline ชัดเจน)",
-    "financial": "ผลกระทบทางการเงิน (ระบุจำนวนเงินจริง)",
-    "risk": "ความเสี่ยงของแผนนี้ + วิธีรับมือ",
-    "qty": ตัวเลขจำนวนสั่งซื้อ
+    "qty": ตัวเลขจำนวนสั่งซื้อ,
+    "futureImpact": "ถ้าเลือกแผนสำรองนี้ อนาคตจะเป็นยังไง?",
+    "supplyForecast": "สต็อกอยู่ได้อีกกี่เดือน? ต้องสั่งอีกไหม?",
+    "costAnalysis": "ต้นทุนรวม? คุ้มค่าไหม?",
+    "riskScenarios": "สถานการณ์เลวร้ายที่อาจเกิดขึ้น",
+    "mitigation": "วิธีรับมือเมื่อเกิดปัญหา",
+    "problemResolved": "ปัญหาจบหรือไม่? ต้องทำอะไรต่อ?"
   },
   "priceForecast": {
     "threeMonth": "คาดการณ์ราคาอีก 3 เดือนข้างหน้า: ขึ้นหรือลง กี่%? เพราะอะไร? (อ้างอิงจากราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString() || '?'})",
@@ -103,6 +121,10 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
     "reason": "เหตุผลเชิงลึกว่าทำไมถึงคุ้มค่าที่สุด (ด้านต้นทุน, คลัง, ความเสี่ยง)",
     "savings": "ประหยัดได้เท่าไหร่เมื่อเทียบกับการสั่งทีเดียว (ระบุจำนวนเงิน)"
   },
+  "lotSchedule": [
+    { "lot": 1, "qty": จำนวนต่อ Lot, "orderMonth": "เดือนที่ต้องเริ่มกระบวนการจัดซื้อ (คำนวณจาก Lead Time ${mat?.leadTimeWeeks} สัปดาห์)", "receiveMonth": "เดือนที่คาดว่าจะได้รับของ", "action": "สิ่งที่ต้องทำในรอบนี้" },
+    { "lot": 2, "qty": จำนวน, "orderMonth": "เดือน", "receiveMonth": "เดือน", "action": "สิ่งที่ต้องทำ" }
+  ],
   "executiveSummary": "สรุปสำหรับผู้บริหาร: ทำไมต้องทำ เมื่อไหร่ต้องทำ ถ้าไม่ทำจะเกิดอะไรขึ้น (2-3 ประโยค อ้างอิงตัวเลข)"
 }
 
@@ -134,8 +156,9 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           supplierAnalysis: parsed.supplierAnalysis || "ไม่สามารถวิเคราะห์ได้",
           priceForecast: parsed.priceForecast || { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: parsed.lotStrategy || { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
-          planA: parsed.planA || { title: "Plan A", action: "-", financial: "-", risk: "-", qty: 0 },
-          planB: parsed.planB || { title: "Plan B", action: "-", financial: "-", risk: "-", qty: 0 },
+          lotSchedule: parsed.lotSchedule || [],
+          planA: parsed.planA || { title: "Plan A", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+          planB: parsed.planB || { title: "Plan B", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
           executiveSummary: parsed.executiveSummary || "",
           raw: content,
         });
@@ -146,8 +169,9 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           supplierAnalysis: "กรุณาดู Raw AI Response ด้านล่าง",
           priceForecast: { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
-          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", action: content.substring(0, 300), financial: "-", risk: "-", qty: mat?.eoq || 0 },
-          planB: { title: "ทางเลือกสำรอง", action: "กรุณาอ่านคำแนะนำ AI", financial: "-", risk: "-", qty: 0 },
+          lotSchedule: [],
+          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: content.substring(0, 300), riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+          planB: { title: "ทางเลือกสำรอง", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
           executiveSummary: "",
           raw: content,
         });
@@ -360,6 +384,48 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
               </div>
             )}
 
+            {/* Lot Schedule Timeline */}
+            {aiResult.lotSchedule && aiResult.lotSchedule.length > 0 && (
+              <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 mb-4">
+                  <Clock size={18} className="text-indigo-500" /> แผนกำหนดการสั่งซื้อ (Procurement Schedule)
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[12px]">
+                    <thead>
+                      <tr className="border-b border-slate-200">
+                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">Lot</th>
+                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">จำนวน</th>
+                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">เริ่มจัดซื้อ</th>
+                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">คาดว่าได้ของ</th>
+                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">สิ่งที่ต้องทำ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {aiResult.lotSchedule.map((s, i) => (
+                        <tr key={i} className={`border-b border-slate-100 ${i === 0 ? 'bg-indigo-50/50' : ''}`}>
+                          <td className="py-3 px-3">
+                            <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-bold ${i === 0 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                              {s.lot}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 font-bold text-slate-800">{s.qty?.toLocaleString()} {material?.unit}</td>
+                          <td className="py-3 px-3">
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold ${i === 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+                              {i === 0 && <AlertTriangle size={10} />}
+                              {s.orderMonth}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 text-slate-600">{s.receiveMonth}</td>
+                          <td className="py-3 px-3 text-slate-600 max-w-[300px]">{s.action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
             {/* Executive Summary */}
             {aiResult.executiveSummary && (
               <div className="rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border border-purple-100">
@@ -379,27 +445,39 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
                   <CheckCircle2 size={12} /> AI แนะนำ
                 </div>
                 <h3 className="text-[18px] font-bold text-emerald-800 mb-1">Plan A: {aiResult.planA.title}</h3>
+                <div className="text-[11px] text-slate-400 mb-4">จำนวน: {aiResult.planA.qty.toLocaleString()} {material?.unit} • {formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))}</div>
                 
-                <div className="space-y-4 mt-4">
-                  <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">📋 ขั้นตอนปฏิบัติงาน</div>
-                    <p className="text-[13px] text-slate-700 leading-relaxed">{aiResult.planA.action}</p>
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-3">
+                    <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider mb-1">🔮 ถ้าเลือกแผนนี้ อนาคตจะเป็นยังไง?</div>
+                    <p className="text-[12px] text-slate-700 leading-relaxed">{aiResult.planA.futureImpact}</p>
                   </div>
-                  <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">💰 ผลกระทบทางการเงิน</div>
-                    <p className="text-[13px] text-slate-700 leading-relaxed">{aiResult.planA.financial}</p>
+                  <div className="rounded-xl bg-blue-50 border border-blue-100 p-3">
+                    <div className="text-[10px] font-bold text-blue-700 uppercase tracking-wider mb-1">📦 สต็อกอยู่ได้อีกกี่เดือน? ต้องสั่งเพิ่มอีกไหม?</div>
+                    <p className="text-[12px] text-slate-700 leading-relaxed">{aiResult.planA.supplyForecast}</p>
+                  </div>
+                  <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-3">
+                    <div className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider mb-1">💰 วิเคราะห์ต้นทุน & ความคุ้มค่า</div>
+                    <p className="text-[12px] text-slate-700 leading-relaxed">{aiResult.planA.costAnalysis}</p>
                   </div>
                   <div className="rounded-xl bg-amber-50 border border-amber-200 p-3">
-                    <div className="text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-1 flex items-center gap-1"><AlertTriangle size={11} /> ความเสี่ยง & วิธีรับมือ</div>
-                    <p className="text-[12px] text-amber-800 leading-relaxed">{aiResult.planA.risk}</p>
+                    <div className="text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-1 flex items-center gap-1"><AlertTriangle size={11} /> สถานการณ์เลวร้ายที่อาจเกิด</div>
+                    <p className="text-[12px] text-amber-900 leading-relaxed">{aiResult.planA.riskScenarios}</p>
+                  </div>
+                  <div className="rounded-xl bg-purple-50 border border-purple-100 p-3">
+                    <div className="text-[10px] font-bold text-purple-700 uppercase tracking-wider mb-1">🛡️ วิธีรับมือเมื่อเกิดความเสี่ยง</div>
+                    <p className="text-[12px] text-slate-700 leading-relaxed">{aiResult.planA.mitigation}</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-100 border border-slate-200 p-3">
+                    <div className="text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1">✅ ปัญหาจบไหม? ต้องทำอะไรต่อ?</div>
+                    <p className="text-[12px] text-slate-800 leading-relaxed font-semibold">{aiResult.planA.problemResolved}</p>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <div className="text-[12px] text-slate-500 font-medium">จำนวน: {aiResult.planA.qty.toLocaleString()} {material?.unit} • {formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))}</div>
+                <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end">
                   <button 
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.action, qty: aiResult.planA.qty, risk: aiResult.planA.risk, financial: aiResult.planA.financial, unitPrice: material?.unitPrice || 0 } }));
+                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.futureImpact, qty: aiResult.planA.qty, risk: aiResult.planA.riskScenarios, financial: aiResult.planA.costAnalysis, unitPrice: material?.unitPrice || 0 } }));
                       if (onClose) onClose();
                       setTimeout(() => setActiveTab?.("activity"), 300);
                     }}
@@ -413,27 +491,39 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
               {/* Plan B */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 relative overflow-hidden shadow-sm hover:shadow-md hover:border-slate-300 transition-all">
                 <h3 className="text-[18px] font-bold text-slate-700 mb-1">Plan B: {aiResult.planB.title}</h3>
+                <div className="text-[11px] text-slate-400 mb-4">จำนวน: {aiResult.planB.qty.toLocaleString()} {material?.unit} • {formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))}</div>
                 
-                <div className="space-y-4 mt-4">
-                  <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">📋 ขั้นตอนปฏิบัติงาน</div>
-                    <p className="text-[13px] text-slate-600 leading-relaxed">{aiResult.planB.action}</p>
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">🔮 ถ้าเลือกแผนนี้ อนาคตจะเป็นยังไง?</div>
+                    <p className="text-[12px] text-slate-600 leading-relaxed">{aiResult.planB.futureImpact}</p>
                   </div>
-                  <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">💰 ผลกระทบทางการเงิน</div>
-                    <p className="text-[13px] text-slate-600 leading-relaxed">{aiResult.planB.financial}</p>
+                  <div className="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">📦 สต็อกอยู่ได้อีกกี่เดือน? ต้องสั่งเพิ่มอีกไหม?</div>
+                    <p className="text-[12px] text-slate-600 leading-relaxed">{aiResult.planB.supplyForecast}</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">💰 วิเคราะห์ต้นทุน & ความคุ้มค่า</div>
+                    <p className="text-[12px] text-slate-600 leading-relaxed">{aiResult.planB.costAnalysis}</p>
                   </div>
                   <div className="rounded-xl bg-red-50 border border-red-200 p-3">
-                    <div className="text-[10px] font-bold text-red-700 uppercase tracking-wider mb-1 flex items-center gap-1"><ShieldAlert size={11} /> ความเสี่ยง & วิธีรับมือ</div>
-                    <p className="text-[12px] text-red-800 leading-relaxed">{aiResult.planB.risk}</p>
+                    <div className="text-[10px] font-bold text-red-700 uppercase tracking-wider mb-1 flex items-center gap-1"><ShieldAlert size={11} /> สถานการณ์เลวร้ายที่อาจเกิด</div>
+                    <p className="text-[12px] text-red-900 leading-relaxed">{aiResult.planB.riskScenarios}</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">🛡️ วิธีรับมือเมื่อเกิดความเสี่ยง</div>
+                    <p className="text-[12px] text-slate-600 leading-relaxed">{aiResult.planB.mitigation}</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-100 border border-slate-200 p-3">
+                    <div className="text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">✅ ปัญหาจบไหม? ต้องทำอะไรต่อ?</div>
+                    <p className="text-[12px] text-slate-700 leading-relaxed font-semibold">{aiResult.planB.problemResolved}</p>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <div className="text-[12px] text-slate-400 font-medium">จำนวน: {aiResult.planB.qty.toLocaleString()} {material?.unit} • {formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))}</div>
+                <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end">
                   <button 
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.action, qty: aiResult.planB.qty, risk: aiResult.planB.risk, financial: aiResult.planB.financial, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
+                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.futureImpact, qty: aiResult.planB.qty, risk: aiResult.planB.riskScenarios, financial: aiResult.planB.costAnalysis, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
                       if (onClose) onClose();
                       setTimeout(() => setActiveTab?.("activity"), 300);
                     }}
