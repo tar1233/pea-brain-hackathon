@@ -158,7 +158,7 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
               {isExpanded && (
                 <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-5 space-y-5">
                   {/* Risk Alert + AI Auto Monitoring */}
-                  {alert && (
+                  {alert && !plan && (
                     <div className={`rounded-xl p-4 border ${
                       alert.severity === 'critical' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'
                     }`}>
