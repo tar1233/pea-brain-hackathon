@@ -14,87 +14,82 @@ export default function AlertHero() {
   if (!topAlert) return null;
 
   return (
-    <div className="rounded-2xl overflow-hidden animate-fade-in"
+    <div className="rounded-3xl overflow-hidden animate-fade-in shadow-lg border border-red-900/20"
       style={{
-        background: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 40%, #b91c1c 100%)",
+        background: "linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #dc2626 100%)",
         animationDelay: "50ms", animationFillMode: "both",
       }}>
-      <div className="px-5 py-4">
+      <div className="px-6 py-5">
         {/* Header bar */}
-        <div className="flex items-center gap-2 mb-3">
-          <ShieldAlert size={14} className="text-red-200" />
-          <span className="text-[12px] font-bold text-white/90">สิ่งที่ต้องตัดสินใจตอนนี้</span>
-          <span className="px-2 py-0.5 rounded-md bg-white/15 text-[10px] font-bold text-white/90">{critCount} เคสวิกฤต</span>
+        <div className="flex items-center gap-2 mb-4">
+          <ShieldAlert size={16} className="text-white animate-pulse" />
+          <span className="text-[13px] font-bold text-white tracking-wide">🚨 แจ้งเตือนวิกฤตอันดับ 1 ที่ต้องจัดการทันที</span>
           <div className="flex-1" />
-          <span className="px-2 py-0.5 rounded-md bg-red-900/50 text-[10px] font-bold text-red-200 border border-red-700/50">วิกฤต</span>
+          <span className="px-2.5 py-1 rounded-lg bg-black/30 text-[10px] font-bold text-white uppercase tracking-wider">
+            Critical Priority
+          </span>
         </div>
 
         {/* Main content */}
-        <div className="grid gap-4" style={{ gridTemplateColumns: "1.8fr 1.2fr 0.8fr" }}>
-          {/* Left — action */}
-          <div>
-            <div className="text-[9px] text-white/40 font-bold uppercase tracking-[2px] mb-1">Action Now</div>
-            <h2 className="text-[17px] font-extrabold text-white leading-tight mb-1">
-              {topAlert.recommendation.split("มูลค่า")[0].trim()}
+        <div className="grid gap-5" style={{ gridTemplateColumns: "2fr 1fr 1fr" }}>
+          {/* Left — Problem */}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-[22px] font-black text-white leading-tight mb-4 drop-shadow-md">
+              {topMaterial?.name} ({topMaterial?.id})
             </h2>
-            <div className="flex items-start gap-1.5 mb-3">
-              <AlertTriangle size={12} className="text-red-300 mt-0.5 shrink-0" />
-              <p className="text-[11px] text-white/60 leading-relaxed">
-                Stock {topMaterial?.currentStock.toLocaleString()} {topMaterial?.unit} ต่ำกว่า safety {topMaterial?.safetyStock.toLocaleString()} ({stockPct}% ต่ำกว่าเกณฑ์)<br />
-                Lead time ยาว {topMaterial?.leadTimeWeeks} สัปดาห์ — หากไม่ดำเนินการ ความเสี่ยง shortage จะเพิ่มขึ้น
-              </p>
+            
+            <div className="flex flex-col gap-2 mb-6">
+              <div className="flex items-center gap-2.5">
+                <span className="px-2 py-1 bg-black/20 text-white/90 text-[11px] font-bold rounded uppercase tracking-wider min-w-[70px] text-center">ปัญหา</span>
+                <span className="text-[14px] font-medium text-white leading-tight">
+                  สต๊อกเหลือเพียง <strong className="text-[16px] text-yellow-300">{topMaterial?.currentStock.toLocaleString()}</strong> {topMaterial?.unit} (ต่ำกว่าเกณฑ์ <strong className="text-yellow-300">{stockPct}%</strong>)
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <span className="px-2 py-1 bg-black/20 text-white/90 text-[11px] font-bold rounded uppercase tracking-wider min-w-[70px] text-center">ผลกระทบ</span>
+                <span className="text-[14px] font-medium text-white leading-tight">
+                  จะเกิดความเสียหายระดับ <strong>รุนแรง</strong> หากไม่แก้ไขภายใน 2 วัน
+                </span>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => document.querySelector('[class*="rounded-3xl bg-white shadow"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold border border-white/10 transition-all cursor-pointer">
-                <Sparkles size={12} />
-                ดูรายละเอียดทั้งหมด
-              </button>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-400 text-white text-[11px] font-bold border border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.5)] animate-pulse transition-all cursor-pointer">
-                สั่งการ AI แก้ไขด่วน
-                <ArrowRight size={12} />
+            
+            <div>
+              <button 
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-red-700 text-[13px] font-extrabold shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] transition-all cursor-pointer"
+                onClick={(e) => { 
+                  e.preventDefault(); 
+                  window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: topMaterial?.id } })); 
+                }}
+              >
+                <Sparkles size={16} className="text-red-600" />
+                ให้ AI สร้างแผนจัดซื้อด่วน
               </button>
             </div>
           </div>
-
-          {/* Center — VaR */}
-          <div className="flex flex-col items-center justify-center text-center">
-            <div className="text-[10px] text-white/40 font-semibold uppercase tracking-wider mb-1">
-              ความเสี่ยงด้านการเงินรวม (Value at Risk)
+          
+          {/* Center — Impact */}
+          <div className="flex flex-col items-center justify-center bg-black/15 rounded-2xl p-5 border border-white/10 backdrop-blur-sm">
+            <div className="text-[11px] text-white/70 font-bold uppercase tracking-widest mb-3">
+              มูลค่าความเสียหาย (Value at Risk)
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[11px] text-white/50">฿</span>
-              <span className="text-[28px] font-black text-white leading-none">{varMillions}</span>
-              <span className="text-[14px] font-bold text-white/70">ล้าน</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[16px] text-white/70 font-bold">฿</span>
+              <span className="text-[42px] font-black text-white leading-none tracking-tighter drop-shadow-lg">{varMillions}</span>
+              <span className="text-[16px] font-bold text-white/90">ล้าน</span>
             </div>
-            <div className="text-[10px] text-white/40 mt-1">ผลกระทบหากเกิด shortage</div>
           </div>
 
-          {/* Right — countdown + confidence */}
-          <div className="flex flex-col items-center justify-center gap-3">
-            {/* Urgency */}
-            <div className="text-center">
-              <div className="text-[9px] text-white/30 font-semibold uppercase tracking-wider mb-1">ความเร่งด่วน</div>
-              <div className="flex items-baseline gap-1 justify-center">
-                <span className="text-[28px] font-black text-white leading-none">2</span>
-                <span className="text-[11px] text-white/50 font-bold">วัน</span>
-                <span className="text-[28px] font-black text-white leading-none ml-1">6</span>
-                <span className="text-[11px] text-white/50 font-bold">ชม.</span>
-              </div>
-              <div className="text-[8px] text-white/25 mt-0.5">ก่อนความเสี่ยงจะเพิ่มขึ้น</div>
+          {/* Right — Urgency */}
+          <div className="flex flex-col items-center justify-center bg-black/15 rounded-2xl p-5 border border-white/10 backdrop-blur-sm relative overflow-hidden">
+            <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />
+            <div className="text-[11px] text-white/70 font-bold uppercase tracking-widest mb-3 relative z-10">
+              เส้นตาย (Deadline)
             </div>
-
-            {/* Confidence */}
-            <div className="flex items-center gap-2">
-              <svg width="48" height="48" viewBox="0 0 48 48" className="-rotate-90">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="4" />
-                <circle cx="24" cy="24" r="20" fill="none" stroke="#4ADE80" strokeWidth="4"
-                  strokeDasharray="125.6" strokeDashoffset={125.6 * (1 - topAlert.confidence / 100)} strokeLinecap="round"
-                  style={{ animation: "ring-grow .8s ease-out forwards" }} />
-              </svg>
-              <div>
-                <div className="text-[18px] font-black text-white leading-none">{topAlert.confidence}%</div>
-                <div className="text-[8px] text-white/30">High Confidence</div>
-              </div>
+            <div className="flex items-baseline gap-1.5 justify-center relative z-10">
+              <span className="text-[42px] font-black text-white leading-none tracking-tighter drop-shadow-lg">2</span>
+              <span className="text-[14px] text-white/80 font-bold">วัน</span>
+              <span className="text-[42px] font-black text-white leading-none tracking-tighter drop-shadow-lg ml-2">6</span>
+              <span className="text-[14px] text-white/80 font-bold">ชม.</span>
             </div>
           </div>
         </div>
