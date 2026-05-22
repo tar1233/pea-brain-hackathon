@@ -42,14 +42,14 @@ export default function ProjectRoadmap() {
     },
     {
       id: "sprint-4",
-      name: "Sprint 4: Pilot Testing & Usability",
+      name: "Sprint 4: AI Model Tuning & Backtesting",
       status: "pending",
       date: "Post-Hackathon",
       tasks: [
-        "ระบบนำเข้าข้อมูลด้วย Excel/CSV (พร้อมใช้งานทันทีโดยไม่ต้องรอ SAP)",
-        "เชื่อมต่อ LINE Official Account ส่งแจ้งเตือนแบบ Real-time",
-        "พัฒนาระบบ Export รายงาน PDF สำหรับนำเสนอผู้บริหาร",
-        "ทดสอบนำร่อง (Pilot Test) ร่วมกับคลังพัสดุเขตนำร่อง 1-2 แห่ง"
+        "ทดสอบความแม่นยำโมเดลย้อนหลัง (Backtesting) ด้วยข้อมูลจริง 3-5 ปี",
+        "เทรนและปรับจูน AI เพื่อลด Error ในการพยากรณ์ Demand ขั้นสูงสุด",
+        "สร้าง Data Pipeline สำหรับตรวจสอบและทำความสะอาดข้อมูลแบบอัตโนมัติ",
+        "ทดสอบนำร่อง (Pilot Test) ในคลังจริงเพื่อประเมินประสิทธิภาพโมเดล"
       ]
     }
   ];
