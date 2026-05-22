@@ -6,50 +6,50 @@ export default function ProjectRoadmap() {
   const sprints = [
     {
       id: "sprint-1",
-      name: "Sprint 1: Core Architecture & Framework",
+      name: "Phase 1: Orientation & Proposal",
       status: "completed",
-      date: "Day 1",
+      date: "5 - 13 May",
       tasks: [
-        "Initialize Next.js 14 with App Router & Turbopack",
-        "Setup TailwindCSS and premium UI system",
-        "Build Dashboard layout & Core Navigation",
-        "Implement Supply Chain Math models (EOQ, ROP)"
+        "Orientation & Workshop (Build-Measure-Learn)",
+        "กำหนด Core Architecture และเทคโนโลยีที่ใช้",
+        "ออกแบบโครงสร้าง (Conceptual Framework) ของ PEA Brain",
+        "ส่ง Proposal แผนการพัฒนา PoC (13 May)"
       ]
     },
     {
       id: "sprint-2",
-      name: "Sprint 2: AI Integration & Risk Intelligence",
-      status: "completed",
-      date: "Day 2",
+      name: "Phase 2: PoC Development (Part 1)",
+      status: "in-progress",
+      date: "19 - 30 May (Current)",
       tasks: [
-        "Integrate AWS API Gateway & AWS Bedrock",
-        "Build PEA Brain Copilot UI (ChatPanel)",
-        "Implement AI-driven Risk Detection engine",
-        "Develop Inventory Analysis & Forecasting views"
+        "พัฒนาระบบ Dashboard และ UI หลักทั้งหมด",
+        "เชื่อมต่อ AWS Bedrock และสร้าง PEA Brain Copilot",
+        "พัฒนาระบบวิเคราะห์ความเสี่ยงและพยากรณ์ Demand",
+        "ทดสอบความแม่นยำของ Data Model (Backtesting)"
       ]
     },
     {
       id: "sprint-3",
-      name: "Sprint 3: Automation & Procurement Flow",
-      status: "in-progress",
-      date: "Day 3 (Today)",
+      name: "Phase 3: PoC Development (Part 2)",
+      status: "pending",
+      date: "31 May - 11 Jun",
       tasks: [
-        "Automate e-Bidding strategy generation",
-        "Create Procurement Planning tracking view",
-        "Add PDF Export and LINE notification demos",
-        "Finalize UI Polish and Micro-animations"
+        "สร้างฟีเจอร์ Procurement Automation (e-Bidding)",
+        "พัฒนาระบบ Export รายงานและสรุปผลสำหรับผู้บริหาร",
+        "ปรับจูน AI เพื่อลด Error (Fine-tuning & Optimization)",
+        "เตรียมระบบสำหรับ Demo เสมือนจริง"
       ]
     },
     {
       id: "sprint-4",
-      name: "Sprint 4: AI Model Tuning & Backtesting",
+      name: "Phase 4: Final Pitching",
       status: "pending",
-      date: "Post-Hackathon",
+      date: "15 - 17 Jun",
       tasks: [
-        "ทดสอบความแม่นยำโมเดลย้อนหลัง (Backtesting) ด้วยข้อมูลจริง 3-5 ปี",
-        "เทรนและปรับจูน AI เพื่อลด Error ในการพยากรณ์ Demand ขั้นสูงสุด",
-        "สร้าง Data Pipeline สำหรับตรวจสอบและทำความสะอาดข้อมูลแบบอัตโนมัติ",
-        "ทดสอบนำร่อง (Pilot Test) ในคลังจริงเพื่อประเมินประสิทธิภาพโมเดล"
+        "เตรียมความพร้อมสำหรับ Demo Day",
+        "สรุป Business Value และ ROI ที่ PEA จะได้รับ",
+        "นำเสนอผลงาน (Final Pitching) ต่อคณะกรรมการ",
+        "ส่งมอบผลงาน PoC ฉบับสมบูรณ์"
       ]
     }
   ];
