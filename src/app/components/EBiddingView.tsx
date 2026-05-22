@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Brain, TrendingDown, TrendingUp, AlertTriangle, CheckCircle2, Clock, PlayCircle, ShieldAlert } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Brain, TrendingDown, TrendingUp, AlertTriangle, CheckCircle2, ShieldAlert, Loader2, Sparkles, RefreshCw } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
@@ -9,76 +9,144 @@ function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
 }
 
+interface AIAnalysisResult {
+  demandAnalysis: string;
+  marketAnalysis: string;
+  supplierAnalysis: string;
+  planA: { title: string; action: string; financial: string; risk: string; qty: number };
+  planB: { title: string; action: string; financial: string; risk: string; qty: number };
+  executiveSummary: string;
+  raw?: string;
+}
+
 export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void }) {
-  const { eBiddingData, materials } = useData();
+  const { eBiddingData, materials, riskAlerts } = useData();
+  const [aiResult, setAiResult] = useState<AIAnalysisResult | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const hasCalledRef = useRef(false);
+
+  // Find the actual material data
+  const material = materials.find(m => m.id === targetMaterialId || m.sapCode === targetMaterialId);
+  const alert = riskAlerts.find(a => a.materialId === targetMaterialId || a.materialId === `MAT-${targetMaterialId}`);
+
+  // Call AI on mount
+  useEffect(() => {
+    if (hasCalledRef.current) return;
+    hasCalledRef.current = true;
+    callAI();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function callAI() {
+    setIsAnalyzing(true);
+    setError(null);
+    setAiResult(null);
+
+    const mat = material;
+    const stockPercent = mat ? Math.round((mat.currentStock / mat.safetyStock) * 100) : 0;
+    const shortage = mat ? Math.max(0, mat.safetyStock - mat.currentStock) : 0;
+    const annualBudget = mat ? mat.annualDemand * mat.unitPrice : 0;
+
+    const daysOfStock = mat ? Math.round(mat.currentStock / (mat.avgMonthlyDemand / 30)) : 0;
+    const monthsOfStock = mat ? (mat.currentStock / mat.avgMonthlyDemand).toFixed(1) : '0';
+    const stockVsSafety = mat ? Math.round(((mat.safetyStock - mat.currentStock) / mat.safetyStock) * 100) : 0;
+    const demandVariation = mat ? Math.round((mat.stdMonthlyDemand / mat.avgMonthlyDemand) * 100) : 0;
+
+    const prompt = `คุณเป็น AI ที่ปรึกษาการจัดซื้อระดับ Enterprise ของ PEA (การไฟฟ้าส่วนภูมิภาค)
+เจ้าหน้าที่จัดซื้อต้องการให้คุณวิเคราะห์ข้อมูลจริงต่อไปนี้ แล้วออกแผนจัดซื้อที่ปฏิบัติได้จริง พร้อมเหตุผลว่าทำไม
+
+═══ ข้อมูลพัสดุ: ${mat?.name || 'Unknown'} (รหัส ${targetMaterialId}) ═══
+📦 สต็อก: ${mat?.currentStock?.toLocaleString() || '?'} ${mat?.unit} (ใช้ได้อีก ${daysOfStock} วัน หรือ ${monthsOfStock} เดือน)
+🔴 Safety Stock: ${mat?.safetyStock?.toLocaleString() || '?'} ${mat?.unit} → ปัจจุบันขาด ${stockVsSafety}% จากเกณฑ์
+📈 เบิกจ่ายเฉลี่ย: ${mat?.avgMonthlyDemand?.toLocaleString() || '?'} ${mat?.unit}/เดือน (ค่าเบี่ยงเบน: ${demandVariation}% → ${demandVariation > 50 ? 'ผันผวนมาก' : 'ค่อนข้างคงที่'})
+⏱️ Lead Time: ${mat?.leadTimeWeeks || '?'} สัปดาห์ (≈${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน)
+💰 ราคาต่อหน่วย: ฿${mat?.unitPrice?.toLocaleString() || '?'} | ราคากลาง: ฿${mat?.budgetPrice?.toLocaleString() || '?'}
+🎯 แผน 2569 ต้องการ: ${mat?.annualDemand?.toLocaleString() || '?'} ${mat?.unit} (งบ ≈ ฿${annualBudget.toLocaleString()})
+📊 ประวัติเบิกจ่าย 12 เดือน: [${mat?.sparkline?.join(', ') || '?'}]
+${alert ? `⚠️ แจ้งเตือน: ${alert.message}` : ''}
+${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''}
+
+═══ สิ่งที่ต้องวิเคราะห์ (บังคับ) ═══
+1. ทำไมต้องสั่ง? — ดูจากสต็อกที่เหลือ vs Demand ที่จะเกิดขึ้น (ใช้ได้อีกกี่วัน?)
+2. ต้องสั่งเมื่อไหร่? — คำนวณจาก Lead Time ว่าต้องเริ่มกระบวนการจัดซื้อวันไหนเพื่อไม่ให้ของขาด
+3. ควรเปิดประกวดราคาช่วงไหน? — วิเคราะห์จากราคาตลาดและประวัติราคาจัดซื้อ
+4. ตัวไหนต้องเฝ้าระวัง? — ดูจากค่าเบี่ยงเบนสูง = Demand ผันผวน
+5. ถ้าแผนมีความเสี่ยง ต้องจัดการยังไง? — ระบุขั้นตอนแก้ไขชัดเจน
+
+ตอบเป็น JSON เท่านั้น (ไม่ต้อง markdown code block) ตามโครงสร้างนี้:
+{
+  "demandAnalysis": "วิเคราะห์จากข้อมูลจริง: ทำไมต้องสั่ง? สต็อกใช้ได้อีกกี่วัน? Demand แนวโน้มไปทางไหน? (อ้างอิงตัวเลข)",
+  "marketAnalysis": "วิเคราะห์จากราคา: ควรเปิดประกวดราคาช่วงไหน? ราคาตลาดเป็นอย่างไร? (อ้างอิงตัวเลข)",
+  "supplierAnalysis": "วิเคราะห์ Supplier: มีความเสี่ยงอะไร? Lead Time นานแค่ไหน? ต้องเริ่มสั่งเมื่อไหร่จึงจะได้ของทัน? (อ้างอิงตัวเลข)",
+  "planA": {
+    "title": "ชื่อแผน (เช่น 'เร่งเปิดประกวดราคา e-Bidding Q3/2569')",
+    "action": "ขั้นตอนปฏิบัติงานจริง: สัปดาห์ที่ 1 ทำอะไร, สัปดาห์ที่ 2 ทำอะไร (ระบุ timeline ชัดเจน)",
+    "financial": "ผลกระทบทางการเงิน: ต้นทุนเท่าไหร่ ประหยัดเท่าไหร่ (ระบุจำนวนเงินจริงจากข้อมูล)",
+    "risk": "ความเสี่ยงของแผนนี้คืออะไร + วิธีรับมือเมื่อเกิดขึ้น",
+    "qty": ตัวเลขจำนวนสั่งซื้อ
+  },
+  "planB": {
+    "title": "ชื่อแผนสำรอง",
+    "action": "ขั้นตอนปฏิบัติงานจริง (ระบุ timeline ชัดเจน)",
+    "financial": "ผลกระทบทางการเงิน (ระบุจำนวนเงินจริง)",
+    "risk": "ความเสี่ยงของแผนนี้ + วิธีรับมือ",
+    "qty": ตัวเลขจำนวนสั่งซื้อ
+  },
+  "executiveSummary": "สรุปสำหรับผู้บริหาร: ทำไมต้องทำ เมื่อไหร่ต้องทำ ถ้าไม่ทำจะเกิดอะไรขึ้น (2-3 ประโยค อ้างอิงตัวเลข)"
+}`;
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+
+      if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+      const data = await res.json();
+      const content = data.content || "";
+
+      // Try to parse JSON from the AI response
+      try {
+        // Strip markdown code fences if present
+        const cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+        const parsed = JSON.parse(cleaned);
+        setAiResult({
+          demandAnalysis: parsed.demandAnalysis || "ไม่สามารถวิเคราะห์ได้",
+          marketAnalysis: parsed.marketAnalysis || "ไม่สามารถวิเคราะห์ได้",
+          supplierAnalysis: parsed.supplierAnalysis || "ไม่สามารถวิเคราะห์ได้",
+          planA: parsed.planA || { title: "Plan A", action: "-", financial: "-", risk: "-", qty: 0 },
+          planB: parsed.planB || { title: "Plan B", action: "-", financial: "-", risk: "-", qty: 0 },
+          executiveSummary: parsed.executiveSummary || "",
+          raw: content,
+        });
+      } catch {
+        // If JSON parsing fails, show the raw AI response
+        setAiResult({
+          demandAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
+          marketAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
+          supplierAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
+          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", action: content.substring(0, 200), financial: "-", risk: "-", qty: mat?.eoq || 0 },
+          planB: { title: "ทางเลือกสำรอง", action: "กรุณาอ่านคำแนะนำ AI ด้านล่าง", financial: "-", risk: "-", qty: 0 },
+          executiveSummary: "",
+          raw: content,
+        });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      setError(msg);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }
 
   if (!eBiddingData) return null;
 
   const { totalRequirement, simulation } = eBiddingData;
-
-  // Dynamic AI Scenario mapping
-  const getScenarioData = (id: string) => {
-    switch(id) {
-      case "10066":
-        return {
-          title: `AI Strategy & Action Plan: สายไฟ THW 1x95 sq.mm. (${id})`,
-          demandData: "ยอดเบิกจ่ายพุ่ง +20% จากโครงการขยายเขต",
-          marketData: "ราคาทองแดงผันผวนสูง (High Volatility)",
-          supplierData: "ความเสี่ยงการส่งมอบ 45% (Liquidity Risk)",
-          planA_Title: "Strategic Sourcing (จัดหาแบบกระจายความเสี่ยง)",
-          planA_Action: "แบ่งสัญญาจัดซื้อเป็น 2 ส่วน (Split Award) เพื่อลดความเสี่ยงผูกขาด 50%",
-          planA_Financial: "ป้องกันความเสี่ยงของขาด 100% แต่ราคาเฉลี่ยอาจเพิ่ม 2%",
-          planA_Risk: "กระบวนการจัดซื้อซับซ้อนขึ้น ต้องจัดการ Supplier 2 ราย",
-          planA_Qty: 200,
-          planB_Title: "Hold & Wait (รอดูสถานการณ์ตลาด)",
-          planB_Action: "ชะลอการสั่งซื้อ และใช้สต๊อกเท่าที่มีไปก่อน",
-          planB_Financial: "ไม่เกิดค่าใช้จ่ายเพิ่ม ณ ตอนนี้",
-          planB_Risk: "มีความเสี่ยงของขาดคลัง 80% หากโครงการขยายเขตเร่งตัว",
-          planB_Qty: 0
-        };
-      case "20045":
-        return {
-          title: `AI Strategy & Action Plan: มิเตอร์ 15(45)A (${id})`,
-          demandData: "ความต้องการใช้คงที่ (Stable Demand)",
-          marketData: "ราคาตลาดมีแนวโน้มทรงตัวตลอดปี",
-          supplierData: "ไม่มีความเสี่ยงด้านการส่งมอบ (Reliability 98%)",
-          planA_Title: "Long-term Contract (ล็อกราคาและปริมาณ)",
-          planA_Action: "เซ็นสัญญาระยะยาว 2 ปีกับ Supplier ปัจจุบันแบบลดหลั่นราคาตามโวลุ่ม",
-          planA_Financial: "ล็อกราคาปัจจุบันได้ ประหยัดงบได้ 1.5% ต่อปี",
-          planA_Risk: "เสียโอกาสหากราคาตลาดตกลงอย่างฉับพลัน",
-          planA_Qty: 5000,
-          planB_Title: "Spot Purchase (ซื้อรายครั้ง)",
-          planB_Action: "จัดซื้อเป็นล็อตเล็กๆ ทุก 3 เดือน (Just-in-Time)",
-          planB_Financial: "ลดต้นทุนจมจากการเก็บสต๊อก (Holding Cost)",
-          planB_Risk: "ต้นทุนการจัดการสูงขึ้น (Ordering Cost) เสียเวลาทำเอกสารบ่อย",
-          planB_Qty: 1200
-        };
-      case "10067":
-      default:
-        return {
-          title: `AI Strategy & Action Plan: หม้อแปลง 160 kVA 3Ph (${id})`,
-          demandData: "แนวโน้มเบิกจ่ายพุ่ง +15% จากพายุฤดูฝน",
-          marketData: "ราคา LME ตลาดโลกลดลง 5% ใน Q4",
-          supplierData: "ประวัติ Supplier A มีความเสี่ยงส่งมอบช้า",
-          planA_Title: "Cost Optimization Strategy",
-          planA_Action: "โอนย้ายสต๊อกคงเหลือจากคลังภาคกลางมาช่วยแก้ขัด 150 เครื่อง และเปิด e-Bidding ใหม่ใน Q4 แทน",
-          planA_Financial: "ประหยัดงบจัดซื้อได้ประมาณ 3-5% (ลดความสูญเปล่า)",
-          planA_Risk: "คลังภาคกลางจะมี Stock ลดลงชั่วคราวเป็นเวลา 2 สัปดาห์ (AI ควบคุมและจัดการได้)",
-          planA_Qty: 150,
-          planB_Title: "Emergency Direct Purchase",
-          planB_Action: "ใช้วิธี \"จัดซื้อพิเศษ (Direct Purchase)\" ฉุกเฉินกับ Supplier สำรอง 300 เครื่องทันที",
-          planB_Financial: "ต้องใช้งบประมาณเพิ่มขึ้นประมาณ 15% จากราคากลางเนื่องจากความเร่งด่วน",
-          planB_Risk: "อาจถูก สตง. เพ่งเล็งเรื่องความโปร่งใส และต้นทุนสูงเกินความจำเป็น",
-          planB_Qty: 300
-        };
-    }
-  };
-
-  const scenario = getScenarioData(targetMaterialId);
-
-  const renderTimelineIcon = (id: number) => {
-    return <CheckCircle2 className="text-emerald-500" size={24} />;
-  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -89,18 +157,19 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold tracking-widest text-blue-200 uppercase">
               <Brain size={14} />
-              e-Bidding AI Optimizer
+              AI-Powered Analysis • AWS Bedrock + RAG
             </div>
             <h1 className="max-w-4xl text-[24px] font-bold leading-tight tracking-tight">
-              {scenario.title}
+              AI Strategy: {material?.name || targetMaterialId}
             </h1>
             <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-blue-100/80 font-medium">
-              แผนยุทธศาสตร์จัดซื้อฉบับสมบูรณ์ วิเคราะห์โดย Multi-Agent AI (Demand Forecasting, Price Trend Analysis, และ Supplier Risk Management) พร้อมให้คุณพิจารณาอนุมัติ
+              วิเคราะห์โดย Amazon Nova Pro + PEA Knowledge Base • ข้อมูลสต็อก: <span className="text-white font-bold">{material?.currentStock?.toLocaleString() || '?'}</span> / Safety Stock: <span className="text-white font-bold">{material?.safetyStock?.toLocaleString() || '?'}</span> {material?.unit || 'เครื่อง'}
             </p>
           </div>
           <div className="flex flex-col items-end text-right">
-            <div className="text-[12px] text-blue-200 font-medium uppercase tracking-wider mb-1">เป้าหมายจัดซื้อ (Target Requirement)</div>
-            <div className="text-[36px] font-black text-white">{totalRequirement.toLocaleString()} <span className="text-[16px] font-normal text-blue-200">เครื่อง</span></div>
+            <div className="text-[12px] text-blue-200 font-medium uppercase tracking-wider mb-1">ราคาต่อหน่วย</div>
+            <div className="text-[28px] font-black text-white">{formatCurrency(material?.unitPrice || 0)}</div>
+            <div className="text-[11px] text-blue-300 mt-1">งบประมาณทั้งปี: {formatCurrency((material?.annualDemand || 0) * (material?.unitPrice || 0))}</div>
           </div>
         </div>
       </section>
@@ -158,124 +227,195 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-4 rounded-xl bg-indigo-50/50 p-4 border border-indigo-100">
-              <h3 className="text-[13px] font-bold text-indigo-900 mb-2">💡 คำแนะนำจาก Bidding Agent:</h3>
-              <p className="text-[12px] text-indigo-700/80 leading-relaxed font-medium">
-                "เทรนด์ราคาเหล็กในตลาดโลกกำลังลดลง คาดการณ์ว่าราคาหม้อแปลงจะลดลงอีก 3-5% ใน Q4 
-                แนะนำให้เปิดประกวดราคารอบแรกที่ 800 เครื่อง (ครอบคลุม Demand ปัจจุบัน) และรอดูสถานการณ์ก่อนเปิดประมูลรอบเสริม"
-              </p>
+            {/* Material Fact Sheet */}
+            <div className="mt-4 rounded-xl bg-slate-50 p-4 border border-slate-100">
+              <h3 className="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-3">📋 ข้อมูลจริงจากระบบ (Live Data)</h3>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12px]">
+                <div className="flex justify-between"><span className="text-slate-500">สต็อกปัจจุบัน:</span><span className="font-bold text-slate-900">{material?.currentStock?.toLocaleString() || '-'} {material?.unit}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Safety Stock:</span><span className="font-bold text-red-600">{material?.safetyStock?.toLocaleString() || '-'} {material?.unit}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Avg Demand/เดือน:</span><span className="font-bold text-slate-900">{material?.avgMonthlyDemand?.toLocaleString() || '-'}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Lead Time:</span><span className="font-bold text-slate-900">{material?.leadTimeWeeks || '-'} สัปดาห์</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">EOQ:</span><span className="font-bold text-slate-900">{material?.eoq?.toLocaleString() || '-'} {material?.unit}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">แผน 2569:</span><span className="font-bold text-slate-900">{material?.annualDemand?.toLocaleString() || '-'} {material?.unit}</span></div>
+              </div>
             </div>
           </section>
         </div>
 
-        {/* Right Column: AI Analysis & Multi-Option Strategy */}
+        {/* Right Column: AI Real-time Analysis */}
         <div className="space-y-6">
           <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 flex flex-col">
-            <div className="mb-6">
-              <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
-                <Brain className="text-purple-600" size={20} />
-                AI Strategy Options (ข้อเสนอแนะเชิงกลยุทธ์)
-              </h2>
-              <p className="text-[12px] text-slate-500 mt-1">AI วิเคราะห์ข้อมูลทั้งหมดแล้วพบว่าพัสดุรายการนี้มีความเสี่ยงสูง จึงเสนอ 2 ทางเลือกที่ดีที่สุดให้ผู้บริหารตัดสินใจ</p>
-            </div>
-
-            {/* Data Points Used */}
-            <div className="mb-6 grid grid-cols-3 gap-3">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Demand Data</div>
-                <div className="text-[12px] font-semibold text-slate-700">{scenario.demandData}</div>
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
+                  <Sparkles className="text-purple-600" size={20} />
+                  AI Strategy Options (วิเคราะห์โดย Bedrock)
+                </h2>
+                <p className="text-[12px] text-slate-500 mt-1">ผลวิเคราะห์จาก Amazon Nova Pro + PEA Knowledge Base แบบ Real-time</p>
               </div>
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Market Data</div>
-                <div className="text-[12px] font-semibold text-slate-700">{scenario.marketData}</div>
-              </div>
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Supplier Data</div>
-                <div className="text-[12px] font-semibold text-slate-700">{scenario.supplierData}</div>
-              </div>
-            </div>
-
-            {/* Plan A */}
-            <div className="mb-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/30 p-5 relative overflow-hidden transition-all hover:shadow-lg hover:shadow-emerald-500/10">
-              <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl flex items-center gap-1">
-                <CheckCircle2 size={12} /> Highly Recommended
-              </div>
-              <h3 className="text-[15px] font-bold text-emerald-900 mb-1">Plan A: {scenario.planA_Title}</h3>
-              <p className="text-[12px] text-emerald-700/80 font-medium mb-4">กลยุทธ์ที่ AI แนะนำว่าคุ้มค่าที่สุดในระยะยาว</p>
-              
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {scenario.planA_Action}</div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {scenario.planA_Financial}</div>
-                </div>
-                <div className="flex gap-2">
-                  <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={12} />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-amber-600">Risk:</span> {scenario.planA_Risk}</div>
-                </div>
-              </div>
-
-              <div className="mt-5 border-t border-emerald-200/50 pt-4 text-right">
-                <button 
-                  onClick={() => {
-                    const material = materials.find(m => m.id === targetMaterialId);
-                    window.dispatchEvent(new CustomEvent("create-po", { 
-                      detail: { materialId: targetMaterialId, qty: scenario.planA_Qty, name: material?.name || scenario.title.split(": ")[1], price: material?.unitPrice } 
-                    }));
-                    if (onClose) onClose();
-                    setTimeout(() => setActiveTab?.("activity"), 500);
-                  }}
-                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
-                >
-                  <CheckCircle2 size={16} /> อนุมัติ Plan A (ดำเนินการโอนย้ายทันที)
+              {!isAnalyzing && (
+                <button onClick={() => { hasCalledRef.current = false; callAI(); }} className="text-[11px] text-purple-600 font-semibold flex items-center gap-1 hover:underline cursor-pointer">
+                  <RefreshCw size={13} /> วิเคราะห์ใหม่
                 </button>
-              </div>
+              )}
             </div>
 
-            {/* Plan B */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 relative overflow-hidden transition-all hover:border-amber-300 hover:shadow-md">
-              <h3 className="text-[15px] font-bold text-slate-800 mb-1">Plan B: {scenario.planB_Title}</h3>
-              <p className="text-[12px] text-slate-500 font-medium mb-4">แผนสำรอง / ทางเลือกกรณีฉุกเฉิน</p>
-              
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {scenario.planB_Action}</div>
+            {/* Loading State */}
+            {isAnalyzing && (
+              <div className="flex-1 flex flex-col items-center justify-center py-16 space-y-4">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full border-4 border-purple-100 border-t-purple-600 animate-spin" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Brain className="text-purple-600 animate-pulse" size={24} />
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {scenario.planB_Financial}</div>
-                </div>
-                <div className="flex gap-2">
-                  <ShieldAlert className="text-red-500 shrink-0 mt-0.5" size={12} />
-                  <div className="text-[12px] text-slate-700"><span className="font-bold text-red-600">Risk:</span> {scenario.planB_Risk}</div>
+                <div className="text-center">
+                  <div className="text-[14px] font-bold text-slate-800">AI กำลังวิเคราะห์ข้อมูลจริง...</div>
+                  <div className="text-[12px] text-slate-500 mt-1">เรียกใช้ Amazon Nova Pro + Knowledge Base (RAG)</div>
+                  <div className="text-[11px] text-purple-600 mt-2 font-medium animate-pulse">กำลังส่งข้อมูลสต็อก, Demand, Lead Time, ราคาตลาด ไปให้ AI ประมวลผล...</div>
                 </div>
               </div>
+            )}
 
-              <div className="mt-5 border-t border-slate-200 pt-4 text-right">
-                <button 
-                  onClick={() => {
-                    const material = materials.find(m => m.id === targetMaterialId);
-                    window.dispatchEvent(new CustomEvent("create-po", { 
-                      detail: { materialId: targetMaterialId, qty: scenario.planB_Qty, name: material?.name || scenario.title.split(": ")[1], price: (material?.unitPrice || 150000) * 1.15 } 
-                    }));
-                    if (onClose) onClose();
-                    setTimeout(() => setActiveTab?.("activity"), 500);
-                  }}
-                  className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-300 px-5 py-2.5 text-[12px] font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B (ยอมรับความเสี่ยง)
-                </button>
+            {/* Error State */}
+            {error && (
+              <div className="flex-1 flex flex-col items-center justify-center py-12 space-y-4">
+                <AlertTriangle className="text-amber-500" size={40} />
+                <div className="text-center">
+                  <div className="text-[14px] font-bold text-slate-800">ไม่สามารถเชื่อมต่อ AI ได้</div>
+                  <div className="text-[12px] text-slate-500 mt-1 max-w-sm">{error}</div>
+                  <button onClick={() => { hasCalledRef.current = false; callAI(); }} className="mt-4 px-4 py-2 rounded-xl bg-purple-600 text-white text-[12px] font-bold cursor-pointer hover:bg-purple-700 transition">
+                    ลองอีกครั้ง
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* AI Result */}
+            {aiResult && !isAnalyzing && (
+              <>
+                {/* Data Points from AI */}
+                <div className="mb-5 grid grid-cols-3 gap-3">
+                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-1">📈 Demand Analysis</div>
+                    <div className="text-[11px] font-semibold text-slate-700 leading-relaxed">{aiResult.demandAnalysis}</div>
+                  </div>
+                  <div className="bg-amber-50 p-3 rounded-xl border border-amber-100">
+                    <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">💰 Market Analysis</div>
+                    <div className="text-[11px] font-semibold text-slate-700 leading-relaxed">{aiResult.marketAnalysis}</div>
+                  </div>
+                  <div className="bg-red-50 p-3 rounded-xl border border-red-100">
+                    <div className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">🏭 Supplier Analysis</div>
+                    <div className="text-[11px] font-semibold text-slate-700 leading-relaxed">{aiResult.supplierAnalysis}</div>
+                  </div>
+                </div>
+
+                {/* Executive Summary */}
+                {aiResult.executiveSummary && (
+                  <div className="mb-5 rounded-xl bg-purple-50 p-4 border border-purple-100">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Brain size={14} className="text-purple-600" />
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">🧠 Executive Summary</span>
+                    </div>
+                    <p className="text-[12px] leading-relaxed font-semibold text-purple-800">{aiResult.executiveSummary}</p>
+                  </div>
+                )}
+
+                {/* Plan A */}
+                <div className="mb-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/30 p-5 relative overflow-hidden transition-all hover:shadow-lg hover:shadow-emerald-500/10">
+                  <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl flex items-center gap-1">
+                    <CheckCircle2 size={12} /> AI Recommended
+                  </div>
+                  <h3 className="text-[15px] font-bold text-emerald-900 mb-1">Plan A: {aiResult.planA.title}</h3>
+                  
+                  <div className="space-y-3 mt-3">
+                    <div className="flex gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {aiResult.planA.action}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {aiResult.planA.financial}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={12} />
+                      <div className="text-[12px] text-slate-700"><span className="font-bold text-amber-600">Risk:</span> {aiResult.planA.risk}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 border-t border-emerald-200/50 pt-4 flex items-center justify-between">
+                    <div className="text-[11px] text-emerald-700 font-medium">สั่งซื้อ: {aiResult.planA.qty.toLocaleString()} {material?.unit || 'เครื่อง'} ({formatCurrency(aiResult.planA.qty * (material?.unitPrice || 0))})</div>
+                    <button 
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent("create-po", { 
+                          detail: { materialId: targetMaterialId, qty: aiResult.planA.qty, name: material?.name || targetMaterialId, price: material?.unitPrice } 
+                        }));
+                        if (onClose) onClose();
+                        setTimeout(() => setActiveTab?.("activity"), 500);
+                      }}
+                      className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
+                    >
+                      <CheckCircle2 size={16} /> อนุมัติ Plan A
+                    </button>
+                  </div>
+                </div>
+
+                {/* Plan B */}
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 relative overflow-hidden transition-all hover:border-amber-300 hover:shadow-md">
+                  <h3 className="text-[15px] font-bold text-slate-800 mb-1">Plan B: {aiResult.planB.title}</h3>
+                  
+                  <div className="space-y-3 mt-3">
+                    <div className="flex gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> {aiResult.planB.action}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+                      <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> {aiResult.planB.financial}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <ShieldAlert className="text-red-500 shrink-0 mt-0.5" size={12} />
+                      <div className="text-[12px] text-slate-700"><span className="font-bold text-red-600">Risk:</span> {aiResult.planB.risk}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 border-t border-slate-200 pt-4 flex items-center justify-between">
+                    <div className="text-[11px] text-slate-500 font-medium">สั่งซื้อ: {aiResult.planB.qty.toLocaleString()} {material?.unit || 'เครื่อง'} ({formatCurrency(aiResult.planB.qty * (material?.unitPrice || 0))})</div>
+                    <button 
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent("create-po", { 
+                          detail: { materialId: targetMaterialId, qty: aiResult.planB.qty, name: material?.name || targetMaterialId, price: (material?.unitPrice || 150000) * 1.15 } 
+                        }));
+                        if (onClose) onClose();
+                        setTimeout(() => setActiveTab?.("activity"), 500);
+                      }}
+                      className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-300 px-5 py-2.5 text-[12px] font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    >
+                      <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B
+                    </button>
+                  </div>
+                </div>
+
+                {/* Raw AI Response (collapsible) */}
+                {aiResult.raw && (
+                  <details className="mt-4 rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
+                    <summary className="px-4 py-3 text-[11px] font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition flex items-center gap-2">
+                      <Brain size={14} className="text-purple-500" /> ดู Raw AI Response (จาก Amazon Nova Pro)
+                    </summary>
+                    <div className="px-4 pb-4 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto font-mono">
+                      {aiResult.raw}
+                    </div>
+                  </details>
+                )}
+              </>
+            )}
           </section>
-          <div className="mt-8 bg-slate-900 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
+
+          {/* Trust Section */}
+          <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
             <h3 className="text-lg font-bold flex items-center gap-2 mb-4">
               <ShieldAlert className="text-emerald-400" size={20} />
-              Enterprise AI Trust & Compliance (การรับรองระบบ)
+              Enterprise AI Trust & Compliance
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
@@ -283,15 +423,15 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
                   <Brain size={16} /> 1. AWS Enterprise AI
                 </div>
                 <p className="text-[12px] text-slate-300 leading-relaxed">
-                  พยากรณ์ราคาแม่นยำด้วย <strong>Amazon Forecast</strong> (ระดับเดียวกับ Amazon Supply Chain) และ <strong>AWS Bedrock + RAG</strong> เชื่อมต่อ พ.ร.บ. จัดซื้อจัดจ้างฯ PEA เพื่อให้ AI วิเคราะห์ภายใต้กรอบกฎหมาย 100%
+                  วิเคราะห์โดย <strong>Amazon Nova Pro</strong> + <strong>AWS Bedrock Knowledge Base (RAG)</strong> เชื่อมต่อ พ.ร.บ. จัดซื้อจัดจ้างฯ PEA 100%
                 </p>
               </div>
               <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                 <div className="text-emerald-400 font-bold mb-2 flex items-center gap-2">
-                  <TrendingUp size={16} /> 2. Backtesting Validation
+                  <TrendingUp size={16} /> 2. Live Data Analysis
                 </div>
                 <p className="text-[12px] text-slate-300 leading-relaxed">
-                  พิสูจน์ความแม่นยำด้วย <strong>Historical Backtesting</strong> นำข้อมูลจัดซื้อย้อนหลัง 3 ปีมาทดสอบกับ AI เพื่อหาค่า Cost-Saving จริง โดยไม่ต้องเสี่ยงทดสอบกับระบบใช้งานปัจจุบัน
+                  ข้อมูลสต็อก, Demand, Lead Time, ราคาตลาด ถูกส่งให้ AI วิเคราะห์แบบ <strong>Real-time</strong> ทุกครั้งที่กดปุ่ม ไม่ใช่ข้อมูล Mock
                 </p>
               </div>
               <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
@@ -299,7 +439,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
                   <CheckCircle2 size={16} /> 3. Human-in-the-Loop
                 </div>
                 <p className="text-[12px] text-slate-300 leading-relaxed">
-                  AI เป็นเพียง <strong>"เสนาธิการ"</strong> จัดเตรียม Executive Summary และ e-Bidding Scenario ให้ <strong>คณะกรรมการจัดซื้อ (มนุษย์)</strong> เป็นผู้ตัดสินใจและลงนามอนุมัติขั้นสุดท้ายเสมอ
+                  AI เป็นเพียง <strong>"เสนาธิการ"</strong> เสนอทางเลือก ให้ <strong>คณะกรรมการจัดซื้อ (มนุษย์)</strong> เป็นผู้ตัดสินใจขั้นสุดท้ายเสมอ
                 </p>
               </div>
             </div>
