@@ -14,30 +14,31 @@ export default function KPICards() {
     : `฿${(totalVaR / 1e6).toFixed(1)} ล้าน`;
 
   const kpis = [
-    { label: "เคสวิกฤต", value: String(criticalAlerts.length), sub: "ต้องดำเนินการทันที", icon: AlertTriangle, color: "#fff", textColor: "#fff", labelColor: "rgba(255,255,255,0.85)", subColor: "rgba(255,255,255,0.7)", bg: "linear-gradient(135deg,#DC2626,#E11D48)", iconBg: "rgba(255,255,255,0.2)" },
-    { label: "เฝ้าระวัง", value: String(warningAlerts.length), sub: "เสี่ยงเพิ่มขึ้นใน 7 วัน", icon: Eye, color: "#D97706", textColor: "#92400E", labelColor: "#B45309", subColor: "#9CA3AF", bg: "linear-gradient(135deg,#FFFBEB,#FEF3C7)", iconBg: "rgba(255,255,255,0.8)" },
-    { label: "ทั้งหมด", value: String(riskAlerts.length), sub: "รายการแจ้งเตือนในระบบ", icon: Package, color: "#2563EB", textColor: "#1E40AF", labelColor: "#2563EB", subColor: "#9CA3AF", bg: "linear-gradient(135deg,#EFF6FF,#DBEAFE)", iconBg: "rgba(255,255,255,0.8)" },
-    { label: "มูลค่าความเสี่ยงรวม", value: varDisplay, sub: "Value at Risk", icon: DollarSign, color: "#7C3AED", textColor: "#5B21B6", labelColor: "#7C3AED", subColor: "#9CA3AF", bg: "linear-gradient(135deg,#F5F3FF,#EDE9FE)", iconBg: "rgba(255,255,255,0.8)", isLarge: true },
-    { label: "Coverage คงคลัง", value: `${avgCoverage}%`, sub: `เฉลี่ยจาก ${materials.length} พัสดุ`, icon: ShieldCheck, color: "#16A34A", textColor: "#166534", labelColor: "#16A34A", subColor: "#9CA3AF", bg: "linear-gradient(135deg,#F0FDF4,#DCFCE7)", iconBg: "rgba(255,255,255,0.8)" },
+    { label: "เคสวิกฤต", value: String(criticalAlerts.length), sub: "ต้องดำเนินการทันที", icon: AlertTriangle, color: "text-red-600", bgIcon: "bg-red-50", border: "border-red-200 shadow-red-500/5", valueColor: "text-red-700" },
+    { label: "เฝ้าระวัง", value: String(warningAlerts.length), sub: "เสี่ยงเพิ่มขึ้นใน 7 วัน", icon: Eye, color: "text-amber-600", bgIcon: "bg-amber-50", border: "border-amber-200 shadow-amber-500/5", valueColor: "text-amber-700" },
+    { label: "รายการทั้งหมด", value: String(riskAlerts.length), sub: "ที่ต้องติดตามในระบบ", icon: Package, color: "text-blue-600", bgIcon: "bg-blue-50", border: "border-slate-200", valueColor: "text-slate-800" },
+    { label: "มูลค่าความเสี่ยงรวม", value: varDisplay, sub: "Value at Risk", icon: DollarSign, color: "text-purple-600", bgIcon: "bg-purple-50", border: "border-slate-200", valueColor: "text-slate-800", isLarge: true },
+    { label: "Coverage คงคลัง", value: `${avgCoverage}%`, sub: `เฉลี่ยจาก ${materials.length} พัสดุ`, icon: ShieldCheck, color: "text-emerald-600", bgIcon: "bg-emerald-50", border: "border-slate-200", valueColor: "text-slate-800" },
   ];
 
   return (
-    <div className="grid grid-cols-5 gap-3 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
+    <div className="grid grid-cols-5 gap-4 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
       {kpis.map((k, i) => {
         const Icon = k.icon;
         return (
-          <div key={i} className="rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1"
-            style={{ background: k.bg }}>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style={{ background: k.iconBg }}>
-                <Icon size={16} style={{ color: k.color }} />
+          <div key={i} className={`bg-white rounded-2xl p-5 border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 flex flex-col ${k.border}`}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${k.bgIcon}`}>
+                <Icon size={20} className={k.color} />
               </div>
-              <span className="text-[11px] font-semibold" style={{ color: k.labelColor }}>{k.label}</span>
+              <span className="text-[13px] font-bold text-slate-600 leading-tight">{k.label}</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className={`font-extrabold leading-none ${k.isLarge ? "text-[16px]" : "text-[22px]"}`} style={{ color: k.textColor }}>{k.value}</span>
+            <div className="mt-auto">
+              <div className={`font-black tracking-tight leading-none ${k.isLarge ? "text-[20px]" : "text-[32px]"} ${k.valueColor}`}>
+                {k.value}
+              </div>
+              <div className="text-[11px] font-medium text-slate-500 mt-2">{k.sub}</div>
             </div>
-            <div className="text-[10px] mt-1" style={{ color: k.subColor }}>{k.sub}</div>
           </div>
         );
       })}
