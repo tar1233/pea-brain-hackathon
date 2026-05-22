@@ -9,7 +9,11 @@ import {
   BarChart3,
   TrendingDown,
   Clock,
-  Briefcase
+  Briefcase,
+  AlertTriangle,
+  Zap,
+  CheckCircle2,
+  BrainCircuit
 } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
@@ -21,7 +25,25 @@ function formatCurrency(value: number) {
 }
 
 export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: string) => void }) {
-  const { materials, isLoading } = useData();
+  const { materials, riskAlerts, isLoading } = useData();
+  const [approvedPlansCount, setApprovedPlansCount] = useState(0);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("pea_approved_plans");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setApprovedPlansCount(parsed.length);
+      }
+      
+      const handleStorage = () => {
+        const s = localStorage.getItem("pea_approved_plans");
+        if (s) setApprovedPlansCount(JSON.parse(s).length);
+      };
+      window.addEventListener("approve-plan", handleStorage);
+      return () => window.removeEventListener("approve-plan", handleStorage);
+    } catch {}
+  }, []);
 
   if (isLoading) {
     return (
@@ -64,27 +86,29 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
         <div className="relative z-10">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1 text-[11px] font-bold tracking-widest text-purple-700 uppercase">
             <Briefcase size={14} />
-            Executive Overview
+            AI Executive Command Center
           </div>
           <h1 className="text-[22px] font-extrabold text-slate-900 leading-tight">
-            ภาพรวมผลการดำเนินงานจัดซื้อพัสดุ ปี 2569
+            ภาพรวมการทำงานของ PEA Brain (AI Copilot)
           </h1>
           <p className="mt-2 text-[13px] text-slate-500 font-medium max-w-xl">
-            สรุปข้อมูลงบประมาณ การประหยัดต้นทุนด้วย AI (Cost Savings) และประสิทธิภาพผู้จัดหา (Supplier Performance) สำหรับผู้บริหาร
+            สรุปข้อมูลการจัดการความเสี่ยงสต๊อกขาดแคลน การวางแผนจัดซื้อด้วย AI และผลประหยัดงบประมาณ
           </p>
         </div>
         <div className="flex gap-4 shrink-0 relative z-10">
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center min-w-[140px]">
-            <div className="text-[10px] font-bold text-slate-400 uppercase">งบประมาณเบิกจ่าย YTD</div>
-            <div className="text-[20px] font-extrabold text-slate-800 mt-1">฿620M</div>
-            <div className="text-[10px] font-bold text-emerald-500 mt-1">41% ของงบรายปี</div>
-          </div>
-          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center min-w-[140px]">
-            <div className="text-[10px] font-bold text-emerald-600 uppercase">AI Cost Savings</div>
-            <div className="text-[20px] font-extrabold text-emerald-700 mt-1">฿20.5M</div>
-            <div className="text-[10px] font-bold text-emerald-600 mt-1 flex justify-center items-center gap-1">
-              <TrendingDown size={10} /> ลดต้นทุนได้ 3.2%
+          <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-red-100 transition" onClick={() => setActiveTab?.("risk")}>
+            <div className="text-[10px] font-bold text-red-500 uppercase flex justify-center items-center gap-1">
+              <AlertTriangle size={12} /> ความเสี่ยงที่ต้องจัดการ
             </div>
+            <div className="text-[20px] font-extrabold text-red-700 mt-1">{riskAlerts.filter(a => a.severity === 'critical').length} รายการ</div>
+            <div className="text-[10px] font-bold text-red-500 mt-1">มูลค่าความเสี่ยง ฿145.2M</div>
+          </div>
+          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-emerald-100 transition" onClick={() => setActiveTab?.("ebidding")}>
+            <div className="text-[10px] font-bold text-emerald-600 uppercase flex justify-center items-center gap-1">
+              <CheckCircle2 size={12} /> แก้ไขแล้วด้วย AI
+            </div>
+            <div className="text-[20px] font-extrabold text-emerald-700 mt-1">{approvedPlansCount} แผน</div>
+            <div className="text-[10px] font-bold text-emerald-600 mt-1">พร้อมดำเนินการทันที</div>
           </div>
         </div>
       </section>
@@ -92,10 +116,10 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
       {/* KPI Grid */}
       <section className="grid gap-4 md:grid-cols-4">
         {[
-          { title: "รอบเวลาจัดซื้อเฉลี่ย (Lead Time)", value: "42 วัน", trend: "-5 วัน จากปีก่อน", icon: Clock, color: "text-blue-600", bg: "bg-blue-50" },
-          { title: "Supplier ตรงเวลา (OTIF)", value: "94%", trend: "+2% จากปีก่อน", icon: ShieldCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
-          { title: "มูลค่า PO ที่เปิดแล้ว", value: "345 ใบ", trend: "มูลค่า ฿450M", icon: DollarSign, color: "text-purple-600", bg: "bg-purple-50" },
-          { title: "อัตราความสำเร็จ e-Bidding", value: "88%", trend: "ไม่มีผู้เสนอราคา 12%", icon: Award, color: "text-amber-600", bg: "bg-amber-50" },
+          { title: "ระยะเวลาจัดทำแผนเฉลี่ย", value: "5 นาที", trend: "ประหยัด 98% (จาก 3 วัน)", icon: Zap, color: "text-amber-500", bg: "bg-amber-50" },
+          { title: "มูลค่า Cost Savings (AI)", value: "฿20.5M", trend: "ประหยัดต้นทุนได้ 3.2%", icon: TrendingDown, color: "text-emerald-600", bg: "bg-emerald-50" },
+          { title: "ความแม่นยำ AI เฝ้าระวัง", value: "94%", trend: "คาดการณ์ของขาดล่วงหน้า", icon: BrainCircuit, color: "text-purple-600", bg: "bg-purple-50" },
+          { title: "อัตราความสำเร็จ e-Bidding", value: "88%", trend: "ลดปัญหาไม่มีผู้เสนอราคา", icon: Award, color: "text-blue-600", bg: "bg-blue-50" },
         ].map((kpi, i) => (
           <div key={i} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
             <div className="flex justify-between items-start mb-4">
@@ -159,8 +183,8 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
       <section className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
           <div>
-            <h3 className="text-[15px] font-bold text-slate-800">ประสิทธิภาพผู้จัดหา (Top Supplier Performance)</h3>
-            <p className="text-[12px] text-slate-500 mt-1">ประเมินจากคุณภาพการส่งมอบตรงเวลาและความน่าเชื่อถือ</p>
+            <h3 className="text-[15px] font-bold text-slate-800">การติดตามพฤติกรรม Supplier ด้วย AI (AI Supplier Analytics)</h3>
+            <p className="text-[12px] text-slate-500 mt-1">ประเมินจากคุณภาพการส่งมอบตรงเวลา เพื่อช่วย AI คำนวณความเสี่ยงของขาดแคลน</p>
           </div>
         </div>
         <div className="overflow-x-auto">
