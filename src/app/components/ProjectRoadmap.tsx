@@ -8,7 +8,7 @@ export default function ProjectRoadmap() {
       id: "sprint-1",
       name: "Sprint 1: Core Architecture & Framework",
       status: "completed",
-      date: "Week 1",
+      date: "Day 1",
       tasks: [
         "Initialize Next.js 14 with App Router & Turbopack",
         "Setup TailwindCSS and premium UI system",
@@ -20,7 +20,7 @@ export default function ProjectRoadmap() {
       id: "sprint-2",
       name: "Sprint 2: AI Integration & Risk Intelligence",
       status: "completed",
-      date: "Week 2",
+      date: "Day 2",
       tasks: [
         "Integrate AWS API Gateway & AWS Bedrock",
         "Build PEA Brain Copilot UI (ChatPanel)",
@@ -32,7 +32,7 @@ export default function ProjectRoadmap() {
       id: "sprint-3",
       name: "Sprint 3: Automation & Procurement Flow",
       status: "in-progress",
-      date: "Week 3",
+      date: "Day 3 (Today)",
       tasks: [
         "Automate e-Bidding strategy generation",
         "Create Procurement Planning tracking view",
