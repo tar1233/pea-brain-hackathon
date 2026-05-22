@@ -72,10 +72,10 @@ export default function AlertHero() {
             <div className="text-[11px] text-white/70 font-bold uppercase tracking-widest mb-3">
               มูลค่าความเสียหาย (Value at Risk)
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-[16px] text-white/70 font-bold">฿</span>
-              <span className="text-[42px] font-black text-white leading-none tracking-tighter drop-shadow-lg">{varMillions}</span>
-              <span className="text-[16px] font-bold text-white/90">ล้าน</span>
+            <div className="flex items-baseline gap-2.5">
+              <span className="text-[18px] text-white/70 font-bold">฿</span>
+              <span className="text-[44px] font-black text-white leading-none tracking-tight drop-shadow-lg">{varMillions}</span>
+              <span className="text-[18px] font-bold text-white/90">ล้าน</span>
             </div>
           </div>
 
@@ -85,11 +85,11 @@ export default function AlertHero() {
             <div className="text-[11px] text-white/70 font-bold uppercase tracking-widest mb-3 relative z-10">
               เส้นตาย (Deadline)
             </div>
-            <div className="flex items-baseline gap-1.5 justify-center relative z-10">
-              <span className="text-[42px] font-black text-white leading-none tracking-tighter drop-shadow-lg">2</span>
-              <span className="text-[14px] text-white/80 font-bold">วัน</span>
-              <span className="text-[42px] font-black text-white leading-none tracking-tighter drop-shadow-lg ml-2">6</span>
-              <span className="text-[14px] text-white/80 font-bold">ชม.</span>
+            <div className="flex items-baseline gap-2.5 justify-center relative z-10">
+              <span className="text-[44px] font-black text-white leading-none tracking-tight drop-shadow-lg">2</span>
+              <span className="text-[16px] text-white/80 font-bold">วัน</span>
+              <span className="text-[44px] font-black text-white leading-none tracking-tight drop-shadow-lg ml-2">6</span>
+              <span className="text-[16px] text-white/80 font-bold">ชม.</span>
             </div>
           </div>
         </div>
