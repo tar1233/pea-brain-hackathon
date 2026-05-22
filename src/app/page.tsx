@@ -99,13 +99,39 @@ export default function Home() {
   }
   const [approvedPlans, setApprovedPlans] = useState<ApprovedPlanData[]>([]);
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("pea_approved_plans");
+      if (saved) {
+        setApprovedPlans(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error("Failed to load approved plans", e);
+    }
+  }, []);
+
+  // Save to localStorage whenever approvedPlans changes (except initial empty mount)
+  useEffect(() => {
+    if (approvedPlans.length > 0) {
+      localStorage.setItem("pea_approved_plans", JSON.stringify(approvedPlans));
+    } else if (localStorage.getItem("pea_approved_plans") && approvedPlans.length === 0) {
+      // If state is empty but we have localstorage, it might be the initial render before mount.
+      // We don't want to clear localstorage immediately.
+    }
+  }, [approvedPlans]);
+
   useEffect(() => {
     const handleApprove = (e: Event) => {
       const ev = e as CustomEvent<ApprovedPlanData>;
       setApprovedPlans(prev => {
         const exists = prev.find(p => p.materialId === ev.detail.materialId);
-        if (exists) return prev.map(p => p.materialId === ev.detail.materialId ? ev.detail : p);
-        return [...prev, ev.detail];
+        const newPlans = exists 
+          ? prev.map(p => p.materialId === ev.detail.materialId ? ev.detail : p)
+          : [...prev, ev.detail];
+        // Also save immediately here just to be safe
+        localStorage.setItem("pea_approved_plans", JSON.stringify(newPlans));
+        return newPlans;
       });
     };
     window.addEventListener("approve-plan", handleApprove);

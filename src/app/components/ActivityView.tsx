@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle2, Clock, FileSearch, Gavel, Users, FileText, AlertTriangle, Brain, ShieldAlert, ArrowRight, ChevronDown, ChevronRight, Package, Sparkles, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, FileSearch, Gavel, Users, FileText, AlertTriangle, Brain, ShieldAlert, ArrowRight, ChevronDown, ChevronRight, Package, Sparkles, Loader2, Target } from "lucide-react";
 import { useData } from "../context/DataContext";
 
 interface ApprovedPlan {
@@ -12,12 +12,15 @@ interface ApprovedPlan {
   qty: number;
   risk: string;
   financial: string;
+  supplyForecast?: string;
+  mitigation?: string;
   unitPrice: number;
 }
 
 interface RiskMitigation {
   isLoading: boolean;
   plan: string | null;
+  parsedPlan?: any;
 }
 
 export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: ApprovedPlan[] }) {
@@ -26,12 +29,12 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
   const [riskMitigations, setRiskMitigations] = useState<Record<string, RiskMitigation>>({});
   const [trackingMitigations, setTrackingMitigations] = useState<Record<string, RiskMitigation>>({});
 
-  // Auto-expand the first approved material
+  // Auto-expand the most recently approved material
   useEffect(() => {
-    if (approvedPlans.length > 0 && !expandedMaterial) {
+    if (approvedPlans.length > 0) {
       setExpandedMaterial(approvedPlans[approvedPlans.length - 1].materialId);
     }
-  }, [approvedPlans, expandedMaterial]);
+  }, [approvedPlans.length]);
 
   // Simulate AI risk monitoring — auto-analyze when alert exists
   async function handleAIRiskAnalysis(materialId: string, alertMessage: string) {
@@ -61,11 +64,17 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{ role: "user", content: `⚠️ AI ตรวจพบความเสี่ยงด้านการจัดส่งสำหรับแผน "${planName}" ของพัสดุ ${mat?.name || materialId}. Supplier อาจส่งมอบล่าช้า 15 วัน เนื่องจากขาดแคลนวัตถุดิบ (Force Majeure) สต็อกปัจจุบัน: ${mat?.currentStock} ${mat?.unit}. กรุณาแนะนำวิธีจัดการความเสี่ยงการจัดส่งล่าช้านี้แบบสั้นกระชับ 3-4 ข้อ เป็นภาษาไทย ระบุขั้นตอนชัดเจน` }],
+          messages: [{ role: "user", content: `⚠️ AI ตรวจพบความเสี่ยงด้านการจัดส่งสำหรับแผน "${planName}" ของพัสดุ ${mat?.name || materialId}. Supplier อาจส่งมอบล่าช้า 15 วัน เนื่องจากขาดแคลนวัตถุดิบ (Force Majeure) สต็อกปัจจุบัน: ${mat?.currentStock} ${mat?.unit}. กรุณาวิเคราะห์และจัดทำแผนรับมือการจัดส่งล่าช้า โดยส่งกลับมาเป็น JSON format ตามโครงสร้างนี้เท่านั้น (ห้ามมี markdown code block): {"demandAI": "คำแนะนำสั้นๆ", "procurementAI": "คำแนะนำสั้นๆ", "warehouseAI": "คำแนะนำสั้นๆ", "executiveSummary": "สรุปสั้นๆ", "updatedAction": "Action plan ใหม่ที่อัพเดทแล้ว"}` }],
         }),
       });
       const data = await res.json();
-      setTrackingMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: data.content || "ไม่สามารถวิเคราะห์ได้" } }));
+      let parsedPlan = null;
+      try {
+        const textContent = (data.content || "").replace(/```json/g, "").replace(/```/g, "").trim();
+        parsedPlan = JSON.parse(textContent);
+      } catch (e) {}
+      
+      setTrackingMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: data.content || "ไม่สามารถวิเคราะห์ได้", parsedPlan } }));
     } catch {
       setTrackingMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: "เกิดข้อผิดพลาดในการเชื่อมต่อ AI" } }));
     }
@@ -248,11 +257,69 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
                                 <Loader2 size={14} className="animate-spin" /> AI กำลังวิเคราะห์แผนสำรอง...
                               </div>
                             ) : (
-                              <div className="mt-2 rounded-xl bg-white border border-blue-100 p-3">
-                                <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-blue-700 uppercase tracking-wider">
-                                  <Brain size={12} /> AI แผนรับมือการจัดส่งล่าช้า
-                                </div>
-                                <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{trackingMitigations[mat.id].plan}</div>
+                              <div className="mt-2 space-y-3">
+                                {trackingMitigations[mat.id].parsedPlan ? (
+                                  <div className="rounded-xl border border-blue-100 bg-white p-4 shadow-sm animate-fade-in">
+                                    <div className="flex items-center gap-1.5 mb-4 text-[11px] font-bold text-blue-800 uppercase tracking-wider border-b border-blue-50 pb-2">
+                                      <Brain size={14} className="text-blue-600" /> AI แผนรับมือการจัดส่งล่าช้า
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                      <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
+                                        <div className="text-[10px] font-bold text-purple-700 mb-1 flex items-center gap-1"><Target size={11} /> Demand Planner AI</div>
+                                        <div className="text-[11px] text-slate-700 leading-relaxed">{trackingMitigations[mat.id].parsedPlan.demandAI}</div>
+                                      </div>
+                                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                                        <div className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1"><FileText size={11} /> Procurement AI</div>
+                                        <div className="text-[11px] text-slate-700 leading-relaxed">{trackingMitigations[mat.id].parsedPlan.procurementAI}</div>
+                                      </div>
+                                      <div className="bg-amber-50 rounded-lg p-3 border border-amber-100">
+                                        <div className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1"><Package size={11} /> Warehouse AI</div>
+                                        <div className="text-[11px] text-slate-700 leading-relaxed">{trackingMitigations[mat.id].parsedPlan.warehouseAI}</div>
+                                      </div>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-lg p-3 border border-slate-100 mb-4">
+                                      <div className="text-[10px] font-bold text-slate-700 mb-1">Executive Summary</div>
+                                      <div className="text-[12px] text-slate-800 font-medium leading-relaxed">{trackingMitigations[mat.id].parsedPlan.executiveSummary}</div>
+                                    </div>
+                                    <div className="flex justify-end">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          window.dispatchEvent(new CustomEvent("approve-plan", {
+                                            detail: {
+                                              ...plan,
+                                              action: trackingMitigations[mat.id].parsedPlan.updatedAction || plan.action,
+                                              mitigation: trackingMitigations[mat.id].parsedPlan.executiveSummary || plan.mitigation,
+                                              supplyForecast: `[อัพเดทล่าช้า 15 วัน] ${plan.supplyForecast || ''}`,
+                                              planName: plan.planName.includes("(Updated)") ? plan.planName : `${plan.planName} (Updated)`
+                                            }
+                                          }));
+                                          // Add visual feedback
+                                          const btn = e.currentTarget;
+                                          const origHtml = btn.innerHTML;
+                                          btn.innerHTML = "✅ อัพเดทแผนเรียบร้อย";
+                                          btn.classList.add("bg-emerald-600", "hover:bg-emerald-700");
+                                          btn.classList.remove("bg-slate-800", "hover:bg-slate-900");
+                                          setTimeout(() => {
+                                            btn.innerHTML = origHtml;
+                                            btn.classList.remove("bg-emerald-600", "hover:bg-emerald-700");
+                                            btn.classList.add("bg-slate-800", "hover:bg-slate-900");
+                                          }, 2000);
+                                        }}
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-4 py-2 text-[11px] font-bold text-white cursor-pointer hover:bg-slate-900 transition shadow-sm"
+                                      >
+                                        <Sparkles size={12} className="text-blue-300" /> ปรับปรุงแผนรับมือ
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="rounded-xl bg-white border border-blue-100 p-3">
+                                    <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-blue-700 uppercase tracking-wider">
+                                      <Brain size={12} /> AI แผนรับมือการจัดส่งล่าช้า
+                                    </div>
+                                    <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{trackingMitigations[mat.id].plan}</div>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>

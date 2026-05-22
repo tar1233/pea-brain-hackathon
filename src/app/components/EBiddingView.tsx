@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap, Package, Clock } from "lucide-react";
+import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap, Package, Clock, Loader2 } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
@@ -38,6 +38,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
   const { eBiddingData, materials, riskAlerts } = useData();
   const [aiResult, setAiResult] = useState<AIAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const hasCalledRef = useRef(false);
 
@@ -574,14 +575,19 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
 
                 <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end">
                   <button 
+                    disabled={loadingPlan !== null}
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.futureImpact, qty: aiResult.planA.qty, risk: aiResult.planA.riskScenarios, financial: aiResult.planA.costAnalysis, supplyForecast: aiResult.planA.supplyForecast, mitigation: aiResult.planA.mitigation, unitPrice: material?.unitPrice || 0 } }));
-                      if (onClose) onClose();
-                      setTimeout(() => setActiveTab?.("activity"), 300);
+                      setLoadingPlan('A');
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan A: ${aiResult.planA.title}`, action: aiResult.planA.futureImpact, qty: aiResult.planA.qty, risk: aiResult.planA.riskScenarios, financial: aiResult.planA.costAnalysis, supplyForecast: aiResult.planA.supplyForecast, mitigation: aiResult.planA.mitigation, unitPrice: material?.unitPrice || 0 } }));
+                        if (onClose) onClose();
+                        setTimeout(() => setActiveTab?.("activity"), 300);
+                      }, 1000);
                     }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-[13px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-[13px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    <CheckCircle2 size={16} /> เลือกแผนนี้ → วางแผนจัดซื้อ
+                    {loadingPlan === 'A' ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />} 
+                    {loadingPlan === 'A' ? "กำลังดำเนินการ..." : "เลือกแผนนี้ → วางแผนจัดซื้อ"}
                   </button>
                 </div>
               </div>
@@ -620,14 +626,19 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
 
                 <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end">
                   <button 
+                    disabled={loadingPlan !== null}
                     onClick={() => {
-                      window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.futureImpact, qty: aiResult.planB.qty, risk: aiResult.planB.riskScenarios, financial: aiResult.planB.costAnalysis, supplyForecast: aiResult.planB.supplyForecast, mitigation: aiResult.planB.mitigation, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
-                      if (onClose) onClose();
-                      setTimeout(() => setActiveTab?.("activity"), 300);
+                      setLoadingPlan('B');
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent("approve-plan", { detail: { materialId: targetMaterialId, materialName: material?.name || targetMaterialId, planName: `Plan B: ${aiResult.planB.title}`, action: aiResult.planB.futureImpact, qty: aiResult.planB.qty, risk: aiResult.planB.riskScenarios, financial: aiResult.planB.costAnalysis, supplyForecast: aiResult.planB.supplyForecast, mitigation: aiResult.planB.mitigation, unitPrice: (material?.unitPrice || 150000) * 1.15 } }));
+                        if (onClose) onClose();
+                        setTimeout(() => setActiveTab?.("activity"), 300);
+                      }, 1000);
                     }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-slate-100 border border-slate-200 px-5 py-3 text-[13px] font-bold text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-slate-100 border border-slate-200 px-5 py-3 text-[13px] font-bold text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B
+                    {loadingPlan === 'B' ? <Loader2 size={16} className="animate-spin text-amber-500" /> : <AlertTriangle size={16} className="text-amber-500" />}
+                    {loadingPlan === 'B' ? "กำลังดำเนินการ..." : "เลือก Plan B"}
                   </button>
                 </div>
               </div>
