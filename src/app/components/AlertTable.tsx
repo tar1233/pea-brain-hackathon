@@ -133,7 +133,13 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                 return (
                   <React.Fragment key={alert.id}>
                     <tr 
-                      className={`border-b border-border/60 hover:bg-gray-50/70 transition-colors ${isCritical ? "bg-critical-50/30" : ""} ${planData ? "cursor-pointer" : ""}`}
+                      className={`border-b border-border/60 transition-colors ${
+                        planData 
+                          ? "bg-emerald-50/60 hover:bg-emerald-100/50 cursor-pointer" 
+                          : isCritical 
+                            ? "bg-critical-50/30 hover:bg-gray-50/70" 
+                            : "hover:bg-gray-50/70"
+                      }`}
                       onClick={() => {
                         if (planData) {
                           setExpandedId(prev => prev === alert.id ? null : alert.id);
