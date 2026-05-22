@@ -66,7 +66,18 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
     const gapDays = leadTimeDays - daysOfStock;
     const shortfallQty = mat ? Math.round((gapDays / 30) * mat.avgMonthlyDemand) : 0;
 
+    // Current date for AI awareness
+    const now = new Date();
+    const thaiMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    const currentMonth = thaiMonths[now.getMonth()];
+    const currentYear = now.getFullYear() + 543; // พ.ศ.
+    const currentMonthNum = now.getMonth() + 1; // 1-12
+    const remainingMonths = 12 - currentMonthNum;
+
     const prompt = `คุณเป็นที่ปรึกษาจัดซื้อระดับ Enterprise ของ PEA (การไฟฟ้าส่วนภูมิภาค)
+
+📅 วันที่ปัจจุบัน: ${now.getDate()} ${currentMonth} ${currentYear} (เดือนที่ ${currentMonthNum} ของปี)
+⏰ เหลืออีก ${remainingMonths} เดือนก่อนสิ้นปีงบประมาณ
 
 ═══ ข้อมูลพัสดุ: ${mat?.name} (${targetMaterialId}) ═══
 สต็อก: ${mat?.currentStock} ${mat?.unit} (ใช้ได้อีก ${daysOfStock} วัน = ${monthsOfStock} เดือน)
@@ -85,6 +96,8 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
 ═══ กฎ: ห้ามถามคำถามกลับ ห้ามเขียน "...ไหม?" ต้องตอบเป็นข้อสรุปเท่านั้น ═══
 ═══ กฎ: ทุก field ต้องมีคำตอบจริง ห้ามเว้นว่าง ห้ามเขียนว่า "-" ═══
 ═══ กฎ: ทุกคำตอบต้องมีเหตุผลกำกับว่า "เพราะ..." ═══
+═══ กฎ: ห้ามแนะนำเดือนที่ผ่านไปแล้ว! วันนี้คือ ${currentMonth} ${currentYear} ถ้าช่วงเวลาที่ดีที่สุดผ่านไปแล้ว ต้องแนะนำทางเลือกถัดไปที่ทำได้จริง พร้อมระบุว่า "ช่วงที่ดีที่สุด(เดือน X)ผ่านไปแล้ว ดังนั้นแนะนำ..." ═══
+═══ กฎ: ทุกวันที่/เดือนที่แนะนำต้องเป็นอนาคต (หลัง ${currentMonth} ${currentYear}) เท่านั้น ═══
 
 ตอบ JSON ตามนี้ (ห้ามมี markdown ห้ามมี text อื่น):
 {
