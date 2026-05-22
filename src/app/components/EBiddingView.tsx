@@ -108,80 +108,108 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
           </section>
         </div>
 
-        {/* Right Column: Supplier Uncertainty Simulation */}
+        {/* Right Column: AI Analysis & Multi-Option Strategy */}
         <div className="space-y-6">
-          <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 h-full flex flex-col">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-[16px] font-bold text-slate-900">AI Action Plan (แผนการดำเนินการ)</h2>
-                <p className="text-[12px] text-slate-500 mt-1">สรุปการตัดสินใจและแผนสำรองแบบ End-to-End</p>
+          <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 flex flex-col">
+            <div className="mb-6">
+              <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
+                <Brain className="text-purple-600" size={20} />
+                AI Strategy Options (ข้อเสนอแนะเชิงกลยุทธ์)
+              </h2>
+              <p className="text-[12px] text-slate-500 mt-1">AI วิเคราะห์ข้อมูลทั้งหมดแล้วพบว่าพัสดุรายการนี้มีความเสี่ยงสูง จึงเสนอ 2 ทางเลือกที่ดีที่สุดให้ผู้บริหารตัดสินใจ</p>
+            </div>
+
+            {/* Data Points Used */}
+            <div className="mb-6 grid grid-cols-3 gap-3">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Demand Data</div>
+                <div className="text-[12px] font-semibold text-slate-700">แนวโน้มเบิกจ่ายพุ่ง +15% จากพายุฤดูฝน</div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Market Data</div>
+                <div className="text-[12px] font-semibold text-slate-700">ราคา LME ตลาดโลกลดลง 5% ใน Q4</div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Supplier Data</div>
+                <div className="text-[12px] font-semibold text-slate-700">ประวัติ Supplier A มีความเสี่ยงส่งช้า</div>
               </div>
             </div>
 
-            <div className="flex-1 relative">
-              <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-slate-100"></div>
+            {/* Plan A */}
+            <div className="mb-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/30 p-5 relative overflow-hidden transition-all hover:shadow-lg hover:shadow-emerald-500/10">
+              <div className="absolute top-0 right-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl flex items-center gap-1">
+                <CheckCircle2 size={12} /> Highly Recommended
+              </div>
+              <h3 className="text-[15px] font-bold text-emerald-900 mb-1">Plan A: Cost Optimization Strategy</h3>
+              <p className="text-[12px] text-emerald-700/80 font-medium mb-4">คุ้มค่าที่สุดระยะยาว • ชะลอการซื้อเพื่อรอราคาลง</p>
               
-              <div className="space-y-8 relative">
-                {simulation.steps.map((step: any) => {
-                  return (
-                    <div key={step.id} className="relative flex gap-4 transition-all duration-500 opacity-100 scale-100">
-                      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
-                        {renderTimelineIcon(step.id)}
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="rounded-2xl border p-4 border-slate-100 bg-white shadow-sm">
-                          <h3 className="text-[14px] font-bold text-slate-900">
-                            Step {step.id}: {step.title}
-                          </h3>
-                          <p className="mt-2 text-[12px] text-slate-600 leading-relaxed">
-                            {step.detail}
-                          </p>
-                          
-                          <div className="mt-4 rounded-xl p-3 bg-purple-50 text-purple-900 border border-purple-100">
-                            <div className="flex items-center gap-1.5 mb-1.5">
-                              <Brain size={14} className="text-purple-600" />
-                              <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">AI Recommendation</span>
-                            </div>
-                            <p className="text-[12px] leading-relaxed font-semibold text-purple-800">
-                              {step.aiAction}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> โอนย้ายสต๊อกคงเหลือจากคลังภาคกลางมาช่วยแก้ขัด 150 เครื่อง และเปิด e-Bidding ใหม่ใน Q4 แทน</div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> ประหยัดงบจัดซื้อได้ประมาณ 3-5% (ลดความสูญเปล่า)</div>
+                </div>
+                <div className="flex gap-2">
+                  <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={12} />
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-amber-600">Risk:</span> คลังภาคกลางจะมี Stock ลดลงชั่วคราวเป็นเวลา 2 สัปดาห์ (AI ควบคุมและจัดการได้)</div>
+                </div>
+              </div>
+
+              <div className="mt-5 border-t border-emerald-200/50 pt-4 text-right">
+                <button 
+                  onClick={() => {
+                    const material = materials.find(m => m.id === targetMaterialId);
+                    window.dispatchEvent(new CustomEvent("create-po", { 
+                      detail: { materialId: targetMaterialId, qty: 150, name: material?.name || targetMaterial, price: material?.unitPrice } 
+                    }));
+                    if (onClose) onClose();
+                    setTimeout(() => setActiveTab?.("activity"), 500);
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer"
+                >
+                  <CheckCircle2 size={16} /> อนุมัติ Plan A (ดำเนินการโอนย้ายทันที)
+                </button>
               </div>
             </div>
 
-            {/* Approve Action */}
-            <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-              <div className="text-[11px] text-slate-500 font-medium">
-                อนุมัติแผนนี้เพื่อสร้างเอกสารสั่งซื้อ (PO) อัตโนมัติและส่งเข้า Workflow ทันที
+            {/* Plan B */}
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 relative overflow-hidden transition-all hover:border-amber-300 hover:shadow-md">
+              <h3 className="text-[15px] font-bold text-slate-800 mb-1">Plan B: Emergency Direct Purchase</h3>
+              <p className="text-[12px] text-slate-500 font-medium mb-4">แก้ปัญหาขาดแคลนไวที่สุด • จัดซื้อวิธีพิเศษเร่งด่วน</p>
+              
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Action:</span> ใช้วิธี "จัดซื้อพิเศษ (Direct Purchase)" ฉุกเฉินกับ Supplier สำรอง 300 เครื่องทันที</div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Financial Impact:</span> ต้องใช้งบประมาณเพิ่มขึ้นประมาณ 15% จากราคากลางเนื่องจากความเร่งด่วน</div>
+                </div>
+                <div className="flex gap-2">
+                  <ShieldAlert className="text-red-500 shrink-0 mt-0.5" size={12} />
+                  <div className="text-[12px] text-slate-700"><span className="font-bold text-red-600">Risk:</span> อาจถูก สตง. เพ่งเล็งเรื่องความโปร่งใส และต้นทุนสูงเกินความจำเป็น</div>
+                </div>
               </div>
-              <button 
-                onClick={() => {
-                  const material = materials.find(m => m.id === targetMaterialId);
-                  window.dispatchEvent(new CustomEvent("create-po", { 
-                    detail: { 
-                      materialId: targetMaterialId, 
-                      qty: material?.eoq || totalRequirement, 
-                      name: targetMaterial,
-                      price: material?.unitPrice 
-                    } 
-                  }));
-                  // Optional: switch to activity tab after a delay to see tracking
-                  if (onClose) onClose();
-                  setTimeout(() => {
-                    setActiveTab?.("activity");
-                  }, 500);
-                }}
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 text-[13px] font-bold text-white hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
-              >
-                <CheckCircle2 size={18} />
-                อนุมัติแผนงาน (Approve AI Plan)
-              </button>
+
+              <div className="mt-5 border-t border-slate-200 pt-4 text-right">
+                <button 
+                  onClick={() => {
+                    const material = materials.find(m => m.id === targetMaterialId);
+                    window.dispatchEvent(new CustomEvent("create-po", { 
+                      detail: { materialId: targetMaterialId, qty: 300, name: material?.name || targetMaterial, price: (material?.unitPrice || 150000) * 1.15 } 
+                    }));
+                    if (onClose) onClose();
+                    setTimeout(() => setActiveTab?.("activity"), 500);
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-300 px-5 py-2.5 text-[12px] font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <AlertTriangle size={16} className="text-amber-500" /> เลือก Plan B (ยอมรับความเสี่ยง)
+                </button>
+              </div>
             </div>
           </section>
           <div className="mt-8 bg-slate-900 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
