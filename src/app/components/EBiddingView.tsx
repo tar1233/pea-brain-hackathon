@@ -9,18 +9,15 @@ function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
 }
 
-export default function EBiddingView() {
-  const { eBiddingData } = useData();
-  const [activeStepId, setActiveStepId] = useState(2);
+export default function EBiddingView({ targetMaterialId = "10067", setActiveTab }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void }) {
+  const { eBiddingData, materials } = useData();
 
   if (!eBiddingData) return null;
 
   const { targetMaterial, totalRequirement, simulation } = eBiddingData;
 
-  const renderTimelineIcon = (status: string, id: number) => {
-    if (status === "completed" || id < activeStepId) return <CheckCircle2 className="text-emerald-500" size={24} />;
-    if (status === "active" || id === activeStepId) return <AlertTriangle className="text-amber-500 animate-pulse" size={24} />;
-    return <Clock className="text-slate-400" size={24} />;
+  const renderTimelineIcon = (id: number) => {
+    return <CheckCircle2 className="text-emerald-500" size={24} />;
   };
 
   return (
@@ -35,11 +32,10 @@ export default function EBiddingView() {
               e-Bidding AI Optimizer
             </div>
             <h1 className="max-w-4xl text-[24px] font-bold leading-tight tracking-tight">
-              เจาะลึกกลยุทธ์การจัดซื้อ: {targetMaterial}
+              AI Strategy & Action Plan: {targetMaterialId}
             </h1>
             <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-blue-100/80 font-medium">
-              Multi-Agent AI วิเคราะห์เทรนด์ราคาและประเมินความเสี่ยง Supplier เพื่อหาจังหวะที่เหมาะสมที่สุดในการเปิดประกวดราคา 
-              พร้อมรับมือความไม่แน่นอนแบบ Real-time
+              แผนยุทธศาสตร์จัดซื้อฉบับสมบูรณ์ วิเคราะห์โดย Multi-Agent AI (Demand Forecasting, Price Trend Analysis, และ Supplier Risk Management) พร้อมให้คุณพิจารณาอนุมัติ
             </p>
           </div>
           <div className="flex flex-col items-end text-right">
@@ -117,15 +113,9 @@ export default function EBiddingView() {
           <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 h-full flex flex-col">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h2 className="text-[16px] font-bold text-slate-900">Supplier Uncertainty Simulator</h2>
-                <p className="text-[12px] text-slate-500 mt-1">จำลองสถานการณ์ความไม่แน่นอน และการพลิกแพลงของ AI</p>
+                <h2 className="text-[16px] font-bold text-slate-900">AI Action Plan (แผนการดำเนินการ)</h2>
+                <p className="text-[12px] text-slate-500 mt-1">สรุปการตัดสินใจและแผนสำรองแบบ End-to-End</p>
               </div>
-              <button 
-                onClick={() => setActiveStepId(prev => prev < 3 ? prev + 1 : 1)}
-                className="flex items-center gap-1.5 rounded-lg bg-[#A80689] px-3 py-1.5 text-[11px] font-bold text-white hover:bg-[#8A0570] transition-colors"
-              >
-                <PlayCircle size={14} /> {activeStepId === 3 ? "รีเซ็ต" : "เล่นเหตุการณ์ถัดไป"}
-              </button>
             </div>
 
             <div className="flex-1 relative">
@@ -133,35 +123,30 @@ export default function EBiddingView() {
               
               <div className="space-y-8 relative">
                 {simulation.steps.map((step: any) => {
-                  const isActive = step.id === activeStepId;
-                  const isPast = step.id < activeStepId;
-                  
                   return (
-                    <div key={step.id} className={`relative flex gap-4 transition-all duration-500 ${isActive ? 'opacity-100 scale-100' : isPast ? 'opacity-60 scale-100' : 'opacity-30 scale-95'}`}>
+                    <div key={step.id} className="relative flex gap-4 transition-all duration-500 opacity-100 scale-100">
                       <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
-                        {renderTimelineIcon(step.status, step.id)}
+                        {renderTimelineIcon(step.id)}
                       </div>
                       
                       <div className="flex-1">
-                        <div className={`rounded-2xl border p-4 ${isActive ? 'border-amber-200 bg-amber-50/30 shadow-md shadow-amber-500/5' : 'border-slate-100 bg-white'}`}>
-                          <h3 className={`text-[14px] font-bold ${isActive ? 'text-amber-900' : 'text-slate-900'}`}>
+                        <div className="rounded-2xl border p-4 border-slate-100 bg-white shadow-sm">
+                          <h3 className="text-[14px] font-bold text-slate-900">
                             Step {step.id}: {step.title}
                           </h3>
                           <p className="mt-2 text-[12px] text-slate-600 leading-relaxed">
                             {step.detail}
                           </p>
                           
-                          {(isActive || isPast) && (
-                            <div className={`mt-4 rounded-xl p-3 ${isActive ? 'bg-amber-100/50 text-amber-900' : 'bg-slate-50 text-slate-700'}`}>
-                              <div className="flex items-center gap-1.5 mb-1.5">
-                                <Brain size={14} className={isActive ? "text-amber-600" : "text-slate-400"} />
-                                <span className="text-[11px] font-bold uppercase tracking-wider">AI Decision</span>
-                              </div>
-                              <p className="text-[12px] leading-relaxed font-medium">
-                                {step.aiAction}
-                              </p>
+                          <div className="mt-4 rounded-xl p-3 bg-purple-50 text-purple-900 border border-purple-100">
+                            <div className="flex items-center gap-1.5 mb-1.5">
+                              <Brain size={14} className="text-purple-600" />
+                              <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">AI Recommendation</span>
                             </div>
-                          )}
+                            <p className="text-[12px] leading-relaxed font-semibold text-purple-800">
+                              {step.aiAction}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -170,6 +155,33 @@ export default function EBiddingView() {
               </div>
             </div>
 
+            {/* Approve Action */}
+            <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
+              <div className="text-[11px] text-slate-500 font-medium">
+                อนุมัติแผนนี้เพื่อสร้างเอกสารสั่งซื้อ (PO) อัตโนมัติและส่งเข้า Workflow ทันที
+              </div>
+              <button 
+                onClick={() => {
+                  const material = materials.find(m => m.id === targetMaterialId);
+                  window.dispatchEvent(new CustomEvent("create-po", { 
+                    detail: { 
+                      materialId: targetMaterialId, 
+                      qty: material?.eoq || totalRequirement, 
+                      name: targetMaterial,
+                      price: material?.unitPrice 
+                    } 
+                  }));
+                  // Optional: switch to activity tab after a delay to see tracking
+                  setTimeout(() => {
+                    setActiveTab?.("activity");
+                  }, 4000);
+                }}
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 text-[13px] font-bold text-white hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
+              >
+                <CheckCircle2 size={18} />
+                อนุมัติแผนงาน (Approve AI Plan)
+              </button>
+            </div>
           </section>
           <div className="mt-8 bg-slate-900 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
             <h3 className="text-lg font-bold flex items-center gap-2 mb-4">

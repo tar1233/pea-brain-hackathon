@@ -201,9 +201,13 @@ export default function AlertTable() {
                             : alert.severity === "warning"
                               ? "border border-warning-300 text-warning-700 hover:bg-warning-50"
                               : "border border-primary-200 text-primary-700 hover:bg-primary-50"
-                          } ${expandedId === alert.id ? 'ring-2 ring-offset-1 ring-purple-300' : ''}`}
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpandedId(expandedId === alert.id ? null : alert.id); }}>
-                          {expandedId === alert.id ? 'ซ่อน' : 'ดูรายละเอียด'}
+                          }`}
+                          onClick={(e) => { 
+                            e.preventDefault(); 
+                            e.stopPropagation(); 
+                            window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                          }}>
+                          ให้ AI เข้าไปวิเคราะห์
                         </button>
                       </td>
                     </tr>
@@ -218,7 +222,11 @@ export default function AlertTable() {
                             <span className="text-text-muted">คำแนะนำ AI:</span>
                             <span className="font-semibold text-text-primary">{alert.recommendation}</span>
                             <span className="text-primary-600 font-semibold cursor-pointer hover:underline ml-1"
-                              onClick={() => setExpandedId(expandedId === alert.id ? null : alert.id)}>
+                              onClick={(e) => { 
+                                e.preventDefault(); 
+                                e.stopPropagation(); 
+                                window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                              }}>
                               ดูเหตุผลและการคำนวณ →
                             </span>
                           </div>

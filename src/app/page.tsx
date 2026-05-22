@@ -81,6 +81,7 @@ import ActivityView from "./components/ActivityView";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("ebidding");
+  const [targetMaterialId, setTargetMaterialId] = useState<string>("10067");
   const { materials, isLoading, error } = useData();
 
   interface POPending {
@@ -147,6 +148,16 @@ export default function Home() {
   }, [materials]);
 
   useEffect(() => {
+    const handleAnalyzeMaterial = (e: Event) => {
+      const customEvent = e as CustomEvent<{ materialId: string }>;
+      setTargetMaterialId(customEvent.detail.materialId);
+      setActiveTab("ebidding");
+    };
+    window.addEventListener("analyze-material", handleAnalyzeMaterial);
+    return () => window.removeEventListener("analyze-material", handleAnalyzeMaterial);
+  }, []);
+
+  useEffect(() => {
     if (!poProgress || !poProgress.isOpen || poProgress.step >= 3) return;
 
     const timer = setTimeout(() => {
@@ -165,7 +176,7 @@ export default function Home() {
   const renderContent = () => {
     switch (activeTab) {
       case "ebidding":
-        return <EBiddingView />;
+        return <EBiddingView targetMaterialId={targetMaterialId} setActiveTab={setActiveTab} />;
       case "dashboard":
         return <Dashboard setActiveTab={setActiveTab} />;
       case "forecast":
