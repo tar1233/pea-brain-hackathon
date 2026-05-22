@@ -42,14 +42,14 @@ export default function ProjectRoadmap() {
     },
     {
       id: "sprint-4",
-      name: "Sprint 4: Deployment & Future Plans",
+      name: "Sprint 4: Pilot Testing & Usability",
       status: "pending",
       date: "Post-Hackathon",
       tasks: [
-        "Connect to real PEA SAP ERP APIs",
-        "Implement User Authentication & Role-Based Access",
-        "Security hardening and penetration testing",
-        "Production deployment on AWS Cloud"
+        "ระบบนำเข้าข้อมูลด้วย Excel/CSV (พร้อมใช้งานทันทีโดยไม่ต้องรอ SAP)",
+        "เชื่อมต่อ LINE Official Account ส่งแจ้งเตือนแบบ Real-time",
+        "พัฒนาระบบ Export รายงาน PDF สำหรับนำเสนอผู้บริหาร",
+        "ทดสอบนำร่อง (Pilot Test) ร่วมกับคลังพัสดุเขตนำร่อง 1-2 แห่ง"
       ]
     }
   ];
