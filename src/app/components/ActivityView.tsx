@@ -97,14 +97,16 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <section className="rounded-[32px] bg-white border border-slate-200 p-8 shadow-sm">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-purple-700 shadow-sm">
-            <Brain size={14} />
+      <section className="rounded-[32px] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] border border-slate-700/50 p-8 shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 max-w-3xl">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-100 shadow-inner">
+            <Brain size={14} className="text-emerald-300" />
             Procurement Planning
           </div>
-          <h1 className="mt-4 text-[24px] font-bold tracking-tight text-slate-900">แผนการจัดซื้อ (Procurement Planning)</h1>
-          <p className="mt-3 text-[13px] leading-relaxed text-slate-500 font-medium">
+          <h1 className="mt-4 text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนการจัดซื้อ (Procurement Planning)</h1>
+          <p className="mt-3 text-[13px] leading-relaxed text-slate-300/90 font-medium">
             ติดตามแผนจัดซื้อสินค้าแต่ละตัว • AI เฝ้าระวังความเสี่ยงอัตโนมัติ • วิเคราะห์แผนรับมือทันทีเมื่อเกิดปัญหา
           </p>
         </div>

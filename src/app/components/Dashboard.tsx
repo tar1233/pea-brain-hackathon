@@ -81,34 +81,37 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
   return (
     <div className="space-y-6">
       {/* Hero Banner */}
-      <section className="rounded-[32px] border border-slate-200 bg-white px-8 py-8 shadow-sm relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+      <section className="rounded-[32px] bg-gradient-to-br from-[#4c1d95] via-[#6d28d9] to-[#312e81] border border-purple-500/30 px-8 py-8 shadow-[0_10px_40px_-10px_rgba(76,29,149,0.5)] relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+        
         <div className="relative z-10">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1 text-[11px] font-bold tracking-widest text-purple-700 uppercase">
-            <Briefcase size={14} />
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3 py-1 text-[11px] font-bold tracking-widest text-purple-100 border border-white/10 uppercase shadow-inner">
+            <Briefcase size={14} className="text-purple-300" />
             AI Executive Command Center
           </div>
-          <h1 className="text-[22px] font-extrabold text-slate-900 leading-tight">
+          <h1 className="text-[24px] font-black text-white leading-tight drop-shadow-md tracking-tight">
             ภาพรวมการทำงานของ PEA Brain (AI Copilot)
           </h1>
-          <p className="mt-2 text-[13px] text-slate-500 font-medium max-w-xl">
+          <p className="mt-2 text-[13px] text-purple-200/90 font-medium max-w-xl">
             สรุปข้อมูลการจัดการความเสี่ยงสต๊อกขาดแคลน การวางแผนจัดซื้อด้วย AI และผลประหยัดงบประมาณ
           </p>
         </div>
+        
         <div className="flex gap-4 shrink-0 relative z-10">
-          <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-red-100 transition" onClick={() => setActiveTab?.("risk")}>
-            <div className="text-[10px] font-bold text-red-500 uppercase flex justify-center items-center gap-1">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-white/20 transition shadow-[0_8px_30px_rgb(0,0,0,0.12)]" onClick={() => setActiveTab?.("risk")}>
+            <div className="text-[10px] font-bold text-red-300 uppercase flex justify-center items-center gap-1 drop-shadow-sm">
               <AlertTriangle size={12} /> ความเสี่ยงที่ต้องจัดการ
             </div>
-            <div className="text-[20px] font-extrabold text-red-700 mt-1">{riskAlerts.filter(a => a.severity === 'critical').length} รายการ</div>
-            <div className="text-[10px] font-bold text-red-500 mt-1">มูลค่าความเสี่ยง ฿145.2M</div>
+            <div className="text-[24px] font-black text-white mt-1 leading-none drop-shadow-md tracking-tight">{riskAlerts.filter(a => a.severity === 'critical').length} <span className="text-[14px]">รายการ</span></div>
+            <div className="text-[10px] font-semibold text-red-200 mt-2">มูลค่าความเสี่ยง ฿145.2M</div>
           </div>
-          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-emerald-100 transition" onClick={() => setActiveTab?.("ebidding")}>
-            <div className="text-[10px] font-bold text-emerald-600 uppercase flex justify-center items-center gap-1">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[140px] cursor-pointer hover:bg-white/20 transition shadow-[0_8px_30px_rgb(0,0,0,0.12)]" onClick={() => setActiveTab?.("ebidding")}>
+            <div className="text-[10px] font-bold text-emerald-300 uppercase flex justify-center items-center gap-1 drop-shadow-sm">
               <CheckCircle2 size={12} /> แก้ไขแล้วด้วย AI
             </div>
-            <div className="text-[20px] font-extrabold text-emerald-700 mt-1">{approvedPlansCount} แผน</div>
-            <div className="text-[10px] font-bold text-emerald-600 mt-1">พร้อมดำเนินการทันที</div>
+            <div className="text-[24px] font-black text-white mt-1 leading-none drop-shadow-md tracking-tight">{approvedPlansCount} <span className="text-[14px]">แผน</span></div>
+            <div className="text-[10px] font-semibold text-emerald-200 mt-2">พร้อมดำเนินการทันที</div>
           </div>
         </div>
       </section>
