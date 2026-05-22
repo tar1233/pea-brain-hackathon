@@ -126,13 +126,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
               }
             ],
             priceTrend: [
-              { month: "Jan", price: 145000 },
-              { month: "Feb", price: 148000 },
-              { month: "Mar", price: 152000 },
-              { month: "Apr", price: 155000 },
-              { month: "May", price: 153000 },
-              { month: "Jun", price: 150000, projected: true },
-              { month: "Jul", price: 147000, projected: true },
+              { month: "Jan", price: 145000, lastYearPrice: 152000 },
+              { month: "Feb", price: 148000, lastYearPrice: 155000 },
+              { month: "Mar", price: 152000, lastYearPrice: 158000 },
+              { month: "Apr", price: 155000, lastYearPrice: 156000 },
+              { month: "May", price: 153000, lastYearPrice: 154000 },
+              { month: "Jun", price: 150000, lastYearPrice: 151000, projected: true },
+              { month: "Jul", price: 147000, lastYearPrice: 149000, projected: true },
             ]
           }
         };

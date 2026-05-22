@@ -75,9 +75,21 @@ export default function EBiddingView() {
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} tickFormatter={(val) => `฿${(val/1000).toFixed(0)}k`} />
                   <Tooltip 
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
-                    formatter={(value: any) => [formatCurrency(Number(value) || 0), "ราคาตลาด"]}
+                    formatter={(value: any, name: any) => [
+                      formatCurrency(Number(value) || 0), 
+                      name === 'price' ? "ปีปัจจุบัน (Forecast)" : "ปีก่อนหน้า (Historical)"
+                    ]}
                   />
                   <ReferenceLine x="May" stroke="#cbd5e1" strokeDasharray="3 3" />
+                  <Line 
+                    type="monotone" 
+                    dataKey="lastYearPrice" 
+                    stroke="#94a3b8" 
+                    strokeWidth={2} 
+                    strokeDasharray="5 5"
+                    dot={false}
+                    activeDot={{ r: 4, strokeWidth: 0, fill: '#94a3b8' }} 
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="price" 
