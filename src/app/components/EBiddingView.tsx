@@ -24,6 +24,7 @@ interface AIAnalysisResult {
   demandAnalysis: string;
   marketAnalysis: string;
   supplierAnalysis: string;
+  emergencyPlan: string;
   priceForecast: { threeMonth: string; oneYear: string; bestTimeToBuy: string };
   lotStrategy: { recommendation: string; totalQty: number; numLots: number; qtyPerLot: number; reason: string; savings: string };
   lotSchedule: Array<{ lot: number; qty: number; orderMonth: string; receiveMonth: string; action: string }>;
@@ -76,18 +77,26 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
 ${alert ? `⚠️ แจ้งเตือน: ${alert.message}` : ''}
 ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''}
 
+
+═══ ⚠️ CRITICAL: วิเคราะห์ช่องว่างวิกฤต (Emergency Gap Analysis) ═══
+🚨 สต็อกใช้ได้อีก: ${daysOfStock} วัน
+⏱️ Lead Time: ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน
+📏 ช่องว่างวิกฤต: ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วัน ที่สต็อกจะหมดก่อนของมาถึง!
+❓ ระหว่าง ${daysOfStock} วันนี้ถึงวันที่ของมาถึง (~${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน) ต้องทำอะไร? ขอยืมจากคลังอื่นได้ไหม? ต้องจัดซื้อเร่งด่วนหรือไม่? มีผลกระทบอะไรบ้างถ้าของขาด?
+
 ═══ สิ่งที่ต้องวิเคราะห์ (บังคับ) ═══
 1. ทำไมต้องสั่ง? — ดูจากสต็อกที่เหลือ vs Demand ที่จะเกิดขึ้น (ใช้ได้อีกกี่วัน?)
 2. ต้องสั่งเมื่อไหร่? — คำนวณจาก Lead Time ว่าต้องเริ่มกระบวนการจัดซื้อวันไหนเพื่อไม่ให้ของขาด
-3. ควรเปิดประกวดราคาช่วงไหน? — วิเคราะห์จากราคาตลาดและประวัติราคาจัดซื้อ
-4. ตัวไหนต้องเฝ้าระวัง? — ดูจากค่าเบี่ยงเบนสูง = Demand ผันผวน
-5. ถ้าแผนมีความเสี่ยง ต้องจัดการยังไง? — ระบุขั้นตอนแก้ไขชัดเจน
+3. ช่องว่างวิกฤต — สต็อกจะหมดก่อนของใหม่มาถึง ต้องแก้ปัญหายังไง? (ยืมจากคลังอื่น, จัดซื้อเร่งด่วน, ลดปริมาณการเบิก)
+4. ถ้าสั่งไม่ทัน — จะเกิดผลกระทบอะไรกับระบบไฟฟ้า? ต้องแจ้งหน่วยงานไหนบ้าง?
+5. แผนฉุกเฉิน — ระหว่างรอของใหม่ ต้องทำยังไง? มีทางลัดอะไรที่ทำได้ตามระเบียบ?
 
 ตอบเป็น JSON เท่านั้น (ไม่ต้อง markdown code block) ตามโครงสร้างนี้:
 {
-  "demandAnalysis": "วิเคราะห์จากข้อมูลจริง: ทำไมต้องสั่ง? สต็อกใช้ได้อีกกี่วัน? Demand แนวโน้มไปทางไหน? (อ้างอิงตัวเลข)",
-  "marketAnalysis": "วิเคราะห์จากราคา: ควรเปิดประกวดราคาช่วงไหน? ราคาตลาดเป็นอย่างไร? (อ้างอิงตัวเลข)",
-  "supplierAnalysis": "วิเคราะห์ Supplier: มีความเสี่ยงอะไร? Lead Time นานแค่ไหน? ต้องเริ่มสั่งเมื่อไหร่จึงจะได้ของทัน? (อ้างอิงตัวเลข)",
+  "demandAnalysis": "วิเคราะห์จากข้อมูลจริง: ทำไมต้องสั่ง? สต็อก ${daysOfStock} วัน vs Lead Time ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน → มีช่องว่าง ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วันที่สต็อกจะหมด! Demand เฉลี่ย ${mat?.avgMonthlyDemand} ต่อเดือน คำนวณว่าจะขาดกี่ชิ้น (อ้างอิงตัวเลข)",
+  "marketAnalysis": "วิเคราะห์จากราคา: ควรเปิดประกวดราคาช่วงไหน? ราคาตลาดเป็นอย่างไร? ถ้าจัดซื้อเร่งด่วนราคาจะแพงขึ้นกี่%? (อ้างอิงตัวเลข)",
+  "supplierAnalysis": "วิเคราะห์ Supplier: Lead Time ${mat?.leadTimeWeeks} สัปดาห์ แต่สต็อกเหลือแค่ ${daysOfStock} วัน ช่องว่าง ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วัน → ต้องเจรจาให้ส่งเร็วขึ้นได้ไหม? ถ้าเร่งได้จะเหลือกี่สัปดาห์? มี Supplier สำรองไหม? (อ้างอิงตัวเลข)",
+  "emergencyPlan": "แผนฉุกเฉิน: ระหว่างรอของใหม่ ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน สต็อกจะหมดใน ${daysOfStock} วัน → ต้องทำอะไรบ้าง? เช่น 1) ขอยืมจากคลังอื่น กี่ชิ้น 2) จัดซื้อเร่งด่วน (วิธีพิเศษ) 3) ปรับลดปริมาณเบิกจ่ายชั่วคราว 4) แจ้งหน่วยงานที่ได้รับผลกระทบ — ระบุเป็นขั้นตอนชัดเจน",
   "planA": {
     "title": "ชื่อแผน (สั้นกระชับ)",
     "qty": ตัวเลขจำนวนสั่งซื้อ,
@@ -125,7 +134,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
     { "lot": 1, "qty": จำนวนต่อ Lot, "orderMonth": "เดือนที่ต้องเริ่มกระบวนการจัดซื้อ (คำนวณจาก Lead Time ${mat?.leadTimeWeeks} สัปดาห์)", "receiveMonth": "เดือนที่คาดว่าจะได้รับของ", "action": "สิ่งที่ต้องทำในรอบนี้" },
     { "lot": 2, "qty": จำนวน, "orderMonth": "เดือน", "receiveMonth": "เดือน", "action": "สิ่งที่ต้องทำ" }
   ],
-  "executiveSummary": "สรุปสำหรับผู้บริหาร: ทำไมต้องทำ เมื่อไหร่ต้องทำ ถ้าไม่ทำจะเกิดอะไรขึ้น (2-3 ประโยค อ้างอิงตัวเลข)"
+  "executiveSummary": "สรุปสำหรับผู้บริหาร: สต็อกเหลือ ${daysOfStock} วัน แต่ Lead Time ${mat ? Math.round(mat.leadTimeWeeks * 7) : '?'} วัน ช่องว่าง ${mat ? Math.round(mat.leadTimeWeeks * 7) - daysOfStock : '?'} วัน → ทำไมต้องทำทันที ถ้าไม่ทำจะเกิดอะไรขึ้น (2-3 ประโยค อ้างอิงตัวเลข)"
 }
 
 สำคัญมาก: ตอบเป็น JSON เท่านั้น ห้ามมี text อื่นนอก JSON ห้ามมี markdown code block`;
@@ -154,6 +163,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           demandAnalysis: parsed.demandAnalysis || "ไม่สามารถวิเคราะห์ได้",
           marketAnalysis: parsed.marketAnalysis || "ไม่สามารถวิเคราะห์ได้",
           supplierAnalysis: parsed.supplierAnalysis || "ไม่สามารถวิเคราะห์ได้",
+          emergencyPlan: parsed.emergencyPlan || "",
           priceForecast: parsed.priceForecast || { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: parsed.lotStrategy || { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           lotSchedule: parsed.lotSchedule || [],
@@ -167,6 +177,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           demandAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
           marketAnalysis: "กรุณาดู Raw AI Response ด้านล่าง",
           supplierAnalysis: "กรุณาดู Raw AI Response ด้านล่าง",
+          emergencyPlan: "",
           priceForecast: { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           lotSchedule: [],
@@ -326,6 +337,35 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
                 </div>
               </div>
             </div>
+
+            {/* Emergency Plan - Critical Gap Alert */}
+            {aiResult.emergencyPlan && (
+              <div className="rounded-2xl bg-gradient-to-r from-red-50 to-orange-50 p-6 shadow-sm border-2 border-red-300">
+                <h2 className="text-[16px] font-bold text-red-800 flex items-center gap-2 mb-3">
+                  <ShieldAlert size={20} className="text-red-600" /> 🚨 แผนฉุกเฉิน: สต็อกจะหมดก่อนของมาถึง!
+                </h2>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="rounded-xl bg-red-100 border border-red-200 p-3 text-center">
+                    <div className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">สต็อกเหลือ</div>
+                    <div className="text-[28px] font-black text-red-700">{material ? Math.round((material.currentStock / (material.avgMonthlyDemand / 30))) : '?'}</div>
+                    <div className="text-[10px] text-red-400">วัน</div>
+                  </div>
+                  <div className="rounded-xl bg-orange-100 border border-orange-200 p-3 text-center">
+                    <div className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-1">Lead Time</div>
+                    <div className="text-[28px] font-black text-orange-700">{material ? Math.round(material.leadTimeWeeks * 7) : '?'}</div>
+                    <div className="text-[10px] text-orange-400">วัน</div>
+                  </div>
+                  <div className="rounded-xl bg-yellow-100 border border-yellow-200 p-3 text-center">
+                    <div className="text-[10px] font-bold text-yellow-600 uppercase tracking-wider mb-1">ช่องว่างวิกฤต</div>
+                    <div className="text-[28px] font-black text-yellow-700">{material ? Math.round(material.leadTimeWeeks * 7) - Math.round((material.currentStock / (material.avgMonthlyDemand / 30))) : '?'}</div>
+                    <div className="text-[10px] text-yellow-500">วัน ที่ต้องอุด</div>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-white/80 border border-red-200 p-4">
+                  <p className="text-[13px] text-slate-800 leading-relaxed whitespace-pre-line">{aiResult.emergencyPlan}</p>
+                </div>
+              </div>
+            )}
 
             {/* Price Forecast Section */}
             {aiResult.priceForecast && (
