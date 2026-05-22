@@ -24,6 +24,7 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
   const { materials, riskAlerts } = useData();
   const [expandedMaterial, setExpandedMaterial] = useState<string | null>(null);
   const [riskMitigations, setRiskMitigations] = useState<Record<string, RiskMitigation>>({});
+  const [trackingMitigations, setTrackingMitigations] = useState<Record<string, RiskMitigation>>({});
 
   // Auto-expand the first approved material
   useEffect(() => {
@@ -48,6 +49,25 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
       setRiskMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: data.content || "ไม่สามารถวิเคราะห์ได้" } }));
     } catch {
       setRiskMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: "เกิดข้อผิดพลาดในการเชื่อมต่อ AI" } }));
+    }
+  }
+
+  // Simulate AI tracking analysis — auto-analyze delivery delays
+  async function handleAITrackingAnalysis(materialId: string, planName: string) {
+    setTrackingMitigations(prev => ({ ...prev, [materialId]: { isLoading: true, plan: null } }));
+    try {
+      const mat = materials.find(m => m.id === materialId || m.sapCode === materialId);
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: `⚠️ AI ตรวจพบความเสี่ยงด้านการจัดส่งสำหรับแผน "${planName}" ของพัสดุ ${mat?.name || materialId}. Supplier อาจส่งมอบล่าช้า 15 วัน เนื่องจากขาดแคลนวัตถุดิบ (Force Majeure) สต็อกปัจจุบัน: ${mat?.currentStock} ${mat?.unit}. กรุณาแนะนำวิธีจัดการความเสี่ยงการจัดส่งล่าช้านี้แบบสั้นกระชับ 3-4 ข้อ เป็นภาษาไทย ระบุขั้นตอนชัดเจน` }],
+        }),
+      });
+      const data = await res.json();
+      setTrackingMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: data.content || "ไม่สามารถวิเคราะห์ได้" } }));
+    } catch {
+      setTrackingMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: "เกิดข้อผิดพลาดในการเชื่อมต่อ AI" } }));
     }
   }
 
@@ -193,17 +213,50 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
                     </div>
                   )}
 
-                  {/* Approved Plan Summary */}
+                  {/* Approved Plan Summary & Tracking */}
                   {plan && (
-                    <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle2 className="text-emerald-600" size={16} />
-                        <span className="text-[12px] font-bold text-emerald-800">{plan.planName}</span>
+                    <div className="space-y-4">
+                      <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CheckCircle2 className="text-emerald-600" size={16} />
+                          <span className="text-[12px] font-bold text-emerald-800">{plan.planName}</span>
+                        </div>
+                        <p className="text-[11px] text-emerald-700 leading-relaxed mb-2">{plan.action}</p>
+                        <div className="flex gap-3 text-[10px]">
+                          <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-600">📦 {plan.qty.toLocaleString()} หน่วย</span>
+                          <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-600">💰 {plan.financial}</span>
+                        </div>
                       </div>
-                      <p className="text-[11px] text-emerald-700 leading-relaxed mb-2">{plan.action}</p>
-                      <div className="flex gap-3 text-[10px]">
-                        <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-600">📦 {plan.qty.toLocaleString()} หน่วย</span>
-                        <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-600">💰 {plan.financial}</span>
+
+                      {/* Post-Plan AI Tracking */}
+                      <div className="rounded-xl p-4 border bg-blue-50 border-blue-200">
+                        <div className="flex items-start gap-3">
+                          <Clock className="text-blue-500" size={20} />
+                          <div className="flex-1">
+                            <div className="text-[12px] font-bold text-slate-800 mb-0.5">🚚 AI เฝ้าระวังการจัดส่ง (Tracking)</div>
+                            <div className="text-[11px] text-slate-600 mb-3">พบความเสี่ยง: ผู้ผลิตหลักแจ้งเตือนปัญหา Supply Chain อาจทำให้ส่งมอบล่าช้า 15 วัน เสี่ยงกระทบสต็อกที่จะหมดในอีก {daysOfStock} วัน</div>
+
+                            {!trackingMitigations[mat.id] ? (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleAITrackingAnalysis(mat.id, plan.planName); }}
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-[11px] font-bold text-white cursor-pointer hover:bg-blue-700 transition shadow-sm"
+                              >
+                                <Sparkles size={12} /> ให้ AI วิเคราะห์แผนสำรอง
+                              </button>
+                            ) : trackingMitigations[mat.id].isLoading ? (
+                              <div className="flex items-center gap-2 text-[11px] text-blue-600 font-bold">
+                                <Loader2 size={14} className="animate-spin" /> AI กำลังวิเคราะห์แผนสำรอง...
+                              </div>
+                            ) : (
+                              <div className="mt-2 rounded-xl bg-white border border-blue-100 p-3">
+                                <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-blue-700 uppercase tracking-wider">
+                                  <Brain size={12} /> AI แผนรับมือการจัดส่งล่าช้า
+                                </div>
+                                <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{trackingMitigations[mat.id].plan}</div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}

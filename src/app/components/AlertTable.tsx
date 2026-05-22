@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import {
-  Search, ChevronLeft, ChevronRight,
+  Search, ChevronLeft, ChevronRight, ChevronDown,
   SlidersHorizontal, Sparkles
 } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
@@ -128,6 +128,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                 const dateStr = ts.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
                 const timeStr = ts.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
                 const ltMonths = material ? Math.ceil(material.leadTimeWeeks / 4) : 0;
+                const planData = approvedPlans.find(p => p.materialId === alert.materialId || p.materialId === alert.materialId.replace('MAT-', ''));
 
                 return (
                   <React.Fragment key={alert.id}>
@@ -196,19 +197,18 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       </td>
                       <td className="px-3 py-3 text-center">
                         {(() => {
-                          const hasPlan = approvedPlans.some(p => p.materialId === alert.materialId || p.materialId === alert.materialId.replace('MAT-', ''));
-                          if (hasPlan) {
+                          if (planData) {
                             return (
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  // Jump to activity tab when clicking "มีแผนแล้ว"
-                                  window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                                  setExpandedId(prev => prev === alert.id ? null : alert.id);
                                 }}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
                               >
                                 <Sparkles size={12} /> มีแผนแล้ว
+                                {expandedId === alert.id ? <ChevronDown size={12} className="ml-1" /> : <ChevronRight size={12} className="ml-1" />}
                               </button>
                             );
                           }
@@ -232,8 +232,8 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       </td>
                     </tr>
 
-                    {/* AI Recommendation inline for critical */}
-                    {isCritical && (
+                    {/* AI Recommendation inline for critical (only if no plan) */}
+                    {isCritical && !planData && (
                       <tr className="bg-primary-50/30">
                         <td></td>
                         <td colSpan={8} className="px-3 py-2">
@@ -254,8 +254,46 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       </tr>
                     )}
 
-                    {/* Expanded Detail Panel */}
-                    {expandedId === alert.id && (
+                    {/* Expanded Detail Panel (Has Plan) */}
+                    {expandedId === alert.id && planData && (
+                      <tr>
+                        <td></td>
+                        <td colSpan={8} className="px-3 py-0">
+                          <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/50 to-white p-5 mb-3 mt-1 animate-fade-in shadow-sm">
+                            <div className="flex items-center gap-2 mb-4">
+                              <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                <Sparkles size={14} className="text-emerald-600" />
+                              </div>
+                              <h4 className="text-[13px] font-bold text-emerald-900">แผนที่อนุมัติ: {planData.planName}</h4>
+                            </div>
+
+                            <div className="bg-white rounded-xl p-4 border border-emerald-100 mb-4">
+                              <div className="text-[11px] font-bold text-emerald-700 mb-2">📋 Action Plan</div>
+                              <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{planData.action}</div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div className="bg-white rounded-xl p-3 border border-emerald-100">
+                                <div className="text-[10px] text-slate-400 uppercase tracking-wider">📦 จำนวนที่สั่งซื้อ</div>
+                                <div className="text-[14px] font-bold text-slate-900 mt-1">{planData.qty.toLocaleString()} หน่วย</div>
+                              </div>
+                              <div className="bg-white rounded-xl p-3 border border-emerald-100">
+                                <div className="text-[10px] text-slate-400 uppercase tracking-wider">💰 งบประมาณ (Financial)</div>
+                                <div className="text-[14px] font-bold text-emerald-700 mt-1">{planData.financial}</div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <button type="button" className="px-4 py-2 rounded-xl text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-all cursor-pointer"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpandedId(null); }}>ปิดรายละเอียด</button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* Expanded Detail Panel (No Plan) */}
+                    {expandedId === alert.id && !planData && (
                       <tr>
                         <td></td>
                         <td colSpan={8} className="px-3 py-0">
