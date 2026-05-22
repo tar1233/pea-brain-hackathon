@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle2, Clock, FileSearch, Gavel, Users, FileText, AlertTriangle, Brain, ArrowRight, ShieldAlert } from "lucide-react";
+import { CheckCircle2, Clock, FileSearch, Gavel, Users, FileText, AlertTriangle, Brain, ShieldAlert, ArrowRight, ChevronDown, ChevronRight, Package, Sparkles, Loader2 } from "lucide-react";
+import { useData } from "../context/DataContext";
 
 interface ApprovedPlan {
   materialId: string;
@@ -14,208 +15,236 @@ interface ApprovedPlan {
   unitPrice: number;
 }
 
+interface RiskMitigation {
+  isLoading: boolean;
+  plan: string | null;
+}
+
 export default function ActivityView() {
-  const [approvedPlan, setApprovedPlan] = useState<ApprovedPlan | null>(null);
+  const { materials, riskAlerts } = useData();
+  const [approvedPlans, setApprovedPlans] = useState<ApprovedPlan[]>([]);
+  const [expandedMaterial, setExpandedMaterial] = useState<string | null>(null);
+  const [riskMitigations, setRiskMitigations] = useState<Record<string, RiskMitigation>>({});
 
   useEffect(() => {
     const handleApprove = (e: Event) => {
       const ev = e as CustomEvent<ApprovedPlan>;
-      setApprovedPlan(ev.detail);
+      setApprovedPlans(prev => {
+        const exists = prev.find(p => p.materialId === ev.detail.materialId);
+        if (exists) return prev.map(p => p.materialId === ev.detail.materialId ? ev.detail : p);
+        return [...prev, ev.detail];
+      });
+      setExpandedMaterial(ev.detail.materialId);
     };
     window.addEventListener("approve-plan", handleApprove);
     return () => window.removeEventListener("approve-plan", handleApprove);
   }, []);
 
-  // Procurement planning steps
-  const planningSteps = [
-    {
-      id: 1,
-      title: "วิเคราะห์ความเสี่ยง & เลือกแผน",
-      subtitle: "Risk Analysis & Plan Selection",
-      icon: Brain,
-      color: "bg-purple-500",
-      borderColor: "border-purple-200",
-      bgColor: "bg-purple-50",
-      status: approvedPlan ? "completed" as const : "active" as const,
-      detail: approvedPlan 
-        ? `เลือกแล้ว: ${approvedPlan.planName} • จำนวน ${approvedPlan.qty.toLocaleString()} หน่วย`
-        : "รอเลือกแผนจากหน้า Risk Management",
-      risk: null,
-    },
-    {
-      id: 2,
-      title: "จัดทำ TOR / ร่างขอบเขตงาน",
-      subtitle: "Terms of Reference Preparation",
-      icon: FileSearch,
-      color: "bg-blue-500",
-      borderColor: "border-blue-200",
-      bgColor: "bg-blue-50",
-      status: approvedPlan ? "active" as const : "pending" as const,
-      detail: approvedPlan 
-        ? `กำหนดคุณลักษณะ ${approvedPlan.materialName} จำนวน ${approvedPlan.qty.toLocaleString()} หน่วย • ราคากลาง ฿${(approvedPlan.qty * approvedPlan.unitPrice).toLocaleString()} • AI แนะนำ: ${approvedPlan.action.substring(0, 120)}...`
-        : "รอข้อมูลจากแผนที่เลือก",
-      risk: approvedPlan ? "ต้องตรวจสอบ Spec ให้ครบถ้วนก่อนเปิดประมูล เพื่อป้องกันการอุทธรณ์" : null,
-    },
-    {
-      id: 3,
-      title: "เปิดประกวดราคา e-Bidding",
-      subtitle: "e-Bidding Announcement",
-      icon: Gavel,
-      color: "bg-amber-500",
-      borderColor: "border-amber-200",
-      bgColor: "bg-amber-50",
-      status: "pending" as const,
-      detail: approvedPlan 
-        ? `ประกาศเชิญชวนผู้ค้าผ่านระบบ e-GP • ระยะเวลาเปิดรับข้อเสนอ 15 วันทำการ • วงเงินประกวดราคา ≈ ฿${(approvedPlan.qty * approvedPlan.unitPrice).toLocaleString()}`
-        : "รอจัดทำ TOR ให้เสร็จก่อน",
-      risk: approvedPlan ? `⚠️ ความเสี่ยงจากแผนที่เลือก: ${approvedPlan.risk}` : null,
-    },
-    {
-      id: 4,
-      title: "ประเมินข้อเสนอ & คัดเลือกผู้ขาย",
-      subtitle: "Bid Evaluation & Vendor Selection",
-      icon: Users,
-      color: "bg-indigo-500",
-      borderColor: "border-indigo-200",
-      bgColor: "bg-indigo-50",
-      status: "pending" as const,
-      detail: "คณะกรรมการพิจารณาผล • เปรียบเทียบราคาและคุณสมบัติ • ตรวจสอบคุณสมบัติผู้ค้า (Vendor Qualification)",
-      risk: "AI จะช่วยเปรียบเทียบราคาเสนอกับราคาตลาด (LME) เพื่อให้มั่นใจว่าได้ราคาที่เหมาะสม",
-    },
-    {
-      id: 5,
-      title: "อนุมัติผล & ออกใบสั่งซื้อ (PO)",
-      subtitle: "Approval & Purchase Order",
-      icon: FileText,
-      color: "bg-emerald-500",
-      borderColor: "border-emerald-200",
-      bgColor: "bg-emerald-50",
-      status: "pending" as const,
-      detail: "ผู้มีอำนาจลงนามอนุมัติ • ระบบออก PO อัตโนมัติ • ส่งข้อมูลเข้า SAP ERP",
-      risk: null,
-    },
-    {
-      id: 6,
-      title: "ติดตามการส่งมอบ & รับของเข้าคลัง",
-      subtitle: "Delivery Tracking & Receiving",
-      icon: CheckCircle2,
-      color: "bg-teal-500",
-      borderColor: "border-teal-200",
-      bgColor: "bg-teal-50",
-      status: "pending" as const,
-      detail: approvedPlan 
-        ? `AI จะเฝ้าระวัง Lead Time และแจ้งเตือนหากมีความเสี่ยงส่งมอบล่าช้า`
-        : "ติดตามสถานะการจัดส่งจาก Supplier จนถึงรับเข้าคลัง WMS",
-      risk: null,
-    },
-  ];
+  // Simulate AI risk monitoring — auto-analyze when alert exists
+  async function handleAIRiskAnalysis(materialId: string, alertMessage: string) {
+    setRiskMitigations(prev => ({ ...prev, [materialId]: { isLoading: true, plan: null } }));
+    try {
+      const mat = materials.find(m => m.id === materialId || m.sapCode === materialId);
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: `⚠️ ระบบเฝ้าระวังตรวจพบความเสี่ยง: "${alertMessage}" สำหรับพัสดุ ${mat?.name || materialId} (สต็อก: ${mat?.currentStock} ${mat?.unit}, Safety Stock: ${mat?.safetyStock}). กรุณาแนะนำวิธีจัดการความเสี่ยงนี้แบบสั้นกระชับ 3-4 ข้อ เป็นภาษาไทย ระบุขั้นตอนชัดเจน` }],
+        }),
+      });
+      const data = await res.json();
+      setRiskMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: data.content || "ไม่สามารถวิเคราะห์ได้" } }));
+    } catch {
+      setRiskMitigations(prev => ({ ...prev, [materialId]: { isLoading: false, plan: "เกิดข้อผิดพลาดในการเชื่อมต่อ AI" } }));
+    }
+  }
+
+  const getProcurementSteps = (materialId: string) => {
+    const plan = approvedPlans.find(p => p.materialId === materialId);
+    const isApproved = !!plan;
+
+    return [
+      { id: 1, title: "วิเคราะห์ & เลือกแผน", icon: Brain, status: isApproved ? "completed" as const : "pending" as const },
+      { id: 2, title: "จัดทำ TOR", icon: FileSearch, status: isApproved ? "active" as const : "pending" as const },
+      { id: 3, title: "เปิด e-Bidding", icon: Gavel, status: "pending" as const },
+      { id: 4, title: "ประเมินผล", icon: Users, status: "pending" as const },
+      { id: 5, title: "ออก PO", icon: FileText, status: "pending" as const },
+      { id: 6, title: "รับของ", icon: CheckCircle2, status: "pending" as const },
+    ];
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <section className="rounded-[32px] bg-white border border-slate-200 p-8 shadow-sm relative overflow-hidden">
-        <div className="max-w-3xl relative z-10">
+      <section className="rounded-[32px] bg-white border border-slate-200 p-8 shadow-sm">
+        <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-purple-700 shadow-sm">
             <Brain size={14} />
             Procurement Planning
           </div>
           <h1 className="mt-4 text-[24px] font-bold tracking-tight text-slate-900">แผนการจัดซื้อ (Procurement Planning)</h1>
           <p className="mt-3 text-[13px] leading-relaxed text-slate-500 font-medium">
-            ติดตามขั้นตอนการจัดซื้อตั้งแต่วิเคราะห์ความเสี่ยง → จัดทำ TOR → เปิดประกวดราคา → คัดเลือกผู้ค้า → ออก PO → รับของ ทุกขั้นตอนมี AI คอยช่วยเฝ้าระวังความเสี่ยง
+            ติดตามแผนจัดซื้อสินค้าแต่ละตัว • AI เฝ้าระวังความเสี่ยงอัตโนมัติ • วิเคราะห์แผนรับมือทันทีเมื่อเกิดปัญหา
           </p>
         </div>
       </section>
 
-      {/* Approved Plan Summary */}
-      {approvedPlan && (
-        <section className="rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-5">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0">
-              <CheckCircle2 size={20} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-[14px] font-bold text-emerald-900">{approvedPlan.planName}</h3>
-              <p className="text-[12px] text-emerald-700 mt-1 leading-relaxed">{approvedPlan.action}</p>
-              <div className="flex gap-4 mt-3 text-[11px]">
-                <span className="bg-white/80 px-2.5 py-1 rounded-lg font-bold text-slate-700">📦 {approvedPlan.materialName}</span>
-                <span className="bg-white/80 px-2.5 py-1 rounded-lg font-bold text-slate-700">🔢 {approvedPlan.qty.toLocaleString()} หน่วย</span>
-                <span className="bg-white/80 px-2.5 py-1 rounded-lg font-bold text-slate-700">💰 {approvedPlan.financial}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Material List */}
+      <section className="space-y-3">
+        {materials.map(mat => {
+          const alert = riskAlerts.find(a => a.materialId === mat.id || a.materialId === mat.sapCode || a.materialId === `MAT-${mat.sapCode}`);
+          const plan = approvedPlans.find(p => p.materialId === mat.id || p.materialId === mat.sapCode);
+          const isExpanded = expandedMaterial === mat.id || expandedMaterial === mat.sapCode;
+          const steps = getProcurementSteps(mat.id);
+          const daysOfStock = Math.round(mat.currentStock / (mat.avgMonthlyDemand / 30));
+          const stockPercent = Math.round((mat.currentStock / mat.safetyStock) * 100);
+          const mitigation = riskMitigations[mat.id] || riskMitigations[mat.sapCode];
 
-      {/* Planning Timeline */}
-      <section className="rounded-3xl bg-white border border-slate-200 p-6 shadow-sm">
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-slate-200" />
+          return (
+            <div key={mat.id} className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden transition-all hover:shadow-md">
+              {/* Material Row — always visible */}
+              <button
+                onClick={() => setExpandedMaterial(isExpanded ? null : mat.id)}
+                className="w-full px-6 py-4 flex items-center gap-5 text-left cursor-pointer hover:bg-slate-50 transition"
+              >
+                {/* Icon */}
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                  mat.riskLevel === 'critical' ? 'bg-red-100 text-red-600' : 
+                  mat.riskLevel === 'warning' ? 'bg-amber-100 text-amber-600' : 
+                  'bg-emerald-100 text-emerald-600'
+                }`}>
+                  <Package size={22} />
+                </div>
 
-          <div className="space-y-1">
-            {planningSteps.map((step, idx) => {
-              const isCompleted = step.status === "completed";
-              const isActive = step.status === "active";
-              const isPending = step.status === "pending";
+                {/* Material Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-[14px] font-bold text-slate-900 truncate">{mat.name}</h3>
+                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0">{mat.sapCode}</span>
+                    {plan && (
+                      <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 flex items-center gap-1">
+                        <CheckCircle2 size={10} /> มีแผนแล้ว
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 mt-1 text-[11px] text-slate-500">
+                    <span>สต็อก: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{mat.currentStock.toLocaleString()} {mat.unit}</strong></span>
+                    <span>•</span>
+                    <span>ใช้ได้อีก <strong className={daysOfStock < 30 ? 'text-red-600' : 'text-slate-700'}>{daysOfStock} วัน</strong></span>
+                    <span>•</span>
+                    <span>Safety Stock: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{stockPercent}%</strong></span>
+                  </div>
+                </div>
 
-              return (
-                <div key={step.id} className="relative">
-                  <div className={`flex gap-5 p-4 rounded-2xl transition-all ${
-                    isActive ? `${step.bgColor} border ${step.borderColor} shadow-sm` : 
-                    isCompleted ? 'bg-emerald-50/50' : 
-                    'hover:bg-slate-50'
+                {/* Risk Badge */}
+                {alert && (
+                  <div className={`shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1 ${
+                    alert.severity === 'critical' ? 'bg-red-50 text-red-700 border border-red-100' : 
+                    'bg-amber-50 text-amber-700 border border-amber-100'
                   }`}>
-                    {/* Step Circle */}
-                    <div className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${
-                      isCompleted ? 'bg-emerald-500 text-white' : 
-                      isActive ? `${step.color} text-white ring-4 ring-white` : 
-                      'bg-white text-slate-400 border border-slate-200'
+                    <AlertTriangle size={11} />
+                    {alert.severity === 'critical' ? 'วิกฤต' : 'เตือน'}
+                  </div>
+                )}
+
+                {/* Procurement Progress Mini */}
+                <div className="shrink-0 flex items-center gap-1">
+                  {steps.map(s => (
+                    <div key={s.id} className={`w-2.5 h-2.5 rounded-full ${
+                      s.status === 'completed' ? 'bg-emerald-500' : 
+                      s.status === 'active' ? 'bg-blue-500 animate-pulse' : 
+                      'bg-slate-200'
+                    }`} title={s.title} />
+                  ))}
+                </div>
+
+                {/* Expand Arrow */}
+                {isExpanded ? <ChevronDown size={18} className="text-slate-400 shrink-0" /> : <ChevronRight size={18} className="text-slate-400 shrink-0" />}
+              </button>
+
+              {/* Expanded Detail */}
+              {isExpanded && (
+                <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-5 space-y-5">
+                  {/* Risk Alert + AI Auto Monitoring */}
+                  {alert && (
+                    <div className={`rounded-xl p-4 border ${
+                      alert.severity === 'critical' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'
                     }`}>
-                      {isCompleted ? <CheckCircle2 size={22} /> : <step.icon size={22} />}
-                    </div>
+                      <div className="flex items-start gap-3">
+                        <ShieldAlert className={alert.severity === 'critical' ? 'text-red-500' : 'text-amber-500'} size={20} />
+                        <div className="flex-1">
+                          <div className="text-[12px] font-bold text-slate-800 mb-0.5">⚠️ AI เฝ้าระวัง: {alert.message}</div>
+                          <div className="text-[11px] text-slate-600 mb-3">{alert.detail}</div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className={`text-[14px] font-bold ${isCompleted ? 'text-emerald-700' : isActive ? 'text-slate-900' : 'text-slate-500'}`}>
-                          ขั้นตอน {step.id}: {step.title}
-                        </h3>
-                        {isCompleted && (
-                          <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold">✓ เสร็จแล้ว</span>
-                        )}
-                        {isActive && (
-                          <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[10px] font-bold animate-pulse">◉ กำลังดำเนินการ</span>
-                        )}
-                        {isPending && (
-                          <span className="bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full text-[10px] font-bold">รอดำเนินการ</span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-slate-400 font-medium mb-2">{step.subtitle}</p>
-                      <p className={`text-[12px] leading-relaxed ${isCompleted || isActive ? 'text-slate-700 font-medium' : 'text-slate-400'}`}>
-                        {step.detail}
-                      </p>
-
-                      {/* Risk Warning */}
-                      {step.risk && (isCompleted || isActive) && (
-                        <div className="mt-3 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl p-3">
-                          <ShieldAlert className="text-amber-500 shrink-0 mt-0.5" size={14} />
-                          <div className="text-[11px] text-amber-700 font-medium leading-relaxed">{step.risk}</div>
+                          {/* AI Auto Risk Mitigation */}
+                          {!mitigation ? (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleAIRiskAnalysis(mat.id, alert.message); }}
+                              className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-[11px] font-bold text-white cursor-pointer hover:bg-purple-700 transition shadow-sm"
+                            >
+                              <Sparkles size={12} /> AI วิเคราะห์แผนรับมือทันที
+                            </button>
+                          ) : mitigation.isLoading ? (
+                            <div className="flex items-center gap-2 text-[11px] text-purple-600 font-bold">
+                              <Loader2 size={14} className="animate-spin" /> AI กำลังวิเคราะห์แผนรับมือ...
+                            </div>
+                          ) : (
+                            <div className="mt-2 rounded-xl bg-white border border-purple-100 p-3">
+                              <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-purple-700 uppercase tracking-wider">
+                                <Brain size={12} /> AI แผนรับมือความเสี่ยง (Real-time)
+                              </div>
+                              <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{mitigation.plan}</div>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
+                  )}
+
+                  {/* Approved Plan Summary */}
+                  {plan && (
+                    <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CheckCircle2 className="text-emerald-600" size={16} />
+                        <span className="text-[12px] font-bold text-emerald-800">{plan.planName}</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-700 leading-relaxed mb-2">{plan.action}</p>
+                      <div className="flex gap-3 text-[10px]">
+                        <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-600">📦 {plan.qty.toLocaleString()} หน่วย</span>
+                        <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-600">💰 {plan.financial}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Procurement Steps Timeline */}
+                  <div className="flex items-center gap-2">
+                    {steps.map((step, idx) => (
+                      <div key={step.id} className="flex items-center gap-2">
+                        <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition ${
+                          step.status === 'completed' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 
+                          step.status === 'active' ? 'bg-blue-100 text-blue-700 border border-blue-200 ring-2 ring-blue-200' : 
+                          'bg-slate-100 text-slate-400 border border-slate-200'
+                        }`}>
+                          <step.icon size={13} />
+                          <span className="hidden xl:inline">{step.title}</span>
+                          <span className="xl:hidden">{step.id}</span>
+                        </div>
+                        {idx < steps.length - 1 && <ArrowRight size={12} className="text-slate-300 shrink-0" />}
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Arrow between steps */}
-                  {idx < planningSteps.length - 1 && (
-                    <div className="flex justify-center py-1">
-                      <ArrowRight size={14} className="text-slate-300 rotate-90" />
+                  {/* No Plan Yet — CTA */}
+                  {!plan && (
+                    <div className="rounded-xl border-2 border-dashed border-slate-200 p-4 text-center">
+                      <p className="text-[12px] text-slate-400 font-medium">ยังไม่มีแผนจัดซื้อ — ไปที่หน้า <strong>Risk Management</strong> แล้วกด &ldquo;ให้ AI วิเคราะห์&rdquo; เพื่อเลือกแผน</p>
                     </div>
                   )}
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              )}
+            </div>
+          );
+        })}
       </section>
     </div>
   );
