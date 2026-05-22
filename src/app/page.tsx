@@ -253,10 +253,10 @@ export default function Home() {
 
       {/* EBidding AI Action Plan Modal — Full Screen */}
       {analyzingMaterialId && (
-        <div className="fixed inset-0 z-[90] bg-[#0f0f1a] overflow-y-auto">
+        <div className="fixed inset-0 z-[90] bg-[#f4f6fb] overflow-y-auto">
           <button 
             onClick={() => setAnalyzingMaterialId(null)}
-            className="fixed top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition z-50 cursor-pointer backdrop-blur-md border border-white/20 shadow-lg"
+            className="fixed top-5 right-5 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-slate-900 flex items-center justify-center text-white transition z-50 cursor-pointer shadow-lg"
           >
             <X size={22} />
           </button>
