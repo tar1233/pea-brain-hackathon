@@ -151,8 +151,8 @@ ${contextText}
       system: [{ text: systemPrompt }],
       messages: alternatingMessages,
       inferenceConfig: {
-        maxTokens: 2048,
-        temperature: jsonMode ? 0.2 : 0.3,
+        maxTokens: jsonMode ? 4096 : 2048,
+        temperature: jsonMode ? 0.15 : 0.3,
         topP: 0.9,
       },
     });

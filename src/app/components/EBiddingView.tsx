@@ -148,17 +148,66 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
       if (!res.ok) throw new Error(`API Error: ${res.status}`);
       const data = await res.json();
       const content = data.content || "";
-      // Robust JSON extraction
+      // Robust JSON extraction with repair
       let jsonStr = content;
       // Remove markdown fences
       jsonStr = jsonStr.replace(/```json\s*/gi, "").replace(/```\s*/gi, "");
-      // Try to extract JSON object from text
-      const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
-      if (jsonMatch) jsonStr = jsonMatch[0];
+      // Remove any text before first { and after last }
+      const firstBrace = jsonStr.indexOf('{');
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
+      } else if (firstBrace !== -1) {
+        jsonStr = jsonStr.substring(firstBrace);
+      }
       jsonStr = jsonStr.trim();
 
-      try {
-        const parsed = JSON.parse(jsonStr);
+      // Try to repair truncated JSON (AI might run out of tokens)
+      const repairJson = (s: string): string => {
+        let openBraces = 0, openBrackets = 0;
+        let inString = false, escape = false;
+        for (let i = 0; i < s.length; i++) {
+          const c = s[i];
+          if (escape) { escape = false; continue; }
+          if (c === '\\') { escape = true; continue; }
+          if (c === '"') { inString = !inString; continue; }
+          if (inString) continue;
+          if (c === '{') openBraces++;
+          if (c === '}') openBraces--;
+          if (c === '[') openBrackets++;
+          if (c === ']') openBrackets--;
+        }
+        // Remove trailing comma before closing
+        s = s.replace(/,\s*$/, '');
+        // Close any unclosed strings
+        if (inString) s += '"';
+        // Close unclosed arrays and objects
+        while (openBrackets > 0) { s += ']'; openBrackets--; }
+        while (openBraces > 0) { s += '}'; openBraces--; }
+        return s;
+      };
+
+      let parsed = null;
+      // Attempt 1: Parse as-is
+      try { parsed = JSON.parse(jsonStr); } catch { /* continue */ }
+      // Attempt 2: Repair and parse
+      if (!parsed) {
+        try { parsed = JSON.parse(repairJson(jsonStr)); } catch { /* continue */ }
+      }
+      // Attempt 3: Try to extract partial JSON by cutting at last valid key
+      if (!parsed) {
+        try {
+          // Find last complete key-value pair
+          const lastQuote = jsonStr.lastIndexOf('"');
+          if (lastQuote > 0) {
+            // Find the end of the last complete value
+            const truncated = jsonStr.substring(0, lastQuote + 1);
+            parsed = JSON.parse(repairJson(truncated));
+          }
+        } catch { /* continue */ }
+      }
+
+      if (parsed) {
         setAiResult({
           demandAnalysis: parsed.demandAnalysis || "ไม่สามารถวิเคราะห์ได้",
           marketAnalysis: parsed.marketAnalysis || "ไม่สามารถวิเคราะห์ได้",
@@ -172,7 +221,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           executiveSummary: parsed.executiveSummary || "",
           raw: content,
         });
-      } catch {
+      } else {
         setAiResult({
           demandAnalysis: "AI วิเคราะห์แล้ว (ดูรายละเอียดด้านล่าง)",
           marketAnalysis: "กรุณาดู Raw AI Response ด้านล่าง",
@@ -181,7 +230,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           priceForecast: { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           lotSchedule: [],
-          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: content.substring(0, 300), riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: content.substring(0, 500), riskScenarios: "-", mitigation: "-", problemResolved: "-" },
           planB: { title: "ทางเลือกสำรอง", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
           executiveSummary: "",
           raw: content,
