@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap } from "lucide-react";
+import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap, Package } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
@@ -14,6 +14,7 @@ interface AIAnalysisResult {
   marketAnalysis: string;
   supplierAnalysis: string;
   priceForecast: { threeMonth: string; oneYear: string; bestTimeToBuy: string };
+  lotStrategy: { recommendation: string; totalQty: number; numLots: number; qtyPerLot: number; reason: string; savings: string };
   planA: { title: string; action: string; financial: string; risk: string; qty: number };
   planB: { title: string; action: string; financial: string; risk: string; qty: number };
   executiveSummary: string;
@@ -91,8 +92,16 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
   },
   "priceForecast": {
     "threeMonth": "คาดการณ์ราคาอีก 3 เดือนข้างหน้า: ขึ้นหรือลง กี่%? เพราะอะไร? (อ้างอิงจากราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString() || '?'})",
-    "oneYear": "คาดการณ์ราคาอีก 1 ปีข้างหน้า: ขึ้นหรือลง กี่%? เพราะอะไร? (อ้างอิงจากราคาปัจจุบัน)",
-    "bestTimeToBuy": "ช่วงเวลาที่ดีที่สุดในการเปิดประกวดราคา คือเดือนอะไร? ทำไม? (วิเคราะห์จากแนวโน้มราคาและฤดูกาล)"
+    "oneYear": "คาดการณ์ราคาอีก 1 ปีข้างหน้า: ขึ้นหรือลง กี่%?",
+    "bestTimeToBuy": "ช่วงเวลาที่ดีที่สุดในการซื้อ"
+  },
+  "lotStrategy": {
+    "recommendation": "แนะนำว่าควรสั่งแบบไหน: 'สั่ง Lot เดียวใหญ่' หรือ 'ซอยหลาย Lot' พร้อมเหตุผลว่าทำไม (วิเคราะห์จาก EOQ, Demand, คลัง, ราคา)",
+    "totalQty": จำนวนที่ต้องสั่งทั้งหมด,
+    "numLots": จำนวนรอบที่แนะนำ,
+    "qtyPerLot": จำนวนต่อรอบ,
+    "reason": "เหตุผลเชิงลึกว่าทำไมถึงคุ้มค่าที่สุด (ด้านต้นทุน, คลัง, ความเสี่ยง)",
+    "savings": "ประหยัดได้เท่าไหร่เมื่อเทียบกับการสั่งทีเดียว (ระบุจำนวนเงิน)"
   },
   "executiveSummary": "สรุปสำหรับผู้บริหาร: ทำไมต้องทำ เมื่อไหร่ต้องทำ ถ้าไม่ทำจะเกิดอะไรขึ้น (2-3 ประโยค อ้างอิงตัวเลข)"
 }
@@ -124,6 +133,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           marketAnalysis: parsed.marketAnalysis || "ไม่สามารถวิเคราะห์ได้",
           supplierAnalysis: parsed.supplierAnalysis || "ไม่สามารถวิเคราะห์ได้",
           priceForecast: parsed.priceForecast || { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
+          lotStrategy: parsed.lotStrategy || { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           planA: parsed.planA || { title: "Plan A", action: "-", financial: "-", risk: "-", qty: 0 },
           planB: parsed.planB || { title: "Plan B", action: "-", financial: "-", risk: "-", qty: 0 },
           executiveSummary: parsed.executiveSummary || "",
@@ -135,6 +145,7 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
           marketAnalysis: "กรุณาดู Raw AI Response ด้านล่าง",
           supplierAnalysis: "กรุณาดู Raw AI Response ด้านล่าง",
           priceForecast: { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
+          lotStrategy: { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           planA: { title: "ดูคำแนะนำ AI ด้านล่าง", action: content.substring(0, 300), financial: "-", risk: "-", qty: mat?.eoq || 0 },
           planB: { title: "ทางเลือกสำรอง", action: "กรุณาอ่านคำแนะนำ AI", financial: "-", risk: "-", qty: 0 },
           executiveSummary: "",
@@ -311,6 +322,40 @@ ${alert ? `📌 คำแนะนำเดิม: ${alert.recommendation}` : ''
                     <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-2">🎯 ช่วงเวลาที่ดีที่สุดในการซื้อ</div>
                     <p className="text-[13px] text-slate-700 leading-relaxed font-bold">{aiResult.priceForecast.bestTimeToBuy}</p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Lot Strategy */}
+            {aiResult.lotStrategy && aiResult.lotStrategy.recommendation !== "-" && (
+              <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 mb-4">
+                  <Package size={18} className="text-indigo-500" /> กลยุทธ์การสั่ง Lot (Lot Strategy)
+                </h2>
+                <div className="grid grid-cols-4 gap-4 mb-4">
+                  <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-4 text-center">
+                    <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">จำนวนรวม</div>
+                    <div className="text-[24px] font-black text-indigo-700">{aiResult.lotStrategy.totalQty.toLocaleString()}</div>
+                    <div className="text-[10px] text-indigo-400">{material?.unit}</div>
+                  </div>
+                  <div className="rounded-xl bg-purple-50 border border-purple-100 p-4 text-center">
+                    <div className="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-1">แบ่งเป็น</div>
+                    <div className="text-[24px] font-black text-purple-700">{aiResult.lotStrategy.numLots}</div>
+                    <div className="text-[10px] text-purple-400">รอบ</div>
+                  </div>
+                  <div className="rounded-xl bg-blue-50 border border-blue-100 p-4 text-center">
+                    <div className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">รอบละ</div>
+                    <div className="text-[24px] font-black text-blue-700">{aiResult.lotStrategy.qtyPerLot.toLocaleString()}</div>
+                    <div className="text-[10px] text-blue-400">{material?.unit}</div>
+                  </div>
+                  <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 text-center">
+                    <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">ประหยัดได้</div>
+                    <div className="text-[14px] font-black text-emerald-700">{aiResult.lotStrategy.savings}</div>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2">
+                  <div className="text-[12px] font-bold text-slate-800">แนะนำ: {aiResult.lotStrategy.recommendation}</div>
+                  <div className="text-[12px] text-slate-600 leading-relaxed">{aiResult.lotStrategy.reason}</div>
                 </div>
               </div>
             )}
