@@ -57,7 +57,10 @@ export default function EBiddingView() {
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-[16px] font-bold text-slate-900">AI Price Benchmarking</h2>
-                <p className="text-[12px] text-slate-500 mt-1">วิเคราะห์เทรนด์ราคาวัสดุเพื่อกำหนดจังหวะเปิดประมูล</p>
+                <p className="text-[12px] text-slate-500 mt-1">วิเคราะห์พยากรณ์ราคาวัสดุเพื่อกำหนดจังหวะเปิดประมูล</p>
+                <div className="mt-2 text-[10px] text-slate-400 font-medium">
+                  <span className="font-semibold text-slate-500">แหล่งข้อมูล (Data Sources):</span> 1. ประวัติใบสั่งซื้อ PEA (SAP) 2. ดัชนีราคาโลหะโลก (LME) 3. ราคากลางกระทรวงพาณิชย์
+                </div>
               </div>
               <div className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700 flex items-center gap-1.5 border border-emerald-100">
                 <TrendingDown size={14} /> ราคาตลาดมีแนวโน้มลดลง
