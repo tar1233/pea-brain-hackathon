@@ -88,37 +88,7 @@ export default function InventoryView() {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" />
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-md">
-              <Boxes size={14} />
-              Stock Planning Workspace
-            </div>
-            <h1 className="mt-4 text-[24px] font-bold tracking-tight text-white">
-              วางแผนเติมสต็อกและจัดลำดับรายการเสี่ยง
-            </h1>
-            <p className="mt-3 text-[13px] leading-relaxed text-slate-300 font-medium">
-              หน้านี้รวมทั้งมุมมอง stock versus safety stock และรายละเอียดวัสดุที่ทีม planning
-              ต้องใช้เพื่อตัดสินใจเติมสต็อกหรือเลื่อนรอบสั่งซื้อ
-            </p>
-          </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { label: "Inventory Value", value: formatCurrency(totalInventoryValue), bg: "bg-gradient-to-br from-[#4c1d95] via-[#6d28d9] to-[#8b5cf6] border-[#8b5cf6]/20 shadow-[0_15px_35px_rgba(139,92,246,0.1)]", valueColor: "text-white", labelColor: "text-purple-100/90" },
-              { label: "At Risk SKU", value: `${atRiskMaterials.length} รายการ`, bg: "bg-gradient-to-br from-[#4e091b] via-[#750e26] to-[#b91c1c] border-rose-500/20 shadow-[0_15px_35px_rgba(185,28,28,0.1)]", valueColor: "text-white", labelColor: "text-red-100/90" },
-              { label: "Average Coverage", value: `${averageCoverage}%`, bg: "bg-gradient-to-br from-[#064e3b] via-[#065f46] to-[#059669] border-emerald-500/20 shadow-[0_15px_35px_rgba(16,185,129,0.1)]", valueColor: "text-white", labelColor: "text-emerald-100/90" },
-            ].map((item) => (
-              <div key={item.label} className={`rounded-[20px] border p-4.5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${item.bg}`}>
-                <div className={`text-[10px] font-bold uppercase tracking-[0.14em] ${item.labelColor}`}>{item.label}</div>
-                <div className={`mt-2 text-[18px] font-bold tracking-tight ${item.valueColor}`}>{item.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className="grid gap-5 xl:grid-cols-[1fr_0.95fr]">
         <article className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
