@@ -374,131 +374,253 @@ export default function ProjectRoadmap() {
           {/* Bucket Body */}
           <div className="bg-white rounded-b-[26px] p-6">
 
-            {/* Merged Materials */}
+            {/* Full Data Catalog */}
             <div className="mb-6">
               <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                materials[] — ข้อมูลพัสดุแบบเต็ม (Raw + Computed)
+                AI Data Requirements — ข้อมูลทั้งหมดที่ระบบ AI ต้องใช้
               </h3>
+
+              {/* Legend */}
+              <div className="flex gap-4 mb-4 text-[10px] font-bold">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-300" /> จาก API (มีข้อมูลจริง)</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-indigo-100 border border-indigo-300" /> AI คำนวณ</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-amber-100 border border-amber-300" /> จำลอง (Simulated)</span>
+              </div>
+
               <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead className="bg-emerald-50 text-[9px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
                       <tr>
-                        <th className="px-3 py-2">id</th>
-                        <th className="px-3 py-2">name</th>
-                        <th className="px-3 py-2 text-right">stock</th>
-                        <th className="px-3 py-2 text-right">safety</th>
-                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">avgMonthly</th>
-                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">annual</th>
-                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">ROP</th>
-                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">EOQ</th>
-                        <th className="px-3 py-2 text-right">budget</th>
-                        <th className="px-3 py-2 text-right">unit</th>
+                        <th className="px-3 py-2 w-8">#</th>
+                        <th className="px-3 py-2">หมวด</th>
+                        <th className="px-3 py-2">Field Name</th>
+                        <th className="px-3 py-2">คำอธิบาย</th>
+                        <th className="px-3 py-2 text-center">แหล่งที่มา</th>
+                        <th className="px-3 py-2">ตัวอย่างค่า (10067)</th>
                       </tr>
                     </thead>
                     <tbody className="text-[11px] font-medium text-slate-700 divide-y divide-slate-100">
-                      <tr className="hover:bg-emerald-50/30">
-                        <td className="px-3 py-2.5 font-mono text-indigo-600 font-bold">10067</td>
-                        <td className="px-3 py-2.5 truncate max-w-[160px]">160 kVA Transformer 3Ph</td>
-                        <td className="px-3 py-2.5 text-right text-red-600 font-bold">12</td>
-                        <td className="px-3 py-2.5 text-right">250</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right">฿150K</td>
-                        <td className="px-3 py-2.5 text-right">฿192.8K</td>
+                      {/* === MATERIALS (from API) === */}
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">1</td>
+                        <td className="px-3 py-2" rowSpan={7}><span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">📦 Materials</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">id</td>
+                        <td className="px-3 py-2">รหัสพัสดุ</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">10067</td>
                       </tr>
-                      <tr className="hover:bg-emerald-50/30">
-                        <td className="px-3 py-2.5 font-mono text-indigo-600 font-bold">10066</td>
-                        <td className="px-3 py-2.5 truncate max-w-[160px]">100 kVA Transformer 3Ph</td>
-                        <td className="px-3 py-2.5 text-right text-red-600 font-bold">5</td>
-                        <td className="px-3 py-2.5 text-right">100</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right">฿85K</td>
-                        <td className="px-3 py-2.5 text-right">฿120.5K</td>
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">2</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">name</td>
+                        <td className="px-3 py-2">ชื่อพัสดุ</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">160 kVA Transformer 3Ph</td>
                       </tr>
-                      <tr className="hover:bg-emerald-50/30">
-                        <td className="px-3 py-2.5 font-mono text-indigo-600 font-bold">20045</td>
-                        <td className="px-3 py-2.5 truncate max-w-[160px]">Drop Out Fuse Cutout 24kV</td>
-                        <td className="px-3 py-2.5 text-right">120</td>
-                        <td className="px-3 py-2.5 text-right">5,000</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
-                        <td className="px-3 py-2.5 text-right">฿4.2K</td>
-                        <td className="px-3 py-2.5 text-right">฿4.5K</td>
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">3</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">currentStock</td>
+                        <td className="px-3 py-2">สต๊อกปัจจุบัน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-red-600 font-bold">12</td>
+                      </tr>
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">4</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">safetyStock</td>
+                        <td className="px-3 py-2">สต๊อกขั้นต่ำ (Safety Stock)</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">250</td>
+                      </tr>
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">5</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">sparkline[]</td>
+                        <td className="px-3 py-2">แนวโน้มสต๊อก 6 เดือนย้อนหลัง</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">[400,380,250,150,80,12]</td>
+                      </tr>
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">6</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">budgetPrice</td>
+                        <td className="px-3 py-2">ราคากลาง (งบประมาณ)</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">฿150,000</td>
+                      </tr>
+                      <tr className="bg-emerald-50/40">
+                        <td className="px-3 py-2 text-slate-400">7</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">unitPrice</td>
+                        <td className="px-3 py-2">ราคาตลาดปัจจุบัน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">฿192,800</td>
+                      </tr>
+
+                      {/* === AI COMPUTED FIELDS === */}
+                      <tr className="bg-indigo-50/40">
+                        <td className="px-3 py-2 text-slate-400">8</td>
+                        <td className="px-3 py-2" rowSpan={5}><span className="text-[10px] font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">🧠 AI Supply Chain</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">avgMonthlyDemand</td>
+                        <td className="px-3 py-2">ปริมาณใช้เฉลี่ย/เดือน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">80 (จาก sparkline)</td>
+                      </tr>
+                      <tr className="bg-indigo-50/40">
+                        <td className="px-3 py-2 text-slate-400">9</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">annualDemand</td>
+                        <td className="px-3 py-2">ปริมาณใช้ต่อปี</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">960 (80 × 12)</td>
+                      </tr>
+                      <tr className="bg-indigo-50/40">
+                        <td className="px-3 py-2 text-slate-400">10</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">leadTimeWeeks</td>
+                        <td className="px-3 py-2">ระยะเวลารอคอย (สัปดาห์)</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">12 สัปดาห์ (≈90 วัน)</td>
+                      </tr>
+                      <tr className="bg-indigo-50/40">
+                        <td className="px-3 py-2 text-slate-400">11</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">reorderPoint (ROP)</td>
+                        <td className="px-3 py-2">จุดสั่งซื้อใหม่</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">480 เครื่อง</td>
+                      </tr>
+                      <tr className="bg-indigo-50/40">
+                        <td className="px-3 py-2 text-slate-400">12</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">eoq</td>
+                        <td className="px-3 py-2">ปริมาณสั่งซื้อที่คุ้มทุน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">800 เครื่อง</td>
+                      </tr>
+
+                      {/* === RISK ALERTS (from API + AI) === */}
+                      <tr className="bg-red-50/30">
+                        <td className="px-3 py-2 text-slate-400">13</td>
+                        <td className="px-3 py-2" rowSpan={4}><span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">⚠️ Risk Alerts</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">severity, materialId, message</td>
+                        <td className="px-3 py-2">ระดับความรุนแรง + ข้อความ</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">critical, alt-1</td>
+                      </tr>
+                      <tr className="bg-red-50/30">
+                        <td className="px-3 py-2 text-slate-400">14</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">costImpact</td>
+                        <td className="px-3 py-2">ผลกระทบทางการเงิน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">฿231.36M</td>
+                      </tr>
+                      <tr className="bg-red-50/30">
+                        <td className="px-3 py-2 text-slate-400">15</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">recommendation</td>
+                        <td className="px-3 py-2">AI แนะนำวิธีแก้ไข</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">เร่งจัดซื้อ + Plan B</td>
+                      </tr>
+                      <tr className="bg-red-50/30">
+                        <td className="px-3 py-2 text-slate-400">16</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">confidence, bufferDays</td>
+                        <td className="px-3 py-2">ความมั่นใจ + สต๊อกยื้อได้กี่วัน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] text-indigo-600">95%, 4 วัน</td>
+                      </tr>
+
+                      {/* === SUPPLIER (Simulated) === */}
+                      <tr className="bg-amber-50/30">
+                        <td className="px-3 py-2 text-slate-400">17</td>
+                        <td className="px-3 py-2" rowSpan={4}><span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">🏭 Suppliers</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">vendors[].name</td>
+                        <td className="px-3 py-2">รายชื่อผู้ค้า 5 ราย</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-amber-100 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded">SIM</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">ไทยทรานสฟอร์มเมอร์ ฯลฯ</td>
+                      </tr>
+                      <tr className="bg-amber-50/30">
+                        <td className="px-3 py-2 text-slate-400">18</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">registeredCapacity</td>
+                        <td className="px-3 py-2">กำลังการผลิตจดทะเบียน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-amber-100 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded">SIM</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">400 เครื่อง/ปี</td>
+                      </tr>
+                      <tr className="bg-amber-50/30">
+                        <td className="px-3 py-2 text-slate-400">19</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">outstandingPOs</td>
+                        <td className="px-3 py-2">PO ค้างส่ง (ยังไม่ส่งมอบ)</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-amber-100 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded">SIM</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">150 เครื่อง</td>
+                      </tr>
+                      <tr className="bg-amber-50/30">
+                        <td className="px-3 py-2 text-slate-400">20</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">reliabilityScore</td>
+                        <td className="px-3 py-2">อัตราค้างจ่าย / ความน่าเชื่อถือ</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-amber-100 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded">SIM</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">0.95 (95%)</td>
+                      </tr>
+
+                      {/* === eBIDDING (AI Computed) === */}
+                      <tr className="bg-purple-50/30">
+                        <td className="px-3 py-2 text-slate-400">21</td>
+                        <td className="px-3 py-2" rowSpan={4}><span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">📋 e-Bidding</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">totalRequirement</td>
+                        <td className="px-3 py-2">ปริมาณที่ต้องจัดซื้อทั้งหมด</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">800 เครื่อง</td>
+                      </tr>
+                      <tr className="bg-purple-50/30">
+                        <td className="px-3 py-2 text-slate-400">22</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">simulation.steps[]</td>
+                        <td className="px-3 py-2">สถานการณ์จำลอง (3 ขั้นตอน)</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">Forecast → Crisis → Recovery</td>
+                      </tr>
+                      <tr className="bg-purple-50/30">
+                        <td className="px-3 py-2 text-slate-400">23</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">priceTrend[]</td>
+                        <td className="px-3 py-2">แนวโน้มราคาย้อนหลัง 7 เดือน</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">฿145K→฿155K→฿147K</td>
+                      </tr>
+                      <tr className="bg-purple-50/30">
+                        <td className="px-3 py-2 text-slate-400">24</td>
+                        <td className="px-3 py-2 font-mono text-[10px]">dynamicROP, bufferDays</td>
+                        <td className="px-3 py-2">จุดสั่งซื้อ + วันสำรอง</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-indigo-100 text-indigo-700 text-[8px] font-bold px-1.5 py-0.5 rounded">AI</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">480 เครื่อง, 4 วัน</td>
+                      </tr>
+
+                      {/* === GLOBAL (from API) === */}
+                      <tr className="bg-slate-50">
+                        <td className="px-3 py-2 text-slate-400">25</td>
+                        <td className="px-3 py-2"><span className="text-[10px] font-bold text-slate-700 bg-slate-200 px-2 py-0.5 rounded">📊 Global</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px]">totalVaR</td>
+                        <td className="px-3 py-2">มูลค่าความเสี่ยงรวม</td>
+                        <td className="px-3 py-2 text-center"><span className="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded">API</span></td>
+                        <td className="px-3 py-2 font-mono text-[10px] font-bold">฿345.8M</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-[10px] text-amber-700 font-medium">
-                  <strong>*0 = API ไม่ได้ส่งมา</strong> → ฟิลด์สีม่วงคือช่องว่างที่ PEA Brain ต้องคำนวณจาก sparkline[] และ AI Model (ปัจจุบัน fallback เป็น 0)
-                </div>
               </div>
             </div>
 
-            {/* Vendors + eBidding + AI Recs */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {/* Vendors */}
-              <div className="bg-blue-50/50 rounded-xl border border-blue-100 p-4">
-                <h4 className="text-[11px] font-bold text-blue-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                  <User size={12} />
-                  vendors[] — 5 ราย
-                </h4>
-                <div className="space-y-1.5 text-[10px] text-blue-900 font-medium">
-                  <div className="flex justify-between"><span>ไทยทรานสฟอร์มเมอร์</span><span className="text-emerald-600 font-bold">95%</span></div>
-                  <div className="flex justify-between"><span>บางกอกพาวเวอร์</span><span className="text-emerald-600 font-bold">92%</span></div>
-                  <div className="flex justify-between"><span>สยามอิเล็คทริค</span><span className="text-amber-600 font-bold">88%</span></div>
-                  <div className="flex justify-between"><span>เมโทร สมาร์ท กริด</span><span className="text-amber-600 font-bold">85%</span></div>
-                  <div className="flex justify-between"><span>นอร์ทเทิร์น กรีน</span><span className="text-red-500 font-bold">80%</span></div>
-                </div>
+            {/* Summary Stats */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-4 text-center">
+                <div className="text-[24px] font-black text-emerald-700">10</div>
+                <div className="text-[10px] font-bold text-emerald-600 uppercase">จาก API (มีจริง)</div>
               </div>
-
-              {/* eBidding Simulation */}
-              <div className="bg-purple-50/50 rounded-xl border border-purple-100 p-4">
-                <h4 className="text-[11px] font-bold text-purple-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                  <Sparkles size={12} />
-                  eBiddingData
-                </h4>
-                <div className="space-y-2 text-[10px] text-purple-900 font-medium">
-                  <div><span className="text-slate-400">target:</span> หม้อแปลง 160kVA</div>
-                  <div><span className="text-slate-400">qty:</span> <span className="font-bold">800 เครื่อง</span></div>
-                  <div><span className="text-slate-400">scenario:</span> Supplier ผันผวน</div>
-                  <div><span className="text-slate-400">steps:</span> 3 simulation steps</div>
-                  <div><span className="text-slate-400">priceTrend:</span> 7 months data</div>
-                </div>
+              <div className="bg-indigo-50 rounded-xl border border-indigo-100 p-4 text-center">
+                <div className="text-[24px] font-black text-indigo-700">11</div>
+                <div className="text-[10px] font-bold text-indigo-600 uppercase">AI คำนวณเพิ่ม</div>
               </div>
-
-              {/* AI Recommendations */}
-              <div className="bg-amber-50/50 rounded-xl border border-amber-100 p-4">
-                <h4 className="text-[11px] font-bold text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                  <Sparkles size={12} />
-                  aiRecommendations[]
-                </h4>
-                <div className="space-y-2 text-[10px] text-amber-900 font-medium">
-                  <div className="flex gap-1.5 items-start">
-                    <span className="bg-red-100 text-red-700 text-[8px] font-bold px-1.5 py-0.5 rounded mt-0.5">critical</span>
-                    <span>สรุปสถานะหม้อแปลง 10067 → ควรเร่งจัดซื้อ</span>
-                  </div>
-                  <div className="flex gap-1.5 items-start">
-                    <span className="bg-blue-100 text-blue-700 text-[8px] font-bold px-1.5 py-0.5 rounded mt-0.5">info</span>
-                    <span>Demand ปี 2569 คือกี่เครื่อง</span>
-                  </div>
-                </div>
+              <div className="bg-amber-50 rounded-xl border border-amber-100 p-4 text-center">
+                <div className="text-[24px] font-black text-amber-700">4</div>
+                <div className="text-[10px] font-bold text-amber-600 uppercase">จำลอง (Supplier)</div>
               </div>
             </div>
 
             {/* Summary */}
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-4">
-              <p className="text-[12px] text-emerald-900 font-bold mb-2">✅ Data Pipeline Summary: 3 ถัง → 1 Dashboard</p>
+              <p className="text-[12px] text-emerald-900 font-bold mb-2">✅ Data Pipeline Summary: 25 fields ใน 5 หมวด → ขับเคลื่อน 4 หน้าจอ</p>
               <p className="text-[11px] text-emerald-700 font-medium">
-                <strong>Bucket 1</strong> (S3 Raw: 7 fields) → <strong>Bucket 2</strong> (AI สร้าง 12+ fields) → <strong>Bucket 3</strong> (รวมทั้งหมด 19+ fields + vendors + eBidding + AI Recs) → แสดงผลบน Dashboard, Risk Management, e-Bidding, AI Copilot ครบทุกหน้า
+                📦 Materials (7 API) + 🧠 AI Supply Chain (5 AI) + ⚠️ Risk (4 API+AI) + 🏭 Suppliers (4 SIM) + 📋 e-Bidding (4 AI) + 📊 Global (1 API) → <strong>Dashboard, Risk Management, e-Bidding, AI Copilot</strong>
               </p>
             </div>
 
