@@ -235,28 +235,27 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
               </div>
             </div>
           </div>
-
-          {/* Draft TOR */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-md font-bold flex items-center gap-2 text-amber-600">
-                <FileText size={18} />
-                Draft TOR Conditions
-              </h2>
-              <button onClick={copyToClipboard} className="text-slate-400 hover:text-indigo-600 transition-colors" title="Copy TOR">
-                <Copy size={16} />
-              </button>
-            </div>
-            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
-              <p className="text-[13px] text-slate-800 leading-loose whitespace-pre-line font-medium">
-                {draftTOR}
-              </p>
-            </div>
-            <div className="mt-4 flex items-start gap-2 text-xs text-amber-700/80 font-medium">
-              <ShieldCheck size={14} className="shrink-0 mt-0.5" />
-              <p>เงื่อนไขนี้สอดคล้องกับระเบียบจัดซื้อฯ โดยเปิดโอกาสให้มีการแข่งขันราคาอย่างเป็นธรรม (Fair Competition) และปิดความเสี่ยงเรื่องผู้ชนะทิ้งงาน</p>
-            </div>
-          </div>
+        </div>
+      </div>
+      {/* Draft TOR (Moved to bottom for horizontal layout) */}
+      <div className="mt-6 max-w-6xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-md font-bold flex items-center gap-2 text-amber-600">
+            <FileText size={18} />
+            Draft TOR Conditions
+          </h2>
+          <button onClick={copyToClipboard} className="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer" title="Copy TOR">
+            <Copy size={16} />
+          </button>
+        </div>
+        <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+          <p className="text-[13px] text-slate-800 leading-loose whitespace-pre-line font-medium">
+            {draftTOR}
+          </p>
+        </div>
+        <div className="mt-4 flex items-start gap-2 text-xs text-amber-700/80 font-medium">
+          <ShieldCheck size={14} className="shrink-0 mt-0.5" />
+          <p>เงื่อนไขนี้สอดคล้องกับระเบียบจัดซื้อฯ โดยเปิดโอกาสให้มีการแข่งขันราคาอย่างเป็นธรรม (Fair Competition) และปิดความเสี่ยงเรื่องผู้ชนะทิ้งงาน</p>
         </div>
       </div>
     </div>
