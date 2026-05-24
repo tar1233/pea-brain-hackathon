@@ -29,52 +29,62 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
   ];
 
   // AI Lot Strategy (Define Target Lots First, Then Evaluate Vendor Potential)
-  const idealLots = [
-    { lotLabel: "Lot 1 (ด่วน)", requiredQty: Math.ceil(targetDemand * 0.4) },
-    { lotLabel: "Lot 2", requiredQty: Math.ceil(targetDemand * 0.3) },
-    { lotLabel: "Lot 3", requiredQty: 0 }
-  ];
-  idealLots[2].requiredQty = targetDemand - idealLots[0].requiredQty - idealLots[1].requiredQty;
-
+  let remainingDemand = targetDemand;
   const lotStrategy: any[] = [];
   const sortedVendors = [...processedVendors].sort((a, b) => b.availableCapacity - a.availableCapacity);
-  const assignedVendorIds = new Set();
+  
+  // Standard procurement ratios: 40%, 30%, 30%
+  const standardRatios = [0.4, 0.3, 0.3];
+  let ratioIndex = 0;
+  let vendorIndex = 0;
+  let lotNumber = 1;
 
-  idealLots.forEach((idealLot) => {
-    // Try to find the best unassigned vendor who can handle the full requiredQty
-    let selectedVendor = sortedVendors.find(v => !assignedVendorIds.has(v.id) && v.availableCapacity >= idealLot.requiredQty);
-    let reason = "";
+  while (remainingDemand > 0 && vendorIndex < sortedVendors.length) {
+    const selectedVendor = sortedVendors[vendorIndex];
     
-    if (selectedVendor) {
-      reason = `กำหนดเป้าหมาย Lot ที่ ${idealLot.requiredQty} ${unit} ประเมินศักยภาพแล้ว "ผ่าน" (ศักยภาพสุทธิ ${selectedVendor.availableCapacity} ${unit} เพียงพอและปลอดภัย)`;
+    // Ideal lot size based on current ratio
+    let idealLotQty = Math.ceil(targetDemand * (standardRatios[ratioIndex] || 0.2)); 
+    if (idealLotQty > remainingDemand) idealLotQty = remainingDemand;
+    if (remainingDemand < 20) idealLotQty = remainingDemand; // Catch small remainders
+    
+    let allocatedQty = idealLotQty;
+    let reason = "";
+
+    if (selectedVendor.availableCapacity >= idealLotQty) {
+      reason = `ประเมินศักยภาพแล้ว "ผ่าน" กำลังผลิตสุทธิ (${selectedVendor.availableCapacity} ${unit}) เพียงพอรับเป้า Lot นี้ (${idealLotQty} ${unit}) ได้อย่างปลอดภัย`;
     } else {
-      // Fallback: Pick the best available unassigned vendor even if they are slightly short
-      selectedVendor = sortedVendors.find(v => !assignedVendorIds.has(v.id));
-      if (selectedVendor) {
-        reason = `กำหนดเป้าหมาย Lot ที่ ${idealLot.requiredQty} ${unit} ประเมินศักยภาพแล้ว "ตึงตัว" (ศักยภาพสุทธิ ${selectedVendor.availableCapacity} ${unit} ต่ำกว่าเป้า) แนะนำให้ต่อรองแผนทยอยส่งมอบ`;
-      }
+      allocatedQty = selectedVendor.availableCapacity; // Cap the lot to their capacity!
+      reason = `กำลังผลิตสุทธิ (${selectedVendor.availableCapacity} ${unit}) ไม่พอรับเป้าหมายเดิม (${idealLotQty} ${unit}) AI จึงปรับลดยอด Lot นี้ลงเท่าที่รับไหวเพื่อป้องกันการทิ้งงาน (ส่วนต่างปัดไป Lot ถัดไป)`;
     }
 
-    if (selectedVendor) {
-      assignedVendorIds.add(selectedVendor.id);
-      
-      // Calculate adjusted confidence
-      let adjustedConfidence = Math.floor(selectedVendor.reliabilityScore * 100);
-      if (selectedVendor.availableCapacity < idealLot.requiredQty) {
-        // Penalty for being short on capacity
-        const capacityRatio = selectedVendor.availableCapacity / idealLot.requiredQty;
-        adjustedConfidence = Math.floor(adjustedConfidence * capacityRatio);
-      }
-
-      lotStrategy.push({
-        lot: idealLot.lotLabel,
-        qty: idealLot.requiredQty,
-        vendor: selectedVendor.name,
-        confidence: adjustedConfidence,
-        reason: reason
-      });
+    if (allocatedQty <= 0) {
+      vendorIndex++;
+      continue;
     }
-  });
+
+    lotStrategy.push({
+      lot: `Lot ${lotNumber}${lotNumber === 1 ? " (ด่วน)" : ""}`,
+      qty: allocatedQty,
+      vendor: selectedVendor.name,
+      confidence: Math.floor(selectedVendor.reliabilityScore * 100),
+      reason: reason
+    });
+
+    remainingDemand -= allocatedQty;
+    vendorIndex++;
+    lotNumber++;
+    ratioIndex++;
+  }
+
+  if (remainingDemand > 0) {
+    lotStrategy.push({
+      lot: `Lot ${lotNumber} (Unfulfilled)`,
+      qty: remainingDemand,
+      vendor: "ไม่มีบริษัทที่พร้อมรับงาน",
+      confidence: 0,
+      reason: `กำลังการผลิตของทุกบริษัทในประเทศรวมกันไม่เพียงพอต่อยอดที่เหลือ แนะนำให้จัดหาจากต่างประเทศ หรือขยายระยะเวลาจัดส่ง`
+    });
+  }
 
   // Dynamic AI Insight Text
   const maxSingleVendorCapacity = sortedVendors.length > 0 ? sortedVendors[0].availableCapacity : 0;
