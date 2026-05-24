@@ -76,12 +76,12 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
-      {/* ===== ARCHITECTURE DATA FLOW (Gemini Redesign) ===== */}
-      <section className="rounded-[32px] bg-gradient-to-br from-[#0a0a1a] via-[#13112b] to-[#1a1145] border border-purple-900/50 p-10 shadow-[0_10px_60px_-20px_rgba(88,28,135,0.4)] relative overflow-hidden group">
+      {/* ===== ARCHITECTURE DATA FLOW (Light Theme Redesign) ===== */}
+      <section className="rounded-[32px] bg-gradient-to-br from-white via-slate-50 to-purple-50/50 border border-slate-200 p-10 shadow-sm relative overflow-hidden group">
         {/* Glow Effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/8 rounded-full blur-[150px] pointer-events-none group-hover:bg-purple-600/15 transition-all duration-700" />
-        <div className="absolute top-0 right-0 w-72 h-72 bg-fuchsia-500/8 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/8 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-400/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-purple-400/10 transition-all duration-700" />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-fuchsia-400/5 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-400/5 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="relative z-10">
 
@@ -91,22 +91,21 @@ export default function ProjectRoadmap() {
             {/* Data Sources (Top-Left) */}
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center text-[14px] text-amber-400"><HardDrive size={16} /></div>
-                <h3 className="text-[14px] font-black text-white">Data Sources</h3>
+                <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-[14px] text-amber-600"><HardDrive size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">Data Sources</h3>
               </div>
-              <div className="bg-[#1a1530]/80 rounded-2xl border border-amber-500/20 p-4 backdrop-blur-sm space-y-2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3 bg-amber-500/8 rounded-xl px-3.5 py-2.5 border border-amber-500/15 hover:border-amber-500/40 hover:bg-amber-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500/30 to-orange-500/20 flex items-center justify-center text-amber-300 shrink-0"><HardDrive size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-amber-200">AWS S3 Bucket</div><div className="text-[9px] text-amber-300/50 font-medium">pea-hackathon-data1</div></div>
+              <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-amber-300 hover:bg-amber-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-100 to-orange-50 flex items-center justify-center text-amber-600 shrink-0"><HardDrive size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">AWS S3 Bucket</div><div className="text-[9px] text-slate-500 font-medium">pea-hackathon-data1</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-blue-500/8 rounded-xl px-3.5 py-2.5 border border-blue-500/15 hover:border-blue-500/40 hover:bg-blue-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/30 to-indigo-500/20 flex items-center justify-center text-blue-300 shrink-0"><Zap size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-blue-200">API Gateway</div><div className="text-[9px] text-blue-300/50 font-medium">REST API Endpoint</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-blue-300 hover:bg-blue-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center text-blue-600 shrink-0"><Zap size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">API Gateway</div><div className="text-[9px] text-slate-500 font-medium">REST API Endpoint</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-emerald-500/8 rounded-xl px-3.5 py-2.5 border border-emerald-500/15 hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500/30 to-teal-500/20 flex items-center justify-center text-emerald-300 shrink-0"><BarChart3 size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-emerald-200">Sandbox Data</div><div className="text-[9px] text-emerald-300/50 font-medium">3,208 records • ฿4.87B</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-emerald-600 shrink-0"><BarChart3 size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Sandbox Data</div><div className="text-[9px] text-slate-500 font-medium">3,208 records • ฿4.87B</div></div>
                 </div>
               </div>
             </div>
@@ -115,40 +114,39 @@ export default function ProjectRoadmap() {
             <div className="flex flex-col items-center px-4">
               {/* Dashed lines going left and right */}
               <div className="relative">
-                <div className="absolute top-1/2 -left-[60px] w-[60px] h-px border-t-2 border-dashed border-purple-400/30" />
-                <div className="absolute top-1/2 -right-[60px] w-[60px] h-px border-t-2 border-dashed border-purple-400/30" />
-                <div className="w-36 h-36 rounded-full bg-gradient-to-br from-purple-600/80 via-fuchsia-500/80 to-pink-500/80 shadow-[0_0_80px_rgba(168,85,247,0.35)] flex items-center justify-center border-[3px] border-purple-300/20 relative group-hover:shadow-[0_0_100px_rgba(168,85,247,0.5)] transition-shadow duration-500">
-                  <div className="absolute inset-2 rounded-full bg-[#13112b]/60 backdrop-blur-sm border border-white/5" />
+                <div className="absolute top-1/2 -left-[60px] w-[60px] h-px border-t-2 border-dashed border-slate-300" />
+                <div className="absolute top-1/2 -right-[60px] w-[60px] h-px border-t-2 border-dashed border-slate-300" />
+                <div className="w-36 h-36 rounded-full bg-gradient-to-br from-purple-500 via-fuchsia-500 to-pink-500 shadow-[0_0_40px_rgba(168,85,247,0.2)] flex items-center justify-center border-[4px] border-white relative group-hover:shadow-[0_0_60px_rgba(168,85,247,0.4)] transition-shadow duration-500 z-20">
+                  <div className="absolute inset-[3px] rounded-full bg-white/95 backdrop-blur-sm" />
                   <div className="text-center relative z-10">
-                    <div className="text-[26px] font-black text-white leading-none tracking-tight">PEA</div>
-                    <div className="text-[18px] font-black text-purple-100/90 leading-none">Brain</div>
-                    <div className="text-[8px] text-purple-300/60 font-bold mt-1 uppercase tracking-widest">Procurement AI</div>
+                    <div className="text-[26px] font-black text-slate-900 leading-none tracking-tight">PEA</div>
+                    <div className="text-[18px] font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-600 leading-none">Brain</div>
+                    <div className="text-[8px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Procurement AI</div>
                   </div>
                 </div>
               </div>
               {/* Dashed line going down */}
-              <div className="w-px h-8 border-l-2 border-dashed border-purple-400/30" />
+              <div className="w-px h-8 border-l-2 border-dashed border-slate-300" />
             </div>
 
             {/* AI Engine (Top-Right) */}
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-fuchsia-500/20 flex items-center justify-center text-[14px] text-fuchsia-400"><BrainCircuit size={16} /></div>
-                <h3 className="text-[14px] font-black text-white">AI / ML Engine</h3>
+                <div className="w-8 h-8 rounded-xl bg-fuchsia-100 flex items-center justify-center text-[14px] text-fuchsia-600"><BrainCircuit size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">AI / ML Engine</h3>
               </div>
-              <div className="bg-[#1a1530]/80 rounded-2xl border border-fuchsia-500/20 p-4 backdrop-blur-sm space-y-2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/5 to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3 bg-fuchsia-500/8 rounded-xl px-3.5 py-2.5 border border-fuchsia-500/15 hover:border-fuchsia-500/40 hover:bg-fuchsia-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500/30 to-purple-500/20 flex items-center justify-center text-fuchsia-300 shrink-0"><BrainCircuit size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-fuchsia-200">AWS Bedrock</div><div className="text-[9px] text-fuchsia-300/50 font-medium">Claude Sonnet 4 (LLM)</div></div>
+              <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-fuchsia-300 hover:bg-fuchsia-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-100 to-purple-50 flex items-center justify-center text-fuchsia-600 shrink-0"><BrainCircuit size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">AWS Bedrock</div><div className="text-[9px] text-slate-500 font-medium">Claude Sonnet 4 (LLM)</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-purple-500/8 rounded-xl px-3.5 py-2.5 border border-purple-500/15 hover:border-purple-500/40 hover:bg-purple-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/30 to-violet-500/20 flex items-center justify-center text-purple-300 shrink-0"><TrendingUp size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-purple-200">Supply Chain AI</div><div className="text-[9px] text-purple-300/50 font-medium">EOQ, ROP, Demand Forecast</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-purple-300 hover:bg-purple-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-violet-50 flex items-center justify-center text-purple-600 shrink-0"><TrendingUp size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Supply Chain AI</div><div className="text-[9px] text-slate-500 font-medium">EOQ, ROP, Demand Forecast</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-pink-500/8 rounded-xl px-3.5 py-2.5 border border-pink-500/15 hover:border-pink-500/40 hover:bg-pink-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500/30 to-rose-500/20 flex items-center justify-center text-pink-300 shrink-0"><AlertTriangle size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-pink-200">Risk Analytics</div><div className="text-[9px] text-pink-300/50 font-medium">VaR, Trust Score, Buffer</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-pink-300 hover:bg-pink-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-pink-600 shrink-0"><AlertTriangle size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Risk Analytics</div><div className="text-[9px] text-slate-500 font-medium">VaR, Trust Score, Buffer</div></div>
                 </div>
               </div>
             </div>
@@ -158,35 +156,34 @@ export default function ProjectRoadmap() {
           <div className="grid grid-cols-[1fr_auto_1fr] gap-6 items-start mb-6">
             {/* Dashed line from left box */}
             <div className="flex items-center justify-end pt-10">
-              <div className="w-full h-px border-t-2 border-dashed border-rose-400/20" />
+              <div className="w-full h-px border-t-2 border-dashed border-slate-300" />
             </div>
 
             {/* Data Processing (Center Box) */}
             <div className="relative w-[340px]">
               <div className="flex items-center gap-2 mb-3 justify-center">
-                <div className="w-8 h-8 rounded-xl bg-rose-500/20 flex items-center justify-center text-[14px] text-rose-400"><RefreshCw size={16} /></div>
-                <h3 className="text-[14px] font-black text-white">Data Processing</h3>
+                <div className="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center text-[14px] text-rose-600"><RefreshCw size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">Data Processing</h3>
               </div>
-              <div className="bg-[#1a1530]/80 rounded-2xl border border-rose-500/20 p-4 backdrop-blur-sm space-y-2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3 bg-rose-500/8 rounded-xl px-3.5 py-2.5 border border-rose-500/15 hover:border-rose-500/40 hover:bg-rose-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500/30 to-red-500/20 flex items-center justify-center text-rose-300 shrink-0"><RefreshCw size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-rose-200">Feature Engineering</div><div className="text-[9px] text-rose-300/50 font-medium">7 raw fields → 25 enriched fields</div></div>
+              <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-rose-300 hover:bg-rose-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-100 to-red-50 flex items-center justify-center text-rose-600 shrink-0"><RefreshCw size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Feature Engineering</div><div className="text-[9px] text-slate-500 font-medium">7 raw fields → 25 enriched fields</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-orange-500/8 rounded-xl px-3.5 py-2.5 border border-orange-500/15 hover:border-orange-500/40 hover:bg-orange-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/30 to-amber-500/20 flex items-center justify-center text-orange-300 shrink-0"><Calculator size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-orange-200">Supply Chain Math</div><div className="text-[9px] text-orange-300/50 font-medium">EOQ, ROP, VaR formulas</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-orange-300 hover:bg-orange-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-orange-600 shrink-0"><Calculator size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Supply Chain Math</div><div className="text-[9px] text-slate-500 font-medium">EOQ, ROP, VaR formulas</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-yellow-500/8 rounded-xl px-3.5 py-2.5 border border-yellow-500/15 hover:border-yellow-500/40 hover:bg-yellow-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500/30 to-amber-500/20 flex items-center justify-center text-yellow-300 shrink-0"><ClipboardList size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-yellow-200">e-Bidding Simulation</div><div className="text-[9px] text-yellow-300/50 font-medium">Scenario Planning A/B/C</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-yellow-300 hover:bg-yellow-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-100 to-amber-50 flex items-center justify-center text-amber-600 shrink-0"><ClipboardList size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">e-Bidding Simulation</div><div className="text-[9px] text-slate-500 font-medium">Scenario Planning A/B/C</div></div>
                 </div>
               </div>
             </div>
 
             {/* Dashed line from right box */}
             <div className="flex items-center justify-start pt-10">
-              <div className="w-full h-px border-t-2 border-dashed border-cyan-400/20" />
+              <div className="w-full h-px border-t-2 border-dashed border-slate-300" />
             </div>
           </div>
 
@@ -196,22 +193,21 @@ export default function ProjectRoadmap() {
             {/* Frontend */}
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-[14px] text-emerald-400"><Blocks size={16} /></div>
-                <h3 className="text-[14px] font-black text-white">Frontend</h3>
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-[14px] text-emerald-600"><Blocks size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">Frontend</h3>
               </div>
-              <div className="bg-[#1a1530]/80 rounded-2xl border border-emerald-500/20 p-4 backdrop-blur-sm space-y-2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3 bg-emerald-500/8 rounded-xl px-3.5 py-2.5 border border-emerald-500/15 hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500/30 to-teal-500/20 flex items-center justify-center text-emerald-300 shrink-0"><Blocks size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-emerald-200">Next.js 16</div><div className="text-[9px] text-emerald-300/50 font-medium">React + TypeScript</div></div>
+              <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-emerald-600 shrink-0"><Blocks size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Next.js 16</div><div className="text-[9px] text-slate-500 font-medium">React + TypeScript</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-teal-500/8 rounded-xl px-3.5 py-2.5 border border-teal-500/15 hover:border-teal-500/40 hover:bg-teal-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500/30 to-cyan-500/20 flex items-center justify-center text-teal-300 shrink-0"><Palette size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-teal-200">Tailwind CSS</div><div className="text-[9px] text-teal-300/50 font-medium">Responsive UI Design</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-teal-300 hover:bg-teal-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-100 to-cyan-50 flex items-center justify-center text-teal-600 shrink-0"><Palette size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Tailwind CSS</div><div className="text-[9px] text-slate-500 font-medium">Responsive UI Design</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-green-500/8 rounded-xl px-3.5 py-2.5 border border-green-500/15 hover:border-green-500/40 hover:bg-green-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/30 to-emerald-500/20 flex items-center justify-center text-green-300 shrink-0"><Smartphone size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-green-200">4 หน้าจอ</div><div className="text-[9px] text-green-300/50 font-medium">Dashboard, Risk, eBid, Copilot</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-green-300 hover:bg-green-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-100 to-emerald-50 flex items-center justify-center text-green-600 shrink-0"><Smartphone size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">4 หน้าจอ</div><div className="text-[9px] text-slate-500 font-medium">Dashboard, Risk, eBid, Copilot</div></div>
                 </div>
               </div>
             </div>
@@ -219,22 +215,21 @@ export default function ProjectRoadmap() {
             {/* Backend */}
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center text-[14px] text-cyan-400"><Container size={16} /></div>
-                <h3 className="text-[14px] font-black text-white">Backend</h3>
+                <div className="w-8 h-8 rounded-xl bg-cyan-100 flex items-center justify-center text-[14px] text-cyan-600"><Container size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">Backend</h3>
               </div>
-              <div className="bg-[#1a1530]/80 rounded-2xl border border-cyan-500/20 p-4 backdrop-blur-sm space-y-2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3 bg-cyan-500/8 rounded-xl px-3.5 py-2.5 border border-cyan-500/15 hover:border-cyan-500/40 hover:bg-cyan-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/30 to-blue-500/20 flex items-center justify-center text-[14px] shrink-0 font-black text-cyan-300">λ</div>
-                  <div><div className="text-[11px] font-bold text-cyan-200">AWS Lambda</div><div className="text-[9px] text-cyan-300/50 font-medium">Orchestrator Function</div></div>
+              <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-cyan-300 hover:bg-cyan-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-100 to-blue-50 flex items-center justify-center text-[14px] shrink-0 font-black text-cyan-600">λ</div>
+                  <div><div className="text-[11px] font-bold text-slate-800">AWS Lambda</div><div className="text-[9px] text-slate-500 font-medium">Orchestrator Function</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-sky-500/8 rounded-xl px-3.5 py-2.5 border border-sky-500/15 hover:border-sky-500/40 hover:bg-sky-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500/30 to-blue-500/20 flex items-center justify-center text-sky-300 shrink-0"><Plug size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-sky-200">Next.js API Routes</div><div className="text-[9px] text-sky-300/50 font-medium">Route Handlers (/api/*)</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-sky-300 hover:bg-sky-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-100 to-blue-50 flex items-center justify-center text-sky-600 shrink-0"><Plug size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Next.js API Routes</div><div className="text-[9px] text-slate-500 font-medium">Route Handlers (/api/*)</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-indigo-500/8 rounded-xl px-3.5 py-2.5 border border-indigo-500/15 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/30 to-violet-500/20 flex items-center justify-center text-indigo-300 shrink-0"><Database size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-indigo-200">Prisma + SQLite</div><div className="text-[9px] text-indigo-300/50 font-medium">Chat History Database</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-100 to-violet-50 flex items-center justify-center text-indigo-600 shrink-0"><Database size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Prisma + SQLite</div><div className="text-[9px] text-slate-500 font-medium">Chat History Database</div></div>
                 </div>
               </div>
             </div>
@@ -242,22 +237,21 @@ export default function ProjectRoadmap() {
             {/* Cloud / DevOps */}
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-slate-500/20 flex items-center justify-center text-[14px] text-slate-400"><Cloud size={16} /></div>
-                <h3 className="text-[14px] font-black text-white">Cloud / DevOps</h3>
+                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-[14px] text-slate-600"><Cloud size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">Cloud / DevOps</h3>
               </div>
-              <div className="bg-[#1a1530]/80 rounded-2xl border border-slate-500/20 p-4 backdrop-blur-sm space-y-2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-500/5 to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3 bg-slate-500/8 rounded-xl px-3.5 py-2.5 border border-slate-500/15 hover:border-slate-500/40 hover:bg-slate-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-500/30 to-gray-500/20 flex items-center justify-center text-slate-300 shrink-0"><Cloud size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-200">AWS Cloud</div><div className="text-[9px] text-slate-400 font-medium">us-east-1 Region</div></div>
+              <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-slate-300 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><Cloud size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">AWS Cloud</div><div className="text-[9px] text-slate-500 font-medium">us-east-1 Region</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-slate-500/8 rounded-xl px-3.5 py-2.5 border border-slate-500/15 hover:border-slate-500/40 hover:bg-slate-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-500/30 to-gray-500/20 flex items-center justify-center text-slate-300 shrink-0"><GitBranch size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-200">Git + GitHub</div><div className="text-[9px] text-slate-400 font-medium">Version Control</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-slate-300 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><GitBranch size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Git + GitHub</div><div className="text-[9px] text-slate-500 font-medium">Version Control</div></div>
                 </div>
-                <div className="flex items-center gap-3 bg-slate-500/8 rounded-xl px-3.5 py-2.5 border border-slate-500/15 hover:border-slate-500/40 hover:bg-slate-500/10 transition-colors relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-500/30 to-gray-500/20 flex items-center justify-center text-slate-300 shrink-0"><Rocket size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-200">Vercel / Cloud Run</div><div className="text-[9px] text-slate-400 font-medium">Deployment Platform</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-slate-300 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><Rocket size={14} /></div>
+                  <div><div className="text-[11px] font-bold text-slate-800">Vercel / Cloud Run</div><div className="text-[9px] text-slate-500 font-medium">Deployment Platform</div></div>
                 </div>
               </div>
             </div>
