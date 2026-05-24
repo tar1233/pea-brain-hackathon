@@ -159,13 +159,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                           <div>
                             <div className="font-bold text-[13px] text-primary-700">{alert.materialId}</div>
                             <div className="text-[11px] text-text-muted">{alert.materialName}</div>
-                            {material && (material.sapCode || material.category) && (
-                              <div className="text-[10px] text-text-muted/60">
-                                {material.sapCode && `SAP: ${material.sapCode}`} 
-                                {material.sapCode && material.category && ' • '} 
-                                {material.category}
-                              </div>
-                            )}
+                            {material && <div className="text-[10px] text-text-muted/60">SAP: {material.sapCode} • {material.category}</div>}
                           </div>
                         </div>
                       </td>
@@ -195,9 +189,9 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       <td className="px-3 py-3 text-center">
                         {material && (
                           <div>
-                            <span className="text-[13px] font-bold">{material.leadTimeWeeks > 0 ? material.leadTimeWeeks : "-"}</span>
-                            {material.leadTimeWeeks > 0 && <span className="text-[10px] text-text-muted ml-0.5">สัปดาห์</span>}
-                            <div className="text-[9px] text-text-muted">{material.leadTimeWeeks > 0 ? `ประมาณ ${ltMonths} เดือน` : "ไม่มีข้อมูล"}</div>
+                            <span className="text-[13px] font-bold">{material.leadTimeWeeks}</span>
+                            <span className="text-[10px] text-text-muted ml-0.5">สัปดาห์</span>
+                            <div className="text-[9px] text-text-muted">ประมาณ {ltMonths} เดือน</div>
                           </div>
                         )}
                       </td>
