@@ -35,7 +35,7 @@ interface AIAnalysisResult {
   raw?: string;
 }
 
-export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void }) {
+export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose, embedded = false, readonly = false }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void, embedded?: boolean, readonly?: boolean }) {
   const { eBiddingData, materials, riskAlerts } = useData();
   const [aiResult, setAiResult] = useState<AIAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -259,13 +259,15 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
   const stockPercent = material ? Math.round((material.currentStock / material.safetyStock) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb]">
+    <div className={embedded ? "w-full bg-[#f4f6fb] rounded-2xl overflow-hidden border border-slate-200 mt-2 pb-6" : "min-h-screen bg-[#f4f6fb]"}>
       {/* ═══ HERO HEADER ═══ */}
       <header className="bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4338ca] text-white">
-        <div className="max-w-[1400px] mx-auto px-8 pt-6 pb-8">
-          <button onClick={onClose} className="mb-5 inline-flex items-center gap-2 text-[12px] text-white/60 hover:text-white transition font-medium cursor-pointer">
-            <ArrowLeft size={14} /> กลับหน้า Risk Management
-          </button>
+        <div className={`max-w-[1400px] mx-auto px-8 ${embedded ? 'pt-6 pb-6' : 'pt-6 pb-8'}`}>
+          {!embedded && (
+            <button onClick={onClose} className="mb-5 inline-flex items-center gap-2 text-[12px] text-white/60 hover:text-white transition font-medium cursor-pointer">
+              <ArrowLeft size={14} /> กลับหน้า Risk Management
+            </button>
+          )}
 
           <div className="flex items-start justify-between gap-8">
             <div className="flex-1">
@@ -466,7 +468,8 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
 
 
             {/* Two Plans Side by Side */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            {!readonly && (
+              <div className="grid gap-6 lg:grid-cols-2">
               {/* Plan A */}
               <div className="rounded-2xl border-2 border-emerald-400 bg-white p-6 relative overflow-hidden shadow-sm hover:shadow-md transition-all">
                 <div className="absolute top-0 right-0 bg-emerald-500 text-white px-4 py-1.5 text-[10px] font-bold rounded-bl-2xl flex items-center gap-1.5">
@@ -571,7 +574,8 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
                   </button>
                 </div>
               </div>
-            </div>
+              </div>
+            )}
 
             {/* Raw AI Response */}
             {aiResult.raw && (

@@ -8,6 +8,7 @@ import {
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useData } from "../context/DataContext";
 import type { RiskLevel } from "../data/mockData";
+import EBiddingView from "./EBiddingView";
 
 const severityConfig: Record<RiskLevel, { label: string; color: string; bg: string; border: string }> = {
   critical: { label: "วิกฤต", color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
@@ -236,9 +237,10 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                               onClick={(e) => { 
                                 e.preventDefault(); 
                                 e.stopPropagation(); 
-                                window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                                setExpandedId(prev => prev === alert.id ? null : alert.id);
                               }}>
                               ให้ AI เข้าไปวิเคราะห์
+                              {expandedId === alert.id ? <ChevronDown size={12} className="ml-1 inline-block" /> : <ChevronRight size={12} className="ml-1 inline-block" />}
                             </button>
                           );
                         })()}
@@ -267,122 +269,18 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       </tr>
                     )}
 
-                    {/* Expanded Detail Panel (Has Plan) */}
-                    {expandedId === alert.id && planData && (
+                    {/* Unified Expanded Detail Panel using Embedded EBiddingView */}
+                    {expandedId === alert.id && (
                       <tr>
                         <td></td>
-                        <td colSpan={8} className="px-3 py-0">
-                          <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/50 to-white p-5 mb-3 mt-1 animate-fade-in shadow-sm">
-                            <div className="flex items-center gap-2 mb-4">
-                              <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
-                                <Sparkles size={14} className="text-emerald-600" />
-                              </div>
-                              <h4 className="text-[13px] font-bold text-emerald-900">แผนที่อนุมัติ: {planData.planName}</h4>
-                            </div>
-
-                            <div className="bg-white rounded-xl p-4 border border-emerald-100 mb-4">
-                              <div className="text-[11px] font-bold text-emerald-700 mb-2">📋 Action Plan</div>
-                              <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{planData.action}</div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div className="bg-white rounded-xl p-3 border border-emerald-100">
-                                <div className="text-[10px] text-slate-400 uppercase tracking-wider">📦 จำนวนที่สั่งซื้อ</div>
-                                <div className="text-[14px] font-bold text-slate-900 mt-1">{planData.qty.toLocaleString()} หน่วย</div>
-                              </div>
-                              <div className="bg-white rounded-xl p-3 border border-emerald-100">
-                                <div className="text-[10px] text-slate-400 uppercase tracking-wider">💰 งบประมาณ (Financial)</div>
-                                <div className="text-[14px] font-bold text-emerald-700 mt-1">{planData.financial}</div>
-                              </div>
-                            </div>
-
-                            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100 mb-4">
-                              <div className="text-[11px] font-bold text-blue-700 mb-2">📦 คาดการณ์สต็อก (Supply Forecast)</div>
-                              <div className="text-[12px] text-slate-700 leading-relaxed">{planData.supplyForecast || '-'}</div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                              <div className="bg-red-50 rounded-xl p-4 border border-red-100">
-                                <div className="text-[11px] font-bold text-red-700 mb-2">⚠️ ความเสี่ยงที่อาจเกิดขึ้น</div>
-                                <div className="text-[12px] text-red-900 leading-relaxed">{planData.risk}</div>
-                              </div>
-                              <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
-                                <div className="text-[11px] font-bold text-purple-700 mb-2">🛡️ แผนรับมือความเสี่ยง (Mitigation)</div>
-                                <div className="text-[12px] text-slate-700 leading-relaxed">{planData.mitigation || '-'}</div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                              <button type="button" className="px-4 py-2 rounded-xl text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-all cursor-pointer"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpandedId(null); }}>ปิดรายละเอียด</button>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-
-                    {/* Expanded Detail Panel (No Plan) */}
-                    {expandedId === alert.id && !planData && (
-                      <tr>
-                        <td></td>
-                        <td colSpan={8} className="px-3 py-0">
-                          <div className="rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50/50 to-white p-5 mb-3 mt-1 animate-fade-in">
-                            <div className="flex items-center gap-2 mb-4">
-                              <div className="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center">
-                                <Sparkles size={14} className="text-purple-600" />
-                              </div>
-                              <h4 className="text-[13px] font-bold text-gray-900">รายละเอียด {alert.materialId} — {alert.materialName}</h4>
-                            </div>
-
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                              <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[10px] text-gray-400 uppercase tracking-wider">สต๊อกปัจจุบัน</div>
-                                <div className="text-[14px] font-bold text-gray-900 mt-1">{material?.currentStock.toLocaleString() ?? '-'} {material?.unit}</div>
-                              </div>
-                              <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[10px] text-gray-400 uppercase tracking-wider">Safety Stock</div>
-                                <div className="text-[14px] font-bold text-gray-900 mt-1">{material?.safetyStock.toLocaleString() ?? '-'} {material?.unit}</div>
-                              </div>
-                              <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[10px] text-gray-400 uppercase tracking-wider">EOQ ที่แนะนำ</div>
-                                <div className="text-[14px] font-bold text-purple-700 mt-1">{material?.eoq.toLocaleString() ?? '-'} {material?.unit}</div>
-                              </div>
-                              <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[10px] text-gray-400 uppercase tracking-wider">ราคาต่อหน่วย</div>
-                                <div className="text-[14px] font-bold text-gray-900 mt-1">{material ? formatCurrency(material.unitPrice) : '-'}</div>
-                              </div>
-                            </div>
-
-                            <div className="bg-white rounded-xl p-4 border border-gray-100 mb-4">
-                              <div className="text-[11px] font-bold text-gray-700 mb-2">📋 สาเหตุ</div>
-                              <div className="text-[12px] text-gray-600 leading-relaxed">{alert.message}</div>
-                            </div>
-
-                            <div className="bg-amber-50 rounded-xl p-4 border border-amber-100 mb-4">
-                              <div className="text-[11px] font-bold text-amber-700 mb-2">🤖 คำแนะนำ AI Copilot</div>
-                              <div className="text-[12px] text-gray-700 leading-relaxed">{alert.recommendation}</div>
-                              <div className="mt-2 text-[11px] text-gray-500">Confidence: <span className="font-bold text-emerald-600">{alert.confidence}%</span></div>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                              {isCritical && (
-                                <button type="button" className="px-4 py-2 rounded-xl text-[11px] font-bold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 shadow-sm transition-all cursor-pointer"
-                                  onClick={(e) => { 
-                                    e.preventDefault(); 
-                                    e.stopPropagation(); 
-                                    window.dispatchEvent(new CustomEvent("create-po", { 
-                                      detail: { 
-                                        materialId: alert.materialId, 
-                                        qty: material?.eoq, 
-                                        name: alert.materialName,
-                                        price: material?.unitPrice 
-                                      } 
-                                    })); 
-                                  }}>สร้างใบสั่งซื้อ (PO)</button>
-                              )}
-                              <button type="button" className="px-4 py-2 rounded-xl text-[11px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all cursor-pointer"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpandedId(null); }}>ปิดรายละเอียด</button>
-                            </div>
+                        <td colSpan={8} className="px-3 py-2">
+                          <div className="animate-fade-in shadow-lg rounded-2xl">
+                            <EBiddingView 
+                              targetMaterialId={alert.materialId} 
+                              embedded={true} 
+                              readonly={!!planData} 
+                              onClose={() => setExpandedId(null)} 
+                            />
                           </div>
                         </td>
                       </tr>
