@@ -89,23 +89,55 @@ export default function ProjectRoadmap() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Raw Data (Sandbox) */}
-          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
-            <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-              <Circle size={10} className="fill-slate-400 text-slate-400" />
-              Raw Sandbox Data
-            </h3>
-            <div className="mb-4 pb-4 border-b border-slate-200/60">
-              <div className="text-[24px] font-black text-slate-800">3,208 <span className="text-[12px] font-medium text-slate-500">Transactions</span></div>
-              <div className="text-[24px] font-black text-slate-800 mt-1">฿4.87 <span className="text-[12px] font-medium text-slate-500">Billion Spend</span></div>
+          {/* Raw Data (Sandbox Bucket & Table) */}
+          <div className="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden flex flex-col">
+            <div className="p-4 border-b border-slate-200 bg-slate-100/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Database size={16} className="text-slate-500" />
+                <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-700">Raw Sandbox Bucket</h3>
+              </div>
+              <span className="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">s3://pea-hackathon-data1</span>
             </div>
-            <ul className="space-y-2 text-[12px] text-slate-600 font-medium">
-              <li>• Material Info & SAP Code</li>
-              <li>• Current Stock & Safety Stock</li>
-              <li>• Historical Demand (Sparklines)</li>
-              <li>• Budget Price & Unit Price</li>
-              <li><span className="text-[10px] text-slate-400 mt-1 block">Source: s3://pea-hackathon-data1</span></li>
-            </ul>
+            
+            <div className="p-4 flex-1">
+              <div className="flex gap-4 mb-4 pb-4 border-b border-slate-200/60">
+                <div>
+                  <div className="text-[18px] font-black text-slate-800">3,208</div>
+                  <div className="text-[10px] uppercase font-bold text-slate-500">Records</div>
+                </div>
+                <div className="w-px h-8 bg-slate-200" />
+                <div>
+                  <div className="text-[18px] font-black text-slate-800">฿4.87B</div>
+                  <div className="text-[10px] uppercase font-bold text-slate-500">Spend</div>
+                </div>
+              </div>
+
+              {/* Sample Raw Data Table */}
+              <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+                <div className="bg-slate-100 text-[9px] font-bold text-slate-500 uppercase flex px-2 py-1.5 border-b border-slate-200">
+                  <div className="w-10">ID</div>
+                  <div className="flex-1">NAME</div>
+                  <div className="w-12 text-right">STOCK</div>
+                </div>
+                <div className="text-[10px] font-medium text-slate-700 divide-y divide-slate-100">
+                  <div className="flex px-2 py-1.5 hover:bg-slate-50">
+                    <div className="w-10 text-slate-400">10067</div>
+                    <div className="flex-1 truncate">160 kVA Transformer</div>
+                    <div className="w-12 text-right text-red-500 font-bold">12</div>
+                  </div>
+                  <div className="flex px-2 py-1.5 hover:bg-slate-50">
+                    <div className="w-10 text-slate-400">10066</div>
+                    <div className="flex-1 truncate">100 kVA Transformer</div>
+                    <div className="w-12 text-right">5</div>
+                  </div>
+                  <div className="flex px-2 py-1.5 hover:bg-slate-50">
+                    <div className="w-10 text-slate-400">20045</div>
+                    <div className="flex-1 truncate">Drop Out Fuse Cutout</div>
+                    <div className="w-12 text-right">120</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Arrow / Processing */}
