@@ -76,36 +76,64 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
-      {/* Raw Data from Sandbox */}
-      {dataSummary && (
-        <div className="bg-amber-50/50 rounded-3xl border border-amber-200 p-6 shadow-sm flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
-              <Database size={24} />
-            </div>
-            <div>
-              <h3 className="text-[14px] font-bold text-amber-900">Sandbox Data Source</h3>
-              <p className="text-[12px] text-amber-700/80 font-medium">{dataSummary.dataSource}</p>
-            </div>
+      {/* Sandbox Data & Transformation */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm mb-6">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+            <Database size={20} />
           </div>
-          <div className="flex items-center gap-8">
-            <div>
-              <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1 tracking-wider">Total Transactions</p>
-              <p className="text-[18px] font-black text-amber-900">{dataSummary.totalTransactions?.toLocaleString()} <span className="text-[12px] font-medium text-amber-700/60">records</span></p>
-            </div>
-            <div className="w-px h-10 bg-amber-200/50"></div>
-            <div>
-              <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1 tracking-wider">Total Spend Data</p>
-              <p className="text-[18px] font-black text-amber-900">฿{(dataSummary.totalSpend / 1000000000).toFixed(2)} <span className="text-[12px] font-medium text-amber-700/60">Billion</span></p>
-            </div>
-            <div className="w-px h-10 bg-amber-200/50"></div>
-            <div>
-              <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1 tracking-wider">Date Range</p>
-              <p className="text-[13px] font-bold text-amber-900">{dataSummary.dateRange}</p>
-            </div>
+          <div>
+            <h2 className="text-[16px] font-extrabold text-slate-900">Sandbox Data Transformation</h2>
+            <p className="text-[11px] text-slate-500 font-medium">ข้อมูลดิบที่ได้รับและกระบวนการประมวลผลด้วย AI</p>
           </div>
         </div>
-      )}
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Raw Data (Sandbox) */}
+          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+            <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+              <Circle size={10} className="fill-slate-400 text-slate-400" />
+              Raw Sandbox Data
+            </h3>
+            <div className="mb-4 pb-4 border-b border-slate-200/60">
+              <div className="text-[24px] font-black text-slate-800">3,208 <span className="text-[12px] font-medium text-slate-500">Transactions</span></div>
+              <div className="text-[24px] font-black text-slate-800 mt-1">฿4.87 <span className="text-[12px] font-medium text-slate-500">Billion Spend</span></div>
+            </div>
+            <ul className="space-y-2 text-[12px] text-slate-600 font-medium">
+              <li>• Material Info & SAP Code</li>
+              <li>• Current Stock & Safety Stock</li>
+              <li>• Historical Demand (Sparklines)</li>
+              <li>• Budget Price & Unit Price</li>
+              <li><span className="text-[10px] text-slate-400 mt-1 block">Source: s3://pea-hackathon-data1</span></li>
+            </ul>
+          </div>
+
+          {/* Arrow / Processing */}
+          <div className="hidden md:flex flex-col items-center justify-center text-indigo-300">
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-indigo-400">PEA Brain AI</div>
+            <ArrowRight size={24} className="animate-pulse" />
+            <div className="text-[10px] font-bold uppercase tracking-widest mt-2 text-indigo-400">Processing</div>
+          </div>
+
+          {/* Processed / Engineered Data */}
+          <div className="bg-indigo-50/50 rounded-2xl p-5 border border-indigo-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+            <h3 className="text-[12px] font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2">
+              <Sparkles size={12} className="text-indigo-500" />
+              Engineered Features
+            </h3>
+            <div className="mb-4 pb-4 border-b border-indigo-100/60">
+              <div className="text-[14px] font-bold text-indigo-900 leading-tight">Data Analytics & <br/>AI Recommendations</div>
+            </div>
+            <ul className="space-y-2 text-[12px] text-indigo-800 font-medium relative z-10">
+              <li>• <strong className="font-extrabold">Dynamic ROP & EOQ</strong> Optimization</li>
+              <li>• <strong className="font-extrabold">Risk Alerts & VaR</strong> (Value at Risk)</li>
+              <li>• <strong className="font-extrabold">Supplier Trust Score</strong> Analytics</li>
+              <li>• <strong className="font-extrabold">AI Lot Strategy</strong> (Multiple Awards)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
