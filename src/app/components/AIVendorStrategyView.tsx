@@ -43,11 +43,19 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
     
     if (allocateQty <= 0) return;
 
+    let reason = "";
+    if (idx === 0) {
+      reason = `ถูกเลือกลำดับ 1 เพราะมีกำลังผลิตสุทธิสูงสุดในตลาด (${vendor.availableCapacity} ${unit}) และ Reliability ${Math.floor(vendor.reliabilityScore * 100)}%`;
+    } else {
+      reason = `กระจายความเสี่ยงมารายที่ ${idx + 1} เพื่อแบ่งเบาภาระจาก Lot ก่อนหน้า (ศักยภาพรองรับได้ ${vendor.availableCapacity} ${unit})`;
+    }
+
     lotStrategy.push({
       lot: `Lot ${idx + 1}${idx === 0 ? " (ด่วน)" : ""}`,
       qty: allocateQty,
       vendor: vendor.name,
-      confidence: Math.floor(vendor.reliabilityScore * 100)
+      confidence: Math.floor(vendor.reliabilityScore * 100),
+      reason: reason
     });
 
     remainingDemand -= allocateQty;
@@ -195,6 +203,10 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                       <span className="text-xs font-medium text-slate-500">Target: {lot.qty} {unit}</span>
                     </div>
                     <div className="text-sm font-medium text-slate-700 truncate">{lot.vendor}</div>
+                    <div className="mt-2 text-[11px] text-slate-500 leading-snug flex items-start gap-1.5">
+                      <Sparkles size={12} className="text-indigo-400 mt-0.5 shrink-0" />
+                      <p>{lot.reason}</p>
+                    </div>
                     <div className="mt-3 w-full bg-slate-100 rounded-full h-1.5">
                       <div className="bg-gradient-to-r from-sky-400 to-indigo-500 h-1.5 rounded-full" style={{ width: `${lot.confidence}%` }}></div>
                     </div>
