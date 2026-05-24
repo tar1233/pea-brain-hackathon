@@ -262,14 +262,6 @@ export default function ProjectRoadmap() {
               </div>
             </div>
           </div>
-          
-          {/* Credit Badge */}
-          <div className="flex justify-center mt-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
-              <Sparkles size={14} className="text-amber-400" />
-              <span className="text-[11px] font-medium text-white/80">Co-designed with <strong className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Gemini (Nanobanana)</strong></span>
-            </div>
-          </div>
 
         </div>
       </section>
