@@ -11,7 +11,6 @@ import ForecastView from "./components/ForecastView";
 import InventoryView from "./components/InventoryView";
 import AlertsView from "./components/AlertsView";
 import EBiddingView from "./components/EBiddingView";
-import AIVendorStrategyView from "./components/AIVendorStrategyView";
 import {
   BudgetView,
   ProcurementView,
@@ -248,8 +247,6 @@ export default function Home() {
         return <ActivityView approvedPlans={approvedPlans} />;
       case "e-bidding":
         return <EBiddingView setActiveTab={setActiveTab} />;
-      case "vendor-strategy":
-        return <AIVendorStrategyView />;
       case "roadmap":
         return <ProjectRoadmap />;
       case "risk":

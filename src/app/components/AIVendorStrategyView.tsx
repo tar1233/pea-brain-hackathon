@@ -46,7 +46,7 @@ export default function AIVendorStrategyView() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-900 text-white p-6 md:p-8">
+    <div className="bg-slate-900 text-white p-6 md:p-8 rounded-[24px] mt-8 border border-slate-800 shadow-xl overflow-hidden">
       {/* Header */}
       <div className="max-w-6xl mx-auto mb-8">
         <div className="flex items-center gap-3 mb-2">

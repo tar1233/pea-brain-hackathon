@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, RefreshCw, ArrowLeft, BarChart3, Target, Zap, Package, Clock, Loader2 } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import AIVendorStrategyView from "./AIVendorStrategyView";
 
 function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
@@ -448,81 +449,8 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
               </div>
             )}
 
-            {/* Lot Strategy */}
-            {aiResult.lotStrategy && aiResult.lotStrategy.recommendation !== "-" && (
-              <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
-                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 mb-4">
-                  <Package size={18} className="text-indigo-500" /> กลยุทธ์การสั่ง Lot (Lot Strategy)
-                </h2>
-                <div className="grid grid-cols-4 gap-4 mb-4">
-                  <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-4 text-center">
-                    <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">จำนวนรวม</div>
-                    <div className="text-[24px] font-black text-indigo-700">{aiResult.lotStrategy.totalQty.toLocaleString()}</div>
-                    <div className="text-[10px] text-indigo-400">{material?.unit}</div>
-                  </div>
-                  <div className="rounded-xl bg-purple-50 border border-purple-100 p-4 text-center">
-                    <div className="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-1">แบ่งเป็น</div>
-                    <div className="text-[24px] font-black text-purple-700">{aiResult.lotStrategy.numLots}</div>
-                    <div className="text-[10px] text-purple-400">รอบ</div>
-                  </div>
-                  <div className="rounded-xl bg-blue-50 border border-blue-100 p-4 text-center">
-                    <div className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">รอบละ</div>
-                    <div className="text-[24px] font-black text-blue-700">{aiResult.lotStrategy.qtyPerLot.toLocaleString()}</div>
-                    <div className="text-[10px] text-blue-400">{material?.unit}</div>
-                  </div>
-                  <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 text-center">
-                    <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">ประหยัดได้</div>
-                    <div className="text-[14px] font-black text-emerald-700">{aiResult.lotStrategy.savings}</div>
-                  </div>
-                </div>
-                <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2">
-                  <div className="text-[12px] font-bold text-slate-800">แนะนำ: {aiResult.lotStrategy.recommendation}</div>
-                  <div className="text-[12px] text-slate-600 leading-relaxed">{aiResult.lotStrategy.reason}</div>
-                </div>
-              </div>
-            )}
-
-            {/* Lot Schedule Timeline */}
-            {aiResult.lotSchedule && aiResult.lotSchedule.length > 0 && (
-              <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
-                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 mb-4">
-                  <Clock size={18} className="text-indigo-500" /> แผนกำหนดการสั่งซื้อ (Procurement Schedule)
-                </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[12px]">
-                    <thead>
-                      <tr className="border-b border-slate-200">
-                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">Lot</th>
-                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">จำนวน</th>
-                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">เริ่มจัดซื้อ</th>
-                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">คาดว่าได้ของ</th>
-                        <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider text-[10px]">สิ่งที่ต้องทำ</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {aiResult.lotSchedule.map((s, i) => (
-                        <tr key={i} className={`border-b border-slate-100 ${i === 0 ? 'bg-indigo-50/50' : ''}`}>
-                          <td className="py-3 px-3">
-                            <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-bold ${i === 0 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
-                              {s.lot}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3 font-bold text-slate-800">{s.qty?.toLocaleString()} {material?.unit}</td>
-                          <td className="py-3 px-3">
-                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold ${i === 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
-                              {i === 0 && <AlertTriangle size={10} />}
-                              {s.orderMonth}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3 text-slate-600">{s.receiveMonth}</td>
-                          <td className="py-3 px-3 text-slate-600 max-w-[300px]">{s.action}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+            {/* Vendor Capacity & Strategy Optimizer Section */}
+            <AIVendorStrategyView />
 
             {/* Executive Summary */}
             {aiResult.executiveSummary && (
