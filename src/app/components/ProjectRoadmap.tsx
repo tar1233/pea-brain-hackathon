@@ -292,10 +292,34 @@ export default function ProjectRoadmap() {
                         <td className="px-4 py-3 text-[10px] text-slate-500">Bedrock AI วิเคราะห์สถานการณ์ + แนะนำ Plan A/B</td>
                       </tr>
                       <tr className="hover:bg-indigo-50/30">
-                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่มีข้อมูล Supplier เลย</td>
-                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">vendors[], trustScore</td>
-                        <td className="px-4 py-3"><span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Supplier Analytics</span></td>
-                        <td className="px-4 py-3 text-[10px] text-slate-500">จำลองข้อมูลผู้ค้า + คำนวณ Trust Score จาก On-Time %</td>
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้ระยะเวลารอคอย (Lead Time)</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">leadTimeWeeks</td>
+                        <td className="px-4 py-3"><span className="bg-cyan-100 text-cyan-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Lead Time Estimation</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">ประมาณจากประวัติ PO + ระยะเวลาส่งมอบเฉลี่ยของ Supplier</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่มีข้อมูล PO ค้างส่ง</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">outstandingPOs</td>
+                        <td className="px-4 py-3"><span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">PO Tracking</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">ติดตาม PO ที่ยังไม่ส่งมอบ → ใช้คำนวณ Available Supply</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้กำลังการผลิตของ Supplier</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">registeredCapacity</td>
+                        <td className="px-4 py-3"><span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Capacity Analytics</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">กำลังการผลิตจดทะเบียนของแต่ละ Supplier → จับคู่กับ Demand</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่มีอัตราค้างจ่าย / ความน่าเชื่อถือ</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">reliabilityScore, trustScore</td>
+                        <td className="px-4 py-3"><span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Supplier Trust Score</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">คำนวณจาก On-Time %, Capacity Utilization, อัตราค้างจ่าย</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่มีแนวโน้มราคาตลาด</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">priceTrend[], bestTimeToBuy</td>
+                        <td className="px-4 py-3"><span className="bg-teal-100 text-teal-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Price Forecasting</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">AI วิเคราะห์ราคาย้อนหลัง → พยากรณ์ช่วงเวลาที่ซื้อได้ราคาดี</td>
                       </tr>
                       <tr className="hover:bg-indigo-50/30">
                         <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้ว่าควรซอยสัญญาไหม</td>
@@ -311,7 +335,7 @@ export default function ProjectRoadmap() {
 
             {/* Summary */}
             <div className="bg-gradient-to-r from-indigo-50 to-fuchsia-50 rounded-xl border border-indigo-100 p-4">
-              <p className="text-[12px] text-indigo-900 font-bold mb-2">📊 สรุป: จากข้อมูลดิบ 7 fields → PEA Brain สร้างเพิ่ม 12+ fields</p>
+              <p className="text-[12px] text-indigo-900 font-bold mb-2">📊 สรุป: จากข้อมูลดิบ 7 fields → PEA Brain สร้างเพิ่ม 18+ fields (10 ช่องว่างที่ต้องเติม)</p>
               <p className="text-[11px] text-indigo-700 font-medium">
                 Sandbox ให้แค่ <strong>&quot;สถานะปัจจุบัน&quot;</strong> (Stock เหลือเท่าไหร่, มีความเสี่ยงอะไร) แต่ PEA Brain เติม <strong>&quot;การตัดสินใจ&quot;</strong> (ควรสั่งเมื่อไหร่, สั่งกี่ชิ้น, ซอยสัญญาไหม, ใช้ Supplier ไหน) — นี่คือ Value ที่ทีมเราสร้างให้ PEA ครับ 🚀
               </p>
