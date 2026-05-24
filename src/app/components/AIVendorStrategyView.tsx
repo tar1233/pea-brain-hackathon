@@ -247,8 +247,8 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                 <Copy size={16} />
               </button>
             </div>
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line font-mono font-medium">
+            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+              <p className="text-[13px] text-slate-800 leading-loose whitespace-pre-line font-medium">
                 {draftTOR}
               </p>
             </div>
