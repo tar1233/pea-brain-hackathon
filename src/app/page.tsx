@@ -10,7 +10,6 @@ import Dashboard from "./components/Dashboard";
 import ForecastView from "./components/ForecastView";
 import InventoryView from "./components/InventoryView";
 import AlertsView from "./components/AlertsView";
-import EBiddingView from "./components/EBiddingView";
 import {
   BudgetView,
   ProcurementView,
@@ -82,7 +81,6 @@ import ActivityView from "./components/ActivityView";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [analyzingMaterialId, setAnalyzingMaterialId] = useState<string | null>(null);
   const { materials, isLoading, error } = useData();
 
   // Approved plans — persisted at page level so they survive tab switches
@@ -202,14 +200,6 @@ export default function Home() {
     return () => window.removeEventListener("create-po", handleCreatePO);
   }, [materials]);
 
-  useEffect(() => {
-    const handleAnalyzeMaterial = (e: Event) => {
-      const customEvent = e as CustomEvent<{ materialId: string }>;
-      setAnalyzingMaterialId(customEvent.detail.materialId);
-    };
-    window.addEventListener("analyze-material", handleAnalyzeMaterial);
-    return () => window.removeEventListener("analyze-material", handleAnalyzeMaterial);
-  }, []);
 
   useEffect(() => {
     if (!poProgress || !poProgress.isOpen || poProgress.step >= 3) return;
@@ -245,8 +235,6 @@ export default function Home() {
         return <ReportsView />;
       case "activity":
         return <ActivityView approvedPlans={approvedPlans} />;
-      case "e-bidding":
-        return <EBiddingView setActiveTab={setActiveTab} />;
       case "roadmap":
         return <ProjectRoadmap />;
       case "risk":
@@ -310,20 +298,6 @@ export default function Home() {
         <AICopilot />
       </div>
 
-      {/* EBidding AI Action Plan Modal — Full Screen */}
-      {analyzingMaterialId && (
-        <div className="fixed inset-0 z-[90] bg-[#f4f6fb] overflow-y-auto">
-          <button 
-            onClick={() => setAnalyzingMaterialId(null)}
-            className="fixed top-5 right-5 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-slate-900 flex items-center justify-center text-white transition z-50 cursor-pointer shadow-lg"
-          >
-            <X size={22} />
-          </button>
-          <div className="min-h-screen">
-            <EBiddingView targetMaterialId={analyzingMaterialId} setActiveTab={setActiveTab} onClose={() => setAnalyzingMaterialId(null)} />
-          </div>
-        </div>
-      )}
 
       {/* PO Creation Progress/Document Modal */}
       {poProgress && poProgress.isOpen && (

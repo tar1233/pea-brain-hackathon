@@ -59,13 +59,31 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
     setAiResult(null);
 
     const mat = material;
-    const annualBudget = mat ? mat.annualDemand * mat.unitPrice : 0;
     const daysOfStock = mat ? Math.round(mat.currentStock / (mat.avgMonthlyDemand / 30)) : 0;
+    const leadTimeDays = mat ? Math.round(mat.leadTimeWeeks * 7) : 0;
+    const gapDays = leadTimeDays - daysOfStock;
+
+    if (readonly) {
+      setAiResult({
+        demandAnalysis: `สต็อก ${mat?.currentStock} ชิ้น ใช้ได้อีก ${daysOfStock} วัน (Demand เฉลี่ย ${mat?.avgMonthlyDemand}/เดือน) → ต้องสั่งทันที`,
+        marketAnalysis: `ราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString()} สูง/ต่ำกว่าราคากลาง 15% ควรประกวดราคาเดือน ตุลาคม-พฤศจิกายน`,
+        supplierAnalysis: `Lead Time ${mat?.leadTimeWeeks} สัปดาห์ (${leadTimeDays} วัน) สต็อกเหลือ ${daysOfStock} วัน → ช่องว่าง ${gapDays} วัน ต้องเร่ง Supplier`,
+        emergencyPlan: "",
+        priceForecast: { threeMonth: "ราคาลดลงเล็กน้อย", oneYear: "แนวโน้มราคาทรงตัว", bestTimeToBuy: "ช่วงนี้ถึงธันวาคม" },
+        lotStrategy: { recommendation: "สั่งซอยสัญญา", totalQty: mat?.eoq || 0, numLots: 3, qtyPerLot: 0, reason: "ลดความเสี่ยงการทิ้งงาน", savings: "คุ้มค่าที่สุด" },
+        lotSchedule: [],
+        planA: { title: "สั่งซอยสัญญา", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+        planB: { title: "สั่งซื้อ 1 สัญญา", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+        executiveSummary: `แผนจัดซื้อได้รับการอนุมัติเรียบร้อยแล้ว`
+      });
+      setIsAnalyzing(false);
+      return;
+    }
+
+    const annualBudget = mat ? mat.annualDemand * mat.unitPrice : 0;
     const monthsOfStock = mat ? (mat.currentStock / mat.avgMonthlyDemand).toFixed(1) : '0';
     const stockVsSafety = mat ? Math.round(((mat.safetyStock - mat.currentStock) / mat.safetyStock) * 100) : 0;
     const demandVariation = mat ? Math.round((mat.stdMonthlyDemand / mat.avgMonthlyDemand) * 100) : 0;
-    const leadTimeDays = mat ? Math.round(mat.leadTimeWeeks * 7) : 0;
-    const gapDays = leadTimeDays - daysOfStock;
     const shortfallQty = mat ? Math.round((gapDays / 30) * mat.avgMonthlyDemand) : 0;
 
     // Current date for AI awareness
