@@ -2,7 +2,11 @@
 
 import { CheckCircle2, Circle, Clock, Code2, Database, LayoutTemplate, Map, Network, Server, Sparkles, Box, User, ArrowRight } from "lucide-react";
 
+import { useData } from "../context/DataContext";
+
 export default function ProjectRoadmap() {
+  const { dataSummary } = useData();
+
   const sprints = [
     {
       id: "sprint-1",
@@ -71,6 +75,38 @@ export default function ProjectRoadmap() {
           </p>
         </div>
       </section>
+
+      {/* Raw Data from Sandbox */}
+      {dataSummary && (
+        <div className="bg-amber-50/50 rounded-3xl border border-amber-200 p-6 shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
+              <Database size={24} />
+            </div>
+            <div>
+              <h3 className="text-[14px] font-bold text-amber-900">Sandbox Data Source</h3>
+              <p className="text-[12px] text-amber-700/80 font-medium">{dataSummary.dataSource}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-8">
+            <div>
+              <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1 tracking-wider">Total Transactions</p>
+              <p className="text-[18px] font-black text-amber-900">{dataSummary.totalTransactions?.toLocaleString()} <span className="text-[12px] font-medium text-amber-700/60">records</span></p>
+            </div>
+            <div className="w-px h-10 bg-amber-200/50"></div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1 tracking-wider">Total Spend Data</p>
+              <p className="text-[18px] font-black text-amber-900">฿{(dataSummary.totalSpend / 1000000000).toFixed(2)} <span className="text-[12px] font-medium text-amber-700/60">Billion</span></p>
+            </div>
+            <div className="w-px h-10 bg-amber-200/50"></div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1 tracking-wider">Date Range</p>
+              <p className="text-[13px] font-bold text-amber-900">{dataSummary.dateRange}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         
