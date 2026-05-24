@@ -76,134 +76,147 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
-      {/* Sandbox Data & Transformation */}
-      {/* Sandbox Raw Data (Full) */}
-      <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
-        <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
-          <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-            <Database size={20} />
-          </div>
-          <div>
-            <h2 className="text-[16px] font-extrabold text-slate-900">ข้อมูลดิบจาก Sandbox (Raw API Response)</h2>
-            <p className="text-[11px] text-slate-500 font-medium">ข้อมูลทั้งหมดที่ได้รับจาก AWS Lambda Orchestrator ผ่าน API Gateway</p>
-          </div>
-          <span className="ml-auto text-[10px] font-bold bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">LIVE from API</span>
-        </div>
-
-        {/* Materials Table */}
-        <div className="mb-6">
-          <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-indigo-500" />
-            materials[] — พัสดุ ({`3 รายการ`})
-          </h3>
-          <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
-                  <tr>
-                    <th className="px-4 py-2.5">id</th>
-                    <th className="px-4 py-2.5">name</th>
-                    <th className="px-4 py-2.5 text-right">currentStock</th>
-                    <th className="px-4 py-2.5 text-right">safetyStock</th>
-                    <th className="px-4 py-2.5 text-center">sparkline</th>
-                    <th className="px-4 py-2.5 text-right">budgetPrice</th>
-                    <th className="px-4 py-2.5 text-right">unitPrice</th>
-                  </tr>
-                </thead>
-                <tbody className="text-[12px] font-medium text-slate-700 divide-y divide-slate-100">
-                  <tr className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10067</td>
-                    <td className="px-4 py-3">160 kVA Transformer 3Ph</td>
-                    <td className="px-4 py-3 text-right text-red-600 font-bold">12</td>
-                    <td className="px-4 py-3 text-right">250</td>
-                    <td className="px-4 py-3 text-center text-[10px] text-slate-400 font-mono">[400,380,250,150,80,12]</td>
-                    <td className="px-4 py-3 text-right">฿150,000</td>
-                    <td className="px-4 py-3 text-right">฿192,800</td>
-                  </tr>
-                  <tr className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10066</td>
-                    <td className="px-4 py-3">100 kVA Transformer 3Ph</td>
-                    <td className="px-4 py-3 text-right text-red-600 font-bold">5</td>
-                    <td className="px-4 py-3 text-right">100</td>
-                    <td className="px-4 py-3 text-center text-[10px] text-slate-400 font-mono">[120,100,80,60,40,5]</td>
-                    <td className="px-4 py-3 text-right">฿85,000</td>
-                    <td className="px-4 py-3 text-right">฿120,500</td>
-                  </tr>
-                  <tr className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-indigo-600 font-bold">20045</td>
-                    <td className="px-4 py-3">Drop Out Fuse Cutout 24kV</td>
-                    <td className="px-4 py-3 text-right">120</td>
-                    <td className="px-4 py-3 text-right">5,000</td>
-                    <td className="px-4 py-3 text-center text-[10px] text-slate-400 font-mono">[6000,5200,4100,3000,2100,120]</td>
-                    <td className="px-4 py-3 text-right">฿4,200</td>
-                    <td className="px-4 py-3 text-right">฿4,500</td>
-                  </tr>
-                </tbody>
-              </table>
+      {/* ===== S3 DATA BUCKET (Original Reference) ===== */}
+      <section className="relative">
+        {/* Bucket Shape */}
+        <div className="rounded-[32px] border-2 border-dashed border-slate-300 bg-gradient-to-b from-slate-50/80 to-white p-1.5">
+          
+          {/* Bucket Handle / Header */}
+          <div className="bg-slate-800 rounded-t-[26px] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                <Database size={18} className="text-amber-400" />
+              </div>
+              <div>
+                <h2 className="text-[15px] font-extrabold text-white tracking-tight">🪣 S3 Data Bucket — ข้อมูลเริ่มต้นจาก Sandbox</h2>
+                <p className="text-[10px] text-slate-400 font-medium mt-0.5">ข้อมูลดิบทั้งหมดที่ PEA ให้มา • เก็บไว้เป็นข้อมูลอ้างอิง (Reference Data)</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-bold bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md font-mono">s3://pea-hackathon-data1</span>
+              <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full">✓ LIVE</span>
             </div>
           </div>
-        </div>
 
-        {/* Risk Alerts Table */}
-        <div className="mb-6">
-          <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-red-500" />
-            riskAlerts[] — การแจ้งเตือนความเสี่ยง ({`3 รายการ`})
-          </h3>
-          <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
-                  <tr>
-                    <th className="px-4 py-2.5">id</th>
-                    <th className="px-4 py-2.5">severity</th>
-                    <th className="px-4 py-2.5">materialId</th>
-                    <th className="px-4 py-2.5">message</th>
-                    <th className="px-4 py-2.5 text-right">costImpact</th>
-                  </tr>
-                </thead>
-                <tbody className="text-[12px] font-medium text-slate-700 divide-y divide-slate-100">
-                  <tr className="hover:bg-red-50/30">
-                    <td className="px-4 py-3 font-mono text-slate-400">alt-1</td>
-                    <td className="px-4 py-3"><span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">critical</span></td>
-                    <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10067</td>
-                    <td className="px-4 py-3 text-[11px] max-w-[300px]">พายุโซนร้อนเข้าภาคเหนือ หม้อแปลง 160kVA ขาดแคลนวิกฤต (12/250)</td>
-                    <td className="px-4 py-3 text-right text-red-600 font-bold">฿231.36M</td>
-                  </tr>
-                  <tr className="hover:bg-red-50/30">
-                    <td className="px-4 py-3 font-mono text-slate-400">alt-2</td>
-                    <td className="px-4 py-3"><span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">critical</span></td>
-                    <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10066</td>
-                    <td className="px-4 py-3 text-[11px] max-w-[300px]">สต๊อกหม้อแปลง 100kVA ต่ำกว่าเกณฑ์ (5/100) ไม่เพียงพอรับมือภัยพิบัติ</td>
-                    <td className="px-4 py-3 text-right text-red-600 font-bold">฿114.47M</td>
-                  </tr>
-                  <tr className="hover:bg-amber-50/30">
-                    <td className="px-4 py-3 font-mono text-slate-400">alt-3</td>
-                    <td className="px-4 py-3"><span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">warning</span></td>
-                    <td className="px-4 py-3 font-mono text-indigo-600 font-bold">20045</td>
-                    <td className="px-4 py-3 text-[11px] max-w-[300px]">Drop Out Fuse ขาดสต๊อก แต่ซัพพลายเออร์ส่งของล่าช้า 2 สัปดาห์</td>
-                    <td className="px-4 py-3 text-right text-amber-600 font-bold">฿21.96M</td>
-                  </tr>
-                </tbody>
-              </table>
+          {/* Bucket Body */}
+          <div className="bg-white rounded-b-[26px] p-6">
+
+            {/* Materials Table */}
+            <div className="mb-6">
+              <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                materials[] — พัสดุ ({`3 รายการ`})
+              </h3>
+              <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                      <tr>
+                        <th className="px-4 py-2.5">id</th>
+                        <th className="px-4 py-2.5">name</th>
+                        <th className="px-4 py-2.5 text-right">currentStock</th>
+                        <th className="px-4 py-2.5 text-right">safetyStock</th>
+                        <th className="px-4 py-2.5 text-center">sparkline</th>
+                        <th className="px-4 py-2.5 text-right">budgetPrice</th>
+                        <th className="px-4 py-2.5 text-right">unitPrice</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[12px] font-medium text-slate-700 divide-y divide-slate-100">
+                      <tr className="hover:bg-slate-50">
+                        <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10067</td>
+                        <td className="px-4 py-3">160 kVA Transformer 3Ph</td>
+                        <td className="px-4 py-3 text-right text-red-600 font-bold">12</td>
+                        <td className="px-4 py-3 text-right">250</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-slate-400 font-mono">[400,380,250,150,80,12]</td>
+                        <td className="px-4 py-3 text-right">฿150,000</td>
+                        <td className="px-4 py-3 text-right">฿192,800</td>
+                      </tr>
+                      <tr className="hover:bg-slate-50">
+                        <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10066</td>
+                        <td className="px-4 py-3">100 kVA Transformer 3Ph</td>
+                        <td className="px-4 py-3 text-right text-red-600 font-bold">5</td>
+                        <td className="px-4 py-3 text-right">100</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-slate-400 font-mono">[120,100,80,60,40,5]</td>
+                        <td className="px-4 py-3 text-right">฿85,000</td>
+                        <td className="px-4 py-3 text-right">฿120,500</td>
+                      </tr>
+                      <tr className="hover:bg-slate-50">
+                        <td className="px-4 py-3 font-mono text-indigo-600 font-bold">20045</td>
+                        <td className="px-4 py-3">Drop Out Fuse Cutout 24kV</td>
+                        <td className="px-4 py-3 text-right">120</td>
+                        <td className="px-4 py-3 text-right">5,000</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-slate-400 font-mono">[6000,5200,4100,3000,2100,120]</td>
+                        <td className="px-4 py-3 text-right">฿4,200</td>
+                        <td className="px-4 py-3 text-right">฿4,500</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Risk Alerts Table */}
+            <div className="mb-6">
+              <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500" />
+                riskAlerts[] — การแจ้งเตือนความเสี่ยง ({`3 รายการ`})
+              </h3>
+              <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                      <tr>
+                        <th className="px-4 py-2.5">id</th>
+                        <th className="px-4 py-2.5">severity</th>
+                        <th className="px-4 py-2.5">materialId</th>
+                        <th className="px-4 py-2.5">message</th>
+                        <th className="px-4 py-2.5 text-right">costImpact</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[12px] font-medium text-slate-700 divide-y divide-slate-100">
+                      <tr className="hover:bg-red-50/30">
+                        <td className="px-4 py-3 font-mono text-slate-400">alt-1</td>
+                        <td className="px-4 py-3"><span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">critical</span></td>
+                        <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10067</td>
+                        <td className="px-4 py-3 text-[11px] max-w-[300px]">พายุโซนร้อนเข้าภาคเหนือ หม้อแปลง 160kVA ขาดแคลนวิกฤต (12/250)</td>
+                        <td className="px-4 py-3 text-right text-red-600 font-bold">฿231.36M</td>
+                      </tr>
+                      <tr className="hover:bg-red-50/30">
+                        <td className="px-4 py-3 font-mono text-slate-400">alt-2</td>
+                        <td className="px-4 py-3"><span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">critical</span></td>
+                        <td className="px-4 py-3 font-mono text-indigo-600 font-bold">10066</td>
+                        <td className="px-4 py-3 text-[11px] max-w-[300px]">สต๊อกหม้อแปลง 100kVA ต่ำกว่าเกณฑ์ (5/100) ไม่เพียงพอรับมือภัยพิบัติ</td>
+                        <td className="px-4 py-3 text-right text-red-600 font-bold">฿114.47M</td>
+                      </tr>
+                      <tr className="hover:bg-amber-50/30">
+                        <td className="px-4 py-3 font-mono text-slate-400">alt-3</td>
+                        <td className="px-4 py-3"><span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">warning</span></td>
+                        <td className="px-4 py-3 font-mono text-indigo-600 font-bold">20045</td>
+                        <td className="px-4 py-3 text-[11px] max-w-[300px]">Drop Out Fuse ขาดสต๊อก แต่ซัพพลายเออร์ส่งของล่าช้า 2 สัปดาห์</td>
+                        <td className="px-4 py-3 text-right text-amber-600 font-bold">฿21.96M</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* totalVaR */}
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-[13px] font-bold text-slate-700">totalVaR</span>
+                <span className="text-[11px] text-slate-400">— มูลค่าความเสี่ยงรวม (Value at Risk)</span>
+              </div>
+              <span className="text-[20px] font-black text-slate-800">฿345,835,000 <span className="text-[12px] font-medium text-slate-500">(฿345.8M)</span></span>
+            </div>
+
+            <div className="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+              <p className="text-[11px] text-emerald-800 font-medium">
+                <strong>API Endpoint:</strong> <span className="font-mono text-[10px]">GET /default/pea-brain-orchestrator</span> • <strong>Source:</strong> AWS Lambda → S3 (pea-hackathon-data1) • <strong>Status:</strong> <span className="text-emerald-600 font-bold">✓ Connected</span>
+              </p>
             </div>
           </div>
-        </div>
-
-        {/* totalVaR */}
-        <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-[13px] font-bold text-slate-700">totalVaR</span>
-            <span className="text-[11px] text-slate-400">— มูลค่าความเสี่ยงรวม (Value at Risk)</span>
-          </div>
-          <span className="text-[20px] font-black text-slate-800">฿345,835,000 <span className="text-[12px] font-medium text-slate-500">(฿345.8M)</span></span>
-        </div>
-
-        <div className="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-          <p className="text-[11px] text-emerald-800 font-medium">
-            <strong>API Endpoint:</strong> <span className="font-mono text-[10px]">GET /default/pea-brain-orchestrator</span> • <strong>Source:</strong> AWS Lambda → S3 (pea-hackathon-data1) • <strong>Status:</strong> <span className="text-emerald-600 font-bold">✓ Connected</span>
-          </p>
         </div>
       </section>
 
