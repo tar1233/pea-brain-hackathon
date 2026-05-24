@@ -41,13 +41,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
         
         // Handle Lambda payload (which might not include computed fields)
         if (!json.riskAlerts) json.riskAlerts = [];
-        json.riskAlerts = json.riskAlerts.map((a: any) => ({
-          ...a,
-          confidence: a.confidence || 95,
-          recommendation: a.recommendation || "รอการตัดสินใจจากผู้ดูแลระบบ",
-          timestamp: a.timestamp || new Date().toISOString(),
-          materialName: a.materialName || "Unknown Material",
-        }));
+        json.riskAlerts = json.riskAlerts.map((a: any) => {
+          const mat = json.materials?.find((m: any) => m.id === a.materialId);
+          return {
+            ...a,
+            confidence: a.confidence || 95,
+            recommendation: a.recommendation || "รอการตัดสินใจจากผู้ดูแลระบบ",
+            timestamp: a.timestamp || new Date().toISOString(),
+            materialName: a.materialName || mat?.name || "Unknown Material",
+          };
+        });
         
         if (!json.materials) json.materials = [];
         // Ensure all material fields exist to prevent UI crashes
