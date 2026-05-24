@@ -320,8 +320,170 @@ export default function ProjectRoadmap() {
           </div>
         </div>
       </section>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+      {/* Arrow Connector: Bucket 2 → Bucket 3 */}
+      <div className="flex flex-col items-center py-4 text-slate-400">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1">Merge &amp; Serve to Frontend</div>
+        <div className="w-px h-6 bg-gradient-to-b from-fuchsia-300 to-emerald-400" />
+        <ArrowRight size={20} className="text-emerald-500 rotate-90 animate-pulse" />
+        <div className="w-px h-6 bg-gradient-to-b from-emerald-400 to-emerald-600" />
+      </div>
+
+      {/* ===== LIVE DATA BUCKET (Current App State) ===== */}
+      <section className="relative">
+        <div className="rounded-[32px] border-2 border-dashed border-emerald-300 bg-gradient-to-b from-emerald-50/50 to-white p-1.5">
+          
+          {/* Bucket Handle / Header */}
+          <div className="bg-gradient-to-r from-emerald-800 via-teal-800 to-cyan-800 rounded-t-[26px] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                <Server size={18} className="text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-[15px] font-extrabold text-white tracking-tight">🚀 PEA Brain Live Bucket — ข้อมูลปัจจุบันที่ App ใช้งาน</h2>
+                <p className="text-[10px] text-emerald-200/80 font-medium mt-0.5">Raw + Engineered = Merged Data • ข้อมูลทั้งหมดที่ Dashboard, Risk, e-Bidding ใช้แสดงผล</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full animate-pulse">● LIVE</span>
+          </div>
+
+          {/* Bucket Body */}
+          <div className="bg-white rounded-b-[26px] p-6">
+
+            {/* Merged Materials */}
+            <div className="mb-6">
+              <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                materials[] — ข้อมูลพัสดุแบบเต็ม (Raw + Computed)
+              </h3>
+              <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-emerald-50 text-[9px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                      <tr>
+                        <th className="px-3 py-2">id</th>
+                        <th className="px-3 py-2">name</th>
+                        <th className="px-3 py-2 text-right">stock</th>
+                        <th className="px-3 py-2 text-right">safety</th>
+                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">avgMonthly</th>
+                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">annual</th>
+                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">ROP</th>
+                        <th className="px-3 py-2 text-right bg-indigo-50/50 text-indigo-500">EOQ</th>
+                        <th className="px-3 py-2 text-right">budget</th>
+                        <th className="px-3 py-2 text-right">unit</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[11px] font-medium text-slate-700 divide-y divide-slate-100">
+                      <tr className="hover:bg-emerald-50/30">
+                        <td className="px-3 py-2.5 font-mono text-indigo-600 font-bold">10067</td>
+                        <td className="px-3 py-2.5 truncate max-w-[160px]">160 kVA Transformer 3Ph</td>
+                        <td className="px-3 py-2.5 text-right text-red-600 font-bold">12</td>
+                        <td className="px-3 py-2.5 text-right">250</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right">฿150K</td>
+                        <td className="px-3 py-2.5 text-right">฿192.8K</td>
+                      </tr>
+                      <tr className="hover:bg-emerald-50/30">
+                        <td className="px-3 py-2.5 font-mono text-indigo-600 font-bold">10066</td>
+                        <td className="px-3 py-2.5 truncate max-w-[160px]">100 kVA Transformer 3Ph</td>
+                        <td className="px-3 py-2.5 text-right text-red-600 font-bold">5</td>
+                        <td className="px-3 py-2.5 text-right">100</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right">฿85K</td>
+                        <td className="px-3 py-2.5 text-right">฿120.5K</td>
+                      </tr>
+                      <tr className="hover:bg-emerald-50/30">
+                        <td className="px-3 py-2.5 font-mono text-indigo-600 font-bold">20045</td>
+                        <td className="px-3 py-2.5 truncate max-w-[160px]">Drop Out Fuse Cutout 24kV</td>
+                        <td className="px-3 py-2.5 text-right">120</td>
+                        <td className="px-3 py-2.5 text-right">5,000</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right bg-indigo-50/30 text-indigo-700 font-bold">0*</td>
+                        <td className="px-3 py-2.5 text-right">฿4.2K</td>
+                        <td className="px-3 py-2.5 text-right">฿4.5K</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-[10px] text-amber-700 font-medium">
+                  <strong>*0 = API ไม่ได้ส่งมา</strong> → ฟิลด์สีม่วงคือช่องว่างที่ PEA Brain ต้องคำนวณจาก sparkline[] และ AI Model (ปัจจุบัน fallback เป็น 0)
+                </div>
+              </div>
+            </div>
+
+            {/* Vendors + eBidding + AI Recs */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Vendors */}
+              <div className="bg-blue-50/50 rounded-xl border border-blue-100 p-4">
+                <h4 className="text-[11px] font-bold text-blue-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                  <User size={12} />
+                  vendors[] — 5 ราย
+                </h4>
+                <div className="space-y-1.5 text-[10px] text-blue-900 font-medium">
+                  <div className="flex justify-between"><span>ไทยทรานสฟอร์มเมอร์</span><span className="text-emerald-600 font-bold">95%</span></div>
+                  <div className="flex justify-between"><span>บางกอกพาวเวอร์</span><span className="text-emerald-600 font-bold">92%</span></div>
+                  <div className="flex justify-between"><span>สยามอิเล็คทริค</span><span className="text-amber-600 font-bold">88%</span></div>
+                  <div className="flex justify-between"><span>เมโทร สมาร์ท กริด</span><span className="text-amber-600 font-bold">85%</span></div>
+                  <div className="flex justify-between"><span>นอร์ทเทิร์น กรีน</span><span className="text-red-500 font-bold">80%</span></div>
+                </div>
+              </div>
+
+              {/* eBidding Simulation */}
+              <div className="bg-purple-50/50 rounded-xl border border-purple-100 p-4">
+                <h4 className="text-[11px] font-bold text-purple-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                  <Sparkles size={12} />
+                  eBiddingData
+                </h4>
+                <div className="space-y-2 text-[10px] text-purple-900 font-medium">
+                  <div><span className="text-slate-400">target:</span> หม้อแปลง 160kVA</div>
+                  <div><span className="text-slate-400">qty:</span> <span className="font-bold">800 เครื่อง</span></div>
+                  <div><span className="text-slate-400">scenario:</span> Supplier ผันผวน</div>
+                  <div><span className="text-slate-400">steps:</span> 3 simulation steps</div>
+                  <div><span className="text-slate-400">priceTrend:</span> 7 months data</div>
+                </div>
+              </div>
+
+              {/* AI Recommendations */}
+              <div className="bg-amber-50/50 rounded-xl border border-amber-100 p-4">
+                <h4 className="text-[11px] font-bold text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                  <Sparkles size={12} />
+                  aiRecommendations[]
+                </h4>
+                <div className="space-y-2 text-[10px] text-amber-900 font-medium">
+                  <div className="flex gap-1.5 items-start">
+                    <span className="bg-red-100 text-red-700 text-[8px] font-bold px-1.5 py-0.5 rounded mt-0.5">critical</span>
+                    <span>สรุปสถานะหม้อแปลง 10067 → ควรเร่งจัดซื้อ</span>
+                  </div>
+                  <div className="flex gap-1.5 items-start">
+                    <span className="bg-blue-100 text-blue-700 text-[8px] font-bold px-1.5 py-0.5 rounded mt-0.5">info</span>
+                    <span>Demand ปี 2569 คือกี่เครื่อง</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-4">
+              <p className="text-[12px] text-emerald-900 font-bold mb-2">✅ Data Pipeline Summary: 3 ถัง → 1 Dashboard</p>
+              <p className="text-[11px] text-emerald-700 font-medium">
+                <strong>Bucket 1</strong> (S3 Raw: 7 fields) → <strong>Bucket 2</strong> (AI สร้าง 12+ fields) → <strong>Bucket 3</strong> (รวมทั้งหมด 19+ fields + vendors + eBidding + AI Recs) → แสดงผลบน Dashboard, Risk Management, e-Bidding, AI Copilot ครบทุกหน้า
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
         
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Left Column: Tech Stack & Architecture */}
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden">
