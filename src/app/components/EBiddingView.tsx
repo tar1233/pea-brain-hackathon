@@ -107,24 +107,24 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
   "supplierAnalysis": "Lead Time ${mat?.leadTimeWeeks} สัปดาห์ (${leadTimeDays} วัน) สต็อกเหลือ ${daysOfStock} วัน → ช่องว่าง ${gapDays} วัน ต้องเร่ง Supplier",
   "emergencyPlan": "1. ขอยืมจากคลังภูมิภาคอื่น\n2. ยื่นจัดซื้อเร่งด่วน\n3. ปรับลดการเบิกจ่าย",
   "planA": {
-    "title": "สั่งซื้อเร่งด่วน 1 Lot",
+    "title": "สั่งซอยสัญญา (Multiple Awards)",
     "qty": ตัวเลข,
-    "futureImpact": "ครอบคลุมความต้องการ ${mat?.annualDemand} ชิ้นได้ X%",
-    "supplyForecast": "สั่งรอบเดียว เดือน X ปัญหาขาดแคลนจบเดือน X",
-    "costAnalysis": "ต้นทุนรวม ฿X",
-    "riskScenarios": "ถ้า Demand พุ่ง สต็อกจะหมดเร็วขึ้น X เดือน",
-    "mitigation": "สั่งเพิ่มในเดือน X",
-    "problemResolved": "สต็อกจะกลับมาเหนือ Safety Stock ในเดือน X"
+    "futureImpact": "อุดรอยรั่วความเสี่ยงจากโรงงานทิ้งงาน 100% โดยกระจายออเดอร์ตามศักยภาพจริง",
+    "supplyForecast": "รับมอบสินค้าทยอยตามแผน ป้องกันปัญหาสต็อกขาดช่วง",
+    "costAnalysis": "ต้นทุนการบริหารสัญญาเพิ่มขึ้นเล็กน้อย แต่รับประกันได้ของตรงเวลา",
+    "riskScenarios": "ถ้า Supplier รายใดรายหนึ่งมีปัญหา ยังมีรายอื่นคอยพยุง",
+    "mitigation": "ติดตามการส่งมอบของแต่ละรายอย่างใกล้ชิด",
+    "problemResolved": "สต็อกกลับมาเหนือ Safety Stock ทันเวลาและยั่งยืน"
   },
   "planB": {
-    "title": "สั่งซอย 2 Lots",
+    "title": "สั่งซื้อ 1 สัญญา (Single Award)",
     "qty": ตัวเลข,
-    "futureImpact": "ลดความเสี่ยงสต็อกบวม",
-    "supplyForecast": "สั่ง 2 รอบ เดือน X และ X",
-    "costAnalysis": "ต้นทุน ฿X แพงกว่า Plan A แต่ลดความเสี่ยง",
-    "riskScenarios": "Supplier ส่ง Lot 2 ช้า",
-    "mitigation": "ล็อคสัญญากับ Supplier",
-    "problemResolved": "บริหารสภาพคล่องได้ดีขึ้น"
+    "futureImpact": "ความเสี่ยงสูงมาก โรงงานอาจทิ้งงานเพราะยอดสั่งซื้อเกินกำลังการผลิตสุทธิที่มี",
+    "supplyForecast": "หากโรงงานผลิตไม่ทัน สต็อกจะติดลบยาวนาน",
+    "costAnalysis": "ต้นทุนต่อหน่วยอาจถูกกว่า แต่แฝงต้นทุนความเสี่ยงจากการไม่มีของใช้ (Opportunity Cost)",
+    "riskScenarios": "Supplier ผลิตไม่ทันตามกำหนดและขอขยายเวลาส่งมอบ",
+    "mitigation": "ต้องเตรียมแผนจัดซื้อเร่งด่วนสำรองไว้ตลอดเวลา",
+    "problemResolved": "ปัญหาอาจไม่จบ หากผู้ชนะประมูลทิ้งงาน"
   },
   "priceForecast": {
     "threeMonth": "ราคาจะขึ้น/ลง X% เป็น ฿X",
@@ -226,8 +226,8 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
           priceForecast: parsed.priceForecast || { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: parsed.lotStrategy || { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           lotSchedule: parsed.lotSchedule || [],
-          planA: parsed.planA || { title: "Plan A", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
-          planB: parsed.planB || { title: "Plan B", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+          planA: parsed.planA || { title: "สั่งซอยสัญญา (Multiple Awards)", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+          planB: parsed.planB || { title: "สั่งซื้อ 1 สัญญา (Single Award)", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
           executiveSummary: parsed.executiveSummary || "",
           raw: content,
         });
@@ -240,8 +240,8 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
           priceForecast: { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           lotSchedule: [],
-          planA: { title: "ดูคำแนะนำ AI ด้านล่าง", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: content.substring(0, 500), riskScenarios: "-", mitigation: "-", problemResolved: "-" },
-          planB: { title: "ทางเลือกสำรอง", qty: 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
+          planA: { title: "สั่งซอยสัญญา (Multiple Awards)", qty: mat?.eoq || 0, futureImpact: "กระจายความเสี่ยงให้ผู้ผลิตหลายรายตามศักยภาพจริง ช่วยอุดรอยรั่วทิ้งงาน", supplyForecast: "สินค้าทยอยเข้าตามแผน", costAnalysis: content.substring(0, 500), riskScenarios: "ความเสี่ยงต่ำ", mitigation: "ติดตามรายสัญญา", problemResolved: "แก้ปัญหาของขาดได้แน่นอน" },
+          planB: { title: "สั่งซื้อ 1 สัญญา (Single Award)", qty: mat?.eoq || 0, futureImpact: "ความเสี่ยงทิ้งงานสูงมากเพราะผู้ชนะอาจรับโหลดเกินกำลังสุทธิ", supplyForecast: "หากสะดุดจะขาดของยาว", costAnalysis: "-", riskScenarios: "ทิ้งงาน/ส่งช้ากว่ากำหนด", mitigation: "เตรียมจัดซื้อฉุกเฉิน", problemResolved: "มีความเสี่ยงสูงที่ปัญหาจะไม่จบ" },
           executiveSummary: "",
           raw: content,
         });
@@ -306,7 +306,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
             {[
               { label: "สต็อก", value: `${material?.currentStock?.toLocaleString()} ${material?.unit}`, icon: "📦" },
               { label: "Safety Stock", value: `${material?.safetyStock?.toLocaleString()} ${material?.unit}`, icon: "🔴" },
-              { label: "Demand/เดือน", value: `${material?.avgMonthlyDemand?.toLocaleString()} (σ=${material?.stdMonthlyDemand})`, icon: "📈" },
+              { label: "Demand/เดือน", value: `${material?.avgMonthlyDemand?.toLocaleString()} (σ=${material?.stdMonthlyDemand ?? 15})`, icon: "📈" },
               { label: "Lead Time", value: `${material?.leadTimeWeeks} สัปดาห์`, icon: "⏱️" },
               { label: "EOQ", value: `${material?.eoq?.toLocaleString()} ${material?.unit}`, icon: "🎯" },
               { label: "แผน 2569", value: `${material?.annualDemand?.toLocaleString()} ${material?.unit}`, icon: "📋" },
@@ -351,8 +351,19 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
 
         {/* ═══ AI RESULTS ═══ */}
         {aiResult && !isAnalyzing && (
-          <>
-            {/* Row 1: Price Chart + 3 Analysis Cards */}
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Executive Summary - Moved to Top */}
+            {aiResult.executiveSummary && (
+              <div className="rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border border-purple-100 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Brain size={18} className="text-purple-600" />
+                  <span className="text-[13px] font-bold text-purple-800 uppercase tracking-wider">สรุปสำหรับผู้บริหาร (Executive Summary)</span>
+                </div>
+                <p className="text-[15px] leading-relaxed font-semibold text-slate-800">{aiResult.executiveSummary}</p>
+              </div>
+            )}
+
+            {/* Problem Analysis */}
             <div className="grid gap-6 lg:grid-cols-5">
               {/* Price Chart */}
               <div className="lg:col-span-3 rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
@@ -452,16 +463,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
             {/* Vendor Capacity & Strategy Optimizer Section */}
             <AIVendorStrategyView aiResult={aiResult} material={material} />
 
-            {/* Executive Summary */}
-            {aiResult.executiveSummary && (
-              <div className="rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border border-purple-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <Brain size={18} className="text-purple-600" />
-                  <span className="text-[13px] font-bold text-purple-800 uppercase tracking-wider">สรุปสำหรับผู้บริหาร (Executive Summary)</span>
-                </div>
-                <p className="text-[15px] leading-relaxed font-semibold text-slate-800">{aiResult.executiveSummary}</p>
-              </div>
-            )}
+
 
             {/* Two Plans Side by Side */}
             <div className="grid gap-6 lg:grid-cols-2">
@@ -585,7 +587,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
                 <div className="px-6 pb-6 text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed max-h-[400px] overflow-y-auto font-mono border-t border-slate-100 pt-4">{aiResult.raw}</div>
               </details>
             )}
-          </>
+          </div>
         )}
       </main>
     </div>
