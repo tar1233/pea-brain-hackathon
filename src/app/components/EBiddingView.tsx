@@ -450,7 +450,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
             )}
 
             {/* Vendor Capacity & Strategy Optimizer Section */}
-            <AIVendorStrategyView />
+            <AIVendorStrategyView aiResult={aiResult} material={material} />
 
             {/* Executive Summary */}
             {aiResult.executiveSummary && (
