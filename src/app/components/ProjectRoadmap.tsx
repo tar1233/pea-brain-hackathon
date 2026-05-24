@@ -962,86 +962,8 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
-        
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Left Column: Tech Stack & Architecture */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
-              <div className="w-10 h-10 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
-                <Network size={20} />
-              </div>
-              <div>
-                <h2 className="text-[16px] font-extrabold text-slate-900">System Architecture</h2>
-                <p className="text-[11px] text-slate-500 font-medium">โครงสร้างระบบและเทคโนโลยีหลักที่ใช้งาน</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Frontend */}
-              <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4">
-                <div className="flex items-center gap-2 text-indigo-600 mb-3">
-                  <LayoutTemplate size={16} />
-                  <span className="text-[12px] font-bold uppercase tracking-widest">Frontend</span>
-                </div>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-[12px] text-slate-700 font-medium">
-                    <Box size={12} className="text-indigo-400" /> Next.js 14 (App Router)
-                  </li>
-                  <li className="flex items-center gap-2 text-[12px] text-slate-700 font-medium">
-                    <Box size={12} className="text-indigo-400" /> TailwindCSS & Lucide Icons
-                  </li>
-                  <li className="flex items-center gap-2 text-[12px] text-slate-700 font-medium">
-                    <Box size={12} className="text-indigo-400" /> Recharts (Data Visualization)
-                  </li>
-                </ul>
-              </div>
-
-              {/* AI & Backend */}
-              <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4">
-                <div className="flex items-center gap-2 text-fuchsia-600 mb-3">
-                  <Sparkles size={16} />
-                  <span className="text-[12px] font-bold uppercase tracking-widest">AI & Backend</span>
-                </div>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-[12px] text-slate-700 font-medium">
-                    <Box size={12} className="text-fuchsia-400" /> AWS Bedrock (Claude 3 / Llama)
-                  </li>
-                  <li className="flex items-center gap-2 text-[12px] text-slate-700 font-medium">
-                    <Box size={12} className="text-fuchsia-400" /> AWS API Gateway
-                  </li>
-                  <li className="flex items-center gap-2 text-[12px] text-slate-700 font-medium">
-                    <Box size={12} className="text-fuchsia-400" /> Prisma ORM & Database
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Data Flow Diagram (Simple) */}
-            <div className="mt-5 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-900 p-5 text-white flex flex-col items-center justify-center gap-3 shadow-inner">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest self-start">Data Flow</span>
-              <div className="flex items-center justify-center gap-2 w-full text-[11px] font-medium text-slate-200">
-                <div className="bg-white/10 px-3 py-2 rounded-lg border border-white/10 flex items-center gap-2">
-                  <User size={14} className="text-sky-300" /> User
-                </div>
-                <div className="h-0.5 flex-1 bg-gradient-to-r from-white/10 to-white/30 relative">
-                  <ArrowRight size={10} className="absolute right-0 top-1/2 -translate-y-1/2 text-white/50" />
-                </div>
-                <div className="bg-white/10 px-3 py-2 rounded-lg border border-white/10 flex items-center gap-2">
-                  <Server size={14} className="text-fuchsia-300" /> API Gateway
-                </div>
-                <div className="h-0.5 flex-1 bg-gradient-to-r from-white/10 to-white/30 relative">
-                  <ArrowRight size={10} className="absolute right-0 top-1/2 -translate-y-1/2 text-white/50" />
-                </div>
-                <div className="bg-white/10 px-3 py-2 rounded-lg border border-white/10 flex items-center gap-2">
-                  <Database size={14} className="text-emerald-300" /> Bedrock AI / DB
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Sprint Timeline */}
+      <div className="max-w-4xl mx-auto">
+        {/* Sprint Timeline */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
             <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
