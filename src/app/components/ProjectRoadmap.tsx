@@ -220,7 +220,106 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
+      {/* Arrow Connector: Bucket 1 → Bucket 2 */}
+      <div className="flex flex-col items-center py-4 text-slate-400">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 mb-1">PEA Brain AI Processing</div>
+        <div className="w-px h-6 bg-gradient-to-b from-slate-300 to-indigo-400" />
+        <ArrowRight size={20} className="text-indigo-500 rotate-90 animate-pulse" />
+        <div className="w-px h-6 bg-gradient-to-b from-indigo-400 to-fuchsia-400" />
+      </div>
 
+      {/* ===== ENGINEERED DATA BUCKET (What PEA Brain Creates) ===== */}
+      <section className="relative">
+        <div className="rounded-[32px] border-2 border-dashed border-fuchsia-300 bg-gradient-to-b from-fuchsia-50/50 to-white p-1.5">
+          
+          {/* Bucket Handle / Header */}
+          <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-fuchsia-900 rounded-t-[26px] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-fuchsia-500/20 flex items-center justify-center">
+                <Sparkles size={18} className="text-fuchsia-400" />
+              </div>
+              <div>
+                <h2 className="text-[15px] font-extrabold text-white tracking-tight">🧠 PEA Brain Engineered Bucket — ข้อมูลที่ AI สร้างขึ้น</h2>
+                <p className="text-[10px] text-fuchsia-200/80 font-medium mt-0.5">Feature Engineering + AI Analytics • ข้อมูลที่คำนวณเพิ่มเพื่อแก้ปัญหาจัดซื้อ</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-bold bg-fuchsia-500/20 text-fuchsia-300 px-2.5 py-1 rounded-full">AI COMPUTED</span>
+          </div>
+
+          {/* Bucket Body */}
+          <div className="bg-white rounded-b-[26px] p-6">
+
+            {/* Problem → Solution Mapping */}
+            <div className="mb-6">
+              <h3 className="text-[13px] font-bold text-slate-700 mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-fuchsia-500" />
+                Gap Analysis — ช่องว่างจากข้อมูลดิบ → สิ่งที่ PEA Brain เติมเต็ม
+              </h3>
+              <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-gradient-to-r from-indigo-50 to-fuchsia-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                      <tr>
+                        <th className="px-4 py-2.5">ปัญหาจากข้อมูลดิบ</th>
+                        <th className="px-4 py-2.5">ฟิลด์ที่ขาด</th>
+                        <th className="px-4 py-2.5">สิ่งที่ PEA Brain สร้าง</th>
+                        <th className="px-4 py-2.5">วิธีคำนวณ</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[12px] font-medium text-slate-700 divide-y divide-slate-100">
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้ว่าต้องซื้อกี่ชิ้น/ปี</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">avgMonthlyDemand, annualDemand</td>
+                        <td className="px-4 py-3"><span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Demand Forecasting</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">คำนวณจาก sparkline[] ย้อนหลัง + Seasonal Factor</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้ว่าควรสั่งซื้อเมื่อไหร่</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">reorderPoint (ROP)</td>
+                        <td className="px-4 py-3"><span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Dynamic ROP</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">ROP = (dailyDemand × leadTime) + safetyStock × riskFactor</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้ว่าควรสั่งซื้อกี่ชิ้น</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">eoq</td>
+                        <td className="px-4 py-3"><span className="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">EOQ Optimization</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">EOQ = √(2 × annualDemand × orderCost / holdingCost)</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">รู้แค่ severity แต่ไม่รู้วิธีแก้</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">recommendation, confidence</td>
+                        <td className="px-4 py-3"><span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">AI Risk Mitigation</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">Bedrock AI วิเคราะห์สถานการณ์ + แนะนำ Plan A/B</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่มีข้อมูล Supplier เลย</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">vendors[], trustScore</td>
+                        <td className="px-4 py-3"><span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Supplier Analytics</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">จำลองข้อมูลผู้ค้า + คำนวณ Trust Score จาก On-Time %</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3 text-red-600 font-bold text-[11px]">ไม่รู้ว่าควรซอยสัญญาไหม</td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">lotStrategy, lotSchedule</td>
+                        <td className="px-4 py-3"><span className="bg-fuchsia-100 text-fuchsia-700 text-[10px] font-bold px-2 py-0.5 rounded-full">AI Lot Strategy</span></td>
+                        <td className="px-4 py-3 text-[10px] text-slate-500">AI วิเคราะห์ปริมาณ + ตลาด → แนะนำซอย/ไม่ซอย Lot</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="bg-gradient-to-r from-indigo-50 to-fuchsia-50 rounded-xl border border-indigo-100 p-4">
+              <p className="text-[12px] text-indigo-900 font-bold mb-2">📊 สรุป: จากข้อมูลดิบ 7 fields → PEA Brain สร้างเพิ่ม 12+ fields</p>
+              <p className="text-[11px] text-indigo-700 font-medium">
+                Sandbox ให้แค่ <strong>&quot;สถานะปัจจุบัน&quot;</strong> (Stock เหลือเท่าไหร่, มีความเสี่ยงอะไร) แต่ PEA Brain เติม <strong>&quot;การตัดสินใจ&quot;</strong> (ควรสั่งเมื่อไหร่, สั่งกี่ชิ้น, ซอยสัญญาไหม, ใช้ Supplier ไหน) — นี่คือ Value ที่ทีมเราสร้างให้ PEA ครับ 🚀
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         
         {/* Left Column: Tech Stack & Architecture */}
