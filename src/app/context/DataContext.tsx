@@ -17,6 +17,7 @@ interface DataContextType {
   dataSummary: any;
   isLoading: boolean;
   error: string | null;
+  vendors: any[];
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -90,6 +91,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
             }
           ];
         }
+
+        json.vendors = [
+          { id: "v1", name: "บริษัท ไทยทรานสฟอร์มเมอร์ จำกัด", registeredCapacity: 400, outstandingPOs: 150, reliabilityScore: 0.95 },
+          { id: "v2", name: "บริษัท สยามอิเล็คทริค อินดัสทรี", registeredCapacity: 250, outstandingPOs: 50, reliabilityScore: 0.88 },
+          { id: "v3", name: "บริษัท บางกอกพาวเวอร์ ซัพพลาย", registeredCapacity: 150, outstandingPOs: 0, reliabilityScore: 0.92 },
+          { id: "v4", name: "บริษัท นอร์ทเทิร์น กรีน เอ็นเนอร์ยี่", registeredCapacity: 200, outstandingPOs: 100, reliabilityScore: 0.80 },
+          { id: "v5", name: "บริษัท เมโทร สมาร์ท กริด", registeredCapacity: 300, outstandingPOs: 220, reliabilityScore: 0.85 }
+        ];
+
         if (!json.dataSummary) json.dataSummary = "";
         if (json.totalVaR === undefined) json.totalVaR = 0;
 
@@ -165,14 +175,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, []);
 
-  const value = {
-    ...(data as Omit<DataContextType, "isLoading" | "error">),
-    isLoading,
-    error,
-  };
-
   return (
-    <DataContext.Provider value={value}>
+    <DataContext.Provider value={{ ...data, vendors: data?.vendors || [], isLoading, error } as DataContextType}>
       {children}
     </DataContext.Provider>
   );
