@@ -23,7 +23,6 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 import { calculateEOQ, calculateDynamicROP, calculateBufferDays } from "../utils/supplyChainAI";
-import { materials as mockMaterials } from "../data/mockData";
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<Omit<DataContextType, "isLoading" | "error"> | null>(null);
@@ -52,23 +51,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
         
         if (!json.materials) json.materials = [];
         // Ensure all material fields exist to prevent UI crashes
-        json.materials = json.materials.map((m: any) => {
-          const mockMat = mockMaterials.find(mm => mm.id === m.id || mm.sapCode === m.sapCode);
-          return {
-            ...m,
-            avgMonthlyDemand: m.avgMonthlyDemand || mockMat?.avgMonthlyDemand || 40,
-            annualDemand: m.annualDemand || mockMat?.annualDemand || 480,
-            leadTimeWeeks: m.leadTimeWeeks || mockMat?.leadTimeWeeks || 12,
-            unit: m.unit || mockMat?.unit || "EA",
-            reorderPoint: m.reorderPoint || mockMat?.reorderPoint || 300,
-            eoq: m.eoq || mockMat?.eoq || 150,
-            currentStock: m.currentStock || mockMat?.currentStock || 0,
-            safetyStock: m.safetyStock || mockMat?.safetyStock || 0,
-            budgetPrice: m.budgetPrice || mockMat?.budgetPrice || 0,
-            unitPrice: m.unitPrice || mockMat?.unitPrice || 0,
-            name: m.name || mockMat?.name || m.id,
-          };
-        });
+        json.materials = json.materials.map((m: any) => ({
+          ...m,
+          avgMonthlyDemand: m.avgMonthlyDemand || 0,
+          annualDemand: m.annualDemand || (m.avgMonthlyDemand ? m.avgMonthlyDemand * 12 : 0),
+          leadTimeWeeks: m.leadTimeWeeks || 0,
+          unit: m.unit || "EA",
+          reorderPoint: m.reorderPoint || 0,
+          eoq: m.eoq || 0,
+          currentStock: m.currentStock || 0,
+          safetyStock: m.safetyStock || 0,
+          budgetPrice: m.budgetPrice || 0,
+          unitPrice: m.unitPrice || 0,
+        }));
 
         if (!json.criticalAlerts) {
           json.criticalAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'critical');
