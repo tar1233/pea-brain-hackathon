@@ -35,7 +35,7 @@ interface AIAnalysisResult {
   raw?: string;
 }
 
-export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose, embedded = false, readonly = false }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void, embedded?: boolean, readonly?: boolean }) {
+export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose, embedded = false, readonly = false, approvedQty }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void, embedded?: boolean, readonly?: boolean, approvedQty?: number }) {
   const { eBiddingData, materials, riskAlerts } = useData();
   const [aiResult, setAiResult] = useState<AIAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -64,13 +64,14 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
     const gapDays = leadTimeDays - daysOfStock;
 
     if (readonly) {
+      const finalQty = approvedQty || mat?.eoq || 0;
       setAiResult({
         demandAnalysis: `สต็อก ${mat?.currentStock} ชิ้น ใช้ได้อีก ${daysOfStock} วัน (Demand เฉลี่ย ${mat?.avgMonthlyDemand}/เดือน) → ต้องสั่งทันที`,
         marketAnalysis: `ราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString()} สูง/ต่ำกว่าราคากลาง 15% ควรประกวดราคาเดือน ตุลาคม-พฤศจิกายน`,
         supplierAnalysis: `Lead Time ${mat?.leadTimeWeeks} สัปดาห์ (${leadTimeDays} วัน) สต็อกเหลือ ${daysOfStock} วัน → ช่องว่าง ${gapDays} วัน ต้องเร่ง Supplier`,
         emergencyPlan: "",
         priceForecast: { threeMonth: "ราคาลดลงเล็กน้อย", oneYear: "แนวโน้มราคาทรงตัว", bestTimeToBuy: "ช่วงนี้ถึงธันวาคม" },
-        lotStrategy: { recommendation: "สั่งซอยสัญญา", totalQty: mat?.eoq || 0, numLots: 3, qtyPerLot: 0, reason: "ลดความเสี่ยงการทิ้งงาน", savings: "คุ้มค่าที่สุด" },
+        lotStrategy: { recommendation: "สั่งซอยสัญญา", totalQty: finalQty, numLots: 3, qtyPerLot: 0, reason: "ลดความเสี่ยงการทิ้งงาน", savings: "คุ้มค่าที่สุด" },
         lotSchedule: [],
         planA: { title: "สั่งซอยสัญญา", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },
         planB: { title: "สั่งซื้อ 1 สัญญา", qty: mat?.eoq || 0, futureImpact: "-", supplyForecast: "-", costAnalysis: "-", riskScenarios: "-", mitigation: "-", problemResolved: "-" },

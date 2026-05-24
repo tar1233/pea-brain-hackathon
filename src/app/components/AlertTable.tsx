@@ -279,6 +279,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                               targetMaterialId={alert.materialId} 
                               embedded={true} 
                               readonly={!!planData} 
+                              approvedQty={planData?.qty}
                               onClose={() => setExpandedId(null)} 
                             />
                           </div>
