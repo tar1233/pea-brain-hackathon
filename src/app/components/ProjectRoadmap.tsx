@@ -76,6 +76,150 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
+      {/* ===== DATA FLOW DIAGRAM ===== */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+            <Network size={20} />
+          </div>
+          <div>
+            <h2 className="text-[16px] font-extrabold text-slate-900">Data Flow Architecture</h2>
+            <p className="text-[11px] text-slate-500 font-medium">ภาพรวมการไหลของข้อมูลจากต้นทางสู่ Dashboard</p>
+          </div>
+        </div>
+
+        {/* Flow Diagram - Horizontal */}
+        <div className="flex items-stretch gap-0 overflow-x-auto pb-4">
+
+          {/* Step 1: Data Source */}
+          <div className="flex-shrink-0 w-[160px]">
+            <div className="bg-gradient-to-b from-amber-500 to-amber-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-amber-200">
+              <Database size={28} className="mb-2" />
+              <div className="text-[12px] font-black text-center">S3 Bucket</div>
+              <div className="text-[9px] text-amber-100 text-center mt-1 font-medium">pea-hackathon-data1</div>
+              <div className="mt-3 space-y-1 w-full">
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">materials.json</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">riskAlerts.json</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">totalVaR</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 1 */}
+          <div className="flex-shrink-0 flex items-center px-2">
+            <div className="flex flex-col items-center">
+              <div className="text-[7px] font-bold text-slate-400 mb-1 whitespace-nowrap">API Gateway</div>
+              <div className="w-12 h-0.5 bg-gradient-to-r from-amber-400 to-purple-500 relative">
+                <ArrowRight size={12} className="text-purple-500 absolute -right-1.5 -top-[5px]" />
+              </div>
+              <div className="text-[7px] font-bold text-slate-400 mt-1 whitespace-nowrap">REST API</div>
+            </div>
+          </div>
+
+          {/* Step 2: Lambda */}
+          <div className="flex-shrink-0 w-[160px]">
+            <div className="bg-gradient-to-b from-purple-600 to-purple-700 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-purple-200">
+              <Server size={28} className="mb-2" />
+              <div className="text-[12px] font-black text-center">AWS Lambda</div>
+              <div className="text-[9px] text-purple-200 text-center mt-1 font-medium">Orchestrator</div>
+              <div className="mt-3 space-y-1 w-full">
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Data Fetch</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Risk Calc</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">VaR Engine</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 2 */}
+          <div className="flex-shrink-0 flex items-center px-2">
+            <div className="flex flex-col items-center">
+              <div className="text-[7px] font-bold text-slate-400 mb-1 whitespace-nowrap">JSON Response</div>
+              <div className="w-12 h-0.5 bg-gradient-to-r from-purple-500 to-indigo-500 relative">
+                <ArrowRight size={12} className="text-indigo-500 absolute -right-1.5 -top-[5px]" />
+              </div>
+              <div className="text-[7px] font-bold text-slate-400 mt-1 whitespace-nowrap">7 Raw Fields</div>
+            </div>
+          </div>
+
+          {/* Step 3: PEA Brain AI */}
+          <div className="flex-shrink-0 w-[180px]">
+            <div className="bg-gradient-to-b from-indigo-600 to-blue-700 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
+              <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-md" />
+              <Sparkles size={28} className="mb-2" />
+              <div className="text-[12px] font-black text-center">PEA Brain AI</div>
+              <div className="text-[9px] text-indigo-200 text-center mt-1 font-medium">Feature Engineering</div>
+              <div className="mt-3 space-y-1 w-full">
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Demand Forecast</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">EOQ / ROP</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Supplier Trust</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Lot Strategy</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 3 */}
+          <div className="flex-shrink-0 flex items-center px-2">
+            <div className="flex flex-col items-center">
+              <div className="text-[7px] font-bold text-slate-400 mb-1 whitespace-nowrap">Merged Data</div>
+              <div className="w-12 h-0.5 bg-gradient-to-r from-indigo-500 to-fuchsia-500 relative">
+                <ArrowRight size={12} className="text-fuchsia-500 absolute -right-1.5 -top-[5px]" />
+              </div>
+              <div className="text-[7px] font-bold text-slate-400 mt-1 whitespace-nowrap">25 Fields</div>
+            </div>
+          </div>
+
+          {/* Step 4: Bedrock AI */}
+          <div className="flex-shrink-0 w-[160px]">
+            <div className="bg-gradient-to-b from-fuchsia-600 to-pink-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-fuchsia-200">
+              <Sparkles size={28} className="mb-2" />
+              <div className="text-[12px] font-black text-center">AWS Bedrock</div>
+              <div className="text-[9px] text-fuchsia-200 text-center mt-1 font-medium">Claude 3 Haiku</div>
+              <div className="mt-3 space-y-1 w-full">
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">AI Copilot Chat</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Risk Analysis</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Recommendation</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 4 */}
+          <div className="flex-shrink-0 flex items-center px-2">
+            <div className="flex flex-col items-center">
+              <div className="text-[7px] font-bold text-slate-400 mb-1 whitespace-nowrap">Insights</div>
+              <div className="w-12 h-0.5 bg-gradient-to-r from-fuchsia-500 to-emerald-500 relative">
+                <ArrowRight size={12} className="text-emerald-500 absolute -right-1.5 -top-[5px]" />
+              </div>
+              <div className="text-[7px] font-bold text-slate-400 mt-1 whitespace-nowrap">NLP Output</div>
+            </div>
+          </div>
+
+          {/* Step 5: Dashboard */}
+          <div className="flex-shrink-0 w-[160px]">
+            <div className="bg-gradient-to-b from-emerald-600 to-teal-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-emerald-200">
+              <LayoutTemplate size={28} className="mb-2" />
+              <div className="text-[12px] font-black text-center">Dashboard</div>
+              <div className="text-[9px] text-emerald-200 text-center mt-1 font-medium">Next.js Frontend</div>
+              <div className="mt-3 space-y-1 w-full">
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Overview</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Risk Mgmt</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">e-Bidding Sim</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">AI Copilot</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom Legend */}
+        <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-4 text-[10px] font-bold text-slate-500">
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-amber-500" /> Data Source (S3)</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-purple-600" /> Processing (Lambda)</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-indigo-600" /> AI Engine (PEA Brain)</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-fuchsia-600" /> LLM (Bedrock)</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-600" /> Frontend (Dashboard)</span>
+        </div>
+      </section>
+
       {/* ===== S3 DATA BUCKET (Original Reference) ===== */}
       <section className="relative">
         {/* Bucket Shape */}
