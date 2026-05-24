@@ -28,43 +28,53 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
     { month: "ส.ค. 69", demand: monthlyDemand, capacity: totalMonthlyMarketCapacity },
   ];
 
-  // AI Lot Strategy (Dynamic Calculation based on capacity)
-  let remainingDemand = targetDemand;
+  // AI Lot Strategy (Define Target Lots First, Then Evaluate Vendor Potential)
+  const idealLots = [
+    { lotLabel: "Lot 1 (ด่วน)", requiredQty: Math.ceil(targetDemand * 0.4) },
+    { lotLabel: "Lot 2", requiredQty: Math.ceil(targetDemand * 0.3) },
+    { lotLabel: "Lot 3", requiredQty: 0 }
+  ];
+  idealLots[2].requiredQty = targetDemand - idealLots[0].requiredQty - idealLots[1].requiredQty;
+
   const lotStrategy: any[] = [];
-  
-  // Sort vendors by effective capacity, descending
   const sortedVendors = [...processedVendors].sort((a, b) => b.availableCapacity - a.availableCapacity);
+  const assignedVendorIds = new Set();
 
-  sortedVendors.forEach((vendor, idx) => {
-    if (remainingDemand <= 0) return;
-    
-    // Allocate either their full capacity or whatever demand is left, whichever is smaller
-    const allocateQty = Math.min(vendor.availableCapacity, remainingDemand);
-    
-    if (allocateQty <= 0) return;
-
+  idealLots.forEach((idealLot) => {
+    // Try to find the best unassigned vendor who can handle the full requiredQty
+    let selectedVendor = sortedVendors.find(v => !assignedVendorIds.has(v.id) && v.availableCapacity >= idealLot.requiredQty);
     let reason = "";
-    if (idx === 0) {
-      reason = `ถูกเลือกลำดับ 1 เพราะมีกำลังผลิตสุทธิสูงสุดในตลาด (${vendor.availableCapacity} ${unit}) และ Reliability ${Math.floor(vendor.reliabilityScore * 100)}%`;
+    
+    if (selectedVendor) {
+      reason = `กำหนดเป้าหมาย Lot ที่ ${idealLot.requiredQty} ${unit} ประเมินศักยภาพแล้ว "ผ่าน" (ศักยภาพสุทธิ ${selectedVendor.availableCapacity} ${unit} เพียงพอและปลอดภัย)`;
     } else {
-      reason = `กระจายความเสี่ยงมารายที่ ${idx + 1} เพื่อแบ่งเบาภาระจาก Lot ก่อนหน้า (ศักยภาพรองรับได้ ${vendor.availableCapacity} ${unit})`;
+      // Fallback: Pick the best available unassigned vendor even if they are slightly short
+      selectedVendor = sortedVendors.find(v => !assignedVendorIds.has(v.id));
+      if (selectedVendor) {
+        reason = `กำหนดเป้าหมาย Lot ที่ ${idealLot.requiredQty} ${unit} ประเมินศักยภาพแล้ว "ตึงตัว" (ศักยภาพสุทธิ ${selectedVendor.availableCapacity} ${unit} ต่ำกว่าเป้า) แนะนำให้ต่อรองแผนทยอยส่งมอบ`;
+      }
     }
 
-    lotStrategy.push({
-      lot: `Lot ${idx + 1}${idx === 0 ? " (ด่วน)" : ""}`,
-      qty: allocateQty,
-      vendor: vendor.name,
-      confidence: Math.floor(vendor.reliabilityScore * 100),
-      reason: reason
-    });
+    if (selectedVendor) {
+      assignedVendorIds.add(selectedVendor.id);
+      
+      // Calculate adjusted confidence
+      let adjustedConfidence = Math.floor(selectedVendor.reliabilityScore * 100);
+      if (selectedVendor.availableCapacity < idealLot.requiredQty) {
+        // Penalty for being short on capacity
+        const capacityRatio = selectedVendor.availableCapacity / idealLot.requiredQty;
+        adjustedConfidence = Math.floor(adjustedConfidence * capacityRatio);
+      }
 
-    remainingDemand -= allocateQty;
+      lotStrategy.push({
+        lot: idealLot.lotLabel,
+        qty: idealLot.requiredQty,
+        vendor: selectedVendor.name,
+        confidence: adjustedConfidence,
+        reason: reason
+      });
+    }
   });
-
-  // If there's still demand left (market capacity < demand), assign the rest to the top vendor
-  if (remainingDemand > 0 && lotStrategy.length > 0) {
-    lotStrategy[0].qty += remainingDemand;
-  }
 
   // Dynamic AI Insight Text
   const maxSingleVendorCapacity = sortedVendors.length > 0 ? sortedVendors[0].availableCapacity : 0;
@@ -72,7 +82,7 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
 
   let aiInsightText = "";
   if (!isSingleVendorEnough) {
-    aiInsightText = `กำลังผลิตรวมตลาดเพียงพอสำหรับ ${targetDemand} ${unit} แต่เนื่องจากผู้ผลิตแต่ละรายมียอดค้างส่ง (Outstanding POs) สูง ทำให้ไม่มีโรงงานใดมี "กำลังผลิตคงเหลือ (Available Capacity)" พอรับยอดเต็มจำนวนได้ในสัญญาเดียว (รับได้สูงสุดเพียง ${maxSingleVendorCapacity} ${unit}/ราย) ระบบ AI จึงออกแบบกลยุทธ์กระจายสัญญา (Lot Splitting) ออกเป็น ${lotStrategy.length} สัญญาเพื่ออุดรอยรั่วและรับประกันการส่งมอบ 100%`;
+    aiInsightText = `เนื่องจากผู้ผลิตแต่ละรายมียอดค้างส่ง (Outstanding POs) ทำให้ประเมินศักยภาพสุทธิ (Effective Capacity) แล้วไม่มีรายใดรับเป้าหมาย ${targetDemand} ${unit} ได้อย่างปลอดภัยในสัญญาเดียว AI จึงกำหนดเป้าหมายซอย Lot ล่วงหน้า (40%, 30%, 30%) แล้วจึงจับคู่กับศักยภาพบริษัทที่รับไหว เพื่อลดความผิดพลาดสูงสุด`;
   } else {
     aiInsightText = `กำลังผลิตจริงของผู้ผลิตรายใหญ่เพียงพอสำหรับรับยอด ${targetDemand} ${unit} ในสัญญาเดียว สามารถเปิดประกวดราคาแบบสัญญาเดียวได้ อย่างไรก็ตามการแบ่ง Lot อาจช่วยเพิ่มการแข่งขันด้านราคาได้`;
   }
