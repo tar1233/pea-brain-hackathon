@@ -76,7 +76,186 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
-      {/* ===== DATA FLOW DIAGRAM ===== */}
+      {/* ===== ARCHITECTURE DATA FLOW (Netflix Style) ===== */}
+      <section className="rounded-[32px] bg-gradient-to-br from-[#0a0a1a] via-[#13112b] to-[#1a1145] border border-purple-900/50 p-8 shadow-[0_10px_60px_-20px_rgba(88,28,135,0.4)] relative overflow-hidden">
+        {/* Glow Effects */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-60 h-60 bg-fuchsia-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10">
+          {/* Center Hub */}
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-purple-600 via-fuchsia-500 to-pink-500 shadow-[0_0_60px_rgba(168,85,247,0.4)] mx-auto mb-4 border-4 border-purple-300/20">
+              <div className="text-center">
+                <div className="text-[20px] font-black text-white leading-none">PEA</div>
+                <div className="text-[14px] font-black text-purple-100 leading-none">Brain</div>
+              </div>
+            </div>
+            <h2 className="text-[18px] font-black text-white tracking-tight">Architecture of PEA Brain</h2>
+            <p className="text-[11px] text-purple-300/80 font-medium mt-1">Data Flow & Technology Stack</p>
+          </div>
+
+          {/* Architecture Grid - Top Row */}
+          <div className="grid grid-cols-3 gap-5 mb-5">
+
+            {/* Data Sources */}
+            <div className="relative">
+              <div className="absolute -top-3 left-4 z-10">
+                <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">Data Sources</span>
+              </div>
+              <div className="bg-gradient-to-b from-purple-900/60 to-purple-950/80 rounded-2xl border border-purple-700/30 p-4 pt-6 backdrop-blur-sm">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 bg-amber-500/10 rounded-xl px-3 py-2 border border-amber-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center text-[12px]">🪣</div>
+                    <div><div className="text-[10px] font-bold text-amber-300">S3 Bucket</div><div className="text-[8px] text-amber-200/60">pea-hackathon-data1</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-blue-500/10 rounded-xl px-3 py-2 border border-blue-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center text-[12px]">⚡</div>
+                    <div><div className="text-[10px] font-bold text-blue-300">API Gateway</div><div className="text-[8px] text-blue-200/60">REST API Endpoint</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-emerald-500/10 rounded-xl px-3 py-2 border border-emerald-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-[12px]">📊</div>
+                    <div><div className="text-[10px] font-bold text-emerald-300">Sandbox Data</div><div className="text-[8px] text-emerald-200/60">3,208 records • ฿4.87B</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AI / ML Engine */}
+            <div className="relative">
+              <div className="absolute -top-3 left-4 z-10">
+                <span className="bg-gradient-to-r from-fuchsia-500 to-purple-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">AI / ML Engine</span>
+              </div>
+              <div className="bg-gradient-to-b from-fuchsia-900/60 to-purple-950/80 rounded-2xl border border-fuchsia-700/30 p-4 pt-6 backdrop-blur-sm">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 bg-fuchsia-500/10 rounded-xl px-3 py-2 border border-fuchsia-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-fuchsia-500/20 flex items-center justify-center text-[12px]">🧠</div>
+                    <div><div className="text-[10px] font-bold text-fuchsia-300">AWS Bedrock</div><div className="text-[8px] text-fuchsia-200/60">Claude Sonnet 4 (LLM)</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-purple-500/10 rounded-xl px-3 py-2 border border-purple-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center text-[12px]">📈</div>
+                    <div><div className="text-[10px] font-bold text-purple-300">Supply Chain AI</div><div className="text-[8px] text-purple-200/60">EOQ, ROP, Demand Forecast</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-pink-500/10 rounded-xl px-3 py-2 border border-pink-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-pink-500/20 flex items-center justify-center text-[12px]">⚠️</div>
+                    <div><div className="text-[10px] font-bold text-pink-300">Risk Analytics</div><div className="text-[8px] text-pink-200/60">VaR, Trust Score, Buffer</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Backend */}
+            <div className="relative">
+              <div className="absolute -top-3 left-4 z-10">
+                <span className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">Backend</span>
+              </div>
+              <div className="bg-gradient-to-b from-cyan-900/60 to-purple-950/80 rounded-2xl border border-cyan-700/30 p-4 pt-6 backdrop-blur-sm">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 bg-cyan-500/10 rounded-xl px-3 py-2 border border-cyan-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-cyan-500/20 flex items-center justify-center text-[12px]">λ</div>
+                    <div><div className="text-[10px] font-bold text-cyan-300">AWS Lambda</div><div className="text-[8px] text-cyan-200/60">Orchestrator Function</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-sky-500/10 rounded-xl px-3 py-2 border border-sky-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-sky-500/20 flex items-center justify-center text-[12px]">🔌</div>
+                    <div><div className="text-[10px] font-bold text-sky-300">Next.js API</div><div className="text-[8px] text-sky-200/60">Route Handlers (/api/*)</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-indigo-500/10 rounded-xl px-3 py-2 border border-indigo-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-500/20 flex items-center justify-center text-[12px]">🗄️</div>
+                    <div><div className="text-[10px] font-bold text-indigo-300">Prisma + SQLite</div><div className="text-[8px] text-indigo-200/60">Chat History DB</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Connection Lines (visual) */}
+          <div className="flex justify-center items-center gap-4 py-2 mb-4">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-fuchsia-500/40" />
+            <div className="flex items-center gap-2 bg-purple-900/60 border border-purple-500/30 rounded-full px-4 py-1.5">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[9px] font-bold text-purple-200 uppercase tracking-widest">Data Pipeline Flow</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-fuchsia-500/40 via-cyan-500/40 to-transparent" />
+          </div>
+
+          {/* Architecture Grid - Bottom Row */}
+          <div className="grid grid-cols-3 gap-5">
+
+            {/* Frontend */}
+            <div className="relative">
+              <div className="absolute -top-3 left-4 z-10">
+                <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">Frontend</span>
+              </div>
+              <div className="bg-gradient-to-b from-emerald-900/60 to-purple-950/80 rounded-2xl border border-emerald-700/30 p-4 pt-6 backdrop-blur-sm">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 bg-emerald-500/10 rounded-xl px-3 py-2 border border-emerald-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-[12px]">⚛️</div>
+                    <div><div className="text-[10px] font-bold text-emerald-300">Next.js 16</div><div className="text-[8px] text-emerald-200/60">React + TypeScript</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-teal-500/10 rounded-xl px-3 py-2 border border-teal-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-teal-500/20 flex items-center justify-center text-[12px]">🎨</div>
+                    <div><div className="text-[10px] font-bold text-teal-300">Tailwind CSS</div><div className="text-[8px] text-teal-200/60">Responsive UI Design</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-green-500/10 rounded-xl px-3 py-2 border border-green-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-green-500/20 flex items-center justify-center text-[12px]">📱</div>
+                    <div><div className="text-[10px] font-bold text-green-300">4 หน้าจอ</div><div className="text-[8px] text-green-200/60">Dashboard, Risk, eBid, Copilot</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Data Processing */}
+            <div className="relative">
+              <div className="absolute -top-3 left-4 z-10">
+                <span className="bg-gradient-to-r from-rose-500 to-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">Data Processing</span>
+              </div>
+              <div className="bg-gradient-to-b from-rose-900/60 to-purple-950/80 rounded-2xl border border-rose-700/30 p-4 pt-6 backdrop-blur-sm">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 bg-rose-500/10 rounded-xl px-3 py-2 border border-rose-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-rose-500/20 flex items-center justify-center text-[12px]">🔄</div>
+                    <div><div className="text-[10px] font-bold text-rose-300">Feature Engineering</div><div className="text-[8px] text-rose-200/60">7 raw → 25 fields</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-orange-500/10 rounded-xl px-3 py-2 border border-orange-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-orange-500/20 flex items-center justify-center text-[12px]">🧮</div>
+                    <div><div className="text-[10px] font-bold text-orange-300">Supply Chain Math</div><div className="text-[8px] text-orange-200/60">EOQ, ROP, VaR formulas</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-yellow-500/10 rounded-xl px-3 py-2 border border-yellow-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-yellow-500/20 flex items-center justify-center text-[12px]">📋</div>
+                    <div><div className="text-[10px] font-bold text-yellow-300">e-Bidding Sim</div><div className="text-[8px] text-yellow-200/60">Scenario Planning A/B</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Cloud Infra */}
+            <div className="relative">
+              <div className="absolute -top-3 left-4 z-10">
+                <span className="bg-gradient-to-r from-slate-500 to-zinc-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">Cloud / DevOps</span>
+              </div>
+              <div className="bg-gradient-to-b from-slate-800/60 to-purple-950/80 rounded-2xl border border-slate-600/30 p-4 pt-6 backdrop-blur-sm">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 bg-slate-500/10 rounded-xl px-3 py-2 border border-slate-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-slate-500/20 flex items-center justify-center text-[12px]">☁️</div>
+                    <div><div className="text-[10px] font-bold text-slate-300">AWS Cloud</div><div className="text-[8px] text-slate-400">us-east-1 Region</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-slate-500/10 rounded-xl px-3 py-2 border border-slate-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-slate-500/20 flex items-center justify-center text-[12px]">🔀</div>
+                    <div><div className="text-[10px] font-bold text-slate-300">Git + GitHub</div><div className="text-[8px] text-slate-400">Version Control</div></div>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-slate-500/10 rounded-xl px-3 py-2 border border-slate-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-slate-500/20 flex items-center justify-center text-[12px]">🚀</div>
+                    <div><div className="text-[10px] font-bold text-slate-300">Vercel / Cloud Run</div><div className="text-[8px] text-slate-400">Deployment Platform</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== 3 DATA BUCKETS START ===== */}
       <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm overflow-hidden">
         <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
           <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
