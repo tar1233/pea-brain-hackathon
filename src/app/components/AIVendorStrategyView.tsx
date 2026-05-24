@@ -28,19 +28,46 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
     { month: "ส.ค. 69", demand: monthlyDemand, capacity: totalMonthlyMarketCapacity },
   ];
 
-  // AI Lot Strategy
-  const lotStrategy = aiResult?.lotSchedule?.length > 0 
-    ? aiResult.lotSchedule.map((lot: any, idx: number) => ({
-        lot: `Lot ${lot.lot}`,
-        qty: lot.qty,
-        vendor: processedVendors[idx % processedVendors.length]?.name || "บริษัทคู่ค้า",
-        confidence: 95 - (idx * 5)
-      }))
-    : [
-        { lot: "Lot 1 (ด่วน)", qty: Math.ceil(targetDemand * 0.4), vendor: processedVendors[0]?.name || "บริษัท ไทยทรานสฟอร์มเมอร์ จำกัด", confidence: 95 },
-        { lot: "Lot 2", qty: Math.ceil(targetDemand * 0.4), vendor: processedVendors[1]?.name || "บริษัท เมโทร สมาร์ท กริด", confidence: 85 },
-        { lot: "Lot 3", qty: Math.floor(targetDemand * 0.2), vendor: processedVendors[2]?.name || "บริษัท สยามอิเล็คทริค อินดัสทรี", confidence: 88 },
-      ];
+  // AI Lot Strategy (Dynamic Calculation based on capacity)
+  let remainingDemand = targetDemand;
+  const lotStrategy: any[] = [];
+  
+  // Sort vendors by effective capacity, descending
+  const sortedVendors = [...processedVendors].sort((a, b) => b.availableCapacity - a.availableCapacity);
+
+  sortedVendors.forEach((vendor, idx) => {
+    if (remainingDemand <= 0) return;
+    
+    // Allocate either their full capacity or whatever demand is left, whichever is smaller
+    const allocateQty = Math.min(vendor.availableCapacity, remainingDemand);
+    
+    if (allocateQty <= 0) return;
+
+    lotStrategy.push({
+      lot: `Lot ${idx + 1}${idx === 0 ? " (ด่วน)" : ""}`,
+      qty: allocateQty,
+      vendor: vendor.name,
+      confidence: Math.floor(vendor.reliabilityScore * 100)
+    });
+
+    remainingDemand -= allocateQty;
+  });
+
+  // If there's still demand left (market capacity < demand), assign the rest to the top vendor
+  if (remainingDemand > 0 && lotStrategy.length > 0) {
+    lotStrategy[0].qty += remainingDemand;
+  }
+
+  // Dynamic AI Insight Text
+  const maxSingleVendorCapacity = sortedVendors.length > 0 ? sortedVendors[0].availableCapacity : 0;
+  const isSingleVendorEnough = maxSingleVendorCapacity >= targetDemand;
+
+  let aiInsightText = "";
+  if (!isSingleVendorEnough) {
+    aiInsightText = `กำลังผลิตรวมตลาดเพียงพอสำหรับ ${targetDemand} ${unit} แต่เนื่องจากผู้ผลิตแต่ละรายมียอดค้างส่ง (Outstanding POs) สูง ทำให้ไม่มีโรงงานใดมี "กำลังผลิตคงเหลือ (Available Capacity)" พอรับยอดเต็มจำนวนได้ในสัญญาเดียว (รับได้สูงสุดเพียง ${maxSingleVendorCapacity} ${unit}/ราย) ระบบ AI จึงออกแบบกลยุทธ์กระจายสัญญา (Lot Splitting) ออกเป็น ${lotStrategy.length} สัญญาเพื่ออุดรอยรั่วและรับประกันการส่งมอบ 100%`;
+  } else {
+    aiInsightText = `กำลังผลิตจริงของผู้ผลิตรายใหญ่เพียงพอสำหรับรับยอด ${targetDemand} ${unit} ในสัญญาเดียว สามารถเปิดประกวดราคาแบบสัญญาเดียวได้ อย่างไรก็ตามการแบ่ง Lot อาจช่วยเพิ่มการแข่งขันด้านราคาได้`;
+  }
 
   const qtys = lotStrategy.map((l: any) => l.qty).join(', ');
   const draftTOR = `1. กฟภ. ขอสงวนสิทธิ์ในการแบ่งการสั่งซื้อพัสดุ (Lot Splitting) ออกเป็น ${lotStrategy.length} สัญญา (${qtys} ${unit}) เพื่อลดความเสี่ยงในการส่งมอบล่าช้า
@@ -99,7 +126,7 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
             <div className="mt-4 p-4 bg-indigo-50 border border-indigo-100 rounded-xl flex items-start gap-3">
               <Brain size={20} className="text-indigo-600 mt-0.5 shrink-0" />
               <p className="text-sm text-indigo-900 leading-relaxed">
-                <strong>AI Insight:</strong> หากสั่งซื้อ {targetDemand} {unit}ในสัญญาเดียว อาจไม่มีโรงงานใดในประเทศที่สามารถผลิตได้ทันใน 1 เดือน ความเสี่ยงที่ กฟภ. จะได้ของล่าช้าสูงถึง 85% แนะนำให้กระจายสัญญา (Lot Splitting)
+                <strong>AI Insight:</strong> {aiInsightText}
               </p>
             </div>
           </div>
