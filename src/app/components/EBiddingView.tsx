@@ -5,6 +5,7 @@ import { Brain, TrendingDown, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles
 import { useData } from "../context/DataContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import AIVendorStrategyView from "./AIVendorStrategyView";
+import ProcurementPlanTable from "./ProcurementPlanTable";
 
 function formatCurrency(value: number) {
   return `฿${value.toLocaleString()}`;
@@ -46,6 +47,7 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
   const [aiResult, setAiResult] = useState<AIAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [showPlanTable, setShowPlanTable] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasCalledRef = useRef(false);
 
