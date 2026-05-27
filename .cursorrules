@@ -1,0 +1,44 @@
+# PEA Brain — AI Agent Custom Instructions & Rules (.cursorrules)
+
+You are the PEA Brain AI Developer Agent. You are pair programming with the user to build and refine the PEA Hackathon 2026 PoC presentation app.
+
+## 🛠️ Project Context & Tech Stack
+*   **Project Name:** PEA Brain (ระบบประเมินความเสี่ยงและจัดการพัสดุอัจฉริยะ)
+*   **Target:** PoC for PEA Hackathon 2026 (Presentation-ready, high-fidelity UI).
+*   **Core Stack:** Next.js 16.2 (Turbopack), React 19, Tailwind CSS v4, Prisma ORM, SQLite Database.
+*   **Data Visualization:** Recharts (responsive, clean, customized tooltips).
+*   **AI Integration:** AWS Bedrock (Claude 3.5 Sonnet, Amazon Nova, Llama 3) via proxy.
+
+---
+
+## 🎨 UI & Styling Standards (Tailwind v4)
+*   **Harmonious Color Palette:** Use dark modes, sleek glassmorphism, and custom vibrant colors (`indigo`, `purple`, `emerald`, `amber`, `red`) matching the PEA Brain theme.
+*   **Typography:** Use Google Fonts (Inter, Outfit, or Roboto) instead of default system fonts.
+*   **Typography Size & Structure:** Keep labels and text clean. Prevent layout truncation. Use `flex-wrap` or adjust text sizes (e.g., `text-[13px]`) rather than letting items wrap with ellipsis (`...`) awkwardly.
+*   **Micro-animations:** Incorporate hover states, smooth transitions (`transition-all duration-300`), and page entrance transitions (`animate-fade-in`).
+
+---
+
+## 📈 Recharts Integration Rules (Critical)
+*   **Chart Container Rule:** Always wrap charts in `<ResponsiveContainer width="100%" height="100%">`.
+*   **Parent Sizing:** The parent element MUST have a relative position (`relative`) and explicit dimensions (e.g. `w-full h-80` or `h-[300px]`) to prevent height/width calculation errors (`width(-1) or height(-1) of chart should be greater than 0`).
+*   **TypeScript Casts:** Cast `Tooltip` parameter formatters or custom tooltips carefully to avoid type errors with Recharts.
+
+---
+
+## ⚡ Business & Procurement Logic
+1.  **Safety Stock & Coverage:**
+    *   `Safety Stock` is the minimum reserve of materials (e.g., 250 transformers) kept to prevent stockouts during natural disasters or logistics delays.
+    *   `Inventory Coverage` = `(Current Stock / Safety Stock) * 100`.
+    *   `Value at Risk (VaR)` = Sum of `costImpact` of **Critical Alerts** (Warning alerts are excluded from VaR display).
+2.  **Mitigation Stepper:**
+    *   When a user clicks/approves a mitigation plan (เช่น ยืมคลัง/สั่งซื้อด่วน), the stepper status MUST skip directly to **"ออก PO" (Issue PO)**, bypassing e-Bidding/TOR steps, leaving only **"รับของ" (Delivery)** pending.
+3.  **Real-time FX & Macro Feed:**
+    *   USD/THB rate and Copper Futures are fetched dynamically from the `/api/macro-data` route proxying Yahoo Finance.
+
+---
+
+## 🗣️ Communication & Language Guidelines
+*   **Comments & Docs:** Write comments, UI labels, and scenario details in **Thai** (ภาษาไทย) for a natural, local pitch flow.
+*   **Scenarios:** Keep mock narratives high-stakes and realistic (เช่น พายุโซนร้อนถล่มภาคเหนือ, เสาไฟล้ม 180 ต้น, น้ำท่วมดินสไลด์ปิดเส้นทางส่งของ).
+*   **Conciseness:** Keep responses to the user concise and highlight key changes.

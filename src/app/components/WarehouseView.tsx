@@ -1,7 +1,9 @@
-import React from 'react';
-import { Shield, AlertTriangle, ArrowRight, Package, Scale, MapPin, Truck, CheckCircle2, TrendingUp, BarChart3, RotateCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, AlertTriangle, ArrowRight, Package, Scale, MapPin, Truck, CheckCircle2, TrendingUp, BarChart3, RotateCw, Map } from 'lucide-react';
 
 export default function WarehouseView() {
+  const [region, setRegion] = useState('ALL');
+
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500 pb-10">
       
@@ -10,15 +12,30 @@ export default function WarehouseView() {
         <div className="absolute inset-0 opacity-15 pointer-events-none" style={{ backgroundImage: "url('/power-grid.png')", backgroundSize: "cover", backgroundPosition: "center", mixBlendMode: "screen" }}></div>
         
         <div className="relative z-10 flex flex-col gap-4 max-w-xl">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-widest w-max border border-white/20 uppercase">
-            <Shield className="w-3.5 h-3.5" />
-            COMMAND CENTER
+          <div className="flex items-center gap-3">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-widest w-max border border-white/20 uppercase">
+              <Shield className="w-3.5 h-3.5" />
+              COMMAND CENTER
+            </div>
+            {/* Regional Dropdown */}
+            <select 
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              className="bg-white/20 border border-white/30 text-white text-[11px] font-bold px-3 py-1.5 rounded-full outline-none cursor-pointer appearance-none"
+            >
+              <option value="ALL" className="text-black">ทุกภูมิภาค (All Regions)</option>
+              <option value="CENTRAL" className="text-black">ส่วนกลาง (อยุธยา)</option>
+              <option value="NORTH" className="text-black">ภาคเหนือ (เชียงใหม่)</option>
+              <option value="SOUTH" className="text-black">ภาคใต้ (สุราษฎร์ธานี)</option>
+              <option value="EAST" className="text-black">ภาคตะวันออก (ชลบุรี)</option>
+              <option value="NORTHEAST" className="text-black">ภาคอีสาน (โคราช)</option>
+            </select>
           </div>
           <div className="flex items-center gap-4">
-            <h1 className="text-[20px] font-bold tracking-tight">ความพร้อมคลังโดยรวม</h1>
+            <h1 className="text-[20px] font-bold tracking-tight">ความพร้อมคลังโดยรวม {region !== 'ALL' ? `(โซน ${region})` : ''}</h1>
             <div className="bg-green-500/20 text-green-200 border border-green-400/30 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-sm">
               <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
-              พร้อมปฏิบัติงาน 6%
+              พร้อมปฏิบัติงาน {region === 'ALL' ? '6%' : '82%'}
             </div>
           </div>
           <p className="text-white/80 text-[12px] leading-relaxed max-w-md mt-1 font-medium">

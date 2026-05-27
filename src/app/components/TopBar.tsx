@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Bell, Download, ChevronDown, HelpCircle } from "lucide-react";
+import { Search, Bell, Download, ChevronDown, HelpCircle, Loader2, BrainCircuit } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useData } from "../context/DataContext";
 
@@ -52,7 +52,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ activeTab }: TopBarProps) {
-  const { criticalAlerts } = useData();
+  const { criticalAlerts, runAutoRiskAnalysis, isAnalyzingRisk } = useData();
   const [now, setNow] = useState(new Date());
   const [isMounted, setIsMounted] = useState(false);
   
@@ -94,6 +94,27 @@ export default function TopBar({ activeTab }: TopBarProps) {
       {/* Export & Share */}
       <div className="flex items-center gap-2">
         <button 
+          onClick={runAutoRiskAnalysis}
+          disabled={isAnalyzingRisk}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border transition-all cursor-pointer shadow-sm relative overflow-hidden group
+            ${isAnalyzingRisk 
+              ? "bg-fuchsia-50 border-fuchsia-200 text-fuchsia-600 opacity-80" 
+              : "bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 border-transparent text-white shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40"}`}
+        >
+          {isAnalyzingRisk ? (
+            <>
+              <Loader2 size={13} className="animate-spin" />
+              <span className="text-[11px] font-bold">กำลังวิเคราะห์...</span>
+            </>
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-500" />
+              <BrainCircuit size={13} className="animate-pulse" />
+              <span className="text-[11px] font-bold">Auto Risk Analysis</span>
+            </>
+          )}
+        </button>
+        <button 
           onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
             detail: {
               title: "กำลังสร้างรายงาน PDF",
@@ -101,10 +122,10 @@ export default function TopBar({ activeTab }: TopBarProps) {
               type: "info"
             }
           }))}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#d9dfeb] bg-white hover:bg-primary-50 text-[11px] font-semibold text-[#475569] transition-colors cursor-pointer shadow-sm"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#d9dfeb] bg-white hover:bg-primary-50 text-[11px] font-semibold text-[#475569] transition-colors cursor-pointer shadow-sm hidden sm:flex"
         >
           <Download size={13} />
-          Export PDF
+          Export
         </button>
         <button 
           onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {

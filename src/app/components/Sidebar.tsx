@@ -4,7 +4,7 @@ import {
   LayoutDashboard, TrendingUp, AlertTriangle,
   ShoppingCart, Settings, Sparkles,
   Package, BarChart3, Shield, Clock3, Landmark, FileText,
-  Brain, PackageSearch, ShieldAlert, Map, ShieldCheck
+  Brain, PackageSearch, ShieldAlert, Map, ShieldCheck, Activity, Trash2
 } from "lucide-react";
 import Image from "next/image";
 import { useData } from "../context/DataContext";
@@ -21,6 +21,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
     { id: "activity", label: "Tracking & Monitoring", icon: Clock3 },
+    { id: "backtest", label: "AI Training & Backtesting", icon: Activity },
     { id: "roadmap", label: "Project Roadmap", icon: Map },
   ];
 
@@ -112,7 +113,19 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <Settings size={13} className="text-white/70" />
           <span className="text-[10px] text-white/72">ตั้งค่า</span>
         </div>
-
+        <button
+          onClick={() => {
+            if (confirm('ล้างแผนจัดซื้อทั้งหมด? (เพื่อทดสอบใหม่)')) {
+              localStorage.removeItem('pea_approved_plans');
+              window.dispatchEvent(new CustomEvent('clear-plans'));
+              window.location.reload();
+            }
+          }}
+          className="mt-2 w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] text-red-300 hover:text-red-200 hover:bg-red-500/15 border border-transparent hover:border-red-400/20 transition-all cursor-pointer"
+        >
+          <Trash2 size={12} />
+          <span>เคลียร์แผนทั้งหมด (Test)</span>
+        </button>
       </div>
     </aside>
   );

@@ -22,7 +22,7 @@ type ChatMessage = {
 const DEFAULT_WELCOME: ChatMessage = {
   id: "welcome",
   role: "ai",
-  content: "สวัสดีครับ! ผม PEA Brain ผู้ช่วยวิเคราะห์ข้อมูลจัดซื้อพัสดุ (เชื่อมต่อกับ Bedrock Knowledge Base เรียบร้อย)\n\nลองถามผมได้เลย เช่น:\n- สรุปสถานะหม้อแปลง 10067 หน่อย\n- Demand ของปี 2569 คือกี่เครื่อง",
+  content: "สวัสดีครับ! พวกเราทีมงาน PEA Brain (Multi-Agent) ผู้ช่วยวิเคราะห์ข้อมูลจัดซื้อพัสดุ (เชื่อมต่อกับ Bedrock Knowledge Base เรียบร้อย)\n\nลองถามผมได้เลย เช่น:\n- สรุปสถานะหม้อแปลง 10067 หน่อย\n- Demand ของปี 2569 คือกี่เครื่อง",
 };
 
 export default function AICopilot() {
@@ -112,7 +112,7 @@ export default function AICopilot() {
           <div>
             <div className="text-[13px] font-extrabold text-gray-900 tracking-tight">PEA Brain Copilot</div>
             <div className="text-[10px] text-gray-500 flex items-center gap-1 mt-0.5 font-semibold">
-              <Bot size={10} /> AWS Bedrock RAG Connected
+              <Bot size={10} /> Nova Pro Multi-Agent Connected
             </div>
           </div>
         </div>

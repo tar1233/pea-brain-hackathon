@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Circle, Clock, Code2, Database, LayoutTemplate, Map, Network, Server, Sparkles, Box, User, ArrowRight, HardDrive, Zap, BarChart3, BrainCircuit, TrendingUp, AlertTriangle, RefreshCw, Calculator, ClipboardList, Blocks, Palette, Smartphone, Container, Plug, Cloud, GitBranch, Rocket } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Code2, Database, LayoutTemplate, Map, Network, Server, Sparkles, Box, User, ArrowRight, HardDrive, Zap, BarChart3, BrainCircuit, TrendingUp, AlertTriangle, RefreshCw, Calculator, ClipboardList, Blocks, Palette, Smartphone, Container, Plug, Cloud, GitBranch, Rocket, Activity, ShieldAlert } from "lucide-react";
 
 import { useData } from "../context/DataContext";
 
@@ -23,34 +23,36 @@ export default function ProjectRoadmap() {
     {
       id: "sprint-2",
       name: "Phase 2: PoC Development (Part 1)",
-      status: "in-progress",
-      date: "19 - 30 May (Current)",
+      status: "completed",
+      date: "19 - 30 May",
       tasks: [
         "พัฒนาระบบ Dashboard และ UI หลักทั้งหมด",
         "เชื่อมต่อ AWS Bedrock และสร้าง PEA Brain Copilot",
         "พัฒนาระบบวิเคราะห์ความเสี่ยงและพยากรณ์ Demand",
-        "ทดสอบความแม่นยำของ Data Model (Backtesting)"
+        "ทดสอบความแม่นยำของ Data Model"
       ]
     },
     {
       id: "sprint-3",
       name: "Phase 3: PoC Development (Part 2)",
-      status: "pending",
-      date: "31 May - 11 Jun",
+      status: "in-progress",
+      date: "31 May - 11 Jun (CURRENT)",
       tasks: [
-        "สร้างฟีเจอร์ Procurement Automation (e-Bidding)",
+        "[x] สร้าง Multi-Agent Architecture (Risk, Math, Procurement)",
+        "[x] สร้างฟีเจอร์ Procurement Automation (e-Bidding)",
+        "[x] อัปเดต Prompt Rules (บังคับ AI อธิบายเหตุผล, มีอ้างอิง, แสดงรายละเอียดแผน)",
         "พัฒนาระบบ Export รายงานและสรุปผลสำหรับผู้บริหาร",
-        "ปรับจูน AI เพื่อลด Error (Fine-tuning & Optimization)",
         "เตรียมระบบสำหรับ Demo เสมือนจริง"
       ]
     },
     {
       id: "sprint-4",
-      name: "Phase 4: Final Pitching",
+      name: "Phase 4: Optimization & Final Pitching",
       status: "pending",
       date: "15 - 17 Jun",
       tasks: [
-        "เตรียมความพร้อมสำหรับ Demo Day",
+        "วางแผน Train AI Model (Fine-tuning) ให้เก่งและแม่นยำขึ้นเฉพาะด้านสายงาน PEA",
+        "ออกแบบกระบวนการ Backtesting จำลองเทียบเคียงข้อมูลการจัดซื้อในอดีต",
         "สรุป Business Value และ ROI ที่ PEA จะได้รับ",
         "นำเสนอผลงาน (Final Pitching) ต่อคณะกรรมการ",
         "ส่งมอบผลงาน PoC ฉบับสมบูรณ์"
@@ -85,27 +87,45 @@ export default function ProjectRoadmap() {
 
         <div className="relative z-10">
 
-          {/* ===== ROW 1: Data Sources + Center Hub + AI Engine ===== */}
+          {/* ===== ROW 1: Data Storage & AI Engine ===== */}
           <div className="grid grid-cols-[1fr_auto_1fr] gap-6 items-center mb-6">
 
-            {/* Data Sources (Top-Left) */}
+            {/* Data Storage (Top-Left) */}
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-[14px] text-amber-600"><HardDrive size={16} /></div>
-                <h3 className="text-[14px] font-black text-slate-800">Data Sources</h3>
+                <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-[14px] text-amber-600"><Database size={16} /></div>
+                <h3 className="text-[14px] font-black text-slate-800">Data Storage & Memory (แหล่งเก็บข้อมูล)</h3>
               </div>
               <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-amber-300 hover:bg-amber-50/50 transition-colors shadow-sm relative z-10">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-amber-50/50 transition-colors shadow-sm relative z-10 w-full">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-100 to-orange-50 flex items-center justify-center text-amber-600 shrink-0"><HardDrive size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">AWS S3 Bucket</div><div className="text-[9px] text-slate-500 font-medium">pea-hackathon-data1</div></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Amazon S3</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Data Lake (ฐานเก็บไฟล์ขนาดใหญ่)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-blue-300 hover:bg-blue-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center text-blue-600 shrink-0"><Zap size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">API Gateway</div><div className="text-[9px] text-slate-500 font-medium">REST API Endpoint</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-blue-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center text-blue-600 shrink-0"><Database size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Amazon RDS / Prisma DB</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Relational Data (ข้อมูลตาราง/โครงสร้าง)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-emerald-600 shrink-0"><BarChart3 size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Sandbox Data</div><div className="text-[9px] text-slate-500 font-medium">3,208 records • ฿4.87B</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-emerald-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-emerald-600 shrink-0"><Zap size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Amazon DynamoDB</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Fast NoSQL (หน่วยความจำแชท)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -121,7 +141,7 @@ export default function ProjectRoadmap() {
                   <div className="text-center relative z-10">
                     <div className="text-[26px] font-black text-slate-900 leading-none tracking-tight">PEA</div>
                     <div className="text-[18px] font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-600 leading-none">Brain</div>
-                    <div className="text-[8px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Procurement AI</div>
+                    <div className="text-[8px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Agentic AI</div>
                   </div>
                 </div>
               </div>
@@ -133,20 +153,45 @@ export default function ProjectRoadmap() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-xl bg-fuchsia-100 flex items-center justify-center text-[14px] text-fuchsia-600"><BrainCircuit size={16} /></div>
-                <h3 className="text-[14px] font-black text-slate-800">AI / ML Engine</h3>
+                <h3 className="text-[14px] font-black text-slate-800">Multi-Agent Framework (มันสมอง AI)</h3>
               </div>
               <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-fuchsia-300 hover:bg-fuchsia-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-100 to-purple-50 flex items-center justify-center text-fuchsia-600 shrink-0"><BrainCircuit size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">AWS Bedrock</div><div className="text-[9px] text-slate-500 font-medium">Claude Sonnet 4 (LLM)</div></div>
+                <div className="flex flex-col gap-2 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-fuchsia-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-100 to-purple-50 flex items-center justify-center text-fuchsia-600 shrink-0"><BrainCircuit size={14} /></div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div className="text-[11px] font-bold text-slate-800">Bedrock Agent Squad</div>
+                        <CheckCircle2 size={14} className="text-emerald-500" />
+                      </div>
+                      <div className="text-[9px] text-slate-500 font-medium">Multi-Agent Orchestration (ประสานงาน AI หลายตัว)</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pl-[44px] text-[8.5px] font-semibold text-fuchsia-700">
+                    <span className="bg-fuchsia-50 px-1.5 py-0.5 rounded flex items-center gap-1"><User size={8}/> Procurement Agent (ผู้ช่วยจัดซื้อ)</span>
+                    <span className="bg-fuchsia-50 px-1.5 py-0.5 rounded flex items-center gap-1"><Calculator size={8}/> Math Agent (นักคำนวณ)</span>
+                    <span className="bg-fuchsia-50 px-1.5 py-0.5 rounded flex items-center gap-1"><AlertTriangle size={8}/> Risk Agent (ประเมินความเสี่ยง)</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-purple-300 hover:bg-purple-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-violet-50 flex items-center justify-center text-purple-600 shrink-0"><TrendingUp size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Supply Chain AI</div><div className="text-[9px] text-slate-500 font-medium">EOQ, ROP, Demand Forecast</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-purple-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-violet-50 flex items-center justify-center text-purple-600 shrink-0"><Sparkles size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Amazon Nova Pro / Claude</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Foundation Model (โมเดลภาษา)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-pink-300 hover:bg-pink-50/50 transition-colors shadow-sm relative z-10">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-pink-50/50 transition-colors shadow-sm relative z-10 w-full">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-pink-600 shrink-0"><AlertTriangle size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Risk Analytics</div><div className="text-[9px] text-slate-500 font-medium">VaR, Trust Score, Buffer</div></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Bedrock Guardrails</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Safety (ควบคุมความปลอดภัยข้อมูล)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -163,20 +208,38 @@ export default function ProjectRoadmap() {
             <div className="relative w-[340px]">
               <div className="flex items-center gap-2 mb-3 justify-center">
                 <div className="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center text-[14px] text-rose-600"><RefreshCw size={16} /></div>
-                <h3 className="text-[14px] font-black text-slate-800">Data Processing</h3>
+                <h3 className="text-[14px] font-black text-slate-800">Data Processing (ท่อประมวลผลข้อมูล)</h3>
               </div>
               <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-rose-300 hover:bg-rose-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-100 to-red-50 flex items-center justify-center text-rose-600 shrink-0"><RefreshCw size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Feature Engineering</div><div className="text-[9px] text-slate-500 font-medium">7 raw fields → 25 enriched fields</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-rose-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-100 to-red-50 flex items-center justify-center text-rose-600 shrink-0"><Network size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS Step Functions</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Workflow (จัดการลำดับการทำงาน)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-orange-300 hover:bg-orange-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-orange-600 shrink-0"><Calculator size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Supply Chain Math</div><div className="text-[9px] text-slate-500 font-medium">EOQ, ROP, VaR formulas</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-orange-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-[14px] shrink-0 font-black text-orange-600">λ</div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS Lambda</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Serverless (ประมวลผลไร้เซิร์ฟเวอร์)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-yellow-300 hover:bg-yellow-50/50 transition-colors shadow-sm relative z-10">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-yellow-50/50 transition-colors shadow-sm relative z-10 w-full">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-100 to-amber-50 flex items-center justify-center text-amber-600 shrink-0"><ClipboardList size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">e-Bidding Simulation</div><div className="text-[9px] text-slate-500 font-medium">Scenario Planning A/B/C</div></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS Glue</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">ETL (เตรียมและดึงข้อมูลอัตโนมัติ)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -194,20 +257,38 @@ export default function ProjectRoadmap() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-[14px] text-emerald-600"><Blocks size={16} /></div>
-                <h3 className="text-[14px] font-black text-slate-800">Frontend</h3>
+                <h3 className="text-[14px] font-black text-slate-800">Frontend Delivery (หน้าจอผู้ใช้)</h3>
               </div>
               <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-emerald-600 shrink-0"><Blocks size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Next.js 16</div><div className="text-[9px] text-slate-500 font-medium">React + TypeScript</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-emerald-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-emerald-600 shrink-0"><Rocket size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS Amplify</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Secure Hosting (โฮสต์เว็บอย่างปลอดภัย)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-teal-300 hover:bg-teal-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-100 to-cyan-50 flex items-center justify-center text-teal-600 shrink-0"><Palette size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Tailwind CSS</div><div className="text-[9px] text-slate-500 font-medium">Responsive UI Design</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-teal-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-100 to-cyan-50 flex items-center justify-center text-teal-600 shrink-0"><Blocks size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Next.js 14</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">React Framework (โครงสร้างเว็บ)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-green-300 hover:bg-green-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-100 to-emerald-50 flex items-center justify-center text-green-600 shrink-0"><Smartphone size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">4 หน้าจอ</div><div className="text-[9px] text-slate-500 font-medium">Dashboard, Risk, eBid, Copilot</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-green-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-100 to-emerald-50 flex items-center justify-center text-green-600 shrink-0"><Palette size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Tailwind CSS</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Enterprise UI (ออกแบบเพื่อความสวยงาม)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,20 +297,38 @@ export default function ProjectRoadmap() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-xl bg-cyan-100 flex items-center justify-center text-[14px] text-cyan-600"><Container size={16} /></div>
-                <h3 className="text-[14px] font-black text-slate-800">Backend</h3>
+                <h3 className="text-[14px] font-black text-slate-800">API & Integration (เชื่อมต่อระบบ)</h3>
               </div>
               <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-cyan-300 hover:bg-cyan-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-100 to-blue-50 flex items-center justify-center text-[14px] shrink-0 font-black text-cyan-600">λ</div>
-                  <div><div className="text-[11px] font-bold text-slate-800">AWS Lambda</div><div className="text-[9px] text-slate-500 font-medium">Orchestrator Function</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-cyan-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-100 to-blue-50 flex items-center justify-center text-cyan-600 shrink-0"><Plug size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Amazon API Gateway</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Secure API (จุดรับส่งข้อมูลที่ปลอดภัย)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-sky-300 hover:bg-sky-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-100 to-blue-50 flex items-center justify-center text-sky-600 shrink-0"><Plug size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Next.js API Routes</div><div className="text-[9px] text-slate-500 font-medium">Route Handlers (/api/*)</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-sky-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-100 to-blue-50 flex items-center justify-center text-[14px] shrink-0 font-black text-sky-600">λ</div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS Lambda</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Microservices (ระบบจัดการหลังบ้านย่อย)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-100 to-violet-50 flex items-center justify-center text-indigo-600 shrink-0"><Database size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Prisma + SQLite</div><div className="text-[9px] text-slate-500 font-medium">Chat History Database</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-indigo-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-100 to-violet-50 flex items-center justify-center text-indigo-600 shrink-0"><Activity size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">Amazon CloudWatch</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Monitoring (เฝ้าระวังความผิดปกติ)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -238,20 +337,38 @@ export default function ProjectRoadmap() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-[14px] text-slate-600"><Cloud size={16} /></div>
-                <h3 className="text-[14px] font-black text-slate-800">Cloud / DevOps</h3>
+                <h3 className="text-[14px] font-black text-slate-800">Deployment (การติดตั้ง & ความปลอดภัย)</h3>
               </div>
               <div className="bg-white/80 rounded-2xl border border-slate-200 p-4 backdrop-blur-md shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-slate-300 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><Cloud size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">AWS Cloud</div><div className="text-[9px] text-slate-500 font-medium">us-east-1 Region</div></div>
-                </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-slate-300 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10">
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10 w-full">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><GitBranch size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Git + GitHub</div><div className="text-[9px] text-slate-500 font-medium">Version Control</div></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS CI/CD Pipeline</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">CI/CD (ระบบส่งมอบโค้ดอัตโนมัติ)</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-slate-300 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><Rocket size={14} /></div>
-                  <div><div className="text-[11px] font-bold text-slate-800">Vercel / Cloud Run</div><div className="text-[9px] text-slate-500 font-medium">Deployment Platform</div></div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><Box size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS CloudFormation</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">IaC (จัดการเซิร์ฟเวอร์ด้วยโค้ด)</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-2.5 border border-emerald-300 bg-emerald-50/30 hover:bg-slate-50/50 transition-colors shadow-sm relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-50 flex items-center justify-center text-slate-600 shrink-0"><User size={14} /></div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold text-slate-800">AWS IAM</div>
+                      <CheckCircle2 size={14} className="text-emerald-500" />
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-medium">Access Control (ควบคุมสิทธิ์เข้าถึงข้อมูล)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -353,15 +470,15 @@ export default function ProjectRoadmap() {
           </div>
 
           {/* Step 4: Bedrock AI */}
-          <div className="flex-shrink-0 w-[160px]">
+          <div className="flex-shrink-0 w-[180px]">
             <div className="bg-gradient-to-b from-fuchsia-600 to-pink-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-fuchsia-200">
               <Sparkles size={28} className="mb-2" />
-              <div className="text-[12px] font-black text-center">AWS Bedrock</div>
-              <div className="text-[9px] text-fuchsia-200 text-center mt-1 font-medium">Claude 3 Haiku</div>
+              <div className="text-[12px] font-black text-center">Bedrock Multi-Agent</div>
+              <div className="text-[9px] text-fuchsia-200 text-center mt-1 font-medium">Model-Agnostic Architecture</div>
               <div className="mt-3 space-y-1 w-full">
-                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">AI Copilot Chat</div>
-                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Risk Analysis</div>
-                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">Recommendation</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">1. Supervisor (Claude 3.5 Sonnet)</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">2. Math Agent (Amazon Nova Pro)</div>
+                <div className="bg-white/20 rounded px-2 py-0.5 text-[8px] text-center font-bold">3. Risk Agent (Meta Llama 3)</div>
               </div>
             </div>
           </div>
@@ -394,8 +511,101 @@ export default function ProjectRoadmap() {
 
         </div>
 
+        {/* Detail Grid: ใช้ทำอะไร / ทำเพื่ออะไร / ประโยชน์ */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-5 gap-4 border-t border-slate-100 pt-6">
+          {/* S3 Details */}
+          <div className="bg-amber-50/50 rounded-xl p-3 border border-amber-100 flex flex-col gap-2">
+            <div className="text-[11px] font-black text-amber-800 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" /> Data Source (S3)
+            </div>
+            <div className="text-[9.5px] leading-relaxed text-slate-600 space-y-1.5">
+              <div>
+                <span className="font-bold text-amber-900">ใช้ทำอะไร:</span> เก็บไฟล์ข้อมูลดิบ (Raw Data) เช่น ข้อมูลพัสดุและรายการเสี่ยง
+              </div>
+              <div>
+                <span className="font-bold text-amber-900">ทำเพื่ออะไร:</span> เป็นแหล่งข้อมูลกลางคลาวด์ที่ปลอดภัยและพร้อมใช้งานตลอดเวลา
+              </div>
+              <div>
+                <span className="font-bold text-amber-900">ประโยชน์:</span> ลดภาระการคิวรี่บนระบบ ERP/WMS หลัก ทำให้การทำงานรวดเร็วขึ้น
+              </div>
+            </div>
+          </div>
+
+          {/* Lambda Details */}
+          <div className="bg-purple-50/50 rounded-xl p-3 border border-purple-100 flex flex-col gap-2">
+            <div className="text-[11px] font-black text-purple-800 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-purple-600 shrink-0" /> Processing (Lambda)
+            </div>
+            <div className="text-[9.5px] leading-relaxed text-slate-600 space-y-1.5">
+              <div>
+                <span className="font-bold text-purple-900">ใช้ทำอะไร:</span> ดึงข้อมูลดิบจาก S3 มาประมวลผลคำนวณระดับความเสี่ยงเบื้องต้น
+              </div>
+              <div>
+                <span className="font-bold text-purple-900">ทำเพื่ออะไร:</span> ทำงานเป็นตัวประสานระบบ (Orchestrator) จัดรูปแบบข้อมูลให้ระบบ AI
+              </div>
+              <div>
+                <span className="font-bold text-purple-900">ประโยชน์:</span> ประมวลผลแบบ Serverless จ่ายตามจริง ทำงานเร็วระดับมิลลิวินาที
+              </div>
+            </div>
+          </div>
+
+          {/* PEA Brain Details */}
+          <div className="bg-indigo-50/50 rounded-xl p-3 border border-indigo-100 flex flex-col gap-2">
+            <div className="text-[11px] font-black text-indigo-800 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-indigo-600 shrink-0" /> AI Engine (PEA Brain)
+            </div>
+            <div className="text-[9.5px] leading-relaxed text-slate-600 space-y-1.5">
+              <div>
+                <span className="font-bold text-indigo-900">ใช้ทำอะไร:</span> คำนวณแบบจำลองขั้นสูง (Demand Forecast, EOQ/ROP, Lot Strategy)
+              </div>
+              <div>
+                <span className="font-bold text-indigo-900">ทำเพื่ออะไร:</span> ทำ Feature Engineering และสร้างตัวแปรเพื่อประกอบการวิเคราะห์เชิงลึก
+              </div>
+              <div>
+                <span className="font-bold text-indigo-900">ประโยชน์:</span> วางแผนบริหารคลังสินค้าโดยอิงตามสถิติและความเสี่ยงจริง แทนการกะเกณฑ์
+              </div>
+            </div>
+          </div>
+
+          {/* Bedrock Details */}
+          <div className="bg-fuchsia-50/50 rounded-xl p-3 border border-fuchsia-100 flex flex-col gap-2">
+            <div className="text-[11px] font-black text-fuchsia-800 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-fuchsia-600 shrink-0" /> LLM (Bedrock)
+            </div>
+            <div className="text-[9.5px] leading-relaxed text-slate-600 space-y-1.5">
+              <div>
+                <span className="font-bold text-fuchsia-900">ใช้ทำอะไร:</span> ทำงานประสานงานกันระหว่าง AI Agents (Supervisor, Math, Risk)
+              </div>
+              <div>
+                <span className="font-bold text-fuchsia-900">ทำเพื่ออะไร:</span> สรุปวิเคราะห์ผลกระทบและข้อเสนอแนะแนะแนวทางแก้ไขความเสี่ยง
+              </div>
+              <div>
+                <span className="font-bold text-fuchsia-900">ประโยชน์:</span> ผู้บริหารเข้าใจสถานการณ์ได้ทันทีผ่านภาษาคน (Natural Language)
+              </div>
+            </div>
+          </div>
+
+          {/* Dashboard Details */}
+          <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100 flex flex-col gap-2">
+            <div className="text-[11px] font-black text-emerald-800 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" /> Frontend (Dashboard)
+            </div>
+            <div className="text-[9.5px] leading-relaxed text-slate-600 space-y-1.5">
+              <div>
+                <span className="font-bold text-emerald-900">ใช้ทำอะไร:</span> แสดงผลแดชบอร์ด รายงานความเสี่ยง และแบบจำลองจัดซื้อ e-Bidding
+              </div>
+              <div>
+                <span className="font-bold text-emerald-900">ทำเพื่ออะไร:</span> ให้เจ้าหน้าที่และผู้บริหารโต้ตอบและสั่งการฉุกเฉินได้ในที่เดียว
+              </div>
+              <div>
+                <span className="font-bold text-emerald-900">ประโยชน์:</span> ตัดสินใจอนุมัติแผนและออกใบสั่งซื้อ (PO) รวดเร็ว ป้องกันสายโซ่อุปทานขาด
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Legend */}
-        <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-4 text-[10px] font-bold text-slate-500">
+        <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap gap-4 text-[10px] font-bold text-slate-500">
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-amber-500" /> Data Source (S3)</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-purple-600" /> Processing (Lambda)</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-indigo-600" /> AI Engine (PEA Brain)</span>
@@ -956,6 +1166,148 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
+      {/* ===== PROMPT ENGINEERING & GUARDRAILS ===== */}
+      <section className="relative mt-8 mb-8">
+        <div className="rounded-[32px] border-2 border-dashed border-amber-300 bg-gradient-to-b from-amber-50/50 to-white p-1.5">
+          <div className="bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 rounded-t-[26px] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+                <BrainCircuit size={18} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-[15px] font-extrabold text-white tracking-tight">🛡️ Prompt Engineering & Guardrails</h2>
+                <p className="text-[10px] text-amber-100 font-medium mt-0.5">กฎและข้อบังคับที่ใช้ควบคุม AI (อัปเดตล่าสุด)</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-bold bg-white/20 text-white px-2.5 py-1 rounded-full">AI RULES</span>
+          </div>
+          
+          <div className="bg-white rounded-b-[26px] p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Rule 1: JSON Schema */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600"><Code2 size={12} /></div>
+                  <h3 className="text-[13px] font-bold text-slate-800">บังคับโครงสร้างข้อมูล (JSON Schema)</h3>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed mb-3">ควบคุมให้ AI วิเคราะห์แนวโน้มราคา พร้อมระบุ <span className="font-bold text-blue-600">เหตุผลประกอบ</span> และ <span className="font-bold text-blue-600">แหล่งอ้างอิง</span> เสมอ</p>
+                <div className="bg-slate-800 rounded-xl p-3 overflow-x-auto">
+                  <pre className="text-[10px] text-emerald-400 font-mono leading-relaxed">
+{`"priceForecast": {
+  "threeMonth": "...เนื่องจาก [ดัชนี LME...] (อ้างอิง: [...])",
+  "oneYear": "...เพราะ [ปัจจัยระดับมหภาค...] (อ้างอิง: [...])",
+  "bestTimeToBuy": "ช่วงเดือน X-Y เพราะ [เหตุผลซัพพลายเออร์]"
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Rule 2: Strict Prompting */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-lg bg-red-100 flex items-center justify-center text-red-600"><AlertTriangle size={12} /></div>
+                  <h3 className="text-[13px] font-bold text-slate-800">กฎข้อบังคับเด็ดขาด (Strict Guidelines)</h3>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed mb-3">ป้องกันปัญหา AI ตอบกำกวม หรือถามคำถามผู้ใช้กลับ (Hallucination Prevention)</p>
+                <ul className="space-y-2 text-[11px] font-medium text-slate-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 mt-0.5">■</span>
+                    ห้ามถามคำถามกลับ ห้ามเขียน "...ไหม?" ต้องตอบเป็นข้อสรุปเท่านั้น
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 mt-0.5">■</span>
+                    ทุกคำตอบต้องเป็น "ข้อสรุป" ที่มีเหตุผลว่า "เพราะอะไร"
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 mt-0.5">■</span>
+                    ห้ามแนะนำเดือนที่ผ่านไปแล้ว (ระบบจะป้อน Current Date ให้)
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 mt-0.5">■</span>
+                    ทุก field ต้องมีคำตอบจริง ห้ามเว้นว่าง ห้ามตอบ "-"
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== AI FINE-TUNING & BACKTESTING STRATEGY ===== */}
+      <section className="relative mt-8 mb-8">
+        <div className="rounded-[32px] border-2 border-dashed border-indigo-300 bg-gradient-to-b from-indigo-50/50 to-white p-1.5">
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 rounded-t-[26px] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+                <TrendingUp size={18} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-[15px] font-extrabold text-white tracking-tight">🚀 AI Fine-tuning & Backtesting Strategy</h2>
+                <p className="text-[10px] text-indigo-100 font-medium mt-0.5">แผนงานเสริมความฉลาดให้ AI และการทดสอบความแม่นยำ (Phase 4)</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-bold bg-white/20 text-white px-2.5 py-1 rounded-full">UPCOMING</span>
+          </div>
+          
+          <div className="bg-white rounded-b-[26px] p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Fine-tuning Plan */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-lg bg-fuchsia-100 flex items-center justify-center text-fuchsia-600"><BrainCircuit size={12} /></div>
+                  <h3 className="text-[13px] font-bold text-slate-800">แผนการเทรน AI (Fine-tuning Plan)</h3>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed mb-4">ปรับแต่ง Amazon Bedrock Models ให้เข้าใจบริบทการทำงานของ กฟภ. (PEA Context) อย่างลึกซึ้ง</p>
+                <div className="space-y-3">
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                    <div className="text-[10px] font-bold text-slate-700 mb-1 flex items-center gap-1.5"><Database size={11} className="text-slate-400"/> 1. PEA Historical Data (ข้อมูลในอดีต)</div>
+                    <p className="text-[10px] text-slate-500">นำข้อมูลใบสั่งซื้อ (PO), ราคากลาง, และบันทึกปัญหาจาก SAP ย้อนหลัง 5 ปี มาสร้าง Dataset สำหรับเทรน AI</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                    <div className="text-[10px] font-bold text-slate-700 mb-1 flex items-center gap-1.5"><AlertTriangle size={11} className="text-slate-400"/> 2. Risk Scenarios (กรณีศึกษาความเสี่ยง)</div>
+                    <p className="text-[10px] text-slate-500">ป้อนเคสวิกฤตที่เคยเกิด (เช่น น้ำท่วมใหญ่ 2554, วิกฤตโควิด) เพื่อสอน AI ถึงวิธีแก้ปัญหาจริงที่ กฟภ. เคยใช้</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                    <div className="text-[10px] font-bold text-slate-700 mb-1 flex items-center gap-1.5"><ClipboardList size={11} className="text-slate-400"/> 3. RAG Knowledge Base (อ้างอิงระเบียบ)</div>
+                    <p className="text-[10px] text-slate-500">เชื่อมต่อพ.ร.บ. จัดซื้อจัดจ้างฯ 2560 เข้าเป็นคลังข้อมูล เพื่อให้ AI แนะนำแผนที่ <span className="text-red-500 font-bold">"ไม่ผิดกฎหมาย"</span> 100%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Backtesting Plan */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600"><Activity size={12} /></div>
+                  <h3 className="text-[13px] font-bold text-slate-800">แผนจำลองการทดสอบ (Backtesting Strategy)</h3>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed mb-4">ทดสอบว่าถ้าใช้ PEA Brain ตั้งแต่ 3 ปีก่อน จะช่วยประหยัดเงินและลดความเสี่ยงได้จริงหรือไม่?</p>
+                <div className="space-y-3">
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-10 h-10 bg-emerald-50 rounded-full blur-xl" />
+                    <div className="text-[10px] font-bold text-emerald-700 mb-1 flex items-center gap-1.5"><Calculator size={11}/> 1. Cost Optimization Test</div>
+                    <p className="text-[10px] text-slate-500">เปรียบเทียบ "ราคาจริงที่จัดซื้อไป" vs "ราคาที่ AI แนะนำให้ซื้อ (ตามช่วงเวลา LME)" วัดผลกำไร/ขาดทุน</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-10 h-10 bg-amber-50 rounded-full blur-xl" />
+                    <div className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1.5"><ShieldAlert size={11}/> 2. Crisis Prevention Test</div>
+                    <p className="text-[10px] text-slate-500">ย้อนกลับไปตอนที่มี "วิกฤตของขาด" ตรวจสอบว่าระบบ Dynamic ROP ของ AI จะส่งแจ้งเตือนทันเวลาหรือไม่</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-10 h-10 bg-blue-50 rounded-full blur-xl" />
+                    <div className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1.5"><User size={11}/> 3. Human vs AI Simulation</div>
+                    <p className="text-[10px] text-slate-500">นำข้อมูลจัดซื้อย้อนหลังมา 10 โครงการ ให้ผู้เชี่ยวชาญ (PEA Staff) และ AI จัดทำแผนเทียบกัน</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="max-w-4xl mx-auto">
         {/* Sprint Timeline */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
@@ -998,14 +1350,26 @@ export default function ProjectRoadmap() {
                     </div>
                     
                     <div className={`mt-3 space-y-2 ${isPending ? "opacity-60" : ""}`}>
-                      {sprint.tasks.map((task, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <CheckCircle2 size={14} className={`shrink-0 mt-0.5 ${isCompleted ? "text-emerald-500" : isInProgress ? "text-blue-400" : "text-slate-300"}`} />
-                          <span className={`text-[12px] font-medium leading-relaxed ${isCompleted ? "text-slate-700" : isInProgress ? "text-slate-800" : "text-slate-500"}`}>
-                            {task}
-                          </span>
-                        </div>
-                      ))}
+                      {sprint.tasks.map((taskStr, i) => {
+                        const isTaskSpecificCompleted = taskStr.startsWith("[x] ");
+                        const taskText = taskStr.replace("[x] ", "");
+                        const finalIsCompleted = isCompleted || isTaskSpecificCompleted;
+
+                        return (
+                          <div key={i} className="flex items-start gap-2">
+                            {finalIsCompleted ? (
+                               <CheckCircle2 size={14} className="shrink-0 mt-0.5 text-emerald-500" />
+                            ) : isInProgress ? (
+                               <Circle size={14} className="shrink-0 mt-0.5 text-blue-400" />
+                            ) : (
+                               <Circle size={14} className="shrink-0 mt-0.5 text-slate-300" />
+                            )}
+                            <span className={`text-[12px] font-medium leading-relaxed ${finalIsCompleted ? "text-slate-700" : isInProgress ? "text-slate-800" : "text-slate-500"}`}>
+                              {taskText}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {isInProgress && (

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { materials as mockMaterials } from "../data/mockData";
 import type { Material, RiskAlert, AIRecommendation, TimelineEvent } from "../data/mockData";
 
 interface DataContextType {
@@ -12,6 +13,9 @@ interface DataContextType {
   warningAlerts: RiskAlert[];
   infoAlerts: RiskAlert[];
   totalVaR: number;
+  setRiskAlerts: (alerts: RiskAlert[]) => void;
+  runAutoRiskAnalysis: () => Promise<void>;
+  isAnalyzingRisk: boolean;
   eBiddingData: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataSummary: any;
@@ -25,9 +29,73 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 import { calculateEOQ, calculateDynamicROP, calculateBufferDays } from "../utils/supplyChainAI";
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<Omit<DataContextType, "isLoading" | "error"> | null>(null);
+  const [data, setData] = useState<Omit<DataContextType, "isLoading" | "error" | "setRiskAlerts" | "runAutoRiskAnalysis" | "isAnalyzingRisk"> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAnalyzingRisk, setIsAnalyzingRisk] = useState(false);
+
+  const setRiskAlerts = (newAlerts: RiskAlert[]) => {
+    if (!data) return;
+    
+    // Add timestamps and default fields if missing
+    const formattedAlerts = newAlerts.map(a => ({
+      ...a,
+      timestamp: a.timestamp || new Date().toISOString(),
+      confidence: a.confidence || 95,
+      recommendation: a.recommendation || "รอการพิจารณา",
+    }));
+
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        riskAlerts: formattedAlerts,
+        criticalAlerts: formattedAlerts.filter(a => a.severity === 'critical'),
+        warningAlerts: formattedAlerts.filter(a => a.severity === 'warning'),
+        infoAlerts: formattedAlerts.filter(a => a.severity === 'info'),
+        totalVaR: formattedAlerts.reduce((sum, a) => sum + (a.costImpact || 0), 0)
+      };
+    });
+  };
+
+  const runAutoRiskAnalysis = async () => {
+    if (!data || !data.materials) return;
+    setIsAnalyzingRisk(true);
+    try {
+      const res = await fetch("/api/analyze-risk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ materials: data.materials }),
+      });
+      const result = await res.json();
+      if (result.success && result.alerts && result.alerts.length > 0) {
+        // Tag them so user knows they are AI generated real-time
+        const taggedAlerts = result.alerts.map((a: any) => ({
+          ...a,
+          message: `🤖 [AI วิเคราะห์] ${a.message}`
+        }));
+        setRiskAlerts(taggedAlerts);
+        
+        // Also log to timeline
+        setData(prev => {
+          if (!prev) return prev;
+          const newEvent = {
+            time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+            text: `🤖 Risk Agent วิเคราะห์ข้อมูลพัสดุ ${data.materials.length} รายการเสร็จสิ้น พบความเสี่ยง ${taggedAlerts.length} รายการ`,
+            type: "system" as const
+          };
+          return {
+            ...prev,
+            timelineEvents: [newEvent, ...prev.timelineEvents].slice(0, 10)
+          };
+        });
+      }
+    } catch (err) {
+      console.error("Failed to run AI risk analysis", err);
+    } finally {
+      setIsAnalyzingRisk(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -50,20 +118,30 @@ export function DataProvider({ children }: { children: ReactNode }) {
         }));
         
         if (!json.materials) json.materials = [];
-        // Ensure all material fields exist to prevent UI crashes
-        json.materials = json.materials.map((m: any) => ({
-          ...m,
-          avgMonthlyDemand: m.avgMonthlyDemand || 0,
-          annualDemand: m.annualDemand || (m.avgMonthlyDemand ? m.avgMonthlyDemand * 12 : 0),
-          leadTimeWeeks: m.leadTimeWeeks || 0,
-          unit: m.unit || "EA",
-          reorderPoint: m.reorderPoint || 0,
-          eoq: m.eoq || 0,
-          currentStock: m.currentStock || 0,
-          safetyStock: m.safetyStock || 0,
-          budgetPrice: m.budgetPrice || 0,
-          unitPrice: m.unitPrice || 0,
-        }));
+        // Ensure all material fields exist to prevent UI crashes, fallback to mockData if missing
+        json.materials = json.materials.map((m: any) => {
+          const mockMatch = mockMaterials.find(mock => mock.sapCode === m.id || mock.id === m.id || mock.id === `MAT-${m.id}`);
+          
+          return {
+            ...mockMatch, // Base fields from mock
+            ...m,         // API overrides mock
+            avgMonthlyDemand: m.avgMonthlyDemand || mockMatch?.avgMonthlyDemand || 0,
+            annualDemand: m.annualDemand || mockMatch?.annualDemand || (m.avgMonthlyDemand ? m.avgMonthlyDemand * 12 : 0),
+            leadTimeWeeks: m.leadTimeWeeks || mockMatch?.leadTimeWeeks || 0,
+            unit: m.unit || mockMatch?.unit || "EA",
+            reorderPoint: m.reorderPoint || mockMatch?.reorderPoint || 0,
+            eoq: m.eoq || mockMatch?.eoq || 0,
+            currentStock: m.currentStock || mockMatch?.currentStock || 0,
+            safetyStock: m.safetyStock || mockMatch?.safetyStock || 0,
+            budgetPrice: m.budgetPrice || mockMatch?.budgetPrice || 0,
+            unitPrice: m.unitPrice || mockMatch?.unitPrice || 0,
+            sapCode: m.sapCode || mockMatch?.sapCode || m.id,
+            category: m.category || mockMatch?.category || "Unknown",
+            stdMonthlyDemand: m.stdMonthlyDemand || mockMatch?.stdMonthlyDemand || 0,
+            plan2569_rpm: m.plan2569_rpm || mockMatch?.plan2569_rpm || 0,
+            sparkline: m.sparkline && m.sparkline.length > 0 ? m.sparkline : mockMatch?.sparkline || []
+          };
+        });
 
         if (!json.criticalAlerts) {
           json.criticalAlerts = json.riskAlerts.filter((a: RiskAlert) => a.severity === 'critical');
@@ -176,7 +254,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <DataContext.Provider value={{ ...data, vendors: data?.vendors || [], isLoading, error } as DataContextType}>
+    <DataContext.Provider value={{ ...data, vendors: data?.vendors || [], isLoading, error, setRiskAlerts, runAutoRiskAnalysis, isAnalyzingRisk } as DataContextType}>
       {children}
     </DataContext.Provider>
   );

@@ -17,6 +17,9 @@ import {
 } from "./components/StrategicViews";
 import WarehouseView from "./components/WarehouseView";
 import ProjectRoadmap from "./components/ProjectRoadmap";
+import EBiddingView from "./components/EBiddingView";
+import ActivityView from "./components/ActivityView";
+import BacktestSimulator from "./components/BacktestSimulator";
 
 /* ─── Watermark: Logo + Name + Grid ─── */
 function Watermark() {
@@ -77,8 +80,6 @@ function Watermark() {
 }
 
 
-import ActivityView from "./components/ActivityView";
-
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const { materials, isLoading, error } = useData();
@@ -124,10 +125,9 @@ export default function Home() {
     const handleApprove = (e: Event) => {
       const ev = e as CustomEvent<ApprovedPlanData>;
       setApprovedPlans(prev => {
-        const exists = prev.find(p => p.materialId === ev.detail.materialId);
-        const newPlans = exists 
-          ? prev.map(p => p.materialId === ev.detail.materialId ? ev.detail : p)
-          : [...prev, ev.detail];
+        // Always append — never replace. Add timestamp for history tracking.
+        const planWithTimestamp = { ...ev.detail, selectedAt: new Date().toISOString() };
+        const newPlans = [...prev, planWithTimestamp];
         // Also save immediately here just to be safe
         localStorage.setItem("pea_approved_plans", JSON.stringify(newPlans));
         return newPlans;
@@ -148,6 +148,17 @@ export default function Home() {
   }
 
   const [poProgress, setPoProgress] = useState<POPending | null>(null);
+  const [targetMaterialId, setTargetMaterialId] = useState<string>("10067");
+
+  useEffect(() => {
+    const handleAnalyzeMaterial = (e: Event) => {
+      const customEvent = e as CustomEvent<{ materialId: string }>;
+      setTargetMaterialId(customEvent.detail.materialId);
+      setActiveTab("ebidding");
+    };
+    window.addEventListener("analyze-material", handleAnalyzeMaterial);
+    return () => window.removeEventListener("analyze-material", handleAnalyzeMaterial);
+  }, []);
 
   interface AlertModalState {
     isOpen: boolean;
@@ -172,6 +183,15 @@ export default function Home() {
 
     window.addEventListener("show-alert", handleShowAlert);
     return () => window.removeEventListener("show-alert", handleShowAlert);
+  }, []);
+
+  useEffect(() => {
+    const handleChangeTab = (e: Event) => {
+      const customEvent = e as CustomEvent<{ tabId: string }>;
+      setActiveTab(customEvent.detail.tabId);
+    };
+    window.addEventListener("change-tab", handleChangeTab);
+    return () => window.removeEventListener("change-tab", handleChangeTab);
   }, []);
 
   useEffect(() => {
@@ -237,6 +257,8 @@ export default function Home() {
         return <ActivityView approvedPlans={approvedPlans} />;
       case "roadmap":
         return <ProjectRoadmap />;
+      case "backtest":
+        return <BacktestSimulator />;
       case "risk":
       default:
         return <AlertsView approvedPlans={approvedPlans} />;
@@ -534,6 +556,19 @@ export default function Home() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 🚀 TRUE FULL SCREEN POPUP FOR EBIDDINGVIEW 🚀 */}
+      {activeTab === "ebidding" && (
+        <div className="fixed inset-0 z-[200] bg-white overflow-y-auto animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <EBiddingView 
+            targetMaterialId={targetMaterialId} 
+            setActiveTab={setActiveTab} 
+            approvedQty={approvedPlans.find(p => p.materialId === targetMaterialId || p.materialId === targetMaterialId.replace('MAT-', ''))?.qty}
+            approvedPlan={approvedPlans.filter(p => p.materialId === targetMaterialId || p.materialId === targetMaterialId.replace('MAT-', '')).pop()}
+            onClose={() => setActiveTab("risk")} 
+          />
         </div>
       )}
     </div>

@@ -43,22 +43,20 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const perPage = 5;
 
-  const filteredAlerts = riskAlerts
-    .filter(a => filter === "all" || a.severity === filter)
-    .filter(a => !searchQ || a.materialName.toLowerCase().includes(searchQ.toLowerCase()) || a.materialId.toLowerCase().includes(searchQ.toLowerCase()));
-
-  const totalPages = Math.max(1, Math.ceil(filteredAlerts.length / perPage));
+  const filteredAlerts = riskAlerts.filter(a => filter === "all" || a.severity === filter)
+    .filter(a => a.materialName.toLowerCase().includes(searchQ.toLowerCase()) || a.materialId.toLowerCase().includes(searchQ.toLowerCase()));
+  
+  const totalPages = Math.ceil(filteredAlerts.length / perPage);
   const paged = filteredAlerts.slice((page - 1) * perPage, page * perPage);
 
   const tabs = [
-    { key: "all", label: "ทั้งหมด", count: riskAlerts.length },
-    { key: "critical", label: "วิกฤต", count: riskAlerts.filter(a => a.severity === "critical").length, dot: "#DC2626" },
-    { key: "warning", label: "เฝ้าระวัง", count: riskAlerts.filter(a => a.severity === "warning").length, dot: "#D97706" },
-    { key: "info", label: "ข้อมูล", count: riskAlerts.filter(a => a.severity === "info").length, dot: "#2563EB" },
+    { key: "all", label: "รายการทั้งหมด", count: riskAlerts.length },
+    { key: "critical", label: "วิกฤต", count: riskAlerts.filter(a => a.severity === 'critical').length, dot: "#DC2626" },
+    { key: "warning", label: "เฝ้าระวัง", count: riskAlerts.filter(a => a.severity === 'warning').length, dot: "#D97706" }
   ];
 
   return (
-    <div className="space-y-3 animate-fade-in" style={{ animationDelay: "300ms", animationFillMode: "both" }}>
+    <div className="space-y-4">
       {/* Filter Tabs Row */}
       <div className="flex items-center gap-1 px-1">
         {tabs.map(tab => (
@@ -129,7 +127,9 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                 const dateStr = ts.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
                 const timeStr = ts.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
                 const ltMonths = material ? Math.ceil(material.leadTimeWeeks / 4) : 0;
-                const planData = approvedPlans.find(p => p.materialId === alert.materialId || p.materialId === alert.materialId.replace('MAT-', ''));
+                const allPlans = approvedPlans.filter(p => p.materialId === alert.materialId || p.materialId === alert.materialId.replace('MAT-', ''));
+                const planData = allPlans.length > 0 ? allPlans[allPlans.length - 1] : undefined;
+                const planUpdateCount = allPlans.length;
 
                 return (
                   <React.Fragment key={alert.id}>
@@ -221,7 +221,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                                 }}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
                               >
-                                <Sparkles size={12} /> มีแผนแล้ว
+                                <Sparkles size={12} /> มีแผนแล้ว {planUpdateCount > 1 ? `(อัปเดท ${planUpdateCount} ครั้ง)` : ''}
                                 {expandedId === alert.id ? <ChevronDown size={12} className="ml-1" /> : <ChevronRight size={12} className="ml-1" />}
                               </button>
                             );
@@ -237,10 +237,10 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                               onClick={(e) => { 
                                 e.preventDefault(); 
                                 e.stopPropagation(); 
-                                setExpandedId(prev => prev === alert.id ? null : alert.id);
+                                window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } }));
                               }}>
                               ให้ AI เข้าไปวิเคราะห์
-                              {expandedId === alert.id ? <ChevronDown size={12} className="ml-1 inline-block" /> : <ChevronRight size={12} className="ml-1 inline-block" />}
+                              <ChevronRight size={12} className="ml-1 inline-block" />
                             </button>
                           );
                         })()}
@@ -260,7 +260,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                               onClick={(e) => { 
                                 e.preventDefault(); 
                                 e.stopPropagation(); 
-                                window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } })); 
+                                window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } }));
                               }}>
                               ดูเหตุผลและการคำนวณ →
                             </span>
@@ -280,6 +280,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                               embedded={true} 
                               readonly={!!planData} 
                               approvedQty={planData?.qty}
+                              approvedPlan={planData}
                               onClose={() => setExpandedId(null)} 
                             />
                           </div>

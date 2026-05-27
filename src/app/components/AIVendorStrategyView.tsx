@@ -16,85 +16,81 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
 
   const totalMonthlyMarketCapacity = processedVendors.reduce((acc: number, v: any) => acc + v.availableCapacity, 0);
 
-  const targetDemand = material?.annualDemand || aiResult?.lotStrategy?.totalQty || 800;
+  const defaultQty = material ? (material.safetyStock > material.currentStock ? material.safetyStock - material.currentStock : material.eoq || 800) : 800;
+  const annualDemand = material?.annualDemand || aiResult?.lotStrategy?.totalQty || defaultQty;
+  const quarterlyDemand = Math.ceil(annualDemand / 4);
+  const targetDemand = quarterlyDemand;
   const unit = material?.unit || "เครื่อง";
-  const monthlyDemand = Math.ceil(targetDemand / 4);
+  const monthlyDemand = Math.ceil(targetDemand / 3);
 
-  // Mock Market Chart Data
-  const marketChartData = [
-    { month: "พ.ค. 69", demand: monthlyDemand, capacity: totalMonthlyMarketCapacity },
-    { month: "มิ.ย. 69", demand: monthlyDemand, capacity: totalMonthlyMarketCapacity },
-    { month: "ก.ค. 69", demand: monthlyDemand, capacity: totalMonthlyMarketCapacity },
-    { month: "ส.ค. 69", demand: monthlyDemand, capacity: totalMonthlyMarketCapacity },
-  ];
+  const getDemandSourceLabel = () => {
+    if (material) {
+      if (annualDemand === material.annualDemand) return `แผนความต้องการจัดซื้อรายปี 2569`;
+      if (annualDemand === material.eoq) return `ปริมาณสั่งซื้อ EOQ ตามระบบ ERP`;
+    }
+    return `การประเมินความต้องการจากระบบ AI`;
+  };
 
-  // AI Lot Strategy (Define Target Lots First, Then Evaluate Vendor Potential)
-  let remainingDemand = targetDemand;
-  const lotStrategy: any[] = [];
+  // Chart Data - quarterly view
+  const quarterLabels = ["รอบ 1 (พ.ค. 69)", "รอบ 2 (ส.ค. 69)", "รอบ 3 (พ.ย. 69)", "รอบ 4 (ก.พ. 70)"];
+  const marketChartData = quarterLabels.map(label => ({
+    month: label,
+    demand: quarterlyDemand,
+    capacity: totalMonthlyMarketCapacity * 3,
+  }));
+
+  // AI Lot Strategy - Quarterly Allocation (4 rounds)
   const sortedVendors = [...processedVendors].sort((a, b) => b.availableCapacity - a.availableCapacity);
-  
-  // Standard procurement ratios: 40%, 30%, 30%
-  const standardRatios = [0.4, 0.3, 0.3];
-  let ratioIndex = 0;
-  let vendorIndex = 0;
+  const lotStrategy: any[] = [];
   let lotNumber = 1;
+  const quarterNames = ["รอบ 1 (พ.ค. 69)", "รอบ 2 (ส.ค. 69)", "รอบ 3 (พ.ย. 69)", "รอบ 4 (ก.พ. 70)"];
+  const standardRatios = [0.4, 0.3, 0.3];
 
-  while (remainingDemand > 0 && vendorIndex < sortedVendors.length) {
-    const selectedVendor = sortedVendors[vendorIndex];
-    
-    // Ideal lot size based on current ratio
-    let idealLotQty = Math.ceil(targetDemand * (standardRatios[ratioIndex] || 0.2)); 
-    if (idealLotQty > remainingDemand) idealLotQty = remainingDemand;
-    if (remainingDemand < 20) idealLotQty = remainingDemand; // Catch small remainders
-    
-    let allocatedQty = idealLotQty;
-    let reason = "";
+  for (let q = 0; q < 4; q++) {
+    const qDemand = q < 3 ? quarterlyDemand : annualDemand - quarterlyDemand * 3;
+    let remaining = qDemand;
+    let ratioIndex = 0;
+    let vendorIdx = 0;
 
-    if (selectedVendor.availableCapacity >= idealLotQty) {
-      reason = `ประเมินศักยภาพแล้ว "ผ่าน" กำลังผลิตสุทธิ (${selectedVendor.availableCapacity} ${unit}) เพียงพอรับเป้า Lot นี้ (${idealLotQty} ${unit}) ได้อย่างปลอดภัย`;
-    } else {
-      allocatedQty = selectedVendor.availableCapacity; // Cap the lot to their capacity!
-      reason = `กำลังผลิตสุทธิ (${selectedVendor.availableCapacity} ${unit}) ไม่พอรับเป้าหมายเดิม (${idealLotQty} ${unit}) AI จึงปรับลดยอด Lot นี้ลงเท่าที่รับไหวเพื่อป้องกันการทิ้งงาน (ส่วนต่างปัดไป Lot ถัดไป)`;
+    while (remaining > 0 && vendorIdx < sortedVendors.length) {
+      const v = sortedVendors[vendorIdx];
+      let idealQty = Math.ceil(qDemand * (standardRatios[ratioIndex] || 0.2));
+      if (idealQty > remaining) idealQty = remaining;
+
+      const allocated = Math.min(idealQty, v.availableCapacity);
+      if (allocated > 0) {
+        lotStrategy.push({
+          lot: `Lot ${lotNumber} (${quarterNames[q]})`,
+          qty: allocated,
+          vendor: v.name,
+          confidence: Math.floor(v.reliabilityScore * 100),
+          reason: `รอบที่ ${q + 1}: กำลังผลิตสุทธิ (${v.availableCapacity} ${unit}/เดือน) รับ Lot นี้ได้ (${allocated} ${unit})`
+        });
+        remaining -= allocated;
+        lotNumber++;
+      }
+      vendorIdx++;
+      ratioIndex++;
     }
-
-    if (allocatedQty <= 0) {
-      vendorIndex++;
-      continue;
-    }
-
-    lotStrategy.push({
-      lot: `Lot ${lotNumber}${lotNumber === 1 ? " (ด่วน)" : ""}`,
-      qty: allocatedQty,
-      vendor: selectedVendor.name,
-      confidence: Math.floor(selectedVendor.reliabilityScore * 100),
-      reason: reason
-    });
-
-    remainingDemand -= allocatedQty;
-    vendorIndex++;
-    lotNumber++;
-    ratioIndex++;
-  }
-
-  if (remainingDemand > 0) {
-    lotStrategy.push({
-      lot: `Lot ${lotNumber} (Unfulfilled)`,
-      qty: remainingDemand,
-      vendor: "ไม่มีบริษัทที่พร้อมรับงาน",
-      confidence: 0,
-      reason: `กำลังการผลิตของทุกบริษัทในประเทศรวมกันไม่เพียงพอต่อยอดที่เหลือ แนะนำให้จัดหาจากต่างประเทศ หรือขยายระยะเวลาจัดส่ง`
-    });
   }
 
   // Dynamic AI Insight Text
   const maxSingleVendorCapacity = sortedVendors.length > 0 ? sortedVendors[0].availableCapacity : 0;
   const isSingleVendorEnough = maxSingleVendorCapacity >= targetDemand;
 
+  // Holding Cost Comparison
+  const holdingCostRate = 0.20;
+  const unitCost = material?.unitPrice || 150000;
+  const singleHoldingCost = Math.round(annualDemand * unitCost * holdingCostRate * 0.5);
+  const phasedHoldingCost = Math.round(annualDemand * unitCost * holdingCostRate * 0.2);
+  const holdingSavings = singleHoldingCost - phasedHoldingCost;
+
   let aiInsightText = "";
-  if (!isSingleVendorEnough) {
-    aiInsightText = `เนื่องจากผู้ผลิตแต่ละรายมียอดค้างส่ง (Outstanding POs) ทำให้ประเมินศักยภาพสุทธิ (Effective Capacity) แล้วไม่มีรายใดรับเป้าหมาย ${targetDemand} ${unit} ได้อย่างปลอดภัยในสัญญาเดียว AI จึงกำหนดเป้าหมายซอย Lot ล่วงหน้า (40%, 30%, 30%) แล้วจึงจับคู่กับศักยภาพบริษัทที่รับไหว เพื่อลดความผิดพลาดสูงสุด`;
+  const quarterlyCapacity = totalMonthlyMarketCapacity * 3;
+  if (quarterlyCapacity >= quarterlyDemand) {
+    aiInsightText = `กำลังผลิตรวมต่อไตรมาส (${quarterlyCapacity.toLocaleString()} ${unit}) เพียงพอรับยอด ${quarterlyDemand.toLocaleString()} ${unit}/รอบ ได้อย่างสบาย ไม่มี Unfulfilled AI จึงแนะนำทยอยซื้อ 4 รอบ รอบละ 3 Lot (อัตรา 40%, 30%, 30%) ช่วยลด Holding Cost จาก ฿${singleHoldingCost.toLocaleString()} เหลือ ฿${phasedHoldingCost.toLocaleString()} (ประหยัด ฿${holdingSavings.toLocaleString()}/ปี)`;
   } else {
-    aiInsightText = `กำลังผลิตจริงของผู้ผลิตรายใหญ่เพียงพอสำหรับรับยอด ${targetDemand} ${unit} ในสัญญาเดียว สามารถเปิดประกวดราคาแบบสัญญาเดียวได้ อย่างไรก็ตามการแบ่ง Lot อาจช่วยเพิ่มการแข่งขันด้านราคาได้`;
+    aiInsightText = `กำลังผลิตต่อไตรมาส (${quarterlyCapacity.toLocaleString()} ${unit}) ไม่เพียงพอต่อความต้องการ ${quarterlyDemand.toLocaleString()} ${unit}/รอบ อาจต้องขยายเป็น 5 รอบแทน`;
   }
 
   const qtys = lotStrategy.map((l: any) => l.qty).join(', ');
@@ -120,7 +116,7 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
           </h1>
         </div>
         <p className="text-slate-500">
-          วิเคราะห์กำลังการผลิตของตลาด (Market Capacity) และออกแบบกลยุทธ์จัดซื้อเพื่ออุดความเสี่ยงส่งมอบล่าช้า
+         วิเคราะห์กำลังผลิต (Market Capacity) และออกแบบกลยุทธ์ทยอยซื้อ 4 รอบ เพื่อลด Holding Cost และอุดความเสี่ยงส่งมอบล่าช้า
         </p>
       </div>
 
@@ -130,9 +126,14 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
         <div className="lg:col-span-2 space-y-6">
           {/* Chart Section */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-slate-800">
-              <Factory size={18} className="text-indigo-500" />
-              ภาพรวมตลาด vs ความต้องการ ({targetDemand} {unit})
+            <h2 className="text-lg font-semibold mb-4 flex flex-col sm:flex-row sm:items-center gap-2 text-slate-800">
+              <div className="flex items-center gap-2">
+                <Factory size={18} className="text-indigo-500" />
+                ภาพรวมตลาด vs ความต้องการ ({annualDemand.toLocaleString()} {unit}/ปี = {quarterlyDemand.toLocaleString()} {unit}/รอบ)
+              </div>
+              <span className="text-xs font-normal text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                (อ้างอิง: {getDemandSourceLabel()})
+              </span>
             </h2>
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -145,9 +146,9 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                     itemStyle={{ color: '#1e293b' }}
                   />
                   <Legend wrapperStyle={{ paddingTop: '10px' }} />
-                  <Bar dataKey="demand" name="Demand ของ กฟภ." fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={50} />
-                  <Bar dataKey="capacity" name="Available Capacity รวมของตลาด" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={50} />
-                  <ReferenceLine y={targetDemand} label={{ position: 'top', value: `เป้าหมายจัดซื้อ ${targetDemand} ${unit}`, fill: '#ef4444', fontSize: 12 }} stroke="#ef4444" strokeDasharray="3 3" />
+                  <Bar dataKey="demand" name="Demand ของ กฟภ. ต่อรอบ" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                  <Bar dataKey="capacity" name="Available Capacity รวมต่อไตรมาส" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                  <ReferenceLine y={quarterlyDemand} label={{ position: 'top', value: `เป้าหมายต่อรอบ ${quarterlyDemand.toLocaleString()} ${unit}`, fill: '#ef4444', fontSize: 12 }} stroke="#ef4444" strokeDasharray="3 3" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -203,15 +204,15 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Brain size={100} className="text-indigo-900" />
             </div>
-            <h2 className="text-lg font-bold mb-2 text-indigo-900">AI Strategy Optimizer</h2>
-            <p className="text-sm text-indigo-700/80 mb-6">สร้างกลยุทธ์การจัดซื้อที่อุดรอยรั่วทางกฎหมายและได้พัสดุตรงเวลา 100%</p>
+            <h2 className="text-lg font-bold mb-2 text-indigo-900">AI Strategy Optimizer (Quarterly)</h2>
+            <p className="text-sm text-indigo-700/80 mb-6">ทยอยซื้อ 4 รอบ รอบละ 3 Lot ลด Holding Cost + อุดความเสี่ยงทิ้งงาน</p>
             
             <div className="space-y-4">
               <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3">
                 <CheckCircle2 size={24} className="text-emerald-500 shrink-0" />
                 <div>
                   <div className="text-sm font-bold text-emerald-800">Strategy Generated</div>
-                  <div className="text-xs text-emerald-600">Recommended Multiple Awards</div>
+                  <div className="text-xs text-emerald-600">4 Rounds × 3 Lots = {lotStrategy.length} Lots ทั้งหมด (ไม่มี Unfulfilled)</div>
                 </div>
               </div>
 

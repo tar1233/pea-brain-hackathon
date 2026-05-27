@@ -33,9 +33,15 @@ interface AIAnalysisResult {
   planB: PlanDetail;
   executiveSummary: string;
   raw?: string;
+  costOptimization?: {
+    singlePurchaseCost: string;
+    phasedPurchaseCost: string;
+    savingsAmount: string;
+    recommendation: string;
+  };
 }
 
-export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose, embedded = false, readonly = false, approvedQty }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void, embedded?: boolean, readonly?: boolean, approvedQty?: number }) {
+export default function EBiddingView({ targetMaterialId = "10067", setActiveTab, onClose, embedded = false, readonly = false, approvedQty, approvedPlan }: { targetMaterialId?: string, setActiveTab?: (tab: string) => void, onClose?: () => void, embedded?: boolean, readonly?: boolean, approvedQty?: number, approvedPlan?: any }) {
   const { eBiddingData, materials, riskAlerts } = useData();
   const [aiResult, setAiResult] = useState<AIAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -95,7 +101,16 @@ export default function EBiddingView({ targetMaterialId = "10067", setActiveTab,
     const currentMonthNum = now.getMonth() + 1; // 1-12
     const remainingMonths = 12 - currentMonthNum;
 
+    const annualQty = mat?.annualDemand || mat?.eoq || 800;
+    const quarterlyQty = Math.ceil(annualQty / 4);
+
+    const holdingCostRate = 0.20;
+    const singleHoldingCost = Math.round(annualQty * (mat?.unitPrice || 0) * holdingCostRate * 0.5);
+    const phasedHoldingCost = Math.round(annualQty * (mat?.unitPrice || 0) * holdingCostRate * 0.2);
+    const holdingSavings = singleHoldingCost - phasedHoldingCost;
+
     const prompt = `คุณเป็นที่ปรึกษาจัดซื้อระดับ Enterprise ของ PEA (การไฟฟ้าส่วนภูมิภาค)
+เน้นวิเคราะห์ต้นทุนรวม (Total Cost of Ownership) เพื่อหาแผนที่ประหยัดที่สุดให้องค์กร
 
 📅 วันที่ปัจจุบัน: ${now.getDate()} ${currentMonth} ${currentYear} (เดือนที่ ${currentMonthNum} ของปี)
 ⏰ เหลืออีก ${remainingMonths} เดือนก่อนสิ้นปีงบประมาณ
@@ -111,13 +126,13 @@ EOQ: ${mat?.eoq} ${mat?.unit}
 ประวัติเบิกจ่าย 12 เดือน: [${mat?.sparkline?.join(', ')}]
 ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำเดิม: ${alert.recommendation}` : ''}
 
-⚠️ วิกฤต: สต็อกเหลือ ${daysOfStock} วัน แต่ Lead Time ${leadTimeDays} วัน → ช่องว่าง ${gapDays} วัน ที่จะไม่มีของใช้!
-ระหว่างช่องว่างนี้จะขาดของ ≈ ${shortfallQty} ${mat?.unit}
+Holding Cost (อัตรา ${holdingCostRate * 100}%): ซื้อทีเดียว = ${singleHoldingCost.toLocaleString()} บาท/ปี | ทยอย 4 รอบ = ${phasedHoldingCost.toLocaleString()} บาท/ปี | ประหยัด ${holdingSavings.toLocaleString()} บาท/ปี
 
-═══ กฎ: ห้ามถามคำถามกลับ ห้ามเขียน "...ไหม?" ต้องตอบเป็นข้อสรุปเท่านั้น ═══
-═══ กฎ: ทุก field ต้องมีคำตอบจริง ห้ามเว้นว่าง ห้ามเขียนว่า "-" ═══
-═══ กฎ: ตอบสั้นกระชับ ตรงประเด็น ห้ามเวรินเว้อ ═══
-═══ กฎ: ห้ามแนะนำเดือนที่ผ่านไปแล้ว! วันนี้คือ ${currentMonth} ${currentYear} ═══
+กฎ: ห้ามอ้างอิงสงคราม โควิด แผ่นดินไหว หรือเหตุการณ์มหภาคที่ทำนายไม่ได้
+กฎ: วิเคราะห์จากข้อมูลจริงที่ให้มาเท่านั้น ต้องเปรียบเทียบซื้อทีเดียว vs ทยอยซื้อ ว่า TCO อันไหนต่ำกว่า
+กฎ: ห้ามถามคำถามกลับ ห้ามเขียน "...ไหม?" ต้องตอบเป็นข้อสรุปเท่านั้น
+กฎ: ทุก field ต้องมีคำตอบจริง มีตัวเลขประกอบ ห้ามเว้นว่าง ห้ามเขียนว่า "-"
+กฎ: ห้ามแนะนำเดือนที่ผ่านไปแล้ว วันนี้คือ ${currentMonth} ${currentYear}
 
 ตอบ JSON ตามนี้ (ห้ามมี markdown ห้ามมี text อื่น):
 {
@@ -125,25 +140,31 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
   "marketAnalysis": "ราคาปัจจุบัน ฿${mat?.unitPrice?.toLocaleString()} สูง/ต่ำกว่าราคากลาง X% ควรประกวดราคาเดือน X",
   "supplierAnalysis": "Lead Time ${mat?.leadTimeWeeks} สัปดาห์ (${leadTimeDays} วัน) สต็อกเหลือ ${daysOfStock} วัน → ช่องว่าง ${gapDays} วัน ต้องเร่ง Supplier",
   "emergencyPlan": "1. ขอยืมจากคลังภูมิภาคอื่น\n2. ยื่นจัดซื้อเร่งด่วน\n3. ปรับลดการเบิกจ่าย",
+  "costOptimization": {
+    "singlePurchaseCost": "ซื้อทีเดียว: ต้นทุนสินค้า + Holding Cost ${singleHoldingCost.toLocaleString()} บาท = TCO รวม",
+    "phasedPurchaseCost": "ทยอยซื้อ 4 รอบ: ต้นทุนสินค้า + Holding Cost ${phasedHoldingCost.toLocaleString()} บาท = TCO รวม",
+    "savingsAmount": "ประหยัดได้ ${holdingSavings.toLocaleString()} บาท จากการลด Holding Cost",
+    "recommendation": "แนะนำทยอยซื้อ เพราะ TCO ต่ำกว่า"
+  },
   "planA": {
-    "title": "สั่งซอยสัญญา (Multiple Awards)",
+    "title": "จัดซื้อรายไตรมาส (Quarterly - TCO Optimized)",
     "qty": ตัวเลข,
-    "futureImpact": "อุดรอยรั่วความเสี่ยงจากโรงงานทิ้งงาน 100% โดยกระจายออเดอร์ตามศักยภาพจริง",
-    "supplyForecast": "รับมอบสินค้าทยอยตามแผน ป้องกันปัญหาสต็อกขาดช่วง",
-    "costAnalysis": "ต้นทุนการบริหารสัญญาเพิ่มขึ้นเล็กน้อย แต่รับประกันได้ของตรงเวลา",
-    "riskScenarios": "ถ้า Supplier รายใดรายหนึ่งมีปัญหา ยังมีรายอื่นคอยพยุง",
-    "mitigation": "ติดตามการส่งมอบของแต่ละรายอย่างใกล้ชิด",
-    "problemResolved": "สต็อกกลับมาเหนือ Safety Stock ทันเวลาและยั่งยืน"
+    "futureImpact": "ลด Holding Cost ได้ ${holdingSavings.toLocaleString()} บาท/ปี เพราะเก็บสต็อกทีละน้อย",
+    "supplyForecast": "รับมอบสินค้าเป็นรอบ ตรงกับกำลังผลิตของ Vendor",
+    "costAnalysis": "TCO = ต้นทุนสินค้า + Holding Cost ${phasedHoldingCost.toLocaleString()} บาท (ประหยัดกว่าซื้อทีเดียว)",
+    "riskScenarios": "จัดซื้อบ่อยขึ้น เพิ่มภาระเอกสาร แต่ใช้สัญญากรอบราคาแก้ได้",
+    "mitigation": "ใช้สัญญากรอบราคา (Frame Agreement) ล็อคราคาทั้งปี แล้วทยอยเรียกของ",
+    "problemResolved": "รักษาสมดุลสต็อกให้เหมาะสม ไม่ล้นคลัง ไม่ขาดของ"
   },
   "planB": {
-    "title": "สั่งซื้อ 1 สัญญา (Single Award)",
+    "title": "จัดซื้อรายปีแบบทยอยส่งมอบ (Annual with Phased Deliveries)",
     "qty": ตัวเลข,
-    "futureImpact": "ความเสี่ยงสูงมาก โรงงานอาจทิ้งงานเพราะยอดสั่งซื้อเกินกำลังการผลิตสุทธิที่มี",
-    "supplyForecast": "หากโรงงานผลิตไม่ทัน สต็อกจะติดลบยาวนาน",
-    "costAnalysis": "ต้นทุนต่อหน่วยอาจถูกกว่า แต่แฝงต้นทุนความเสี่ยงจากการไม่มีของใช้ (Opportunity Cost)",
-    "riskScenarios": "Supplier ผลิตไม่ทันตามกำหนดและขอขยายเวลาส่งมอบ",
-    "mitigation": "ต้องเตรียมแผนจัดซื้อเร่งด่วนสำรองไว้ตลอดเวลา",
-    "problemResolved": "ปัญหาอาจไม่จบ หากผู้ชนะประมูลทิ้งงาน"
+    "futureImpact": "ล็อคราคาตลอดปี ได้ Volume Discount แลกกับสัญญาผูกพันระยะยาว",
+    "supplyForecast": "รับมอบเป็นงวด (ทุกไตรมาส) ป้องกันปัญหาไม่มีที่เก็บ",
+    "costAnalysis": "TCO ลดลงจาก Volume Discount + ลด Holding Cost ด้วยการทยอยส่งมอบ",
+    "riskScenarios": "ถ้า Supplier ผลิตไม่ทันในรอบใด อาจกระทบแผนงานต่อเนื่องทั้งปี",
+    "mitigation": "กำหนด Delivery Schedule ให้ชัดเจนในสัญญา พร้อมค่าปรับหากล่าช้า",
+    "problemResolved": "แก้ปัญหาสต็อกล้นคลัง ลดภาระงานจัดซื้อซ้ำ ได้ราคาดีกว่า"
   },
   "priceForecast": {
     "threeMonth": "ราคาจะขึ้น/ลง X% เป็น ฿X",
@@ -242,6 +263,7 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
           marketAnalysis: parsed.marketAnalysis || "ไม่สามารถวิเคราะห์ได้",
           supplierAnalysis: parsed.supplierAnalysis || "ไม่สามารถวิเคราะห์ได้",
           emergencyPlan: parsed.emergencyPlan || "",
+          costOptimization: parsed.costOptimization || undefined,
           priceForecast: parsed.priceForecast || { threeMonth: "-", oneYear: "-", bestTimeToBuy: "-" },
           lotStrategy: parsed.lotStrategy || { recommendation: "-", totalQty: 0, numLots: 1, qtyPerLot: 0, reason: "-", savings: "-" },
           lotSchedule: parsed.lotSchedule || [],
@@ -384,32 +406,85 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
               </div>
             )}
 
-            {/* Problem Analysis */}
+            {/* TCO Comparison */}
             <div className="grid gap-6 lg:grid-cols-5">
-              {/* Price Chart */}
+              {/* TCO Bar Chart */}
               <div className="lg:col-span-3 rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2"><BarChart3 size={18} className="text-indigo-500" /> แนวโน้มราคาตลาด</h2>
-                    <p className="text-[11px] text-slate-400 mt-1">แหล่งข้อมูล: ประวัติใบสั่งซื้อ PEA (SAP) • ดัชนีราคาโลหะโลก (LME) • ราคากลางกระทรวงพาณิชย์</p>
+                    <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2"><BarChart3 size={18} className="text-indigo-500" /> เปรียบเทียบ TCO (Total Cost of Ownership)</h2>
+                    <p className="text-[11px] text-slate-400 mt-1">ต้นทุนสินค้า + Holding Cost (อัตรา 20% ต่อปี) • ซื้อทีเดียว vs ทยอยซื้อ</p>
                   </div>
                   <div className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700 flex items-center gap-1.5 border border-emerald-100">
-                    <TrendingDown size={13} /> ราคามีแนวโน้มลดลง
+                    <TrendingDown size={13} /> ทยอยซื้อประหยัดกว่า
                   </div>
                 </div>
-                <div className="h-[240px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={simulation.priceTrend} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(val) => `฿${(val/1000).toFixed(0)}k`} />
-                      <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }} formatter={(value: any, name: any) => [formatCurrency(Number(value) || 0), name === 'price' ? "ปีปัจจุบัน (Forecast)" : "ปีก่อนหน้า"]} />
-                      <ReferenceLine x="May" stroke="#cbd5e1" strokeDasharray="3 3" />
-                      <Line type="monotone" dataKey="lastYearPrice" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-                      <Line type="monotone" dataKey="price" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+                {(() => {
+                  const unitPrice = material?.unitPrice || 150000;
+                  const annualDemand = material?.annualDemand || 800;
+                  const goodsCost = annualDemand * unitPrice;
+                  const singleHC = Math.round(goodsCost * 0.20 * 0.5);
+                  const phasedHC = Math.round(goodsCost * 0.20 * 0.2);
+                  const singleTCO = goodsCost + singleHC;
+                  const phasedTCO = goodsCost + phasedHC;
+                  const savings = singleHC - phasedHC;
+                  const maxTCO = singleTCO;
+                  return (
+                    <div className="space-y-5 mt-2">
+                      {/* Single Purchase Bar */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[12px] font-bold text-red-700">🔴 ซื้อทีเดียว (Single Purchase)</span>
+                          <span className="text-[13px] font-black text-red-700">฿{singleTCO.toLocaleString()}</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-10 overflow-hidden relative">
+                          <div
+                            className="h-full rounded-full flex items-center justify-end pr-3 transition-all duration-1000"
+                            style={{ width: `${(singleTCO / maxTCO) * 100}%`, background: 'linear-gradient(90deg, #fca5a5 0%, #ef4444 100%)' }}
+                          >
+                            <span className="text-[10px] font-bold text-white drop-shadow">Holding Cost ฿{singleHC.toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mt-1 text-[10px] text-slate-400">
+                          <span>ต้นทุนสินค้า ฿{goodsCost.toLocaleString()}</span>
+                          <span>+</span>
+                          <span>Holding Cost ฿{singleHC.toLocaleString()} (สต็อกเฉลี่ย 50%)</span>
+                        </div>
+                      </div>
+                      {/* Phased Purchase Bar */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[12px] font-bold text-emerald-700">🟢 ทยอยซื้อ 4 รอบ (Phased Purchase)</span>
+                          <span className="text-[13px] font-black text-emerald-700">฿{phasedTCO.toLocaleString()}</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-10 overflow-hidden relative">
+                          <div
+                            className="h-full rounded-full flex items-center justify-end pr-3 transition-all duration-1000"
+                            style={{ width: `${(phasedTCO / maxTCO) * 100}%`, background: 'linear-gradient(90deg, #86efac 0%, #22c55e 100%)' }}
+                          >
+                            <span className="text-[10px] font-bold text-white drop-shadow">Holding Cost ฿{phasedHC.toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mt-1 text-[10px] text-slate-400">
+                          <span>ต้นทุนสินค้า ฿{goodsCost.toLocaleString()}</span>
+                          <span>+</span>
+                          <span>Holding Cost ฿{phasedHC.toLocaleString()} (สต็อกเฉลี่ย 20%)</span>
+                        </div>
+                      </div>
+                      {/* Savings Highlight */}
+                      <div className="rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[16px]">💰</div>
+                          <div>
+                            <div className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">ประหยัดได้จากการทยอยซื้อ</div>
+                            <div className="text-[10px] text-emerald-600 mt-0.5">ลด Holding Cost จากสต็อกเฉลี่ย 50% → 20%</div>
+                          </div>
+                        </div>
+                        <div className="text-[24px] font-black text-emerald-700">฿{savings.toLocaleString()}<span className="text-[12px] font-bold text-emerald-500">/ปี</span></div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* 3 Analysis Cards */}
@@ -429,57 +504,39 @@ ${alert ? `แจ้งเตือน: ${alert.message} | คำแนะนำ
               </div>
             </div>
 
-            {/* Emergency Plan - Critical Gap Alert */}
-            {aiResult.emergencyPlan && (
-              <div className="rounded-2xl bg-gradient-to-r from-red-50 to-orange-50 p-6 shadow-sm border-2 border-red-300">
-                <h2 className="text-[16px] font-bold text-red-800 flex items-center gap-2 mb-3">
-                  <ShieldAlert size={20} className="text-red-600" /> 🚨 แผนฉุกเฉิน: สต็อกจะหมดก่อนของมาถึง!
-                </h2>
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="rounded-xl bg-red-100 border border-red-200 p-3 text-center">
-                    <div className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">สต็อกเหลือ</div>
-                    <div className="text-[28px] font-black text-red-700">{material ? Math.round((material.currentStock / (material.avgMonthlyDemand / 30))) : '?'}</div>
-                    <div className="text-[10px] text-red-400">วัน</div>
-                  </div>
-                  <div className="rounded-xl bg-orange-100 border border-orange-200 p-3 text-center">
-                    <div className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-1">Lead Time</div>
-                    <div className="text-[28px] font-black text-orange-700">{material ? Math.round(material.leadTimeWeeks * 7) : '?'}</div>
-                    <div className="text-[10px] text-orange-400">วัน</div>
-                  </div>
-                  <div className="rounded-xl bg-yellow-100 border border-yellow-200 p-3 text-center">
-                    <div className="text-[10px] font-bold text-yellow-600 uppercase tracking-wider mb-1">ช่องว่างวิกฤต</div>
-                    <div className="text-[28px] font-black text-yellow-700">{material ? Math.round(material.leadTimeWeeks * 7) - Math.round((material.currentStock / (material.avgMonthlyDemand / 30))) : '?'}</div>
-                    <div className="text-[10px] text-yellow-500">วัน ที่ต้องอุด</div>
-                  </div>
-                </div>
-                <div className="rounded-xl bg-white/80 border border-red-200 p-4">
-                  <p className="text-[13px] text-slate-800 leading-relaxed whitespace-pre-line">{aiResult.emergencyPlan}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Price Forecast Section */}
-            {aiResult.priceForecast && (
-              <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
-                <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 mb-4">
-                  <TrendingDown size={18} className="text-indigo-500" /> AI คาดการณ์ราคา (Price Forecast)
-                </h2>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="rounded-xl bg-blue-50 border border-blue-100 p-4">
-                    <div className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-2">📊 อีก 3 เดือนข้างหน้า</div>
-                    <p className="text-[13px] text-slate-700 leading-relaxed font-medium">{aiResult.priceForecast.threeMonth}</p>
-                  </div>
-                  <div className="rounded-xl bg-purple-50 border border-purple-100 p-4">
-                    <div className="text-[10px] font-bold text-purple-600 uppercase tracking-wider mb-2">📈 อีก 1 ปีข้างหน้า</div>
-                    <p className="text-[13px] text-slate-700 leading-relaxed font-medium">{aiResult.priceForecast.oneYear}</p>
-                  </div>
-                  <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4">
-                    <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-2">🎯 ช่วงเวลาที่ดีที่สุดในการซื้อ</div>
-                    <p className="text-[13px] text-slate-700 leading-relaxed font-bold">{aiResult.priceForecast.bestTimeToBuy}</p>
+            {/* Holding Cost Breakdown */}
+            {(() => {
+              const unitPrice = material?.unitPrice || 150000;
+              const annualDemand = material?.annualDemand || 800;
+              const goodsCost = annualDemand * unitPrice;
+              const singleHC = Math.round(goodsCost * 0.20 * 0.5);
+              const phasedHC = Math.round(goodsCost * 0.20 * 0.2);
+              const savings = singleHC - phasedHC;
+              return (
+                <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+                  <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 mb-4">
+                    <Package size={18} className="text-indigo-500" /> Holding Cost Breakdown (อัตรา 20% ต่อปี)
+                  </h2>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-center">
+                      <div className="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-2">🔴 ซื้อทีเดียว (สต็อกเฉลี่ย 50%)</div>
+                      <div className="text-[26px] font-black text-red-700">฿{singleHC.toLocaleString()}</div>
+                      <div className="text-[11px] text-red-400 mt-1">Holding Cost ต่อปี</div>
+                    </div>
+                    <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 text-center">
+                      <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-2">🟢 ทยอยซื้อ 4 รอบ (สต็อกเฉลี่ย 20%)</div>
+                      <div className="text-[26px] font-black text-emerald-700">฿{phasedHC.toLocaleString()}</div>
+                      <div className="text-[11px] text-emerald-400 mt-1">Holding Cost ต่อปี</div>
+                    </div>
+                    <div className="rounded-xl bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 p-4 text-center">
+                      <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-2">💰 ประหยัดได้</div>
+                      <div className="text-[26px] font-black text-amber-700">฿{savings.toLocaleString()}</div>
+                      <div className="text-[11px] text-amber-500 mt-1">ต่อปี จากการลดสต็อก</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Vendor Capacity & Strategy Optimizer Section */}
             <AIVendorStrategyView aiResult={aiResult} material={material} />
