@@ -29,7 +29,7 @@ function PageShell({
       <section className="rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" />
         <div className="max-w-3xl relative z-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[13px] font-bold uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-md">
             <Icon size={14} />
             {eyebrow}
           </div>
@@ -67,7 +67,7 @@ export function ProcurementView() {
           { label: "Lead time เฉลี่ย", value: `${Math.round(materials.reduce((sum, item) => sum + item.leadTimeWeeks, 0) / (materials.length || 1))} สัปดาห์`, bg: "bg-gradient-to-br from-blue-50/60 to-indigo-50/60 border-blue-100", valueColor: "text-blue-800" },
         ].map((item) => (
           <article key={item.label} className={`rounded-[20px] border p-4.5 shadow-[0_12px_24px_rgba(0,0,0,0.01)] backdrop-blur-sm ${item.bg}`}>
-            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">{item.label}</div>
+            <div className="text-[13px] font-bold uppercase tracking-[0.14em] text-slate-400">{item.label}</div>
             <div className={`mt-2 text-[18px] font-bold ${item.valueColor}`}>{item.value}</div>
           </article>
         ))}
@@ -90,7 +90,7 @@ export function ProcurementView() {
               <div className={item.severity === "critical" ? "font-bold text-red-700" : "font-bold text-amber-700"}>Impact {formatCurrency(item.costImpact)}</div>
             </div>
             <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-              <span className="text-[11px] text-slate-400 font-semibold">Confidence: <span className="font-bold text-emerald-600">{item.confidence}%</span></span>
+              <span className="text-[13px] text-slate-400 font-semibold">Confidence: <span className="font-bold text-emerald-600">{item.confidence}%</span></span>
               <button 
                 type="button"
                 onClick={() => {
@@ -103,7 +103,7 @@ export function ProcurementView() {
                     } 
                   }));
                 }}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shadow-sm text-white ${
+                className={`px-3 py-1.5 rounded-lg text-[13px] font-bold cursor-pointer transition-colors shadow-sm text-white ${
                   item.severity === "critical" 
                     ? "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 shadow-red-500/10" 
                     : "bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 shadow-amber-500/10"
@@ -136,7 +136,7 @@ export function WarehouseView() {
             <article key={material.id} className="rounded-[20px] border border-slate-200 bg-white p-4.5 shadow-[0_12px_24px_rgba(0,0,0,0.01)] hover:shadow-md transition-all">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-sm font-bold text-slate-900">{material.id}</div>
-                <div className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${coverage < 100 ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"}`}>
+                <div className={`rounded-full px-2.5 py-1 text-[13px] font-bold ${coverage < 100 ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"}`}>
                   {coverage}%
                 </div>
               </div>
@@ -177,7 +177,7 @@ export function BudgetView() {
           { label: "Risk Exposure", value: formatCurrency(totalVaR), bg: "bg-gradient-to-br from-[#4e091b] via-[#750e26] to-[#b91c1c] border-rose-500/20 shadow-[0_15px_35px_rgba(185,28,28,0.1)]", valueColor: "text-white", labelColor: "text-red-100/90" },
         ].map((item) => (
           <article key={item.label} className={`rounded-[20px] border p-4.5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${item.bg}`}>
-            <div className={`text-[10px] font-bold uppercase tracking-[0.14em] ${item.labelColor}`}>{item.label}</div>
+            <div className={`text-[13px] font-bold uppercase tracking-[0.14em] ${item.labelColor}`}>{item.label}</div>
             <div className={`mt-2 text-[18px] font-bold tracking-tight ${item.valueColor}`}>{item.value}</div>
           </article>
         ))}
@@ -208,7 +208,7 @@ export function BudgetView() {
                      <div className="mt-3 text-[14px] font-bold text-slate-900">
                        {formatCurrency(material.annualDemand * material.budgetPrice)}
                      </div>
-                     <div className="mt-1 text-[10px] text-slate-500 font-semibold">Annual demand x budget price</div>
+                     <div className="mt-1 text-[13px] text-slate-500 font-semibold">Annual demand x budget price</div>
                    </div>
                    <button 
                      type="button"
@@ -219,7 +219,7 @@ export function BudgetView() {
                          type: "success"
                        }
                      }))}
-                     className="mt-4 w-max px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer transition shadow-sm"
+                     className="mt-4 w-max px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[13px] font-bold cursor-pointer transition shadow-sm"
                    >
                      ปรับปรุงแผนงบ
                    </button>
@@ -291,7 +291,7 @@ export function ReportsView() {
         <h3 className="text-lg font-bold text-slate-900 mb-4 border-l-4 border-purple-500 pl-3">แผนปฏิบัติการ (Action Plan) สำหรับพัสดุวิกฤต</h3>
         <div className="overflow-x-auto rounded-2xl border border-slate-200">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
+            <thead className="bg-slate-50 text-[13px] uppercase tracking-wider text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-semibold">พัสดุ</th>
                 <th className="px-4 py-3 font-semibold">สถานะสต๊อก</th>

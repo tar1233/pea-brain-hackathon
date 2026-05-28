@@ -25,7 +25,7 @@ export default function AlertHero() {
           <ShieldAlert size={16} className="text-white animate-pulse" />
           <span className="text-[13px] font-bold text-white tracking-wide">🚨 แจ้งเตือนวิกฤตอันดับ 1 ที่ต้องจัดการทันที</span>
           <div className="flex-1" />
-          <span className="px-2.5 py-1 rounded-lg bg-black/30 text-[10px] font-bold text-white uppercase tracking-wider">
+          <span className="px-2.5 py-1 rounded-lg bg-black/30 text-[13px] font-bold text-white uppercase tracking-wider">
             Critical Priority
           </span>
         </div>
@@ -40,13 +40,13 @@ export default function AlertHero() {
             
             <div className="flex flex-col gap-2 mb-6">
               <div className="flex items-center gap-2.5">
-                <span className="px-2 py-1 bg-black/20 text-white/90 text-[11px] font-bold rounded uppercase tracking-wider min-w-[70px] text-center">ปัญหา</span>
+                <span className="px-2 py-1 bg-black/20 text-white/90 text-[13px] font-bold rounded uppercase tracking-wider min-w-[70px] text-center">ปัญหา</span>
                 <span className="text-[14px] font-medium text-white leading-tight">
                   สต๊อกเหลือเพียง <strong className="text-[16px] text-yellow-300">{topMaterial?.currentStock.toLocaleString()}</strong> {topMaterial?.unit} (ต่ำกว่าเกณฑ์ <strong className="text-yellow-300">{stockPct}%</strong>)
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="px-2 py-1 bg-black/20 text-white/90 text-[11px] font-bold rounded uppercase tracking-wider min-w-[70px] text-center">ผลกระทบ</span>
+                <span className="px-2 py-1 bg-black/20 text-white/90 text-[13px] font-bold rounded uppercase tracking-wider min-w-[70px] text-center">ผลกระทบ</span>
                 <span className="text-[14px] font-medium text-white leading-tight">
                   จะเกิดความเสียหายระดับ <strong>รุนแรง</strong> หากไม่แก้ไขภายใน 2 วัน
                 </span>
@@ -69,12 +69,12 @@ export default function AlertHero() {
           
           {/* Center — Impact */}
           <div className="flex flex-col items-center justify-center bg-black/15 rounded-2xl p-5 border border-white/10 backdrop-blur-sm">
-            <div className="text-[11px] text-white/70 font-bold uppercase tracking-widest mb-3">
+            <div className="text-[13px] text-white/70 font-bold uppercase tracking-widest mb-3">
               มูลค่าความเสียหาย (Value at Risk)
             </div>
             <div className="flex items-baseline gap-2.5">
               <span className="text-[18px] text-white/70 font-bold">฿</span>
-              <span className="text-[44px] font-black text-white leading-none tracking-tight drop-shadow-lg">{varMillions}</span>
+              <span className="text-[40px] font-black text-white leading-none tracking-tight drop-shadow-lg">{varMillions}</span>
               <span className="text-[18px] font-bold text-white/90">ล้าน</span>
             </div>
           </div>
@@ -82,13 +82,13 @@ export default function AlertHero() {
           {/* Right — Urgency */}
           <div className="flex flex-col items-center justify-center bg-black/15 rounded-2xl p-5 border border-white/10 backdrop-blur-sm relative overflow-hidden">
             <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />
-            <div className="text-[11px] text-white/70 font-bold uppercase tracking-widest mb-3 relative z-10">
+            <div className="text-[13px] text-white/70 font-bold uppercase tracking-widest mb-3 relative z-10">
               เส้นตาย (Deadline)
             </div>
             <div className="flex items-baseline gap-2.5 justify-center relative z-10">
-              <span className="text-[44px] font-black text-white leading-none tracking-tight drop-shadow-lg">2</span>
+              <span className="text-[40px] font-black text-white leading-none tracking-tight drop-shadow-lg">2</span>
               <span className="text-[16px] text-white/80 font-bold">วัน</span>
-              <span className="text-[44px] font-black text-white leading-none tracking-tight drop-shadow-lg ml-2">6</span>
+              <span className="text-[40px] font-black text-white leading-none tracking-tight drop-shadow-lg ml-2">6</span>
               <span className="text-[16px] text-white/80 font-bold">ชม.</span>
             </div>
           </div>

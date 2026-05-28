@@ -75,20 +75,20 @@ export default function TopBar({ activeTab }: TopBarProps) {
     <header className="flex h-[72px] shrink-0 items-center gap-4 border-b border-gray-100/60 bg-white/60 px-8 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_4px_30px_rgb(0,0,0,0.02)]">
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-[14px] font-bold text-[#5c2b86]">{current.title}</h1>
+          <h1 className="text-[16px] font-bold text-[#5c2b86]">{current.title}</h1>
           {alertBadge ? (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-critical-600 text-[9px] font-bold text-white">
               {alertBadge}
             </span>
           ) : null}
         </div>
-        <div className="mt-0.5 text-[11px] text-[#8a94ab]">{current.subtitle}</div>
+        <div className="mt-0.5 text-[13px] text-[#8a94ab]">{current.subtitle}</div>
       </div>
 
       <div className="flex-1" />
 
       {/* Date */}
-      <span className="text-[11px] text-[#8a94ab]">{dateStr} • {timeStr} น.</span>
+      <span className="text-[13px] text-[#8a94ab]">{dateStr} • {timeStr} น.</span>
 
 
       {/* Spacer */}
@@ -97,14 +97,14 @@ export default function TopBar({ activeTab }: TopBarProps) {
 
       {/* Profile */}
       <div className="flex items-center gap-2 cursor-pointer">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#d04ca6] to-[#9f2c80] border-2 border-[#f3d3e7] flex items-center justify-center text-[10px] font-bold text-white">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d04ca6] to-[#9f2c80] border-2 border-[#f3d3e7] flex items-center justify-center text-[12px] font-bold text-white">
           {activeTab === "warehouse" ? "วญ" : "ขภ"}
         </div>
         <div className="hidden lg:block">
-          <div className="text-[11px] font-semibold text-text-primary leading-tight">
+          <div className="text-[13px] font-semibold text-text-primary leading-tight">
             {activeTab === "warehouse" ? "คุณวรัญญู จันทร์ศิริ" : "คุณขวัญภิชา"}
           </div>
-          <div className="text-[9px] text-text-muted">
+          <div className="text-[12px] text-text-muted">
             {activeTab === "warehouse" ? "ผู้บริหารคลัง" : "Supply Planner"}
           </div>
         </div>
