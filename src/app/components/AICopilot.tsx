@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Sparkles, Send, User, AlertTriangle, Shield, Info, ArrowRight, Trash2 } from "lucide-react";
+import { Bot, Sparkles, Send, User, AlertTriangle, Shield, Info, Trash2, MessageCircle, PanelRightClose } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import { useData } from "../context/DataContext";
@@ -30,6 +30,7 @@ export default function AICopilot() {
   const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_WELCOME]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
 
   // Load from localStorage on mount
@@ -43,6 +44,11 @@ export default function AICopilot() {
         console.error("Failed to parse chat history");
       }
     }
+    // Load panel state
+    const panelState = localStorage.getItem("pea_brain_chat_open");
+    if (panelState !== null) {
+      setIsOpen(panelState === "true");
+    }
   }, []);
 
   // Save to localStorage on change
@@ -50,6 +56,11 @@ export default function AICopilot() {
     localStorage.setItem("pea_brain_chat_history", JSON.stringify(messages));
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  // Save panel state
+  useEffect(() => {
+    localStorage.setItem("pea_brain_chat_open", String(isOpen));
+  }, [isOpen]);
 
   const handleClearChat = () => {
     setMessages([DEFAULT_WELCOME]);
@@ -81,7 +92,7 @@ export default function AICopilot() {
       if (data.content) {
         let finalContent = data.content;
         
-        // Append citations if they exist to show off the RAG capability to judges
+        // Append citations if they exist
         if (data.citations && data.citations.length > 0) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const uniqueCitations = Array.from(new Set(data.citations.map((c: any) => c.reference)));
@@ -101,6 +112,23 @@ export default function AICopilot() {
     }
   };
 
+  // ── Floating Button (when chat is closed) ──
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[#A80689] to-[#7b0365] text-white flex items-center justify-center shadow-[0_8px_30px_rgba(168,6,137,0.4)] hover:shadow-[0_8px_40px_rgba(168,6,137,0.6)] hover:scale-105 transition-all duration-300 cursor-pointer group"
+        title="เปิด PEA Brain Copilot"
+      >
+        <MessageCircle size={24} className="group-hover:scale-110 transition-transform" />
+        <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+          <span className="text-[8px] font-bold text-white">AI</span>
+        </span>
+      </button>
+    );
+  }
+
+  // ── Full Chat Panel (when open) ──
   return (
     <aside className="w-[320px] shrink-0 bg-white/60 backdrop-blur-3xl border-l border-white/60 shadow-[-10px_0_40px_rgb(0,0,0,0.03)] flex flex-col h-screen relative z-40">
       {/* Header */}
@@ -116,19 +144,28 @@ export default function AICopilot() {
             </div>
           </div>
         </div>
-        <button 
-          onClick={handleClearChat}
-          className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50/50 rounded-xl transition-all cursor-pointer"
-          title="ล้างประวัติแชท"
-        >
-          <Trash2 size={14} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={handleClearChat}
+            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50/50 rounded-xl transition-all cursor-pointer"
+            title="ล้างประวัติแชท"
+          >
+            <Trash2 size={14} />
+          </button>
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100/50 rounded-xl transition-all cursor-pointer"
+            title="ปิดแชท"
+          >
+            <PanelRightClose size={14} />
+          </button>
+        </div>
       </div>
 
-      {/* Recommendations (Scrollable top half) */}
+      {/* Recommendations */}
       <div className="px-4 py-4 space-y-3 bg-gradient-to-b from-white/30 to-transparent shrink-0 border-b border-gray-100/30">
         <div className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 ml-1">คำแนะนำด่วน (Auto-generated)</div>
-        {aiRecommendations.slice(0, 2).map((rec, i) => {
+        {aiRecommendations.slice(0, 2).map((rec) => {
           const Icon = sevIcons[rec.severity];
           const colors = sevColors[rec.severity];
           return (
@@ -148,6 +185,7 @@ export default function AICopilot() {
         })}
       </div>
 
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
