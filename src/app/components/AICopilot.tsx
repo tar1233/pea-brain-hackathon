@@ -30,7 +30,7 @@ export default function AICopilot() {
   const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_WELCOME]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   // Load from localStorage on mount
