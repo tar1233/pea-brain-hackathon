@@ -1334,8 +1334,8 @@ export default function ProjectRoadmap() {
                     ${isCompleted ? "bg-emerald-500" : isInProgress ? "bg-blue-500 animate-pulse" : "bg-slate-300"}
                   `}>
                     {isCompleted && <CheckCircle2 size={12} className="text-white" />}
-                    {isInProgress && <Code2 size={10} className="text-white" />}
-                    {isPending && <Circle size={8} className="text-white fill-white" />}
+                    {isInProgress && <Code2 size={13} className="text-white" />}
+                    {isPending && <Circle size={11} className="text-white fill-white" />}
                   </div>
 
                   {/* Content */}

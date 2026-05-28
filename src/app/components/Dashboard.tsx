@@ -370,7 +370,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                       : "แสดงผลกระทบความสูญเสียจากต้นทุนกรณีซื้อรูปแบบปกติ เทียบกับการล็อกและบริหารโดย AI"}
                   </p>
                 </div>
-                <span className="bg-slate-100 text-slate-500 text-[9px] px-2 py-1 rounded font-bold uppercase tracking-wider">
+                <span className="bg-slate-100 text-slate-500 text-[12px] px-2 py-1 rounded font-bold uppercase tracking-wider">
                   {activeTF === 'ปัจจุบัน' ? "Simulated Data" : "Historical Simulation"}
                 </span>
               </div>
@@ -400,7 +400,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                       : `สถิติงบสะสมที่ประหยัดได้ในช่วงเวลาย้อนหลัง ${activeTF}`}
                   </p>
                 </div>
-                <span className="bg-slate-100 text-slate-500 text-[9px] px-2 py-1 rounded font-bold uppercase tracking-wider">
+                <span className="bg-slate-100 text-slate-500 text-[12px] px-2 py-1 rounded font-bold uppercase tracking-wider">
                   {activeTF === 'ปัจจุบัน' ? "Projection" : "Historical Record"}
                 </span>
               </div>
@@ -425,7 +425,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                 <h3 className="text-[15px] font-bold text-slate-800">การติดตามพฤติกรรม Supplier ด้วย AI (AI Supplier Analytics)</h3>
                 <p className="text-[12px] text-slate-500 mt-1">ประเมินจากคุณภาพการส่งมอบตรงเวลา เพื่อช่วย AI คำนวณความเสี่ยงของขาดแคลน</p>
               </div>
-              <span className="bg-slate-100 text-slate-500 text-[9px] px-2 py-1 rounded font-bold uppercase tracking-wider">Simulated Data</span>
+              <span className="bg-slate-100 text-slate-500 text-[12px] px-2 py-1 rounded font-bold uppercase tracking-wider">Simulated Data</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
