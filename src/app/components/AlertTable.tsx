@@ -62,12 +62,12 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
         {tabs.map(tab => (
           <button key={tab.key}
             onClick={() => { setFilter(tab.key); setPage(1); }}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-t-lg text-[12px] font-medium transition-all cursor-pointer
+            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-t-lg text-[14px] font-medium transition-all cursor-pointer
               ${filter === tab.key
                 ? "bg-white text-primary-700 border border-border border-b-white font-semibold shadow-sm -mb-px z-10"
                 : "text-text-secondary hover:text-text-primary hover:bg-white/50 border border-transparent"}`}>
-            {tab.dot && <span className="w-2 h-2 rounded-full" style={{ background: tab.dot }} />}
-            {tab.label} <span className={`${filter === tab.key ? "bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-md text-[10px] font-bold" : "text-text-muted"}`}>{tab.count}</span>
+            {tab.dot && <span className="w-2.5 h-2.5 rounded-full" style={{ background: tab.dot }} />}
+            {tab.label} <span className={`${filter === tab.key ? "bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-md text-[12px] font-bold" : "text-text-muted"}`}>{tab.count}</span>
           </button>
         ))}
       </div>
@@ -78,23 +78,23 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
           <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={searchQ} onChange={e => { setSearchQ(e.target.value); setPage(1); }}
             placeholder="ค้นหาชื่อพัสดุ รหัส หรือคำอธิบาย..."
-            className="w-[220px] pl-8 pr-3 py-1.5 rounded-lg bg-gray-50 text-[12px] text-gray-700 outline-none focus:ring-2 focus:ring-purple-100 transition-all border-none" />
+            className="w-[240px] pl-8 pr-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-purple-100 transition-all border-none" />
         </div>
-        <select className="px-3 py-1.5 rounded-lg bg-gray-50 text-[12px] text-gray-600 outline-none cursor-pointer border-none">
+        <select className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
           <option>หมวดพัสดุ</option><option>หม้อแปลงไฟฟ้า</option><option>อุปกรณ์ป้องกัน</option><option>อุปกรณ์วัด</option>
         </select>
-        <select className="px-3 py-1.5 rounded-lg bg-gray-50 text-[12px] text-gray-600 outline-none cursor-pointer border-none">
+        <select className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
           <option>ระดับความเสี่ยง</option><option>วิกฤต</option><option>เฝ้าระวัง</option><option>ข้อมูล</option>
         </select>
-        <select className="px-3 py-1.5 rounded-lg bg-gray-50 text-[12px] text-gray-600 outline-none cursor-pointer border-none">
+        <select className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
           <option>สถานะ</option><option>รอดำเนินการ</option><option>อยู่ระหว่างดำเนินการ</option>
         </select>
-        <span className="px-3 py-1.5 rounded-lg bg-gray-50 text-[11px] text-gray-500 whitespace-nowrap">
+        <span className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-500 whitespace-nowrap">
           12 พ.ค. 2569 - 19 พ.ค. 2569
         </span>
         <div className="flex-1" />
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 text-[12px] text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer border-none font-semibold">
-          <SlidersHorizontal size={13} />
+        <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer border-none font-semibold">
+          <SlidersHorizontal size={14} />
           ตัวกรองเพิ่มเติม
         </button>
       </div>
@@ -105,15 +105,15 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
           <table className="w-full min-w-[900px] border-collapse">
             <thead>
               <tr className="bg-gray-50/80 border-b border-border">
-                <th className="w-[36px] px-3 py-2.5 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider">ลำดับ</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold text-text-muted uppercase tracking-wider">รายการแจ้งเตือน</th>
-                <th className="px-3 py-2.5 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider">ระดับความเสี่ยง</th>
-                <th className="px-3 py-2.5 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider">Stock / Safety</th>
-                <th className="px-3 py-2.5 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider">Lead Time</th>
-                <th className="px-3 py-2.5 text-right text-[10px] font-semibold text-text-muted uppercase tracking-wider">มูลค่าความเสี่ยง (VaR)</th>
-                <th className="px-3 py-2.5 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider">แนวโน้ม</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold text-text-muted uppercase tracking-wider">อัปเดตล่าสุด</th>
-                <th className="px-3 py-2.5 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider">การดำเนินการ</th>
+                <th className="w-[36px] px-3 py-3 text-center text-[12px] font-semibold text-text-muted uppercase tracking-wider">ลำดับ</th>
+                <th className="px-3 py-3 text-left text-[12px] font-semibold text-text-muted uppercase tracking-wider">รายการแจ้งเตือน</th>
+                <th className="px-3 py-3 text-center text-[12px] font-semibold text-text-muted uppercase tracking-wider">ระดับความเสี่ยง</th>
+                <th className="px-3 py-3 text-center text-[12px] font-semibold text-text-muted uppercase tracking-wider">Stock / Safety</th>
+                <th className="px-3 py-3 text-center text-[12px] font-semibold text-text-muted uppercase tracking-wider">Lead Time</th>
+                <th className="px-3 py-3 text-right text-[12px] font-semibold text-text-muted uppercase tracking-wider">มูลค่าความเสี่ยง (VaR)</th>
+                <th className="px-3 py-3 text-center text-[12px] font-semibold text-text-muted uppercase tracking-wider">แนวโน้ม</th>
+                <th className="px-3 py-3 text-left text-[12px] font-semibold text-text-muted uppercase tracking-wider">อัปเดตล่าสุด</th>
+                <th className="px-3 py-3 text-center text-[12px] font-semibold text-text-muted uppercase tracking-wider">การดำเนินการ</th>
               </tr>
             </thead>
             <tbody>
@@ -148,7 +148,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       }}
                     >
                       <td className="px-3 py-3 text-center">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mx-auto
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold mx-auto
                           ${isCritical ? "bg-red-500 text-white" : alert.severity === "warning" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
                           {rank}
                         </div>
@@ -157,26 +157,26 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                         <div className="flex items-center gap-2.5">
                           <div className={`w-1 h-8 rounded-full ${isCritical ? "bg-critical-500" : alert.severity === "warning" ? "bg-warning-500" : "bg-info-500"}`} />
                           <div>
-                            <div className="font-bold text-[13px] text-primary-700">{alert.materialId}</div>
-                            <div className="text-[11px] text-text-muted">{alert.materialName}</div>
-                            {material && <div className="text-[10px] text-text-muted/60">SAP: {material.sapCode} • {material.category}</div>}
+                            <div className="font-bold text-[15px] text-primary-700">{alert.materialId}</div>
+                            <div className="text-[13px] text-text-muted">{alert.materialName}</div>
+                            {material && <div className="text-[11px] text-text-muted/60">SAP: {material.sapCode} • {material.category}</div>}
                           </div>
                         </div>
                       </td>
                       <td className="px-3 py-3 text-center">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-bold"
                           style={{ background: sev.bg, color: sev.color, border: `1px solid ${sev.border}` }}>
-                          <span className="w-1.5 h-1.5 rounded-full animate-pulse-soft" style={{ background: sev.color }} />
+                          <span className="w-2 h-2 rounded-full animate-pulse-soft" style={{ background: sev.color }} />
                           {sev.label}
                         </span>
                       </td>
                       <td className="px-3 py-3 text-center">
                         {material && (
                           <div>
-                            <span className="text-[13px] font-bold" style={{ color: stockPct < 50 ? "#DC2626" : "#0F172A" }}>
+                            <span className="text-[15px] font-bold" style={{ color: stockPct < 50 ? "#DC2626" : "#0F172A" }}>
                               {material.currentStock.toLocaleString()} / {material.safetyStock.toLocaleString()}
                             </span>
-                            <span className="text-[10px] text-text-muted ml-1">({stockPct}%)</span>
+                            <span className="text-[12px] text-text-muted ml-1">({stockPct}%)</span>
                             <div className="w-[50px] h-[3px] rounded-full bg-gray-100 mt-1 mx-auto overflow-hidden">
                               <div className="h-full rounded-full" style={{
                                 width: `${Math.min(stockPct, 100)}%`,
@@ -189,23 +189,23 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       <td className="px-3 py-3 text-center">
                         {material && (
                           <div>
-                            <span className="text-[13px] font-bold">{material.leadTimeWeeks}</span>
-                            <span className="text-[10px] text-text-muted ml-0.5">สัปดาห์</span>
-                            <div className="text-[9px] text-text-muted">ประมาณ {ltMonths} เดือน</div>
+                            <span className="text-[15px] font-bold">{material.leadTimeWeeks}</span>
+                            <span className="text-[12px] text-text-muted ml-0.5">สัปดาห์</span>
+                            <div className="text-[11px] text-text-muted">ประมาณ {ltMonths} เดือน</div>
                           </div>
                         )}
                       </td>
                       <td className="px-3 py-3 text-right">
-                        <span className="text-[14px] font-bold" style={{ color: isCritical ? "#DC2626" : "#0F172A" }}>
+                        <span className="text-[16px] font-bold" style={{ color: isCritical ? "#DC2626" : "#0F172A" }}>
                           {formatCurrency(alert.costImpact)}
                         </span>
-                        <div className="text-[9px] text-text-muted">ผลกระทบการขาดแคลน</div>
+                        <div className="text-[11px] text-text-muted">ผลกระทบการขาดแคลน</div>
                       </td>
                       <td className="px-3 py-3">
                         {material && <Sparkline data={material.sparkline} color={sev.color} />}
                       </td>
                       <td className="px-3 py-3 text-left">
-                        <div className="text-[11px] text-text-secondary leading-snug">
+                        <div className="text-[13px] text-text-secondary leading-snug">
                           {dateStr}<br/>{timeStr} น.
                         </div>
                       </td>
@@ -219,15 +219,15 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                                   e.stopPropagation();
                                   setExpandedId(prev => prev === alert.id ? null : alert.id);
                                 }}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
                               >
-                                <Sparkles size={12} /> มีแผนแล้ว {planUpdateCount > 1 ? `(อัปเดท ${planUpdateCount} ครั้ง)` : ''}
+                                <Sparkles size={14} /> มีแผนแล้ว {planUpdateCount > 1 ? `(อัปเดท ${planUpdateCount} ครั้ง)` : ''}
                                 {expandedId === alert.id ? <ChevronDown size={12} className="ml-1" /> : <ChevronRight size={12} className="ml-1" />}
                               </button>
                             );
                           }
                           return (
-                            <button type="button" className={`px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shadow-sm
+                            <button type="button" className={`px-3 py-2 rounded-lg text-[12px] font-bold cursor-pointer transition-colors shadow-sm
                               ${isCritical
                                 ? "text-white bg-critical-600 hover:bg-critical-700"
                                 : alert.severity === "warning"
@@ -240,7 +240,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                                 window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } }));
                               }}>
                               ให้ AI เข้าไปวิเคราะห์
-                              <ChevronRight size={12} className="ml-1 inline-block" />
+                              <ChevronRight size={14} className="ml-1 inline-block" />
                             </button>
                           );
                         })()}
@@ -252,8 +252,8 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       <tr className="bg-primary-50/30">
                         <td></td>
                         <td colSpan={8} className="px-3 py-2">
-                          <div className="flex items-center gap-2 text-[11px] flex-wrap">
-                            <Sparkles size={12} className="text-success-600 shrink-0" />
+                          <div className="flex items-center gap-2 text-[13px] flex-wrap">
+                            <Sparkles size={14} className="text-success-600 shrink-0" />
                             <span className="text-text-muted">คำแนะนำ AI:</span>
                             <span className="font-semibold text-text-primary">{alert.recommendation}</span>
                             <span className="text-primary-600 font-semibold cursor-pointer hover:underline ml-1"
@@ -296,7 +296,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
 
         {/* Pagination */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-          <span className="text-[12px] text-text-muted">
+          <span className="text-[13px] text-text-muted">
             แสดง {filteredAlerts.length > 0 ? (page - 1) * perPage + 1 : 0} - {Math.min(page * perPage, filteredAlerts.length)} จาก {filteredAlerts.length} รายการ
           </span>
           <div className="flex items-center gap-1">
