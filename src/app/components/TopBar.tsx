@@ -42,8 +42,8 @@ const tabConfig: Record<string, { title: string; subtitle: string }> = {
     subtitle: "AI recommendation audit trail & system timeline",
   },
   roadmap: {
-    title: "แผนงานและโครงสร้างระบบ",
-    subtitle: "Sprint Updates, Architecture & Timeline",
+    title: "AI Training & แผนงานโครงสร้างระบบ",
+    subtitle: "Backtesting, Sprint Updates, Architecture & Timeline",
   },
 };
 

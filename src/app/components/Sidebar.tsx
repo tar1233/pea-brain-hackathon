@@ -21,8 +21,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
     { id: "activity", label: "Tracking & Monitoring", icon: Clock3 },
-    { id: "backtest", label: "AI Training & Backtesting", icon: Activity },
-    { id: "roadmap", label: "Project Roadmap", icon: Map },
+    { id: "roadmap", label: "AI Training & Roadmap", icon: Map },
   ];
 
   return (

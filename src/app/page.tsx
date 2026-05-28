@@ -256,9 +256,12 @@ export default function Home() {
       case "activity":
         return <ActivityView approvedPlans={approvedPlans} />;
       case "roadmap":
-        return <ProjectRoadmap />;
-      case "backtest":
-        return <BacktestSimulator />;
+        return (
+          <div className="space-y-6">
+            <ProjectRoadmap />
+            <BacktestSimulator />
+          </div>
+        );
       case "risk":
       default:
         return <AlertsView approvedPlans={approvedPlans} />;
