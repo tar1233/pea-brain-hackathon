@@ -91,58 +91,7 @@ export default function TopBar({ activeTab }: TopBarProps) {
       <span className="text-[11px] text-[#8a94ab]">{dateStr} • {timeStr} น.</span>
 
 
-      {/* Export & Share */}
-      <div className="flex items-center gap-2">
-        <button 
-          onClick={runAutoRiskAnalysis}
-          disabled={isAnalyzingRisk}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border transition-all cursor-pointer shadow-sm relative overflow-hidden group
-            ${isAnalyzingRisk 
-              ? "bg-fuchsia-50 border-fuchsia-200 text-fuchsia-600 opacity-80" 
-              : "bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 border-transparent text-white shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40"}`}
-        >
-          {isAnalyzingRisk ? (
-            <>
-              <Loader2 size={13} className="animate-spin" />
-              <span className="text-[11px] font-bold">กำลังวิเคราะห์...</span>
-            </>
-          ) : (
-            <>
-              <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-500" />
-              <BrainCircuit size={13} className="animate-pulse" />
-              <span className="text-[11px] font-bold">Auto Risk Analysis</span>
-            </>
-          )}
-        </button>
-        <button 
-          onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
-            detail: {
-              title: "กำลังสร้างรายงาน PDF",
-              content: "📄 ระบบกำลังรวบรวมข้อมูลความพร้อมคลังพัสดุและสรุปการวิเคราะห์ความเสี่ยงเพื่อสร้างรายงาน PDF...\n\n(Demo Phase 2: เอกสารฉบับเต็มกำลังดาวน์โหลดลงบนอุปกรณ์ของคุณ)",
-              type: "info"
-            }
-          }))}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#d9dfeb] bg-white hover:bg-primary-50 text-[11px] font-semibold text-[#475569] transition-colors cursor-pointer shadow-sm hidden sm:flex"
-        >
-          <Download size={13} />
-          Export
-        </button>
-        <button 
-          onClick={() => window.dispatchEvent(new CustomEvent("show-alert", {
-            detail: {
-              title: "ส่งข้อมูลไปยัง LINE สำเร็จ",
-              content: "✅ ระบบได้ทำการส่งสรุปสถานะความเสี่ยงของหม้อแปลง 10067 และ 10066 เข้า LINE กลุ่ม 'ผู้บริหาร PEA จัดซื้อ' เรียบร้อยแล้ว เพื่อแจ้งเตือนและประกอบการตัดสินใจของบเพิ่มเติม!",
-              type: "success"
-            }
-          }))}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#06c755]/20 bg-[#06c755]/10 hover:bg-[#06c755]/20 text-[11px] font-bold text-[#05a546] transition-colors cursor-pointer shadow-sm"
-        >
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-            <path d="M22.28,10.66C22.28,6.01,17.7,2.25,12,2.25C6.3,2.25,1.72,6.01,1.72,10.66c0,4.18,3.56,7.74,8.38,8.35c0.33,0.07,0.78,0.22,0.89,0.52c0.1,0.26,0.03,0.67,0,0.92c-0.04,0.34-0.2,0.99-0.2,0.99c-0.04,0.16-0.17,0.66,0.58,0.35c0.75-0.31,4.06-2.4,5.55-4.11C20.61,15.25,22.28,13.14,22.28,10.66z"/>
-          </svg>
-          Share to LINE
-        </button>
-      </div>
+      {/* Spacer */}
 
       <div className="w-px h-5 bg-border" />
 
