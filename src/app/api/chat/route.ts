@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  BedrockAgentRuntimeClient,
-  RetrieveCommand,
-} from "@aws-sdk/client-bedrock-agent-runtime";
-import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
@@ -43,10 +39,10 @@ const credentials = {
   secretAccessKey: process.env.PEA_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || "",
 };
 
-const agentClient = new BedrockAgentRuntimeClient({
-  region: REGION,
-  credentials: credentials.accessKeyId ? credentials : undefined,
-});
+// const agentClient = new BedrockAgentRuntimeClient({
+//   region: REGION,
+//   credentials: credentials.accessKeyId ? credentials : undefined,
+// });
 
 const runtimeClient = new BedrockRuntimeClient({
   region: REGION,
@@ -321,32 +317,33 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Step 1: Retrieve from Knowledge Base (RAG) ──
-    const recentUserMessages = messages
-      .filter((m: { role: string; content: string }) => m.role === "user")
-      .slice(-2)
-      .map((m: { role: string; content: string }) => m.content)
-      .join(" ");
-    const retrievalQueryText = recentUserMessages.substring(0, 1000);
+    // const recentUserMessages = messages
+    //   .filter((m: { role: string; content: string }) => m.role === "user")
+    //   .slice(-2)
+    //   .map((m: { role: string; content: string }) => m.content)
+    //   .join(" ");
+    // const retrievalQueryText = recentUserMessages.substring(0, 1000);
 
-    const retrieveCommand = new RetrieveCommand({
-      knowledgeBaseId: KNOWLEDGE_BASE_ID,
-      retrievalQuery: { text: retrievalQueryText },
-      retrievalConfiguration: {
-        vectorSearchConfiguration: { numberOfResults: 5 },
-      },
-    });
+    // const retrieveCommand = new RetrieveCommand({
+    //   knowledgeBaseId: KNOWLEDGE_BASE_ID,
+    //   retrievalQuery: { text: retrievalQueryText },
+    //   retrievalConfiguration: {
+    //     vectorSearchConfiguration: { numberOfResults: 5 },
+    //   },
+    // });
 
-    const retrieveResponse = await agentClient.send(retrieveCommand);
-    const retrievedResults = retrieveResponse.retrievalResults || [];
+    // const retrieveResponse = await agentClient.send(retrieveCommand);
+    // const retrievedResults = retrieveResponse.retrievalResults || [];
     
-    let contextText = "";
-    if (retrievedResults.length > 0) {
-      contextText = retrievedResults
-        .map((r, index) => `[ข้อมูลอ้างอิง ${index + 1}]:\n${r.content?.text}\n`)
-        .join("\n");
-    } else {
-      contextText = "ไม่พบข้อมูลอ้างอิงในระบบ";
-    }
+    let contextText = "ไม่สามารถดึงข้อมูลอ้างอิงจาก Knowledge Base ได้เนื่องจากถูกปิดใช้งาน";
+    const retrievedResults: any[] = [];
+    // if (retrievedResults.length > 0) {
+    //   contextText = retrievedResults
+    //     .map((r, index) => `[ข้อมูลอ้างอิง ${index + 1}]:\n${r.content?.text}\n`)
+    //     .join("\n");
+    // } else {
+    //   contextText = "ไม่พบข้อมูลอ้างอิงในระบบ";
+    // }
 
     // Inject live dashboard alerts
     const liveAlerts = riskAlerts
