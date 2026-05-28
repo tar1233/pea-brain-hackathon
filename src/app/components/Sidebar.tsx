@@ -59,10 +59,10 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           />
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
-              <span className="text-white font-extrabold text-[16px] tracking-tight">PEA</span>
-              <span className="text-[#EDC878] font-extrabold text-[16px]">Brain</span>
+              <span className="text-white font-extrabold text-[20px] tracking-tight">PEA</span>
+              <span className="text-[#EDC878] font-extrabold text-[20px]">Brain</span>
             </div>
-            <div className="text-[#EDC878]/80 text-[8px] font-medium tracking-wide mt-[-1px]">
+            <div className="text-[#EDC878]/80 text-[10px] font-medium tracking-wide mt-[-1px]">
               ขับเคลื่อนการจัดซื้อพลังงานด้วย AI เพื่ออนาคตที่ยั่งยืน
             </div>
           </div>
@@ -73,10 +73,10 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       <div className="mx-3 mb-5 p-4 rounded-2xl border border-white/12 cursor-pointer transition-all hover:border-white/25 relative z-10 shadow-[0_18px_35px_rgba(46,0,66,0.22)]"
         style={{ background: "linear-gradient(135deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.05) 100%)" }}>
         <div className="flex items-center gap-2">
-          <Sparkles size={14} className="text-purple-300" />
-          <span className="text-[12px] font-bold text-white">AI Copilot</span>
+          <Sparkles size={16} className="text-purple-300" />
+          <span className="text-[15px] font-bold text-white">AI Copilot</span>
         </div>
-        <div className="text-[10px] text-white/72 mt-1">วิเคราะห์ความเสี่ยงด้วย AI</div>
+        <div className="text-[12px] text-white/72 mt-1">วิเคราะห์ความเสี่ยงด้วย AI</div>
       </div>
 
       <div className="mx-4 h-px bg-white/8 relative z-10" />
@@ -89,15 +89,15 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           const badgeValue = item.id === "risk" ? criticalAlerts.length : item.badge;
           return (
             <button key={item.id} onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-2.5 px-3 py-3 rounded-2xl text-[12px] transition-all duration-300 cursor-pointer
+              className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-2xl text-[15px] transition-all duration-300 cursor-pointer
                 ${isActive
                   ? "bg-white/20 text-white font-semibold shadow-[0_8px_30px_rgba(255,255,255,0.12)] border border-white/30 backdrop-blur-md"
                   : "text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent"
                 }`}>
-              <Icon size={15} className={isActive ? "text-[#EDC878] drop-shadow-md" : "text-white/70"} />
+              <Icon size={18} className={isActive ? "text-[#EDC878] drop-shadow-md" : "text-white/70"} />
               <span className="flex-1 text-left truncate">{item.label}</span>
               {badgeValue && (
-                <span className="min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold flex items-center justify-center bg-critical-600 text-white">
+                <span className="min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center bg-critical-600 text-white">
                   {badgeValue}
                 </span>
               )}
@@ -110,8 +110,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       <div className="px-3 pb-4 pt-2 relative z-10">
         <div className="mx-1 h-px bg-white/8 mb-2" />
         <div className="flex items-center gap-2 px-2">
-          <Settings size={13} className="text-white/70" />
-          <span className="text-[10px] text-white/72">ตั้งค่า</span>
+          <Settings size={16} className="text-white/70" />
+          <span className="text-[13px] text-white/72">ตั้งค่า</span>
         </div>
         <button
           onClick={() => {
@@ -121,9 +121,9 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               window.location.reload();
             }
           }}
-          className="mt-2 w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] text-red-300 hover:text-red-200 hover:bg-red-500/15 border border-transparent hover:border-red-400/20 transition-all cursor-pointer"
+          className="mt-2 w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[12px] text-red-300 hover:text-red-200 hover:bg-red-500/15 border border-transparent hover:border-red-400/20 transition-all cursor-pointer"
         >
-          <Trash2 size={12} />
+          <Trash2 size={14} />
           <span>เคลียร์แผนทั้งหมด (Test)</span>
         </button>
       </div>
