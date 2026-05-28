@@ -259,14 +259,14 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 flex-1 w-full">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3 py-1 text-[11px] font-bold tracking-widest text-purple-100 border border-white/10 uppercase shadow-inner">
-            <Briefcase size={14} className="text-purple-300" />
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3 py-1.5 text-[13px] font-bold tracking-widest text-purple-100 border border-white/10 uppercase shadow-inner">
+            <Briefcase size={16} className="text-purple-300" />
             {activeTF === 'ปัจจุบัน' ? "AI Executive Command Center" : `Backtest Simulation: ${activeTF}`}
           </div>
-          <h1 className="text-[24px] font-black text-white leading-tight drop-shadow-md tracking-tight">
+          <h1 className="text-[28px] font-black text-white leading-tight drop-shadow-md tracking-tight">
             ภาพรวมการทำงานของ PEA Brain (Multi-Agent Squad)
           </h1>
-          <p className="mt-2 text-[13px] text-purple-200/90 font-medium max-w-xl leading-relaxed">
+          <p className="mt-2 text-[15px] text-purple-200/90 font-medium max-w-xl leading-relaxed">
             {activeTF === 'ปัจจุบัน' 
               ? "สรุปข้อมูลการจัดการความเสี่ยงสต๊อกขาดแคลน การวางแผนจัดซื้อด้วย AI และผลประหยัดงบประมาณแบบเรียลไทม์"
               : `ประมวลผลประสิทธิภาพย้อนหลังของโมเดล AI ในช่วงเวลา ${activeTF} ที่ผ่านมา`}
@@ -278,7 +278,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
               <button
                 key={tf}
                 onClick={() => setActiveTF(tf)}
-                className={`px-4 py-1.5 rounded-lg text-[12px] font-extrabold transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-lg text-[14px] font-extrabold transition-all cursor-pointer ${
                   activeTF === tf 
                   ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30' 
                   : 'text-purple-300 hover:text-white hover:bg-white/5'
@@ -294,35 +294,35 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
           {activeTF === 'ปัจจุบัน' ? (
             <>
               <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("risk")}>
-                <div className="text-[10.5px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1">
-                  <AlertTriangle size={12} /> ความเสี่ยงที่ต้องจัดการ
+                <div className="text-[13px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1.5">
+                  <AlertTriangle size={14} /> ความเสี่ยงที่ต้องจัดการ
                 </div>
-                <div className="text-[28px] font-black text-slate-900 mt-1 leading-none tracking-tight">{criticalAlerts.length} <span className="text-[14px]">รายการ</span></div>
-                <div className="text-[10px] font-bold text-red-500 mt-2">มูลค่าความเสี่ยง {formatCurrency(criticalVaR)}</div>
+                <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{criticalAlerts.length} <span className="text-[16px]">รายการ</span></div>
+                <div className="text-[13px] font-bold text-red-500 mt-2">มูลค่าความเสี่ยง {formatCurrency(criticalVaR)}</div>
               </div>
               <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("ebidding")}>
-                <div className="text-[10.5px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1">
-                  <CheckCircle2 size={12} /> แก้ไขแล้วด้วย AI
+                <div className="text-[13px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1.5">
+                  <CheckCircle2 size={14} /> แก้ไขแล้วด้วย AI
                 </div>
-                <div className="text-[28px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[14px]">แผน</span></div>
-                <div className="text-[10px] font-bold text-emerald-600 mt-2">พร้อมดำเนินการทันที</div>
+                <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[16px]">แผน</span></div>
+                <div className="text-[13px] font-bold text-emerald-600 mt-2">พร้อมดำเนินการทันที</div>
               </div>
             </>
           ) : (
             <>
               <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none shadow-xl">
-                <div className="text-[10.5px] font-extrabold text-amber-600 uppercase flex justify-center items-center gap-1">
-                  <ShieldCheck size={12} /> ป้องกันวิกฤตสำเร็จ
+                <div className="text-[13px] font-extrabold text-amber-600 uppercase flex justify-center items-center gap-1.5">
+                  <ShieldCheck size={14} /> ป้องกันวิกฤตสำเร็จ
                 </div>
-                <div className="text-[28px] font-black text-slate-900 mt-1 leading-none tracking-tight">{tfData.kpis[2].value}</div>
-                <div className="text-[10px] font-bold text-amber-600 mt-2">อิงจากสถิติช่วง {activeTF}</div>
+                <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{tfData.kpis[2].value}</div>
+                <div className="text-[13px] font-bold text-amber-600 mt-2">อิงจากสถิติช่วง {activeTF}</div>
               </div>
               <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none shadow-xl">
-                <div className="text-[10.5px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1">
-                  <DollarSign size={12} /> งบประหยัดสะสม
+                <div className="text-[13px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1.5">
+                  <DollarSign size={14} /> งบประหยัดสะสม
                 </div>
-                <div className="text-[28px] font-black text-slate-900 mt-1 leading-none tracking-tight">{tfData.kpis[1].value}</div>
-                <div className="text-[10px] font-bold text-emerald-600 mt-2">สถิติช่วงย้อนหลัง {activeTF}</div>
+                <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{tfData.kpis[1].value}</div>
+                <div className="text-[13px] font-bold text-emerald-600 mt-2">สถิติช่วงย้อนหลัง {activeTF}</div>
               </div>
             </>
           )}
@@ -347,9 +347,9 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                   </div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">{kpi.title}</div>
-                  <div className="text-[22px] font-extrabold text-slate-800 mt-1">{kpi.value}</div>
-                  <div className="text-[11px] font-medium text-slate-500 mt-1">{kpi.trend}</div>
+                  <div className="text-[13px] font-bold text-slate-400 uppercase tracking-wide">{kpi.title}</div>
+                  <div className="text-[26px] font-extrabold text-slate-800 mt-1">{kpi.value}</div>
+                  <div className="text-[13px] font-medium text-slate-500 mt-1">{kpi.trend}</div>
                 </div>
               </div>
             ))}
