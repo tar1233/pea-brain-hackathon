@@ -131,7 +131,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('toggle-feedback'))}
-          className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold transition-all cursor-pointer ${
+          className={`feedback-ignore-click w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold transition-all cursor-pointer ${
             isFeedbackOn 
               ? "bg-amber-500 text-white shadow-md shadow-amber-500/20 border border-amber-400/30 hover:bg-amber-600" 
               : "bg-white/10 text-white hover:bg-white/20 border border-transparent hover:border-white/20"
@@ -148,7 +148,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               window.location.reload();
             }
           }}
-          className="mt-4 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold text-white bg-red-500/80 hover:bg-red-600 shadow-md shadow-red-500/20 border border-red-400/30 transition-all cursor-pointer"
+          className="feedback-ignore-click mt-4 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold text-white bg-red-500/80 hover:bg-red-600 shadow-md shadow-red-500/20 border border-red-400/30 transition-all cursor-pointer"
         >
           <Trash2 size={14} />
           <span>เคลียร์แผนทั้งหมด (Test)</span>

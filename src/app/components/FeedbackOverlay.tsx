@@ -22,8 +22,7 @@ interface SavedUser {
 export default function FeedbackOverlay() {
   const [isModeOn, setIsModeOn] = useState(false);
   const [pins, setPins] = useState<FeedbackPin[]>([]);
-  const [activeDraft, setActiveDraft] = useState<{ x: number; y: number } | null>(null);
-  
+  const [activeDraft, setActiveDraft] = useState<{ x: number; y: number; clientY: number } | null>(null);
   const [formRole, setFormRole] = useState("คณะกรรมการ (Judge)");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [formName, setFormName] = useState("");
@@ -71,8 +70,8 @@ export default function FeedbackOverlay() {
     
     const handleGlobalClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Ignore clicks on sidebar, existing pins, or the draft popup
-      if (target.closest("aside") || target.closest(".feedback-ignore-click")) {
+      // Ignore clicks on existing pins or the draft popup (and specific ignore areas like the toggle button)
+      if (target.closest(".feedback-ignore-click")) {
         return;
       }
       
@@ -80,7 +79,7 @@ export default function FeedbackOverlay() {
       e.preventDefault();
       e.stopPropagation();
       
-      setActiveDraft({ x: e.pageX, y: e.pageY });
+      setActiveDraft({ x: e.pageX, y: e.pageY, clientY: e.clientY });
       setFormText("");
     };
 
@@ -150,14 +149,14 @@ export default function FeedbackOverlay() {
     <>
       {/* Mode Indicator Overlay Header */}
       {isModeOn && (
-        <div className="fixed top-0 left-0 right-0 h-1.5 bg-amber-500 z-[9998] animate-pulse pointer-events-none" />
+        <div className="fixed top-0 left-0 right-0 h-1.5 bg-amber-500 z-[99998] animate-pulse pointer-events-none" />
       )}
 
       {/* Render existing pins */}
       {isModeOn && pins.map((pin) => (
         <div 
           key={pin.id}
-          className="absolute z-[9998] feedback-ignore-click"
+          className="absolute z-[99998] feedback-ignore-click"
           style={{ left: pin.x, top: pin.y, transform: "translate(-50%, -100%)" }}
           onMouseEnter={() => setHoveredPin(pin.id)}
           onMouseLeave={() => setHoveredPin(null)}
@@ -203,17 +202,26 @@ export default function FeedbackOverlay() {
       {/* Render Draft Popup */}
       {isModeOn && activeDraft && (
         <div 
-          className="absolute z-[9999] feedback-ignore-click bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 w-72 animate-in zoom-in-95 duration-150"
+          className="absolute z-[99999] feedback-ignore-click bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 w-72 animate-in zoom-in-95 duration-150"
           style={{ 
             left: activeDraft.x, 
             top: activeDraft.y,
-            transform: "translate(-50%, -100%)",
-            marginTop: "-16px" // Offset slightly above the clicked point
+            transform: (activeDraft.y - window.scrollY) < 450 ? "translate(-50%, 16px)" : "translate(-50%, -100%)",
+            marginTop: (activeDraft.y - window.scrollY) < 450 ? "0" : "-16px"
           }}
         >
           {/* Triangle pointer */}
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white z-10" />
-          <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-t-amber-200 z-0" />
+          {(activeDraft.y - window.scrollY) < 450 ? (
+            <>
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-b-white z-10" />
+              <div className="absolute -top-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-b-amber-200 z-0" />
+            </>
+          ) : (
+            <>
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white z-10" />
+              <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-t-amber-200 z-0" />
+            </>
+          )}
 
           <div className="flex justify-between items-center mb-3 relative z-20">
             <h3 className="text-[13px] font-bold text-slate-800 flex items-center gap-1.5">
@@ -239,7 +247,7 @@ export default function FeedbackOverlay() {
               </div>
               
               {isRoleDropdownOpen && (
-                <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-[10001] animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-[100001] animate-in fade-in slide-in-from-top-2 duration-150">
                   {rolesList.map(r => (
                     <div 
                       key={r}
