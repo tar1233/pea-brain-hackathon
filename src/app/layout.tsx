@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DataProvider } from "./context/DataContext";
+import FeedbackOverlay from "./components/FeedbackOverlay";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,6 +8,12 @@ export const metadata: Metadata = {
   description:
     "ระบบ AI ช่วยบริหารจัดการ Supply Chain อัจฉริยะสำหรับ กฟภ. — Risk Alert Dashboard",
   keywords: ["PEA", "procurement", "AI", "supply chain", "risk alert", "กฟภ"],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "PEA Brain",
+  },
 };
 
 export const viewport: Viewport = {
@@ -32,6 +39,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <DataProvider>{children}</DataProvider>
+        <FeedbackOverlay />
       </body>
     </html>
   );

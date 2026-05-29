@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard, TrendingUp, AlertTriangle,
   ShoppingCart, Settings, Sparkles,
   Package, BarChart3, Shield, Clock3, Landmark, FileText,
-  Brain, PackageSearch, ShieldAlert, Map, ShieldCheck, Activity, Trash2
+  Brain, PackageSearch, ShieldAlert, Map, ShieldCheck, Activity, Trash2,
+  MessageSquare
 } from "lucide-react";
 import Image from "next/image";
 import { useData } from "../context/DataContext";
@@ -16,16 +18,27 @@ interface SidebarProps {
 
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { criticalAlerts } = useData();
+  const [isFeedbackOn, setIsFeedbackOn] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => setIsFeedbackOn(e.detail.isOn);
+    window.addEventListener('feedback-state-change', handler);
+    return () => window.removeEventListener('feedback-state-change', handler);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("pea_active_tab", activeTab);
+  }, [activeTab]);
 
   const menuItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "risk", label: "Risk Management", icon: ShieldAlert, badge: criticalAlerts.length, bgBadge: "bg-red-500 text-white" },
     { id: "activity", label: "Tracking & Monitoring", icon: Clock3 },
-    { id: "roadmap", label: "AI Training & Roadmap", icon: Map },
+    { id: "roadmap", label: "AI Training & Roadmap", icon: Map, badgeLabel: "DEV" },
   ];
 
   return (
-    <aside className="w-[260px] shrink-0 sticky top-0 h-screen flex flex-col relative overflow-hidden border-r border-white/10 shadow-[12px_0_40px_rgba(83,0,93,0.15)]"
+    <aside className="w-[260px] shrink-0 sticky top-0 h-screen flex flex-col relative overflow-hidden border-r border-white/10 shadow-[12px_0_40px_rgba(83,0,93,0.15)] z-[10000]"
       style={{ background: "linear-gradient(180deg, #8c0aa8 0%, #6d108d 28%, #5b1f6b 58%, #7d365c 100%)" }}>
 
       {/* ── Power Grid Background Image ── */}
@@ -94,7 +107,14 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                   : "text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent"
                 }`}>
               <Icon size={18} className={isActive ? "text-[#EDC878] drop-shadow-md" : "text-white/70"} />
-              <span className="flex-1 text-left truncate">{item.label}</span>
+              <span className="flex-1 text-left flex items-center gap-2 truncate">
+                <span className="truncate">{item.label}</span>
+                {item.badgeLabel && (
+                  <span className="text-[9px] font-bold tracking-wider bg-white/20 text-white px-1.5 py-0.5 rounded uppercase">
+                    {item.badgeLabel}
+                  </span>
+                )}
+              </span>
               {badgeValue && (
                 <span className="min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center bg-critical-600 text-white">
                   {badgeValue}
@@ -106,12 +126,20 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 pb-4 pt-2 relative z-10">
-        <div className="mx-1 h-px bg-white/8 mb-2" />
-        <div className="flex items-center gap-2 px-2">
-          <Settings size={16} className="text-white/70" />
-          <span className="text-[13px] text-white/72">ตั้งค่า</span>
-        </div>
+      <div className="px-3 pb-10 pt-2 relative z-10 flex flex-col gap-2">
+        <div className="mx-1 h-px bg-white/10 mb-2" />
+        
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('toggle-feedback'))}
+          className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold transition-all cursor-pointer ${
+            isFeedbackOn 
+              ? "bg-amber-500 text-white shadow-md shadow-amber-500/20 border border-amber-400/30 hover:bg-amber-600" 
+              : "bg-white/10 text-white hover:bg-white/20 border border-transparent hover:border-white/20"
+          }`}
+        >
+          <MessageSquare size={14} />
+          <span>{isFeedbackOn ? "ปิดโหมดเสนอแนะ" : "โหมดเสนอแนะ"}</span>
+        </button>
         <button
           onClick={() => {
             if (confirm('ล้างแผนจัดซื้อทั้งหมด? (เพื่อทดสอบใหม่)')) {
@@ -120,7 +148,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               window.location.reload();
             }
           }}
-          className="mt-2 w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[12px] text-red-300 hover:text-red-200 hover:bg-red-500/15 border border-transparent hover:border-red-400/20 transition-all cursor-pointer"
+          className="mt-4 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold text-white bg-red-500/80 hover:bg-red-600 shadow-md shadow-red-500/20 border border-red-400/30 transition-all cursor-pointer"
         >
           <Trash2 size={14} />
           <span>เคลียร์แผนทั้งหมด (Test)</span>

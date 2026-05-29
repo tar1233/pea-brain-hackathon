@@ -132,7 +132,7 @@ ${strategicActionPlan}
 - ห้ามตอบกว้างๆ ต้องใช้ตัวเลข ${exactShortageQty} เครื่องเป็นเป้าหมายหลักในการแก้ปัญหา
 
 ส่งกลับมาเป็น JSON format ตามโครงสร้างนี้เท่านั้น ห้ามใช้ข้อความซ้ำกับตัวอย่าง ให้วิเคราะห์และสร้างข้อความขึ้นมาใหม่ทั้งหมด:
-{"agents":{"demand":"<วิเคราะห์ Demand>","procurement":"<วิเคราะห์ Supplier>","warehouse":"<วิเคราะห์สต็อก>"},"impactAnalysis":"<สรุปผลกระทบ>","speedComparison":"<เปรียบเทียบเวลา>","financialImpact":"<วิเคราะห์ต้นทุน>","executiveSummary":"<สรุปภาพรวม>","option1":{"title":"ทางเลือกที่ 1: <ชื่อ>","desc":"<รายละเอียดวิธีการ จำนวน ราคา>","risk":"<ความเสี่ยงของทางเลือกนี้>","outcome":"<ผลลัพธ์ที่คาดหวัง>","steps":["<ขั้นตอน 1>","<ขั้นตอน 2>","<ขั้นตอน 3>"]},"option2":{"title":"ทางเลือกที่ 2: <ชื่อ>","desc":"<รายละเอียดวิธีการ จำนวน ราคา>","risk":"<ความเสี่ยงของทางเลือกนี้>","outcome":"<ผลลัพธ์ที่คาดหวัง>","steps":["<ขั้นตอน 1>","<ขั้นตอน 2>","<ขั้นตอน 3>"]},"needToKnow":["<ข้อมูล 1>","<ข้อมูล 2>"],"updatedAction":"Action plan ใหม่"}`;
+{"agents":{"demand":"<วิเคราะห์ Demand>","procurement":"<วิเคราะห์ Supplier>","warehouse":"<วิเคราะห์สต็อก>"},"impactAnalysis":"<สรุปผลกระทบ>","speedComparison":"<เปรียบเทียบเวลา>","financialImpact":"<วิเคราะห์ต้นทุน>","executiveSummary":"<สรุปภาพรวม>","option1":{"title":"ทางเลือกที่ 1: <ชื่อ>","reason":"<เหตุผลที่ AI แนะนำทางเลือกนี้>","desc":"<รายละเอียดวิธีการ จำนวน ราคา>","risk":"<ความเสี่ยงของทางเลือกนี้>","outcome":"<ผลลัพธ์ที่คาดหวัง>","steps":["<ขั้นตอน 1>","<ขั้นตอน 2>","<ขั้นตอน 3>"]},"option2":{"title":"ทางเลือกที่ 2: <ชื่อ>","reason":"<เหตุผลที่ AI เสนอทางเลือกสำรองนี้>","desc":"<รายละเอียดวิธีการ จำนวน ราคา>","risk":"<ความเสี่ยงของทางเลือกนี้>","outcome":"<ผลลัพธ์ที่คาดหวัง>","steps":["<ขั้นตอน 1>","<ขั้นตอน 2>","<ขั้นตอน 3>"]},"needToKnow":["<ข้อมูล 1>","<ข้อมูล 2>"],"updatedAction":"Action plan ใหม่"}`;
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -173,7 +173,7 @@ ${strategicActionPlan}
     <div className="space-y-6 relative">
       {/* Success Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-fade-in-up transition-all duration-300">
+        <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-50 animate-fade-in-up transition-all duration-300">
           <div className="bg-emerald-600 text-white px-5 py-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(5,150,105,0.5)] border border-emerald-500/50 flex items-start gap-3">
             <CheckCircle2 className="shrink-0 mt-0.5 text-emerald-100" size={20} />
             <div>
@@ -185,16 +185,16 @@ ${strategicActionPlan}
       )}
 
       {/* Header */}
-      <section className="rounded-[32px] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] border border-slate-700/50 p-8 shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] relative overflow-hidden">
+      <section className="rounded-2xl md:rounded-[32px] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] border border-slate-700/50 p-4 md:p-8 shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3.5 py-1.5 text-[13px] font-bold uppercase tracking-[0.16em] text-emerald-100 shadow-inner">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3 py-1 md:px-3.5 md:py-1.5 text-[11px] md:text-[13px] font-bold uppercase tracking-[0.16em] text-emerald-100 shadow-inner">
             <Brain size={14} className="text-emerald-300" />
             Procurement Planning
           </div>
-          <h1 className="mt-4 text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนการจัดซื้อ (Procurement Planning)</h1>
-          <p className="mt-3 text-[13px] leading-relaxed text-slate-300/90 font-medium">
+          <h1 className="mt-3 md:mt-4 text-[18px] md:text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนการจัดซื้อ (Procurement Planning)</h1>
+          <p className="mt-2 md:mt-3 text-[11px] md:text-[13px] leading-relaxed text-slate-300/90 font-medium">
             ติดตามแผนจัดซื้อสินค้าแต่ละตัว • AI เฝ้าระวังความเสี่ยงอัตโนมัติ • วิเคราะห์แผนรับมือทันทีเมื่อเกิดปัญหา
           </p>
         </div>
@@ -218,50 +218,70 @@ ${strategicActionPlan}
               {/* Material Row — always visible */}
               <button
                 onClick={() => setExpandedMaterial(isExpanded ? null : mat.id)}
-                className="w-full px-6 py-4 flex items-center gap-5 text-left cursor-pointer hover:bg-slate-50 transition"
+                className="w-full px-4 py-3 md:px-6 md:py-4 flex flex-col md:flex-row md:items-center gap-2 md:gap-5 text-left cursor-pointer hover:bg-slate-50 transition"
               >
-                {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                  mat.riskLevel === 'critical' ? 'bg-red-100 text-red-600' : 
-                  mat.riskLevel === 'warning' ? 'bg-amber-100 text-amber-600' : 
-                  'bg-emerald-100 text-emerald-600'
-                }`}>
-                  <Package size={22} />
-                </div>
+                {/* Top row on mobile: Icon + Name + SAP + Arrow */}
+                <div className="flex items-center gap-3 w-full md:contents">
+                  {/* Icon */}
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                    mat.riskLevel === 'critical' ? 'bg-red-100 text-red-600' : 
+                    mat.riskLevel === 'warning' ? 'bg-amber-100 text-amber-600' : 
+                    'bg-emerald-100 text-emerald-600'
+                  }`}>
+                    <Package size={20} />
+                  </div>
 
-                {/* Material Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-[14px] font-bold text-slate-900 truncate">{mat.name}</h3>
-                    <span className="text-[13px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0">{mat.sapCode}</span>
-                    {plan && (
-                      <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[13px] font-bold shrink-0 flex items-center gap-1">
-                        <CheckCircle2 size={13} /> มีแผนแล้ว
-                      </span>
+                  {/* Material Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-[14px] md:text-[16px] font-bold text-slate-900 truncate">{mat.name}</h3>
+                      <span className="text-[12px] md:text-[14px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0">{mat.sapCode}</span>
+                      {plan && (
+                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[11px] md:text-[14px] font-bold shrink-0 flex items-center gap-1">
+                          <CheckCircle2 size={12} /> มีแผนแล้ว
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mobile: Arrow + Risk Badge */}
+                  <div className="flex items-center gap-2 md:hidden">
+                    {alert && (
+                      <div className={`shrink-0 px-2 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 ${
+                        alert.severity === 'critical' ? 'bg-red-50 text-red-700 border border-red-100' : 
+                        'bg-amber-50 text-amber-700 border border-amber-100'
+                      }`}>
+                        <AlertTriangle size={12} />
+                        {alert.severity === 'critical' ? 'วิกฤต' : 'เตือน'}
+                      </div>
                     )}
-                  </div>
-                  <div className="flex items-center gap-3 mt-1 text-[13px] text-slate-500">
-                    <span>สต็อก: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{mat.currentStock.toLocaleString()} {mat.unit}</strong></span>
-                    <span>•</span>
-                    <span>ใช้ได้อีก <strong className={daysOfStock < 30 ? 'text-red-600' : 'text-slate-700'}>{daysOfStock} วัน</strong></span>
-                    <span>•</span>
-                    <span>Safety Stock: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{stockPercent}%</strong></span>
+                    {isExpanded ? <ChevronDown size={16} className="text-slate-400 shrink-0" /> : <ChevronRight size={16} className="text-slate-400 shrink-0" />}
                   </div>
                 </div>
 
+                {/* Stats row — always visible */}
+                <div className="flex items-center gap-2 md:gap-3 text-[12px] md:text-[14px] text-slate-500 flex-wrap pl-[52px] md:pl-0 -mt-1 md:mt-0">
+                  <span>สต็อก: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{mat.currentStock.toLocaleString()} {mat.unit}</strong></span>
+                  <span className="text-slate-300">•</span>
+                  <span>ใช้ได้อีก <strong className={daysOfStock < 30 ? 'text-red-600' : 'text-slate-700'}>{daysOfStock} วัน</strong></span>
+                  <span className="text-slate-300">•</span>
+                  <span>Safety Stock: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{stockPercent}%</strong></span>
+                </div>
+
+                {/* Desktop-only elements */}
                 {/* Risk Badge */}
                 {alert && (
-                  <div className={`shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-bold flex items-center gap-1 ${
+                  <div className={`hidden md:flex shrink-0 px-3 py-1.5 rounded-lg text-[14px] font-bold items-center gap-1 ${
                     alert.severity === 'critical' ? 'bg-red-50 text-red-700 border border-red-100' : 
                     'bg-amber-50 text-amber-700 border border-amber-100'
                   }`}>
-                    <AlertTriangle size={13} />
+                    <AlertTriangle size={14} />
                     {alert.severity === 'critical' ? 'วิกฤต' : 'เตือน'}
                   </div>
                 )}
 
                 {/* Procurement Progress Mini */}
-                <div className="shrink-0 flex items-center gap-1">
+                <div className="shrink-0 hidden md:flex items-center gap-1">
                   {steps.map(s => (
                     <div key={s.id} className={`w-2.5 h-2.5 rounded-full ${
                       s.status === 'completed' ? 'bg-emerald-500' : 
@@ -271,13 +291,15 @@ ${strategicActionPlan}
                   ))}
                 </div>
 
-                {/* Expand Arrow */}
-                {isExpanded ? <ChevronDown size={18} className="text-slate-400 shrink-0" /> : <ChevronRight size={18} className="text-slate-400 shrink-0" />}
+                {/* Expand Arrow - Desktop */}
+                <div className="hidden md:block">
+                  {isExpanded ? <ChevronDown size={18} className="text-slate-400 shrink-0" /> : <ChevronRight size={18} className="text-slate-400 shrink-0" />}
+                </div>
               </button>
 
               {/* Expanded Detail */}
               {isExpanded && (
-                <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-5 space-y-5">
+                <div className="border-t border-slate-100 bg-slate-50/50 px-3 py-3 md:px-6 md:py-5 space-y-4 md:space-y-5">
                   {/* Risk Alert + AI Auto Monitoring */}
                   {alert && !plan && (
                     <div className={`rounded-xl p-4 border ${
@@ -317,48 +339,56 @@ ${strategicActionPlan}
                       {/* Approved Plan Summary & Tracking */}
                       {plan && (
                         <div className="space-y-4">
-                          <div className="space-y-3">
-                            {/* Original Plan */}
-                            <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
-                              <div className="flex items-center gap-2 mb-2">
-                                <FileText className="text-slate-500" size={16} />
-                                <span className="text-[12px] font-bold text-slate-700">
-                                  {allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.planName || `แผนจัดซื้อหลัก: รอส่งมอบ ${mat.name}`}
-                                </span>
-                                {allPlansForMat.length > 0 && <span className="bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded text-[12px] uppercase tracking-wider font-bold">แผนหลักเดิม</span>}
-                              </div>
-                              <p className="text-[13px] text-slate-600 leading-relaxed mb-2">
-                                {allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.action || 'รอการส่งมอบตามกำหนดการเดิมจาก Supplier หลัก'}
-                              </p>
-                              <div className="flex gap-3 text-[13px]">
-                                <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-500 border border-slate-100">📦 {(allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.qty || plan?.qty || Math.round(mat.avgMonthlyDemand / 30) * mat.safetyStock || 0).toLocaleString()} หน่วย</span>
-                                <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-slate-500 border border-slate-100">💰 {allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.financial || 'เป็นไปตามงบประมาณเดิมที่ตั้งไว้'}</span>
+                          <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-4">
+                            <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <FileText size={16} className="text-slate-600" />
+                                <h4 className="text-[14px] font-bold text-slate-800">สรุปแผนดำเนินการ (Approved Plan Summary)</h4>
                               </div>
                             </div>
-
-                            {/* Mitigation Plan (Latest) */}
-                            {allPlansForMat.length > 0 && plan.planName?.startsWith('[แผนใหม่]') && (
-                              <div className="rounded-xl bg-emerald-50 border border-emerald-200 border-l-4 border-l-emerald-500 p-4 shadow-sm">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <CheckCircle2 className="text-emerald-600" size={16} />
-                                  <span className="text-[12px] font-bold text-emerald-800">{plan.planName}</span>
-                                  <span className="bg-emerald-600 text-white px-1.5 py-0.5 rounded text-[12px] uppercase tracking-wider font-bold shadow-sm">แผนรับมือฉุกเฉินที่ทำงานอยู่</span>
-                                </div>
-                                <p className="text-[13px] text-emerald-700 leading-relaxed mb-2">{plan.action}</p>
-                                <div className="flex gap-3 text-[13px]">
-                                  <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-emerald-700 border border-emerald-100">📦 {plan.qty.toLocaleString()} หน่วย</span>
-                                  <span className="bg-white/80 px-2 py-1 rounded-md font-bold text-emerald-700 border border-emerald-100">💰 {plan.financial}</span>
-                                </div>
-                              </div>
-                            )}
+                            <div className="overflow-x-auto"><table className="w-full text-left text-[13px] border-collapse min-w-[700px]">
+                              <tbody className="divide-y divide-slate-100">
+                                {/* Original Plan Row */}
+                                <tr className="hover:bg-slate-50/50">
+                                  <td className="px-4 py-4 font-bold text-slate-700 w-[20%] align-top bg-slate-50/30 whitespace-nowrap">
+                                    แผนหลักเดิม
+                                  </td>
+                                  <td className="px-4 py-4 text-slate-700 align-top border-l border-slate-200">
+                                    <div className="font-bold mb-1 text-[14px]">{allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.planName || `รอส่งมอบ ${mat.name}`}</div>
+                                    <div className="text-slate-600 mb-2.5 leading-relaxed">{allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.action || 'รอการส่งมอบตามกำหนดการเดิมจาก Supplier หลัก'}</div>
+                                    <div className="flex flex-wrap gap-2 text-[12px]">
+                                      <span className="bg-slate-100 px-2.5 py-1 rounded-md font-medium text-slate-700 border border-slate-200/60">📦 {(allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.qty || plan?.qty || Math.round(mat.avgMonthlyDemand / 30) * mat.safetyStock || 0).toLocaleString()} หน่วย</span>
+                                      <span className="bg-slate-100 px-2.5 py-1 rounded-md font-medium text-slate-700 border border-slate-200/60">💰 {allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.financial || 'เป็นไปตามงบประมาณเดิม'}</span>
+                                    </div>
+                                  </td>
+                                </tr>
+                                
+                                {/* Mitigation Plan Row (if exists) */}
+                                {allPlansForMat.length > 0 && plan.planName?.startsWith('[แผนใหม่]') && (
+                                  <tr className="hover:bg-emerald-50/30 bg-emerald-50/10">
+                                    <td className="px-4 py-4 font-bold text-emerald-800 w-[20%] align-top bg-emerald-50/50 border-t border-emerald-100 whitespace-nowrap">
+                                      <div className="flex items-center gap-1.5"><CheckCircle2 size={15} className="text-emerald-600"/> แผนรับมือฉุกเฉิน</div>
+                                    </td>
+                                    <td className="px-4 py-4 text-emerald-900 align-top border-l border-emerald-100 border-t">
+                                      <div className="font-bold mb-1 text-[14px]">{plan.planName}</div>
+                                      <div className="text-emerald-800 mb-2.5 leading-relaxed">{plan.action}</div>
+                                      <div className="flex flex-wrap gap-2 text-[12px]">
+                                        <span className="bg-emerald-100/80 px-2.5 py-1 rounded-md font-medium text-emerald-800 border border-emerald-200/60">📦 {plan.qty.toLocaleString()} หน่วย</span>
+                                        <span className="bg-emerald-100/80 px-2.5 py-1 rounded-md font-medium text-emerald-800 border border-emerald-200/60">💰 {plan.financial}</span>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table></div>
                           </div>
                       {!(allPlansForMat.length > 0 && plan?.planName?.startsWith('[แผนใหม่]')) && (
                         <div className="rounded-xl p-4 border bg-blue-50 border-blue-200">
                         <div className="flex items-start gap-3">
                           <Clock className="text-blue-500" size={20} />
                           <div className="flex-1">
-                            <div className="text-[12px] font-bold text-slate-800 mb-0.5">🚚 AI เฝ้าระวังการจัดส่ง (Tracking)</div>
-                            <div className="text-[13px] text-slate-600 mb-3">พบความเสี่ยง: ผู้ผลิตหลักแจ้งเตือนปัญหา Supply Chain อาจทำให้ส่งมอบล่าช้า 15 วัน เสี่ยงกระทบสต็อกที่จะหมดในอีก {daysOfStock} วัน</div>
+                            <div className="text-[14px] font-bold text-slate-800 mb-0.5">🚚 AI เฝ้าระวังการจัดส่ง (Tracking)</div>
+                            <div className="text-[14px] text-slate-600 mb-3">พบความเสี่ยง: ผู้ผลิตหลักแจ้งเตือนปัญหา Supply Chain อาจทำให้ส่งมอบล่าช้า 15 วัน เสี่ยงกระทบสต็อกที่จะหมดในอีก {daysOfStock} วัน</div>
 
                             {!trackingMitigations[mat.id] ? (
                               <button
@@ -381,44 +411,49 @@ ${strategicActionPlan}
                                           <Brain size={14} className="text-blue-600" /> AI แผนรับมือการจัดส่งล่าช้า
                                         </div>
                                         
-                                        {/* Multi-Agent Analysis Boxes */}
-                                        {trackingMitigations[mat.id].parsedPlan.agents && (
-                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                                            <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
-                                              <div className="text-[13px] font-bold text-purple-700 mb-1 flex items-center gap-1">🎯 Demand Planner AI</div>
-                                              <div className="text-[13px] text-slate-700 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.agents.demand)}</div>
-                                            </div>
-                                            <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                                              <div className="text-[13px] font-bold text-blue-700 mb-1 flex items-center gap-1">💼 Procurement AI</div>
-                                              <div className="text-[13px] text-slate-700 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.agents.procurement)}</div>
-                                            </div>
-                                            <div className="bg-amber-50 rounded-lg p-3 border border-amber-100">
-                                              <div className="text-[13px] font-bold text-amber-700 mb-1 flex items-center gap-1">📦 Warehouse AI</div>
-                                              <div className="text-[13px] text-slate-700 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.agents.warehouse)}</div>
-                                            </div>
+                                        {/* Multi-Agent & Deep Analysis Summary Table */}
+                                        <div className="rounded-xl border border-slate-200 bg-white mb-4 overflow-hidden">
+                                          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+                                            <h4 className="text-[14px] font-bold text-slate-800 flex items-center gap-2"><Brain size={16} className="text-slate-600"/> สรุปข้อมูลวิเคราะห์เชิงลึก (Deep Analysis)</h4>
                                           </div>
-                                        )}
-
-                                        {/* Deep Analysis Metrics */}
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                                          {trackingMitigations[mat.id].parsedPlan.impactAnalysis && (
-                                            <div className="bg-red-50 rounded-lg p-3 border border-red-100">
-                                              <div className="text-[13px] font-bold text-red-700 mb-1 flex items-center gap-1">⚠️ Impact Analysis</div>
-                                              <div className="text-[13px] text-slate-700 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.impactAnalysis)}</div>
-                                            </div>
-                                          )}
-                                          {trackingMitigations[mat.id].parsedPlan.speedComparison && (
-                                            <div className="bg-sky-50 rounded-lg p-3 border border-sky-100">
-                                              <div className="text-[13px] font-bold text-sky-700 mb-1 flex items-center gap-1">⏱️ Speed Comparison</div>
-                                              <div className="text-[13px] text-slate-700 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.speedComparison)}</div>
-                                            </div>
-                                          )}
-                                          {trackingMitigations[mat.id].parsedPlan.financialImpact && (
-                                            <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
-                                              <div className="text-[13px] font-bold text-emerald-700 mb-1 flex items-center gap-1">💰 Financial Impact</div>
-                                              <div className="text-[13px] text-slate-700 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.financialImpact)}</div>
-                                            </div>
-                                          )}
+                                          <div className="overflow-x-auto"><table className="w-full text-left text-[13px] min-w-[600px]">
+                                            <tbody className="divide-y divide-slate-100">
+                                              {trackingMitigations[mat.id].parsedPlan.agents && (
+                                                <>
+                                                  <tr className="hover:bg-slate-50/50">
+                                                    <td className="px-4 py-2.5 font-bold text-slate-700 w-1/4 align-top whitespace-nowrap">🎯 Demand Planner AI</td>
+                                                    <td className="px-4 py-2.5 text-slate-600">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.agents.demand)}</td>
+                                                  </tr>
+                                                  <tr className="hover:bg-slate-50/50">
+                                                    <td className="px-4 py-2.5 font-bold text-slate-700 w-1/4 align-top whitespace-nowrap">💼 Procurement AI</td>
+                                                    <td className="px-4 py-2.5 text-slate-600">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.agents.procurement)}</td>
+                                                  </tr>
+                                                  <tr className="hover:bg-slate-50/50">
+                                                    <td className="px-4 py-2.5 font-bold text-slate-700 w-1/4 align-top whitespace-nowrap">📦 Warehouse AI</td>
+                                                    <td className="px-4 py-2.5 text-slate-600">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.agents.warehouse)}</td>
+                                                  </tr>
+                                                </>
+                                              )}
+                                              {trackingMitigations[mat.id].parsedPlan.impactAnalysis && (
+                                                <tr className="hover:bg-slate-50/50 bg-red-50/30">
+                                                  <td className="px-4 py-2.5 font-bold text-red-700 w-1/4 align-top whitespace-nowrap">⚠️ Impact Analysis</td>
+                                                  <td className="px-4 py-2.5 text-red-800">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.impactAnalysis)}</td>
+                                                </tr>
+                                              )}
+                                              {trackingMitigations[mat.id].parsedPlan.speedComparison && (
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-2.5 font-bold text-slate-700 w-1/4 align-top whitespace-nowrap">⏱️ Speed Comparison</td>
+                                                  <td className="px-4 py-2.5 text-slate-600">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.speedComparison)}</td>
+                                                </tr>
+                                              )}
+                                              {trackingMitigations[mat.id].parsedPlan.financialImpact && (
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-2.5 font-bold text-slate-700 w-1/4 align-top whitespace-nowrap">💰 Financial Impact</td>
+                                                  <td className="px-4 py-2.5 text-slate-600">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.financialImpact)}</td>
+                                                </tr>
+                                              )}
+                                            </tbody>
+                                          </table></div>
                                         </div>
 
                                         {/* Executive Summary */}
@@ -427,117 +462,129 @@ ${strategicActionPlan}
                                           <div className="text-[12px] text-slate-800 font-medium leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.executiveSummary)}</div>
                                         </div>
 
-                                        {/* 2 Best Options — Full Detail Cards */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                          {/* Option 1 */}
-                                          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200 space-y-3">
-                                            <div className="text-[12px] font-bold text-emerald-800 flex items-center gap-1.5"><Target size={13} /> {trackingMitigations[mat.id].parsedPlan.option1?.title || 'ทางเลือกที่ 1'}</div>
-                                            <div className="text-[11px] text-slate-700 leading-relaxed bg-white rounded-lg p-2.5 border border-emerald-100">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option1?.desc)}</div>
-                                            {trackingMitigations[mat.id].parsedPlan.option1?.risk && (
-                                              <div className="flex items-start gap-1.5 bg-red-50 rounded-lg p-2.5 border border-red-100">
-                                                <AlertTriangle size={12} className="text-red-500 shrink-0 mt-0.5" />
-                                                <div><div className="text-[13px] font-bold text-red-700 mb-0.5">ความเสี่ยง</div><div className="text-[13px] text-red-800 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option1.risk)}</div></div>
-                                              </div>
-                                            )}
-                                            {trackingMitigations[mat.id].parsedPlan.option1?.outcome && (
-                                              <div className="flex items-start gap-1.5 bg-emerald-100/60 rounded-lg p-2.5 border border-emerald-200">
-                                                <CheckCircle2 size={12} className="text-emerald-600 shrink-0 mt-0.5" />
-                                                <div><div className="text-[13px] font-bold text-emerald-700 mb-0.5">ผลลัพธ์ที่คาดหวัง</div><div className="text-[13px] text-emerald-800 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option1.outcome)}</div></div>
-                                              </div>
-                                            )}
-                                            {trackingMitigations[mat.id].parsedPlan.option1?.steps && (
-                                              <div className="bg-white rounded-lg p-2.5 border border-emerald-100">
-                                                <div className="text-[13px] font-bold text-emerald-700 mb-1.5">ขั้นตอนดำเนินการ</div>
-                                                <div className="space-y-1">
-                                                  {trackingMitigations[mat.id].parsedPlan.option1.steps.map((s: string, i: number) => (
-                                                    <div key={i} className="flex items-start gap-2 text-[13px] text-slate-700"><span className="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-[11px] font-bold">{i+1}</span><span className="leading-relaxed">{highlightNumbers(s)}</span></div>
-                                                  ))}
-                                                </div>
-                                              </div>
-                                            )}
-                                            <button
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                const selectedOption = trackingMitigations[mat.id].parsedPlan.option1;
-                                                setTrackingMitigations(prev => ({
-                                                  ...prev,
-                                                  [mat.id]: { ...prev[mat.id], selectedOptionId: 1 }
-                                                }));
-                                                window.dispatchEvent(new CustomEvent("approve-plan", {
-                                                  detail: {
-                                                    ...plan,
-                                                    action: `[ทางเลือกที่ 1] ${selectedOption?.title || ''}: ${selectedOption?.desc || ''}`,
-                                                    mitigation: `ความเสี่ยง: ${selectedOption?.risk || '-'} | ผลลัพธ์: ${selectedOption?.outcome || '-'}`,
-                                                    supplyForecast: `[อัพเดทล่าช้า 15 วัน] ${plan.supplyForecast || ''}`,
-                                                    planName: `[แผนใหม่] ทางเลือกที่ 1: ${selectedOption?.title || 'อัปเดตแผนรับมือ'}`
-                                                  }
-                                                }));
-                                                showToast('อัปเดตแผนรับมือสำเร็จ', `เลือกทางเลือกที่ 1: ${selectedOption?.title} เรียบร้อยแล้ว ระบบได้จัดเก็บข้อมูลลงประวัติ`);
-                                              }}
-                                              className={`w-full mt-3 inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-[13px] font-bold text-white cursor-pointer transition shadow-sm ${
-                                                trackingMitigations[mat.id].selectedOptionId === 1 
-                                                  ? 'bg-emerald-600' 
-                                                  : 'bg-emerald-700 hover:bg-emerald-800'
-                                              }`}
-                                            >
-                                              <CheckCircle2 size={12} /> 
-                                              {trackingMitigations[mat.id].selectedOptionId === 1 ? '✅ เลือกแผนนี้แล้ว' : 'เลือกแผนนี้'}
-                                            </button>
+                                        {/* Emergency Decision Matrix Table */}
+                                        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm mb-4">
+                                          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2">
+                                            <Target size={16} className="text-slate-600" />
+                                            <h4 className="text-[14px] font-bold text-slate-800">ตารางเปรียบเทียบแผนฉุกเฉิน (Emergency Decision Matrix)</h4>
                                           </div>
-                                          {/* Option 2 */}
-                                          <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 space-y-3">
-                                            <div className="text-[12px] font-bold text-blue-800 flex items-center gap-1.5"><Target size={13} /> {trackingMitigations[mat.id].parsedPlan.option2?.title || 'ทางเลือกที่ 2'}</div>
-                                            <div className="text-[11px] text-slate-700 leading-relaxed bg-white rounded-lg p-2.5 border border-blue-100">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option2?.desc)}</div>
-                                            {trackingMitigations[mat.id].parsedPlan.option2?.risk && (
-                                              <div className="flex items-start gap-1.5 bg-red-50 rounded-lg p-2.5 border border-red-100">
-                                                <AlertTriangle size={12} className="text-red-500 shrink-0 mt-0.5" />
-                                                <div><div className="text-[13px] font-bold text-red-700 mb-0.5">ความเสี่ยง</div><div className="text-[13px] text-red-800 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option2.risk)}</div></div>
-                                              </div>
-                                            )}
-                                            {trackingMitigations[mat.id].parsedPlan.option2?.outcome && (
-                                              <div className="flex items-start gap-1.5 bg-blue-100/60 rounded-lg p-2.5 border border-blue-200">
-                                                <CheckCircle2 size={12} className="text-blue-600 shrink-0 mt-0.5" />
-                                                <div><div className="text-[13px] font-bold text-blue-700 mb-0.5">ผลลัพธ์ที่คาดหวัง</div><div className="text-[13px] text-blue-800 leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option2.outcome)}</div></div>
-                                              </div>
-                                            )}
-                                            {trackingMitigations[mat.id].parsedPlan.option2?.steps && (
-                                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
-                                                <div className="text-[13px] font-bold text-blue-700 mb-1.5">ขั้นตอนดำเนินการ</div>
-                                                <div className="space-y-1">
-                                                  {trackingMitigations[mat.id].parsedPlan.option2.steps.map((s: string, i: number) => (
-                                                    <div key={i} className="flex items-start gap-2 text-[13px] text-slate-700"><span className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 text-[11px] font-bold">{i+1}</span><span className="leading-relaxed">{highlightNumbers(s)}</span></div>
-                                                  ))}
-                                                </div>
-                                              </div>
-                                            )}
-                                            <button
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                const selectedOption = trackingMitigations[mat.id].parsedPlan.option2;
-                                                setTrackingMitigations(prev => ({
-                                                  ...prev,
-                                                  [mat.id]: { ...prev[mat.id], selectedOptionId: 2 }
-                                                }));
-                                                window.dispatchEvent(new CustomEvent("approve-plan", {
-                                                  detail: {
-                                                    ...plan,
-                                                    action: `[ทางเลือกที่ 2] ${selectedOption?.title || ''}: ${selectedOption?.desc || ''}`,
-                                                    mitigation: `ความเสี่ยง: ${selectedOption?.risk || '-'} | ผลลัพธ์: ${selectedOption?.outcome || '-'}`,
-                                                    supplyForecast: `[อัพเดทล่าช้า 15 วัน] ${plan.supplyForecast || ''}`,
-                                                    planName: `[แผนใหม่] ทางเลือกที่ 2: ${selectedOption?.title || 'อัปเดตแผนรับมือ'}`
-                                                  }
-                                                }));
-                                                showToast('อัปเดตแผนรับมือสำเร็จ', `เลือกทางเลือกที่ 2: ${selectedOption?.title} เรียบร้อยแล้ว ระบบได้จัดเก็บข้อมูลลงประวัติ`);
-                                              }}
-                                              className={`w-full mt-3 inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-[13px] font-bold text-white cursor-pointer transition shadow-sm ${
-                                                trackingMitigations[mat.id].selectedOptionId === 2 
-                                                  ? 'bg-blue-600' 
-                                                  : 'bg-blue-700 hover:bg-blue-800'
-                                              }`}
-                                            >
-                                              <CheckCircle2 size={12} /> 
-                                              {trackingMitigations[mat.id].selectedOptionId === 2 ? '✅ เลือกแผนนี้แล้ว' : 'เลือกแผนนี้'}
-                                            </button>
+                                          <div className="overflow-x-auto">
+                                            <table className="w-full text-left border-collapse text-[13px] min-w-[800px]">
+                                              <thead>
+                                                <tr className="bg-slate-100/50 border-b border-slate-200 text-slate-600">
+                                                  <th className="px-4 py-3 font-bold w-1/4">หัวข้อการประเมิน</th>
+                                                  <th className="px-4 py-3 font-bold w-[37.5%] border-l border-slate-200 bg-emerald-50/50">
+                                                    <div className="flex items-center gap-2">
+                                                      <span className="bg-emerald-500 text-white px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm shrink-0">
+                                                        <Sparkles size={10} /> AI แนะนำ
+                                                      </span>
+                                                      <span className="text-emerald-900">{trackingMitigations[mat.id].parsedPlan.option1?.title || 'ทางเลือกที่ 1'}</span>
+                                                    </div>
+                                                  </th>
+                                                  <th className="px-4 py-3 font-bold w-[37.5%] border-l border-slate-200">
+                                                    {trackingMitigations[mat.id].parsedPlan.option2?.title || 'ทางเลือกที่ 2'}
+                                                  </th>
+                                                </tr>
+                                              </thead>
+                                              <tbody className="divide-y divide-slate-100">
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">เหตุผลที่แนะนำ<br/><span className="text-[11px] font-normal text-slate-500">(AI Reasoning)</span></td>
+                                                  <td className="px-4 py-3 text-emerald-800 bg-emerald-50/30 border-l border-slate-200 font-medium leading-relaxed">{trackingMitigations[mat.id].parsedPlan.option1?.reason || 'แก้ปัญหา Stockout ได้ทันท่วงทีและมีประสิทธิภาพสูงสุดตามเงื่อนไขเวลา'}</td>
+                                                  <td className="px-4 py-3 text-slate-600 border-l border-slate-200 leading-relaxed">{trackingMitigations[mat.id].parsedPlan.option2?.reason || 'เป็นแผนสำรองฉุกเฉินกรณีที่ไม่สามารถทำตามแผนหลักได้'}</td>
+                                                </tr>
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">รายละเอียด</td>
+                                                  <td className="px-4 py-3 text-slate-600 border-l border-slate-200">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option1?.desc)}</td>
+                                                  <td className="px-4 py-3 text-slate-600 border-l border-slate-200">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option2?.desc)}</td>
+                                                </tr>
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">ผลลัพธ์ที่คาดหวัง</td>
+                                                  <td className="px-4 py-3 text-emerald-700 border-l border-slate-200 font-medium">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option1?.outcome)}</td>
+                                                  <td className="px-4 py-3 text-blue-700 border-l border-slate-200 font-medium">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option2?.outcome)}</td>
+                                                </tr>
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">ความเสี่ยง</td>
+                                                  <td className="px-4 py-3 text-red-600 border-l border-slate-200">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option1?.risk)}</td>
+                                                  <td className="px-4 py-3 text-red-600 border-l border-slate-200">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.option2?.risk)}</td>
+                                                </tr>
+                                                <tr className="hover:bg-slate-50/50">
+                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">ขั้นตอนดำเนินการ</td>
+                                                  <td className="px-4 py-3 text-slate-600 border-l border-slate-200 align-top">
+                                                    <ul className="list-decimal pl-4 space-y-1">
+                                                      {(trackingMitigations[mat.id].parsedPlan.option1?.steps || []).map((s: string, i: number) => <li key={i}>{highlightNumbers(s)}</li>)}
+                                                    </ul>
+                                                  </td>
+                                                  <td className="px-4 py-3 text-slate-600 border-l border-slate-200 align-top">
+                                                    <ul className="list-decimal pl-4 space-y-1">
+                                                      {(trackingMitigations[mat.id].parsedPlan.option2?.steps || []).map((s: string, i: number) => <li key={i}>{highlightNumbers(s)}</li>)}
+                                                    </ul>
+                                                  </td>
+                                                </tr>
+                                                <tr className="bg-slate-50/30">
+                                                  <td className="px-4 py-4"></td>
+                                                  <td className="px-4 py-4 border-l border-slate-200">
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const selectedOption = trackingMitigations[mat.id].parsedPlan.option1;
+                                                        setTrackingMitigations(prev => ({
+                                                          ...prev,
+                                                          [mat.id]: { ...prev[mat.id], selectedOptionId: 1 }
+                                                        }));
+                                                        window.dispatchEvent(new CustomEvent("approve-plan", {
+                                                          detail: {
+                                                            ...plan,
+                                                            action: `[ทางเลือกที่ 1] ${selectedOption?.title || ''}: ${selectedOption?.desc || ''}`,
+                                                            mitigation: `ความเสี่ยง: ${selectedOption?.risk || '-'} | ผลลัพธ์: ${selectedOption?.outcome || '-'}`,
+                                                            supplyForecast: `[อัพเดทล่าช้า 15 วัน] ${plan?.supplyForecast || ''}`,
+                                                            planName: `[แผนใหม่] ทางเลือกที่ 1: ${selectedOption?.title || 'อัปเดตแผนรับมือ'}`
+                                                          }
+                                                        }));
+                                                        showToast('อัปเดตแผนรับมือสำเร็จ', `เลือกทางเลือกที่ 1: ${selectedOption?.title} เรียบร้อยแล้ว ระบบได้จัดเก็บข้อมูลลงประวัติ`);
+                                                      }}
+                                                      className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white cursor-pointer transition shadow-sm ${
+                                                        trackingMitigations[mat.id].selectedOptionId === 1 
+                                                          ? 'bg-emerald-600 ring-2 ring-emerald-500 ring-offset-2' 
+                                                          : 'bg-emerald-600 hover:bg-emerald-700'
+                                                      }`}
+                                                    >
+                                                      <CheckCircle2 size={16} /> 
+                                                      {trackingMitigations[mat.id].selectedOptionId === 1 ? '✅ อนุมัติแผนนี้แล้ว' : 'เลือกแผนนี้ (AI แนะนำ)'}
+                                                    </button>
+                                                  </td>
+                                                  <td className="px-4 py-4 border-l border-slate-200">
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const selectedOption = trackingMitigations[mat.id].parsedPlan.option2;
+                                                        setTrackingMitigations(prev => ({
+                                                          ...prev,
+                                                          [mat.id]: { ...prev[mat.id], selectedOptionId: 2 }
+                                                        }));
+                                                        window.dispatchEvent(new CustomEvent("approve-plan", {
+                                                          detail: {
+                                                            ...plan,
+                                                            action: `[ทางเลือกที่ 2] ${selectedOption?.title || ''}: ${selectedOption?.desc || ''}`,
+                                                            mitigation: `ความเสี่ยง: ${selectedOption?.risk || '-'} | ผลลัพธ์: ${selectedOption?.outcome || '-'}`,
+                                                            supplyForecast: `[อัพเดทล่าช้า 15 วัน] ${plan?.supplyForecast || ''}`,
+                                                            planName: `[แผนใหม่] ทางเลือกที่ 2: ${selectedOption?.title || 'อัปเดตแผนรับมือ'}`
+                                                          }
+                                                        }));
+                                                        showToast('อัปเดตแผนรับมือสำเร็จ', `เลือกทางเลือกที่ 2: ${selectedOption?.title} เรียบร้อยแล้ว ระบบได้จัดเก็บข้อมูลลงประวัติ`);
+                                                      }}
+                                                      className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold cursor-pointer transition shadow-sm ${
+                                                        trackingMitigations[mat.id].selectedOptionId === 2 
+                                                          ? 'bg-blue-600 text-white ring-2 ring-blue-500 ring-offset-2' 
+                                                          : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                                                      }`}
+                                                    >
+                                                      <CheckCircle2 size={16} className={trackingMitigations[mat.id].selectedOptionId === 2 ? 'text-white' : 'text-slate-400'} /> 
+                                                      {trackingMitigations[mat.id].selectedOptionId === 2 ? '✅ อนุมัติแผนนี้แล้ว' : 'เลือกแผนนี้ (ทางเลือกสำรอง)'}
+                                                    </button>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
                                           </div>
                                         </div>
 

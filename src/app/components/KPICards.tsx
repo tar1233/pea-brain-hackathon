@@ -73,24 +73,24 @@ export default function KPICards() {
   ];
 
   return (
-    <div className="grid grid-cols-5 gap-4 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
       {kpis.map((k, i) => {
         const Icon = k.icon;
         return (
-          <div key={i} className={`bg-white rounded-2xl p-5 border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 flex flex-col relative group ${k.border}`}>
-            <div className="flex items-center gap-3 mb-3 w-full">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${k.bgIcon}`}>
-                <Icon size={20} className={k.color} />
+          <div key={i} className={`bg-white rounded-2xl p-4 md:p-5 border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 flex flex-col relative group ${k.border} ${i === 4 ? "col-span-2 md:col-span-1" : ""}`}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3 w-full">
+              <div className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center shrink-0 ${k.bgIcon}`}>
+                <Icon size={18} className={k.color} />
               </div>
-              <span className="text-[15px] font-bold text-slate-600 leading-tight truncate">{k.label}</span>
+              <span className="text-[13px] md:text-[15px] font-bold text-slate-600 leading-tight truncate">{k.label}</span>
             </div>
             <div className="mt-auto">
-              <div className={`font-black tracking-tight leading-none ${k.isLarge ? "text-[24px]" : "text-[36px]"} ${k.valueColor}`}>
+              <div className={`font-black tracking-tight leading-none ${k.isLarge ? "text-[20px] md:text-[24px]" : "text-[28px] md:text-[36px]"} ${k.valueColor}`}>
                 {k.value}
               </div>
-              <div className="text-[13px] font-medium text-slate-500 mt-2">{k.sub}</div>
+              <div className="text-[11px] md:text-[13px] font-medium text-slate-500 mt-1.5 md:mt-2">{k.sub}</div>
               {k.reference && (
-                <div className="text-[11px] font-medium text-slate-400 mt-1.5 border-t border-slate-100 pt-1">
+                <div className="text-[10px] md:text-[11px] font-medium text-slate-400 mt-1 md:mt-1.5 border-t border-slate-100 pt-1">
                   *{k.reference}
                 </div>
               )}

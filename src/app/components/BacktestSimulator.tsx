@@ -647,7 +647,7 @@ export default function BacktestSimulator() {
   const formatCurrency = (val: number) => `฿${val}k`;
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-6xl mx-auto pb-12">
+    <div className="space-y-6 animate-fade-in w-full max-w-[1600px] mx-auto pb-12 px-6 lg:px-8">
       {/* Header Banner & Timeframe Selector */}
       <section className="rounded-[32px] bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 border border-slate-700/50 p-8 shadow-lg relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />

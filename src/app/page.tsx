@@ -20,6 +20,7 @@ import ProjectRoadmap from "./components/ProjectRoadmap";
 import EBiddingView from "./components/EBiddingView";
 import ActivityView from "./components/ActivityView";
 import BacktestSimulator from "./components/BacktestSimulator";
+import FeedbackLog from "./components/FeedbackLog";
 
 /* ─── Watermark: Logo + Name + Grid ─── */
 function Watermark() {
@@ -81,6 +82,7 @@ function Watermark() {
 
 
 export default function Home() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const { materials, isLoading, error } = useData();
 
@@ -259,6 +261,7 @@ export default function Home() {
         return (
           <div className="space-y-6">
             <ProjectRoadmap />
+            <FeedbackLog />
             <BacktestSimulator />
           </div>
         );
@@ -305,15 +308,18 @@ export default function Home() {
       <Watermark />
 
       {/* Sidebar */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className={`fixed inset-0 z-[9999] bg-black/50 transition-opacity md:hidden ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`} onClick={() => setIsSidebarOpen(false)} />
+      <div className={`fixed md:static inset-y-0 left-0 z-[10000] transform transition-transform duration-300 md:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <Sidebar activeTab={activeTab} setActiveTab={(tab) => {setActiveTab(tab); setIsSidebarOpen(false);}} />
+      </div>
 
       {/* Center + Right */}
-      <div className="flex flex-1 overflow-hidden relative z-[1]">
+      <div className="flex flex-1 overflow-hidden relative z-[1] min-w-0">
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-          <TopBar activeTab={activeTab} />
+          <TopBar activeTab={activeTab} onMenuClick={() => setIsSidebarOpen(true)} />
           <main className="flex-1 overflow-y-auto bg-[linear-gradient(180deg,rgba(249,246,255,0.95)_0%,rgba(245,247,252,0.96)_100%)]">
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-3 md:px-6 py-4 md:py-5 space-y-4">
               {renderContent()}
             </div>
           </main>
@@ -564,7 +570,7 @@ export default function Home() {
 
       {/* 🚀 TRUE FULL SCREEN POPUP FOR EBIDDINGVIEW 🚀 */}
       {activeTab === "ebidding" && (
-        <div className="fixed inset-0 z-[200] bg-white overflow-y-auto animate-in slide-in-from-bottom-5 fade-in duration-300">
+        <div className="fixed inset-0 z-[20000] bg-white overflow-y-auto animate-in slide-in-from-bottom-5 fade-in duration-300">
           <EBiddingView 
             targetMaterialId={targetMaterialId} 
             setActiveTab={setActiveTab} 

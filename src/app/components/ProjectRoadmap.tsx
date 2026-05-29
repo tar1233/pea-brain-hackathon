@@ -39,10 +39,11 @@ export default function ProjectRoadmap() {
       date: "31 May - 11 Jun (CURRENT)",
       tasks: [
         "[x] สร้าง Multi-Agent Architecture (Risk, Math, Procurement)",
-        "[x] สร้างฟีเจอร์ Procurement Automation (e-Bidding)",
-        "[x] อัปเดต Prompt Rules (บังคับ AI อธิบายเหตุผล, มีอ้างอิง, แสดงรายละเอียดแผน)",
-        "พัฒนาระบบ Export รายงานและสรุปผลสำหรับผู้บริหาร",
-        "เตรียมระบบสำหรับ Demo เสมือนจริง"
+        "[x] สร้างฟีเจอร์ Procurement Automation (e-Bidding) พร้อม Decision Matrix",
+        "[x] อัปเดต Prompt Rules ให้ AI อธิบายเหตุผลการตัดสินใจอย่างโปร่งใส",
+        "[x] พัฒนาระบบ Tracking & Monitoring ติดตามประวัติการจัดซื้อและแจ้งเตือน",
+        "[x] สร้างแดชบอร์ด Backtest Simulator (Time Machine) เพื่อจำลองผลลัพธ์ย้อนหลัง",
+        "เตรียมระบบสำหรับ Demo เสมือนจริง และ Export รายงาน"
       ]
     },
     {
@@ -51,35 +52,35 @@ export default function ProjectRoadmap() {
       status: "pending",
       date: "15 - 17 Jun",
       tasks: [
-        "วางแผน Train AI Model (Fine-tuning) ให้เก่งและแม่นยำขึ้นเฉพาะด้านสายงาน PEA",
-        "ออกแบบกระบวนการ Backtesting จำลองเทียบเคียงข้อมูลการจัดซื้อในอดีต",
-        "สรุป Business Value และ ROI ที่ PEA จะได้รับ",
-        "นำเสนอผลงาน (Final Pitching) ต่อคณะกรรมการ",
+        "เก็บตก UI/UX รอบสุดท้าย (Final Polish) ให้ระบบดูน่าเชื่อถือและใช้งานง่าย",
+        "วางแผน Train AI Model (Fine-tuning) ด้วยข้อมูลบริบทเฉพาะของ PEA",
+        "สรุป Business Value และ ROI ที่ PEA จะได้รับจากการใช้งาน PEA Brain",
+        "นำเสนอผลงาน (Final Pitching) ต่อคณะกรรมการ PEA",
         "ส่งมอบผลงาน PoC ฉบับสมบูรณ์"
       ]
     }
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-6xl mx-auto pb-12">
+    <div className="space-y-4 md:space-y-6 animate-fade-in w-full max-w-[1600px] mx-auto pb-12 px-3 md:px-6 lg:px-8">
       {/* Header Banner */}
-      <section className="rounded-[32px] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] border border-slate-700/50 p-8 shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] relative overflow-hidden">
+      <section className="rounded-2xl md:rounded-[32px] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] border border-slate-700/50 p-4 md:p-8 shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3.5 py-1.5 text-[13px] font-bold uppercase tracking-[0.16em] text-fuchsia-200 shadow-inner">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3 py-1 md:px-3.5 md:py-1.5 text-[11px] md:text-[13px] font-bold uppercase tracking-[0.16em] text-fuchsia-200 shadow-inner">
             <Map size={14} className="text-fuchsia-300" />
             Project Roadmap
           </div>
-          <h1 className="mt-4 text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนงานและโครงสร้างระบบ (Architecture & Timeline)</h1>
-          <p className="mt-3 text-[13px] leading-relaxed text-slate-300/90 font-medium">
+          <h1 className="mt-3 md:mt-4 text-[18px] md:text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนงานและโครงสร้างระบบ (Architecture & Timeline)</h1>
+          <p className="mt-2 md:mt-3 text-[11px] md:text-[13px] leading-relaxed text-slate-300/90 font-medium">
             สรุปโครงสร้างเทคโนโลยีที่ใช้พัฒนา (Tech Stack) และแผนการดำเนินงาน (Sprint Updates) ของ PEA Brain
           </p>
         </div>
       </section>
 
       {/* ===== ARCHITECTURE DATA FLOW (Light Theme Redesign) ===== */}
-      <section className="rounded-[32px] bg-gradient-to-br from-white via-slate-50 to-purple-50/50 border border-slate-200 p-10 shadow-sm relative overflow-hidden group">
+      <section className="rounded-2xl md:rounded-[32px] bg-gradient-to-br from-white via-slate-50 to-purple-50/50 border border-slate-200 p-4 md:p-10 shadow-sm relative overflow-hidden group">
         {/* Glow Effects */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-400/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-purple-400/10 transition-all duration-700" />
         <div className="absolute top-0 right-0 w-72 h-72 bg-fuchsia-400/5 rounded-full blur-[80px] pointer-events-none" />
@@ -88,7 +89,7 @@ export default function ProjectRoadmap() {
         <div className="relative z-10">
 
           {/* ===== ROW 1: Data Storage & AI Engine ===== */}
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-6 items-center mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 items-center mb-6">
 
             {/* Data Storage (Top-Left) */}
             <div className="relative">
@@ -134,8 +135,8 @@ export default function ProjectRoadmap() {
             <div className="flex flex-col items-center px-4">
               {/* Dashed lines going left and right */}
               <div className="relative">
-                <div className="absolute top-1/2 -left-[60px] w-[60px] h-px border-t-2 border-dashed border-slate-300" />
-                <div className="absolute top-1/2 -right-[60px] w-[60px] h-px border-t-2 border-dashed border-slate-300" />
+                <div className="hidden lg:block absolute top-1/2 -left-[60px] w-[60px] h-px border-t-2 border-dashed border-slate-300" />
+                <div className="hidden lg:block absolute top-1/2 -right-[60px] w-[60px] h-px border-t-2 border-dashed border-slate-300" />
                 <div className="w-36 h-36 rounded-full bg-gradient-to-br from-purple-500 via-fuchsia-500 to-pink-500 shadow-[0_0_40px_rgba(168,85,247,0.2)] flex items-center justify-center border-[4px] border-white relative group-hover:shadow-[0_0_60px_rgba(168,85,247,0.4)] transition-shadow duration-500 z-20">
                   <div className="absolute inset-[3px] rounded-full bg-white/95 backdrop-blur-sm" />
                   <div className="text-center relative z-10">
@@ -146,7 +147,7 @@ export default function ProjectRoadmap() {
                 </div>
               </div>
               {/* Dashed line going down */}
-              <div className="w-px h-8 border-l-2 border-dashed border-slate-300" />
+              <div className="hidden lg:block w-px h-8 border-l-2 border-dashed border-slate-300" />
             </div>
 
             {/* AI Engine (Top-Right) */}
@@ -198,10 +199,10 @@ export default function ProjectRoadmap() {
           </div>
 
           {/* ===== ROW 2: Data Processing (Center) ===== */}
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-6 items-start mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 items-center lg:items-start mb-6">
             {/* Dashed line from left box */}
             <div className="flex items-center justify-end pt-10">
-              <div className="w-full h-px border-t-2 border-dashed border-slate-300" />
+              <div className="hidden lg:block w-full h-px border-t-2 border-dashed border-slate-300" />
             </div>
 
             {/* Data Processing (Center Box) */}
@@ -246,12 +247,12 @@ export default function ProjectRoadmap() {
 
             {/* Dashed line from right box */}
             <div className="flex items-center justify-start pt-10">
-              <div className="w-full h-px border-t-2 border-dashed border-slate-300" />
+              <div className="hidden lg:block w-full h-px border-t-2 border-dashed border-slate-300" />
             </div>
           </div>
 
           {/* ===== ROW 3: Frontend + Backend + Cloud/DevOps ===== */}
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
             {/* Frontend */}
             <div className="relative">
@@ -378,14 +379,14 @@ export default function ProjectRoadmap() {
       </section>
 
       {/* ===== 3 DATA BUCKETS START ===== */}
-      <section className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm overflow-hidden">
-        <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-            <Network size={20} />
+      <section className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 p-3 md:p-6 shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2 md:gap-3 border-b border-slate-100 pb-3 md:pb-4 mb-4 md:mb-6">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+            <Network size={18} />
           </div>
           <div>
-            <h2 className="text-[16px] font-extrabold text-slate-900">Data Flow Architecture</h2>
-            <p className="text-[13px] text-slate-500 font-medium">ภาพรวมการไหลของข้อมูลจากต้นทางสู่ Dashboard</p>
+            <h2 className="text-[14px] md:text-[16px] font-extrabold text-slate-900">Data Flow Architecture</h2>
+            <p className="text-[11px] md:text-[13px] text-slate-500 font-medium">ภาพรวมการไหลของข้อมูลจากต้นทางสู่ Dashboard</p>
           </div>
         </div>
 
@@ -393,7 +394,7 @@ export default function ProjectRoadmap() {
         <div className="flex items-stretch gap-0 overflow-x-auto pb-4">
 
           {/* Step 1: Data Source */}
-          <div className="flex-shrink-0 w-[160px]">
+          <div className="flex-1 min-w-[130px] md:min-w-[160px]">
             <div className="bg-gradient-to-b from-amber-500 to-amber-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-amber-200">
               <Database size={28} className="mb-2" />
               <div className="text-[12px] font-black text-center">S3 Bucket</div>
@@ -418,7 +419,7 @@ export default function ProjectRoadmap() {
           </div>
 
           {/* Step 2: Lambda */}
-          <div className="flex-shrink-0 w-[160px]">
+          <div className="flex-1 min-w-[160px]">
             <div className="bg-gradient-to-b from-purple-600 to-purple-700 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-purple-200">
               <Server size={28} className="mb-2" />
               <div className="text-[12px] font-black text-center">AWS Lambda</div>
@@ -443,7 +444,7 @@ export default function ProjectRoadmap() {
           </div>
 
           {/* Step 3: PEA Brain AI */}
-          <div className="flex-shrink-0 w-[180px]">
+          <div className="flex-1 min-w-[180px]">
             <div className="bg-gradient-to-b from-indigo-600 to-blue-700 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
               <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-md" />
               <Sparkles size={28} className="mb-2" />
@@ -470,7 +471,7 @@ export default function ProjectRoadmap() {
           </div>
 
           {/* Step 4: Bedrock AI */}
-          <div className="flex-shrink-0 w-[180px]">
+          <div className="flex-1 min-w-[180px]">
             <div className="bg-gradient-to-b from-fuchsia-600 to-pink-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-fuchsia-200">
               <Sparkles size={28} className="mb-2" />
               <div className="text-[12px] font-black text-center">Bedrock Multi-Agent</div>
@@ -495,7 +496,7 @@ export default function ProjectRoadmap() {
           </div>
 
           {/* Step 5: Dashboard */}
-          <div className="flex-shrink-0 w-[160px]">
+          <div className="flex-1 min-w-[160px]">
             <div className="bg-gradient-to-b from-emerald-600 to-teal-600 rounded-2xl p-4 h-full flex flex-col items-center justify-center text-white shadow-lg shadow-emerald-200">
               <LayoutTemplate size={28} className="mb-2" />
               <div className="text-[12px] font-black text-center">Dashboard</div>
@@ -512,7 +513,7 @@ export default function ProjectRoadmap() {
         </div>
 
         {/* Detail Grid: ใช้ทำอะไร / ทำเพื่ออะไร / ประโยชน์ */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-5 gap-4 border-t border-slate-100 pt-6">
+        <div className="mt-6 md:mt-8 grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 border-t border-slate-100 pt-4 md:pt-6">
           {/* S3 Details */}
           <div className="bg-amber-50/50 rounded-xl p-3 border border-amber-100 flex flex-col gap-2">
             <div className="text-[13px] font-black text-amber-800 flex items-center gap-1.5">
@@ -1308,7 +1309,7 @@ export default function ProjectRoadmap() {
         </div>
       </section>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full">
         {/* Sprint Timeline */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">

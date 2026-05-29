@@ -29,7 +29,7 @@ const TF_DATA = {
       { title: "ความเร็ววิเคราะห์ & วางแผน", value: "10 วินาที", trend: "ประหยัดเวลา 99% (จากเดิม 3 วัน)", icon: Zap, color: "text-amber-500", bg: "bg-amber-50" },
       { title: "ตรวจจับความเสี่ยงวิกฤต", value: "100%", trend: "วิเคราะห์แจ้งเตือนแบบ Real-time", icon: ShieldCheck, color: "text-red-600", bg: "bg-red-50" },
       { title: "ฟิลด์ข้อมูลที่ AI ประมวลผลได้", value: "25 Fields", trend: "มากกว่าข้อมูลดิบเดิมถึง 3.5 เท่า", icon: Database, color: "text-blue-600", bg: "bg-blue-50" },
-      { title: "สร้างแผน e-Bidding", value: "อัตโนมัติ", trend: "คำนวณ ROP, EOQ, Lead Time ทันที", icon: BrainCircuit, color: "text-purple-600", bg: "bg-purple-50" },
+      { title: "สร้างแผน e-Bidding ด้วย AI", value: "อัตโนมัติ", trend: "มาพร้อม Decision Matrix ชี้แจงเหตุผล", icon: BrainCircuit, color: "text-purple-600", bg: "bg-purple-50" },
     ],
     budgetChart: [
       { month: "Jan", spend: 120, budget: 150 },
@@ -254,7 +254,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
   return (
     <div className="space-y-6">
       {/* Hero Banner */}
-      <section className="rounded-[32px] bg-gradient-to-br from-[#4c1d95] via-[#6d28d9] to-[#312e81] border border-purple-500/30 px-8 py-8 shadow-[0_10px_40px_-10px_rgba(76,29,149,0.5)] relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6 animate-fade-in">
+      <section className="rounded-2xl md:rounded-[32px] bg-gradient-to-br from-[#4c1d95] via-[#6d28d9] to-[#312e81] border border-purple-500/30 px-4 py-5 md:px-8 md:py-8 shadow-[0_10px_40px_-10px_rgba(76,29,149,0.5)] relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 animate-fade-in">
         <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
         
@@ -263,10 +263,10 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
             <Briefcase size={16} className="text-purple-300" />
             {activeTF === 'ปัจจุบัน' ? "AI Executive Command Center" : `Backtest Simulation: ${activeTF}`}
           </div>
-          <h1 className="text-[28px] font-black text-white leading-tight drop-shadow-md tracking-tight">
+          <h1 className="text-[20px] md:text-[28px] font-black text-white leading-tight drop-shadow-md tracking-tight">
             ภาพรวมการทำงานของ PEA Brain (Multi-Agent Squad)
           </h1>
-          <p className="mt-2 text-[15px] text-purple-200/90 font-medium max-w-xl leading-relaxed">
+          <p className="mt-2 text-[12px] md:text-[15px] text-purple-200/90 font-medium max-w-xl leading-relaxed">
             {activeTF === 'ปัจจุบัน' 
               ? "สรุปข้อมูลการจัดการความเสี่ยงสต๊อกขาดแคลน การวางแผนจัดซื้อด้วย AI และผลประหยัดงบประมาณแบบเรียลไทม์"
               : `ประมวลผลประสิทธิภาพย้อนหลังของโมเดล AI ในช่วงเวลา ${activeTF} ที่ผ่านมา`}
@@ -278,7 +278,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
               <button
                 key={tf}
                 onClick={() => setActiveTF(tf)}
-                className={`px-4 py-2 rounded-lg text-[14px] font-extrabold transition-all cursor-pointer ${
+                className={`px-2.5 py-1.5 md:px-4 md:py-2 rounded-lg text-[12px] md:text-[14px] font-extrabold transition-all cursor-pointer whitespace-nowrap ${
                   activeTF === tf 
                   ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30' 
                   : 'text-purple-300 hover:text-white hover:bg-white/5'
@@ -290,22 +290,22 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
           </div>
         </div>
         
-        <div className="flex gap-4 shrink-0 relative z-10 w-full md:w-auto justify-end">
+        <div className="flex gap-3 md:gap-4 shrink-0 relative z-10 w-full md:w-auto justify-center md:justify-end">
           {activeTF === 'ปัจจุบัน' ? (
             <>
-              <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("risk")}>
-                <div className="text-[13px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1.5">
-                  <AlertTriangle size={14} /> ความเสี่ยงที่ต้องจัดการ
+              <div className="bg-white rounded-2xl p-3 md:p-4 text-center min-w-[120px] md:min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("risk")}>
+                <div className="text-[11px] md:text-[13px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1">
+                  <AlertTriangle size={12} /> ความเสี่ยง
                 </div>
-                <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{criticalAlerts.length} <span className="text-[16px]">รายการ</span></div>
-                <div className="text-[13px] font-bold text-red-500 mt-2">มูลค่าความเสี่ยง {formatCurrency(criticalVaR)}</div>
+                <div className="text-[26px] md:text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{criticalAlerts.length} <span className="text-[13px] md:text-[16px]">รายการ</span></div>
+                <div className="text-[11px] md:text-[13px] font-bold text-red-500 mt-1 md:mt-2">VaR {formatCurrency(criticalVaR)}</div>
               </div>
-              <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("ebidding")}>
-                <div className="text-[13px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1.5">
-                  <CheckCircle2 size={14} /> แก้ไขแล้วด้วย AI
+              <div className="bg-white rounded-2xl p-3 md:p-4 text-center min-w-[120px] md:min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("activity")}>
+                <div className="text-[11px] md:text-[13px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1">
+                  <CheckCircle2 size={12} /> อนุมัติแผน
                 </div>
-                <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[16px]">แผน</span></div>
-                <div className="text-[13px] font-bold text-emerald-600 mt-2">พร้อมดำเนินการทันที</div>
+                <div className="text-[26px] md:text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[13px] md:text-[16px]">แผน</span></div>
+                <div className="text-[11px] md:text-[13px] font-bold text-emerald-600 mt-1 md:mt-2">ติดตามสถานะจัดซื้อ</div>
               </div>
             </>
           ) : (
@@ -338,7 +338,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
       ) : (
         <div className="space-y-6 animate-fade-in">
           {/* KPI Grid */}
-          <section className="grid gap-4 md:grid-cols-4">
+          <section className="grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-4">
             {tfData.kpis.map((kpi, i) => (
               <div key={i} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
                 <div className="flex justify-between items-start mb-4">

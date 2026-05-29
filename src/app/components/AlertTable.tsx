@@ -58,42 +58,42 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
   return (
     <div className="space-y-4">
       {/* Filter Tabs Row */}
-      <div className="flex items-center gap-1 px-1">
+      <div className="flex items-center gap-1 px-1 overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.key}
             onClick={() => { setFilter(tab.key); setPage(1); }}
-            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-t-lg text-[14px] font-medium transition-all cursor-pointer
+            className={`flex items-center gap-1.5 px-3 md:px-4 py-2 md:py-2.5 rounded-t-lg text-[12px] md:text-[14px] font-medium transition-all cursor-pointer whitespace-nowrap
               ${filter === tab.key
                 ? "bg-white text-primary-700 border border-border border-b-white font-semibold shadow-sm -mb-px z-10"
                 : "text-text-secondary hover:text-text-primary hover:bg-white/50 border border-transparent"}`}>
-            {tab.dot && <span className="w-2.5 h-2.5 rounded-full" style={{ background: tab.dot }} />}
-            {tab.label} <span className={`${filter === tab.key ? "bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-md text-[12px] font-bold" : "text-text-muted"}`}>{tab.count}</span>
+            {tab.dot && <span className="w-2 h-2 rounded-full" style={{ background: tab.dot }} />}
+            {tab.label} <span className={`${filter === tab.key ? "bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-md text-[11px] md:text-[12px] font-bold" : "text-text-muted"}`}>{tab.count}</span>
           </button>
         ))}
       </div>
 
       {/* Filter Controls Row */}
-      <div className="flex items-center gap-2 p-3 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-4 flex-wrap">
-        <div className="relative">
+      <div className="flex items-center gap-2 p-2 md:p-3 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-4 flex-wrap">
+        <div className="relative w-full md:w-auto">
           <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={searchQ} onChange={e => { setSearchQ(e.target.value); setPage(1); }}
-            placeholder="ค้นหาชื่อพัสดุ รหัส หรือคำอธิบาย..."
-            className="w-[240px] pl-8 pr-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-purple-100 transition-all border-none" />
+            placeholder="ค้นหาชื่อพัสดุ รหัส..."
+            className="w-full md:w-[240px] pl-8 pr-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-purple-100 transition-all border-none" />
         </div>
-        <select className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
+        <select className="hidden md:block px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
           <option>หมวดพัสดุ</option><option>หม้อแปลงไฟฟ้า</option><option>อุปกรณ์ป้องกัน</option><option>อุปกรณ์วัด</option>
         </select>
-        <select className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
+        <select className="hidden md:block px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
           <option>ระดับความเสี่ยง</option><option>วิกฤต</option><option>เฝ้าระวัง</option><option>ข้อมูล</option>
         </select>
-        <select className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
+        <select className="hidden md:block px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 outline-none cursor-pointer border-none">
           <option>สถานะ</option><option>รอดำเนินการ</option><option>อยู่ระหว่างดำเนินการ</option>
         </select>
-        <span className="px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-500 whitespace-nowrap">
+        <span className="hidden md:block px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-500 whitespace-nowrap">
           12 พ.ค. 2569 - 19 พ.ค. 2569
         </span>
         <div className="flex-1" />
-        <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer border-none font-semibold">
+        <button className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 text-[13px] text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer border-none font-semibold">
           <SlidersHorizontal size={14} />
           ตัวกรองเพิ่มเติม
         </button>

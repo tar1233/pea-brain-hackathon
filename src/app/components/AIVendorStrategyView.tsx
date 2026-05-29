@@ -103,27 +103,46 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
     alert("คัดลอกร่างเงื่อนไข TOR เรียบร้อยแล้ว");
   };
 
-  return (
-    <div className="bg-white text-slate-800 p-6 md:p-8 rounded-2xl mt-8 border border-slate-200 shadow-sm overflow-hidden">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-indigo-50 p-2 rounded-lg border border-indigo-100">
-            <Brain className="text-indigo-600" size={24} />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            AI Procurement Strategy (TOR Optimizer)
-          </h1>
-        </div>
-        <p className="text-slate-500">
-         วิเคราะห์กำลังผลิต (Market Capacity) และออกแบบกลยุทธ์ทยอยซื้อ 4 รอบ เพื่อลด Holding Cost และอุดความเสี่ยงส่งมอบล่าช้า
-        </p>
-      </div>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+  const exportVendorCapacity = () => {
+    const headers = ["ชื่อผู้ผลิต (Vendor)", "กำลังผลิตจดทะเบียน (Capacity)", "ยอดค้างส่ง (Backlog)", "Reliability Score", "กำลังผลิตสุทธิ (Available)"];
+    const rows = processedVendors.map((v: any) => [
+      v.name, v.registeredCapacity, v.outstandingPOs, v.reliability, v.availableCapacity
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r: any) => r.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "vendor_capacity.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportLotAllocation = () => {
+    const strategy = aiResult?.lotStrategy?.strategy || [];
+    const headers = ["Lot No.", "ชื่อผู้ผลิต (Vendor)", "จำนวนที่จัดสรร", "เหตุผลการจัดสรร (AI Reason)"];
+    const rows = strategy.map((lot: any, idx: number) => [
+      idx + 1, lot.vendor, lot.allocation, `"${(lot.reason || '').replace(/"/g, '""')}"`
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r: any) => r.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "lot_allocation.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="bg-transparent text-slate-800 mt-6">
+      <div className="w-full space-y-6">
         
         {/* Left Col: Market Capacity vs Demand */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
           {/* Chart Section */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold mb-4 flex flex-col sm:flex-row sm:items-center gap-2 text-slate-800">
@@ -160,101 +179,137 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
             </div>
           </div>
 
-          {/* Vendors Capacity Table */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-slate-800">
-              <TrendingUp size={18} className="text-emerald-500" />
-              ข้อมูลศักยภาพผู้ผลิต (Vendor Reliability Database)
-            </h2>
+          {/* Vendors Capacity Table (Excel Style) */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
+              <div>
+                <h3 className="text-[16px] font-bold text-slate-800 flex items-center gap-2">
+                  <TrendingUp size={18} className="text-emerald-500" />
+                  ข้อมูลศักยภาพผู้ผลิต (Vendor Reliability Database)
+                </h3>
+              </div>
+            </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
-                  <tr>
-                    <th className="px-4 py-3">Vendor</th>
-                    <th className="px-4 py-3 text-center">Registered<br/>Capacity</th>
-                    <th className="px-4 py-3 text-center">Outstanding<br/>POs (ค้างส่ง)</th>
-                    <th className="px-4 py-3 text-center">Reliability<br/>Score</th>
-                    <th className="px-4 py-3 text-center">Effective Available<br/>(เครื่อง/เดือน)</th>
+              <table className="w-full text-left border-collapse min-w-[800px]">
+                <thead>
+                  <tr className="bg-slate-200 text-slate-700 text-[14px]">
+                    <th className="p-2 border border-slate-300 font-bold text-center">ชื่อผู้ผลิต (Vendor)</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">กำลังผลิตจดทะเบียน<br/>(Capacity)</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">ยอดค้างส่ง (Backlog)</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">Reliability Score</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center bg-indigo-100 text-indigo-800">กำลังผลิตสุทธิ<br/>(Available)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody>
                   {processedVendors.map((v: any) => (
-                    <tr key={v.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-4 py-3 font-medium text-slate-800">{v.name}</td>
-                      <td className="px-4 py-3 text-center text-slate-600">{v.registeredCapacity}</td>
-                      <td className="px-4 py-3 text-center text-rose-500">{v.outstandingPOs}</td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`px-2 py-1 rounded-md text-xs font-semibold ${v.reliabilityScore >= 0.9 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                    <tr key={v.id} className="hover:bg-slate-50 text-[14px] bg-white">
+                      <td className="p-2 border border-slate-300 font-medium text-slate-800">{v.name}</td>
+                      <td className="p-2 border border-slate-300 text-center text-slate-600">{v.registeredCapacity}</td>
+                      <td className="p-2 border border-slate-300 text-center text-rose-500 font-medium">{v.outstandingPOs}</td>
+                      <td className="p-2 border border-slate-300 text-center">
+                        <span className={`px-2 py-0.5 rounded text-[12px] font-bold ${v.reliabilityScore >= 0.9 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                           {(v.reliabilityScore * 100).toFixed(0)}%
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-center font-bold text-sky-600">{v.availableCapacity}</td>
+                      <td className="p-2 border border-slate-300 text-center font-bold text-sky-600 bg-sky-50">{v.availableCapacity}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
 
-        {/* Right Col: Strategy Optimizer */}
-        <div className="space-y-6">
-          {/* Strategy View */}
-          <div className="bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5">
-              <Brain size={100} className="text-indigo-900" />
+          {/* AI Lot Allocation Table (Excel Style) */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
+              <div>
+                <h3 className="text-[16px] font-bold text-slate-800 flex items-center gap-2">
+                  <Brain size={18} className="text-indigo-600" />
+                  ตารางแผนกระจายการจัดสรรพัสดุ (AI Lot Allocation)
+                </h3>
+              </div>
             </div>
-            <h2 className="text-lg font-bold mb-2 text-indigo-900">AI Strategy Optimizer (Quarterly)</h2>
-            <p className="text-sm text-indigo-700/80 mb-6">ทยอยซื้อ 4 รอบ รอบละ 3 Lot ลด Holding Cost + อุดความเสี่ยงทิ้งงาน</p>
-            
-            <div className="space-y-4">
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3">
-                <CheckCircle2 size={24} className="text-emerald-500 shrink-0" />
-                <div>
-                  <div className="text-sm font-bold text-emerald-800">Strategy Generated</div>
-                  <div className="text-xs text-emerald-600">4 Rounds × 3 Lots = {lotStrategy.length} Lots ทั้งหมด (ไม่มี Unfulfilled)</div>
-                </div>
-              </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[800px]">
+                <thead>
+                  <tr className="bg-slate-200 text-slate-700 text-[14px]">
+                    <th className="p-2 border border-slate-300 font-bold text-center">รอบจัดส่ง / Lot No.</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">ผู้ผลิตที่ได้งาน</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center bg-emerald-100 text-emerald-800">จำนวนที่จัดสรร</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">เหตุผลการจัดสรร (AI Reason)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lotStrategy.map((lot: any, idx: number) => {
+                  
+  const exportVendorCapacity = () => {
+    const headers = ["ชื่อผู้ผลิต (Vendor)", "กำลังผลิตจดทะเบียน (Capacity)", "ยอดค้างส่ง (Backlog)", "Reliability Score", "กำลังผลิตสุทธิ (Available)"];
+    const rows = processedVendors.map((v: any) => [
+      v.name, v.registeredCapacity, v.outstandingPOs, v.reliability, v.availableCapacity
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r: any) => r.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "vendor_capacity.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
-              <div className="space-y-3">
-                {lotStrategy.map((lot: any, idx: number) => (
-                  <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-bold text-indigo-600">{lot.lot}</span>
-                      <span className="text-xs font-medium text-slate-500">Target: {lot.qty} {unit}</span>
-                    </div>
-                    <div className="text-sm font-medium text-slate-700 truncate">{lot.vendor}</div>
-                    <div className="mt-2 text-[11px] text-slate-500 leading-snug flex items-start gap-1.5">
-                      <Sparkles size={12} className="text-indigo-400 mt-0.5 shrink-0" />
-                      <p>{lot.reason}</p>
-                    </div>
-                    <div className="mt-3 w-full bg-slate-100 rounded-full h-1.5">
-                      <div className="bg-gradient-to-r from-sky-400 to-indigo-500 h-1.5 rounded-full" style={{ width: `${lot.confidence}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+  const exportLotAllocation = () => {
+    const strategy = aiResult?.lotStrategy?.strategy || [];
+    const headers = ["Lot No.", "ชื่อผู้ผลิต (Vendor)", "จำนวนที่จัดสรร", "เหตุผลการจัดสรร (AI Reason)"];
+    const rows = strategy.map((lot: any, idx: number) => [
+      idx + 1, lot.vendor, lot.allocation, `"${(lot.reason || '').replace(/"/g, '""')}"`
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r: any) => r.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "lot_allocation.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+                      <tr key={idx} className="hover:bg-slate-50 text-[14px] bg-white">
+                        <td className="p-2 border border-slate-300 text-center text-slate-600 font-medium bg-slate-50">{lot.lot}</td>
+                        <td className="p-2 border border-slate-300 text-indigo-700 font-bold">{lot.vendor}</td>
+                        <td className="p-2 border border-slate-300 text-center font-black text-slate-800 bg-emerald-50">{lot.qty.toLocaleString()}</td>
+                        <td className="p-2 border border-slate-300 text-slate-600 text-[13px]">{lot.reason}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
       {/* Draft TOR (Moved to bottom for horizontal layout) */}
-      <div className="mt-6 max-w-6xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-md font-bold flex items-center gap-2 text-amber-600">
-            <FileText size={18} />
-            Draft TOR Conditions
-          </h2>
-          <button onClick={copyToClipboard} className="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer" title="Copy TOR">
+      <div className="mt-6 w-full bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
+          <div>
+            <h3 className="text-[16px] font-bold text-slate-800 flex items-center gap-2">
+              <FileText size={18} className="text-amber-600" />
+              ร่างเงื่อนไขและข้อกำหนด TOR (Draft TOR Conditions)
+            </h3>
+            <p className="text-[12px] text-slate-500 mt-1">ข้อกำหนดสำหรับการจัดสรรโควต้าตามความสามารถของผู้ผลิต</p>
+          </div>
+          <button onClick={copyToClipboard} className="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer bg-white p-2 rounded-lg border border-slate-200 shadow-sm" title="คัดลอกร่าง TOR">
             <Copy size={16} />
           </button>
         </div>
-        <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+        <div className="p-5">
           <p className="text-[13px] text-slate-800 leading-loose whitespace-pre-line font-medium">
             {draftTOR}
           </p>
         </div>
-        <div className="mt-4 flex items-start gap-2 text-xs text-amber-700/80 font-medium">
+        <div className="px-5 pb-5 flex items-start gap-2 text-xs text-amber-700/80 font-medium">
           <ShieldCheck size={14} className="shrink-0 mt-0.5" />
           <p>เงื่อนไขนี้สอดคล้องกับระเบียบจัดซื้อฯ โดยเปิดโอกาสให้มีการแข่งขันราคาอย่างเป็นธรรม (Fair Competition) และปิดความเสี่ยงเรื่องผู้ชนะทิ้งงาน</p>
         </div>
