@@ -25,6 +25,7 @@ export default function FeedbackOverlay() {
   const [pins, setPins] = useState<FeedbackPin[]>([]);
   const [activeDraft, setActiveDraft] = useState<{ x: number; y: number; clientY: number } | null>(null);
   const [mainAreaState, setMainAreaState] = useState<HTMLElement | null>(null);
+  const [currentTab, setCurrentTab] = useState("dashboard");
   const [formRole, setFormRole] = useState("คณะกรรมการ (Judge)");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [formName, setFormName] = useState("");
@@ -65,18 +66,28 @@ export default function FeedbackOverlay() {
         if (parsed.role) setFormRole(parsed.role);
         if (parsed.name) setFormName(parsed.name);
       }
+      
+      const savedTab = localStorage.getItem("pea_active_tab");
+      if (savedTab) {
+        setCurrentTab(savedTab);
+      }
     } catch (e) {
       console.error("Error loading feedback data", e);
     }
   }, []);
 
-  // Listen to toggle events from Sidebar
+  // Listen to toggle events from Sidebar and tab changes
   useEffect(() => {
-    const handler = () => {
-      setIsModeOn(prev => !prev);
-    };
+    const handler = () => setIsModeOn(prev => !prev);
+    const tabHandler = (e: any) => setCurrentTab(e.detail.tab);
+    
     window.addEventListener('toggle-feedback', handler);
-    return () => window.removeEventListener('toggle-feedback', handler);
+    window.addEventListener('tab-changed', tabHandler);
+    
+    return () => {
+      window.removeEventListener('toggle-feedback', handler);
+      window.removeEventListener('tab-changed', tabHandler);
+    };
   }, []);
 
   // Find the main element when mode is turned on
@@ -148,7 +159,7 @@ export default function FeedbackOverlay() {
       name: formName,
       text: formText,
       timestamp: new Date().toISOString(),
-      tabId: localStorage.getItem("pea_active_tab") || "risk",
+      tabId: currentTab,
     };
 
     const newPins = [...pins, newPin];
@@ -358,7 +369,7 @@ export default function FeedbackOverlay() {
       {/* All pins + draft popup are portaled INTO the <main> scroll container */}
       {isModeOn && mainAreaState && createPortal(
         <>
-          {pins.map(pin => renderPin(pin))}
+          {pins.filter(pin => pin.tabId === currentTab || !pin.tabId).map(pin => renderPin(pin))}
           {activeDraft && renderDraftPopup()}
         </>,
         mainAreaState

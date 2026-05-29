@@ -28,6 +28,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
   useEffect(() => {
     localStorage.setItem("pea_active_tab", activeTab);
+    window.dispatchEvent(new CustomEvent('tab-changed', { detail: { tab: activeTab } }));
   }, [activeTab]);
 
   const menuItems = [
@@ -73,7 +74,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             <div className="flex items-center gap-1">
               <span className="text-white font-extrabold text-[20px] tracking-tight">PEA</span>
               <span className="text-[#EDC878] font-extrabold text-[20px]">Brain</span>
-              <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/10 text-white/80 border border-white/20 tracking-wider">v0.1.3</span>
+              <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/10 text-white/80 border border-white/20 tracking-wider">v0.1.4</span>
             </div>
             <div className="text-[#EDC878]/80 text-[10px] font-medium tracking-wide mt-[-1px]">
               ขับเคลื่อนการจัดซื้อพลังงานด้วย AI เพื่ออนาคตที่ยั่งยืน
