@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { MessageSquare, X, Send, User, MapPin, ChevronDown } from "lucide-react";
 
 interface FeedbackPin {
@@ -24,7 +25,7 @@ export default function FeedbackOverlay() {
   const [isModeOn, setIsModeOn] = useState(false);
   const [pins, setPins] = useState<FeedbackPin[]>([]);
   const [activeDraft, setActiveDraft] = useState<{ x: number; y: number; clientY: number; inMain: boolean } | null>(null);
-  const [scrollY, setScrollY] = useState(0);
+  const [mainEl, setMainEl] = useState<HTMLElement | null>(null);
   const [formRole, setFormRole] = useState("คณะกรรมการ (Judge)");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [formName, setFormName] = useState("");
@@ -61,34 +62,11 @@ export default function FeedbackOverlay() {
     return () => window.removeEventListener('toggle-feedback', handler);
   }, []);
 
-  // Track scroll position of main area
+  // Get main scroll area for portal
   useEffect(() => {
-    if (!isModeOn) return;
-    
-    let mainArea: HTMLElement | null = null;
-    let handleScroll: (() => void) | null = null;
-    
-    // Slight delay to ensure page is fully rendered
-    const timer = setTimeout(() => {
-      mainArea = document.getElementById("main-scroll-area");
-      if (!mainArea) return;
-      
-      handleScroll = () => {
-        setScrollY(mainArea!.scrollTop);
-      };
-      
-      // Initial check
-      handleScroll();
-      
-      mainArea.addEventListener("scroll", handleScroll);
-    }, 100);
-    
-    return () => {
-      clearTimeout(timer);
-      if (mainArea && handleScroll) {
-        mainArea.removeEventListener("scroll", handleScroll);
-      }
-    };
+    if (isModeOn) {
+      setMainEl(document.getElementById("main-scroll-area"));
+    }
   }, [isModeOn]);
 
   // Dispatch state change whenever isModeOn changes
@@ -113,11 +91,18 @@ export default function FeedbackOverlay() {
       
       const inMain = !!target.closest("#main-scroll-area");
       const mainArea = document.getElementById("main-scroll-area");
-      const currentScroll = mainArea ? mainArea.scrollTop : 0;
       
-      const contentY = inMain ? e.pageY + currentScroll : e.pageY;
+      let finalX = e.pageX;
+      let finalY = e.pageY;
       
-      setActiveDraft({ x: e.pageX, y: contentY, clientY: e.clientY, inMain });
+      if (inMain && mainArea) {
+        const rect = mainArea.getBoundingClientRect();
+        // Calculate coordinates relative to the scrolling container
+        finalX = e.clientX - rect.left;
+        finalY = e.clientY - rect.top + mainArea.scrollTop;
+      }
+      
+      setActiveDraft({ x: finalX, y: finalY, clientY: e.clientY, inMain });
       setFormText("");
     };
 
@@ -193,77 +178,84 @@ export default function FeedbackOverlay() {
 
       {/* Render existing pins */}
       {isModeOn && pins.map((pin) => {
-        const visualY = pin.inMain ? pin.y - scrollY : pin.y;
-        return (
+        const pinContent = (
           <div 
             key={pin.id}
             className="absolute z-[99998] feedback-ignore-click"
-            style={{ left: pin.x, top: visualY, transform: "translate(-50%, -100%)" }}
+            style={{ left: pin.x, top: pin.y, transform: "translate(-50%, -100%)" }}
             onMouseEnter={() => setHoveredPin(pin.id)}
             onMouseLeave={() => setHoveredPin(null)}
           >
-          <div className="relative group cursor-pointer">
-            <MapPin 
-              size={32} 
-              className={`drop-shadow-md ${getRoleColor(pin.role).replace("bg-", "text-")} fill-white`} 
-            />
-            
-            {/* Tooltip */}
-            {(hoveredPin === pin.id || activeDraft === null) && (
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[calc(100%+8px)] w-64 bg-white rounded-xl shadow-xl border border-slate-200 p-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <div className={`w-2 h-2 rounded-full ${getRoleColor(pin.role)}`} />
-                    <span className="text-[11px] font-bold text-slate-700">{pin.role}</span>
+            <div className="relative group cursor-pointer">
+              <MapPin 
+                size={32} 
+                className={`drop-shadow-md ${getRoleColor(pin.role).replace("bg-", "text-")} fill-white`} 
+              />
+              
+              {/* Tooltip */}
+              {(hoveredPin === pin.id || activeDraft === null) && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[calc(100%+8px)] w-64 bg-white rounded-xl shadow-xl border border-slate-200 p-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-2 h-2 rounded-full ${getRoleColor(pin.role)}`} />
+                      <span className="text-[11px] font-bold text-slate-700">{pin.role}</span>
+                    </div>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDeletePin(pin.id); }}
+                      className="text-slate-400 hover:text-red-500 transition cursor-pointer"
+                    >
+                      <X size={12} />
+                    </button>
                   </div>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); handleDeletePin(pin.id); }}
-                    className="text-slate-400 hover:text-red-500 transition cursor-pointer"
-                  >
-                    <X size={12} />
-                  </button>
-                </div>
-                {pin.name && (
-                  <div className="text-[12px] font-semibold text-slate-900 mb-1 flex items-center gap-1">
-                    <User size={10} /> {pin.name}
+                  {pin.name && (
+                    <div className="text-[12px] font-semibold text-slate-900 mb-1 flex items-center gap-1">
+                      <User size={10} /> {pin.name}
+                    </div>
+                  )}
+                  <p className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap">{pin.text}</p>
+                  <div className="text-[9px] text-slate-400 mt-2 text-right">
+                    {formatDate(pin.timestamp)}
                   </div>
-                )}
-                <p className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap">{pin.text}</p>
-                <div className="text-[9px] text-slate-400 mt-2 text-right">
-                  {formatDate(pin.timestamp)}
+                  {/* Triangle pointer */}
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white" />
                 </div>
-                {/* Triangle pointer */}
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white" />
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
         );
+
+        if (pin.inMain && mainEl) {
+          return createPortal(pinContent, mainEl);
+        }
+        return pinContent;
       })}
 
       {/* Render Draft Popup */}
-      {isModeOn && activeDraft && (
-        <div 
-          className="absolute z-[99999] feedback-ignore-click bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 w-72 animate-in zoom-in-95 duration-150"
-          style={{ 
-            left: activeDraft.x, 
-            top: activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y,
-            transform: (activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y) < 450 ? "translate(-50%, 16px)" : "translate(-50%, -100%)",
-            marginTop: (activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y) < 450 ? "0" : "-16px"
-          }}
-        >
-          {/* Triangle pointer */}
-          {(activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y) < 450 ? (
-            <>
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-b-white z-10" />
-              <div className="absolute -top-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-b-amber-200 z-0" />
-            </>
-          ) : (
-            <>
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white z-10" />
-              <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-t-amber-200 z-0" />
-            </>
-          )}
+      {isModeOn && activeDraft && (() => {
+        const isNearTop = activeDraft.clientY < 200;
+        
+        const draftContent = (
+          <div 
+            className="absolute z-[99999] feedback-ignore-click bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 w-72 animate-in zoom-in-95 duration-150"
+            style={{ 
+              left: activeDraft.x, 
+              top: activeDraft.y,
+              transform: isNearTop ? "translate(-50%, 16px)" : "translate(-50%, -100%)",
+              marginTop: isNearTop ? "0" : "-16px"
+            }}
+          >
+            {/* Triangle pointer */}
+            {isNearTop ? (
+              <>
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-b-white z-10" />
+                <div className="absolute -top-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-b-amber-200 z-0" />
+              </>
+            ) : (
+              <>
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white z-10" />
+                <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-t-amber-200 z-0" />
+              </>
+            )}
 
           <div className="flex justify-between items-center mb-3 relative z-20">
             <h3 className="text-[13px] font-bold text-slate-800 flex items-center gap-1.5">
@@ -348,7 +340,13 @@ export default function FeedbackOverlay() {
             </div>
           </div>
         </div>
-      )}
+        );
+
+        if (activeDraft.inMain && mainEl) {
+          return createPortal(draftContent, mainEl);
+        }
+        return draftContent;
+      })()}
     </>
   );
 }
