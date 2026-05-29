@@ -277,7 +277,9 @@ export default function FeedbackOverlay() {
   // Render the draft form popup
   const renderDraftPopup = () => {
     if (!activeDraft) return null;
-    const isNearTop = activeDraft.clientY < 200;
+    // Increase threshold to 380px because the popup is tall. 
+    // If clientY is less than 380, there's not enough space above, so render it below.
+    const isNearTop = activeDraft.clientY < 380;
     
     return (
       <div 
