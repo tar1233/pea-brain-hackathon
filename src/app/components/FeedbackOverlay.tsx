@@ -63,19 +63,33 @@ export default function FeedbackOverlay() {
 
   // Track scroll position of main area
   useEffect(() => {
-    const mainArea = document.getElementById("main-scroll-area");
-    if (!mainArea) return;
+    if (!isModeOn) return;
     
-    const handleScroll = () => {
-      setScrollY(mainArea.scrollTop);
+    let mainArea: HTMLElement | null = null;
+    let handleScroll: (() => void) | null = null;
+    
+    // Slight delay to ensure page is fully rendered
+    const timer = setTimeout(() => {
+      mainArea = document.getElementById("main-scroll-area");
+      if (!mainArea) return;
+      
+      handleScroll = () => {
+        setScrollY(mainArea!.scrollTop);
+      };
+      
+      // Initial check
+      handleScroll();
+      
+      mainArea.addEventListener("scroll", handleScroll);
+    }, 100);
+    
+    return () => {
+      clearTimeout(timer);
+      if (mainArea && handleScroll) {
+        mainArea.removeEventListener("scroll", handleScroll);
+      }
     };
-    
-    // Initial check
-    handleScroll();
-    
-    mainArea.addEventListener("scroll", handleScroll);
-    return () => mainArea.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isModeOn]);
 
   // Dispatch state change whenever isModeOn changes
   useEffect(() => {
