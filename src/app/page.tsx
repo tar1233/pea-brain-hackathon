@@ -318,7 +318,7 @@ export default function Home() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
           <TopBar activeTab={activeTab} onMenuClick={() => setIsSidebarOpen(true)} />
-          <main className="flex-1 overflow-y-auto bg-[linear-gradient(180deg,rgba(249,246,255,0.95)_0%,rgba(245,247,252,0.96)_100%)]">
+          <main id="main-scroll-area" className="flex-1 overflow-y-auto bg-[linear-gradient(180deg,rgba(249,246,255,0.95)_0%,rgba(245,247,252,0.96)_100%)] relative">
             <div className="px-3 md:px-6 py-4 md:py-5 space-y-4">
               {renderContent()}
             </div>
