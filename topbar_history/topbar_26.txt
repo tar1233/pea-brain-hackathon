@@ -1,0 +1,25 @@
+      icon: "🎯",
+      title: "Case Study: พาเล่น",
+      content: (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-red-50 border border-red-200 p-4">
+            <div className="text-[14px] font-bold text-red-800">🚨 สถานการณ์: หม้อแปลง 160 kVA ใกล้หมดสต็อก!</div>
+            <div className="text-[12px] text-red-700 mt-1">สต็อกเหลือ 12 เครื่อง • Demand 339/เดือน • ใช้ได้อีก 1 วัน!</div>
+          </div>
+          <div className="space-y-4">
+            {[
+              { step: "1", title: "เปิด Dashboard", desc: "เห็น KPI \"พัสดุ Critical = 2\" และตารางแจ้งเตือนด่วนรายการ 10067", action: "กดปุ่ม \"ให้ AI สร้างแผนจัดซื้อด่วน\"", img: "02_risk.png" },
+              { step: "2", title: "AI วิเคราะห์ (5 วินาที)", desc: "เห็น Executive Summary + TCO เปรียบเทียบ: ซื้อทีเดียว ฿520M vs ทยอยซื้อ ฿492M → ประหยัด ฿28M/ปี", action: "กด \"เลือกแผน A → วางแผนจัดซื้อ\"", img: "08_ai_analysis.png" },
+              { step: "3", title: "ไปหน้า Tracking", desc: "เห็น Stepper: ✅ วิเ
+              { step: "5", title: "AI สร้างแผนฉุกเฉิน", desc: "Multi-Agent วิเคราะห์: Demand + Procurement + Warehouse → แนะนำโอนย้ายจากคลังกลาง 150 เครื่อง", action: "กด \"อนุมัติทางเลือกที่ 1\"", img: "12_cs_emergency.png" },
+              { step: "6", title: "ยืนยันกับ AI Copilot", desc: "ถาม \"สรุปสถานะหม้อแปลง 10067\" → AI ตอบสถานะล่าสุดครบ", action: "เสร็จสมบูรณ์! ✅", img: "05_chat.png" },
+            ].map((s, i) => (
+              <div key={i} className="flex gap-3 items-start rounded-xl border border-slate-200 bg-white p-3 md:p-4 hover:border-purple-200 transition-colors">
+                <div className={`w-8 h-8 rounded-full ${i === 5 ? "bg-emerald-600" : "bg-purple-600"} text-white text-[13px] font-bold flex items-center justify-center shrink-0`}>{s.step}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[14px] font-bold text-slate-800">{s.title}</div>
+                  <div className="text-[13px] text-slate-600 mt-0.5 leading-relaxed">{s.desc}</div>
+                  <div className="text-[12px] text-purple-600 font-bold mt-2">👆 {s.action}</div>
+                  {s.img && (
+                    <div className="mt-3 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                      <img src={`/manual/${s.img}`} alt={s.title} className="w-full h-auto object-cover object-top" style={{ maxHeight: '200px' }} loading="lazy" />

@@ -143,9 +143,12 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <span>{isFeedbackOn ? "ปิดโหมดเสนอแนะ" : "โหมดเสนอแนะ"}</span>
         </button>
         <button
-          onClick={() => {
+          onClick={async () => {
             if (confirm('ล้างแผนจัดซื้อทั้งหมด? (เพื่อทดสอบใหม่)')) {
               localStorage.removeItem('pea_approved_plans');
+              try {
+                await fetch('/api/feedback', { method: 'DELETE' });
+              } catch (e) {}
               window.dispatchEvent(new CustomEvent('clear-plans'));
               window.location.reload();
             }

@@ -1,0 +1,42 @@
+    </div>
+  );
+
+  const sections = [
+    {
+      id: "overview",
+      icon: "🏠",
+      title: "ภาพรวมระบบ",
+      content: (
+        <div className="space-y-4">
+          <p className="text-[11px] text-slate-700 leading-relaxed">
+            <strong>PEA Brain (Multi-Agent Squad)</strong> ถูกออกแบบมาเพื่อให้ผู้บริหารและทีมจัดหา <strong>เห็นผลลัพธ์ที่เป็นรูปธรรมและตัดสินใจได้ทันที</strong> โดยมุ่งเน้นไปที่ประโยชน์หลัก 4 ด้าน:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { title: "⚡ ความเร็ววิเคราะห์ & วางแผน", desc: "ลดเวลาจาก 3 วัน เหลือเพียง 10 วินาที (ประหยัดเวลา 99%)" },
+              { title: "🎯 ตรวจจับความเสี่ยงวิกฤต", desc: "100% Real-time ป้องกันสต็อกขาดแคลนก่อนเกิดปัญหา" },
+              { title: "🧠 ประมวลผลข้อมูลเชิงลึก", desc: "AI วิเคราะห์ตัวแปรมากถึง 25 Fields เพื่อหาแผนจัด
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "dashboard",
+      icon: "📊",
+      title: "หน้า Dashboard",
+      content: (
+        <div className="space-y-4">
+          <ScreenshotPreview src="/manual/01_dashboard.png" alt="หน้า Overview Dashboard" />
+          <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+            <div className="text-[11px] font-bold text-indigo-800 mb-2">🎯 Hero Banner (ส่วนบนสุด)</div>
+            <div className="text-[11px] text-indigo-700 leading-relaxed">
+              แถบ Gradient สีม่วง-ทอง แสดงข้อมูลสรุปสำคัญ: มูลค่าความเสี่ยงรวม (VaR), สต็อกเฉลี่ย, ประสิทธิภาพ AI
+            </div>
+          </div>
+          <div className="text-[11px] font-bold text-slate-800">📊 KPI Cards (5 การ์ด)</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+            {["📦 พัสดุ Critical", "⚠️ แจ้งเตือนทั้งหมด", "🕐 Lead Time เฉลี่ย", "💰 มูลค่าความเสี่ยง", "✅ แผนอนุมัติแล้ว"].map((k, i) => (

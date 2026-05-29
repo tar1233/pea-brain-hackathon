@@ -1,0 +1,16 @@
+    title: "AI Training & แผนงานโครงสร้างระบบ",
+    subtitle: "Backtesting, Sprint Updates, Architecture & Timeline",
+  },
+};
+
+interface TopBarProps {
+  activeTab: string;
+}
+
+export default function TopBar({ activeTab }: TopBarProps) {
+  const { criticalAlerts, runAutoRiskAnalysis, isAnalyzingRisk } = useData();
+  const [now, setNow] = useState(new Date());
+  const [isMounted, setIsMounted] = useState(false);
+  const [showManual, setShowManual] = useState(false);
+  
+  useEffect(() => {

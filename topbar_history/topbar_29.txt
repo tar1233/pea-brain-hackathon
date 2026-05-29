@@ -1,0 +1,31 @@
+    </>
+  );
+}
+
+/* ────────────────────────────────────────────── */
+/*  Manual Modal Component                        */
+/* ────────────────────────────────────────────── */
+function ManualModal({ onClose }: { onClose: () => void }) {
+  const [activeSection, setActiveSection] = useState(0);
+
+  // Screenshot preview helper
+  const ScreenshotPreview = ({ src, alt }: { src: string; alt: string }) => (
+    <div className="rounded-xl border border-slate-200 overflow-hidden shadow-sm mt-3 mb-1">
+      <div className="bg-slate-100 px-3 py-1.5 border-b border-slate-200 flex items-center gap-2">
+        <div className="flex gap-1"><div className="w-2.5 h-2.5 rounded-full bg-red-400"/><div className="w-2.5 h-2.5 rounded-full bg-amber-400"/><div className="w-2.5 h-2.5 rounded-full bg-emerald-400"/></div>
+        <span className="text-[10px] text-slate-500 font-medium">📸 ตัวอย่างหน้าจอ — {alt}</span>
+      </div>
+      <img src={src} alt={alt} className="w-full h-auto" loading="lazy" />
+    </div>
+  );
+
+  const sections = [
+    {
+      id: "overview",
+      icon: "🏠",
+      title: "ภาพรวมระบบ",
+      content: (
+        <div className="space-y-4">
+          <ScreenshotPreview src="/manual/01_dashboard.png" alt="PEA Brain ภาพรวมระบบ" />
+          <p className="text-[14px] text-slate-700 leading-relaxed">
+            <strong>PEA Brain</strong> คือระบบ AI อัจฉริยะที่ช่วย <strong>กองจัดหาพัสดุ</strong> ของ PEA ตัดสินใจจัดซื้อพัสดุอย่างมีประสิทธิภาพ ด้วยเทคโนโลยี Multi-Agent AI ที่ทำงานร่วมกัน 4 ตัว:

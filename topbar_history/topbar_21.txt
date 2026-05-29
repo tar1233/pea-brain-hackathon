@@ -1,0 +1,58 @@
+  const sections = [
+    {
+      id: "overview",
+      icon: "🏠",
+      title: "ภาพรวมระบบ",
+      content: (
+        <div className="space-y-4">
+          <p className="text-[14px] text-slate-700 leading-relaxed">
+            <strong>PEA Brain</strong> คือระบบ AI อัจฉริยะที่ช่วย <strong>กองจัดหาพัสดุ</strong> ของ PEA ตัดสินใจจัดซื้อพัสดุอย่างมีประสิทธิภาพ ด้วยเทคโนโลยี Multi-Agent AI ที่ทำงานร่วมกัน 4 ตัว:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { agent: "🎯 Demand Planner", desc: "พยากรณ์ความต้องการใช้พัสดุ" },
+              { agent: "📦 Supply Chain", desc: "วิเคราะห์ห่วงโซ่อุปทาน + Lead Time" },
+              { agent: "🛡️ Risk Analyst", desc: "ประเมินความเสี่ยง + แจ้งเตือน" },
+              { agent: "💼 Procurement Strategist", desc: "วางแผนจัดซื้อ + TCO Optimization" },
+            ].map((a, i) => (
+              <div key={i} className="rounded-xl bg-gradient-to-br from-slate-50 to-purple-50/30 border border-slate-200/60 p-3">
+                <div cl
+                    activeSection === i
+                      ? "bg-purple-100 text-purple-800 font-bold shadow-sm"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                  }`}
+                >
+                  <span className="mr-1.5">{s.icon}</span>{s.title}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Section Tabs */}
+          <div className="sm:hidden flex overflow-x-auto border-b border-slate-100 bg-slate-50 shrink-0 absolute top-[72px] left-0 right-0 z-10">
+            {sections.map((s, i) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSection(i)}
+                className={`px-3 py-2 text-[11px] whitespace-nowrap font-medium border-b-2 transition-colors ${
+                  activeSection === i ? "border-purple-600 text-purple-700 bg-purple-50" : "border-transparent text-slate-500"
+                }`}
+              >
+                {s.icon} {s.title}
+              </button>
+            ))}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-5 md:p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-[22px]">{sections[activeSection].icon}</span>
+              <h3 className="text-[18px] font-extrabold text-slate-900">{sections[activeSection].title}</h3>
+            </div>
+            {sections[activeSection].content}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

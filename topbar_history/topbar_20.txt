@@ -1,0 +1,11 @@
+    </>
+  );
+}
+
+/* ────────────────────────────────────────────── */
+/*  Manual Modal Component                        */
+/* ────────────────────────────────────────────── */
+function ManualModal({ onClose }: { onClose: () => void }) {
+  const [activeSection, setActiveSection] = useState(0);
+
+  const sections = [

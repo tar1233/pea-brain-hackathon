@@ -1,0 +1,47 @@
+    },
+    {
+      id: "dashboard",
+      icon: "📊",
+      title: "หน้า Dashboard",
+      content: (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+            <div className="text-[14px] font-bold text-indigo-800 mb-2">🎯 Hero Banner (ส่วนบนสุด)</div>
+            <div className="text-[14px] text-indigo-700 leading-relaxed">
+              แถบ Gradient สีม่วง-ทอง แสดงข้อมูลสรุปสำคัญ: มูลค่าความเสี่ยงรวม (VaR), สต็อกเฉลี่ย, ประสิทธิภาพ AI
+            </div>
+          </div>
+          <div className="text-[14px] font-bold text-slate-800">📊 KPI Cards (5 การ์ด)</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[14px]">
+            {["📦 พัสดุ Critical", "⚠️ แจ้งเตือนทั้งหมด", "🕐 Lead Time เฉลี่ย", "💰 มูลค่าความเสี่ยง", "✅ แผนอนุมัติแล้ว"].map((k, i) => (
+              <div key={i} className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white p-2.5">
+                <div className="w-1.5 h-4 rounded-full bg-indigo-400"></div>
+                <span className="font-medium text-slate-700">{k}</s
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[20000] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-2 md:pr-4 md:py-4 md:pl-[276px] animate-in fade-in duration-200">
+      <div className="w-full max-w-[1100px] max-h-[96vh] bg-white rounded-[24px] shadow-[0_25px_60px_rgba(0,0,0,0.25)] border border-slate-100 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-purple-50 to-indigo-50 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+              <BookOpen size={20} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-[16px] font-extrabold text-slate-900 tracking-tight">📘 คู่มือการใช้งาน PEA Brain</h2>
+              <p className="text-[12px] text-slate-500 font-medium">ระบบสนับสนุนการตัดสินใจจัดซื้อพัสดุอัจฉริยะ</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-9 h-9 rounded-full hover:bg-white/80 flex items-center justify-center text-slate-400 hover:text-slate-600 transition cursor-pointer">
+            <X size={18} />
+          </button>

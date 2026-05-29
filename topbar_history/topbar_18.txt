@@ -1,0 +1,31 @@
+              { agent: "💼 Procurement Strategist", desc: "วางแผนจัดซื้อ + TCO Optimization" },
+            ].map((a, i) => (
+              <div key={i} className="rounded-xl bg-gradient-to-br from-slate-50 to-purple-50/30 border border-slate-200/60 p-3">
+                <div className="text-[13px] font-bold text-slate-800">{a.agent}</div>
+                <div className="text-[12px] text-slate-600 mt-0.5">{a.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div className="rounded-xl bg-purple-50 border border-purple-100 p-4 mt-3">
+            <div className="text-[13px] font-bold text-purple-800 mb-1">🔧 เทคโนโลยี</div>
+            <div className="text-[12px] text-purple-700">Next.js 15 • Amazon Bedrock (Nova Pro) • RAG Knowledge Base • DynamoDB • Lambda</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "menu",
+      icon: "📋",
+      title: "เมนูหลัก",
+      content: (
+        <div className="space-y-3">
+          <p className="text-[14px] text-slate-700">ระบบมี 4 เมนูหลักใน Sidebar:</p>
+          {[
+            { icon: "📊", name: "Overview", desc: "Dashboard สรุปภาพรวม KPI ทั้งหมด มูลค่าความเสี่ยง สต็อกเฉลี่ย และตารางแจ้งเตือนด่วน" },
+            { icon: "🛡️", name: "Risk Management", desc: "ตารางแจ้งเตือนความเสี่ยงทุกรายการ กรองตามระดับ Critical/Warning/Info พร้อมปุ่มให้ AI วิเคราะห์" },
+            { icon: "⏱️", name: "Tracking & Monitoring", desc: "ติดตามแผนที่อนุมัติแล้ว ดู Stepper 4 ขั้นตอน สร้าง PO อัตโนมัติ และ AI เฝ้าระวังการจัดส่ง" },
+            { icon: "🗺️", name: "AI Training & Roadmap", desc: "แผนพัฒนาระบบ Phase 1-4, Feedback Log, Backtest Simulator" },
+          ].map((m, i) => (
+            <div key={i} className="flex gap-3 rounded-xl border border-slate-200 bg-white p-3 hover:border-purple-200 hover:bg-purple-50/20 transition-colors">
+              <div className="text-[20px] shrink-0">{m.icon}</div>
+              <div>

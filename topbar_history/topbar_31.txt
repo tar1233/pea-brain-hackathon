@@ -1,0 +1,47 @@
+    </div>
+  );
+
+  const sections = [
+    {
+      id: "overview",
+      icon: "🏠",
+      title: "ภาพรวมระบบ",
+      content: (
+        <div className="space-y-4">
+          <p className="text-[14px] text-slate-700 leading-relaxed">
+            <strong>PEA Brain</strong> คือระบบ AI อัจฉริยะที่ช่วย <strong>กองจัดหาพัสดุ</strong> ของ PEA ตัดสินใจจัดซื้อพัสดุอย่างมีประสิทธิภาพ ด้วยเทคโนโลยี Multi-Agent AI ที่ทำงานร่วมกัน 4 ตัว:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { agent: "🎯 Demand Planner", desc: "พยากรณ์ความต้องการใช้พัสดุ" },
+              { agent: "📦 Supply Chain", desc: "วิเคราะห์ห่วงโซ่อุปทาน + Lead Time" },
+              { agent: "🛡️ Risk Analyst", desc: "ประเมินความเสี่ยง + แจ้งเตือน" },
+              { agent: "💼 Procurement Strategist", desc: "วางแผนจัดซื้อ + TCO Optimization" },
+            ].map((a, i) => (
+              <div key={i} className="rounded-xl bg-gradient-to-br from-slate-50 to-purple-50/30 border border-slate-200/60 p-
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "dashboard",
+      icon: "📊",
+      title: "หน้า Dashboard",
+      content: (
+        <div className="space-y-4">
+          <ScreenshotPreview src="/manual/01_dashboard.png" alt="หน้า Overview Dashboard" />
+          <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+            <div className="text-[13px] font-bold text-indigo-800 mb-2">🎯 Hero Banner (ส่วนบนสุด)</div>
+            <div className="text-[12px] text-indigo-700 leading-relaxed">
+              แถบ Gradient สีม่วง-ทอง แสดงข้อมูลสรุปสำคัญ: มูลค่าความเสี่ยงรวม (VaR), สต็อกเฉลี่ย, ประสิทธิภาพ AI
+            </div>
+          </div>
+          <div className="text-[13px] font-bold text-slate-800">📊 KPI Cards (5 การ์ด)</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
+            {["📦 พัสดุ Critical", "⚠️ แจ้งเตือนทั้งหมด", "🕐 Lead Time เฉลี่ย", "💰 มูลค่าความเสี่ยง", "✅ แผนอนุมัติแล้ว"].map((k, i) => (
+              <div key={i} className="rounded-lg bg-slate-50 border border-slate-200 p-2 text-slate-700 font-medium">{k}</div>
+            ))}

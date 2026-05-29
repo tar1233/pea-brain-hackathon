@@ -1,0 +1,66 @@
+interface TopBarProps {
+  activeTab: string;
+  onMenuClick?: () => void;
+}
+
+export default function TopBar({ activeTab, onMenuClick }: TopBarProps) {
+  const { criticalAlerts } = useData();
+  const [now, setNow] = useState(new Date());
+  const [isMounted, setIsMounted] = useState(false);
+  const [showManual, setShowManual] = useState(false);
+  
+  useEffect(() => {
+    // eslint-disable-next-line
+    setIsMounted(true);
+    const t = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const current = tabConfig[activeTab] ?? tabConfig.risk;
+  const alertBadge = activeTab === "risk" ? criticalAlerts.length : null;
+
+  const dateStr = isMounted ? now.toLocaleDateString("th-TH", {
+    day: "numeric", month: "long", year: "numeric",
+  }) : "";
+  const timeStr = isMounted ? now.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }) : "";
+
+  return (
+    <>
+      <header className="flex h-[72px] shrink-0 items-center gap-4 border-b border-gray-100/60 bg-white/60 px-4 md:px-8 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_4px_30px_rgb(0,0,0,0.02)]">
+        <button onClick={onMenuClick} className="md:hidden p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+          <Menu size={24} />
+        </button>
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-[14px] md:text-[16px] font-bold text-[#5c2b86]
+            </div>
+            <div className="text-[12px] text-text-muted">
+              {activeTab === "warehouse" ? "ผู้บริหารคลัง" : "Supply Planner"}
+            </div>
+          </div>
+          <ChevronDown size={12} className="text-text-muted" />
+        </div>
+      </header>
+
+      {/* ═══ MANUAL MODAL ═══ */}
+      {showManual && <ManualModal onClose={() => setShowManual(false)} />}
+    </>
+  );
+}
+
+/* ────────────────────────────────────────────── */
+/*  Manual Modal Component                        */
+/* ────────────────────────────────────────────── */
+function ManualModal({ onClose }: { onClose: () => void }) {
+  const [activeSection, setActiveSection] = useState(0);
+
+  // Screenshot preview helper
+  const ScreenshotPreview = ({ src, alt }: { src: string; alt: string }) => (
+    <div className="rounded-xl border border-slate-200 overflow-hidden shadow-sm mt-3 mb-1">
+      <div className="bg-slate-100 px-3 py-1.5 border-b border-slate-200 flex items-center gap-2">
+        <div className="flex gap-1"><div className="w-2.5 h-2.5 rounded-full bg-red-400"/><div className="w-2.5 h-2.5 rounded-full bg-amber-400"/><div className="w-2.5 h-2.5 rounded-full bg-emerald-400"/></div>
+        <span className="text-[10px] text-slate-500 font-medium">📸 ตัวอย่างหน้าจอ — {alt}</span>
+      </div>
+      <img src={src} alt={alt} className="w-full h-auto" loading="lazy" />
+    </div>
+  );

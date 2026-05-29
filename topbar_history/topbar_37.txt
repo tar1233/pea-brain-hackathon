@@ -1,0 +1,51 @@
+
+        {/* Profile */}
+        <div className="flex items-center gap-2 cursor-pointer">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d04ca6] to-[#9f2c80] border-2 border-[#f3d3e7] flex items-center justify-center text-[12px] font-bold text-white">
+            {activeTab === "warehouse" ? "วญ" : "ขภ"}
+          </div>
+          <div className="hidden lg:block">
+            <div className="text-[13px] font-semibold text-text-primary leading-tight">
+              {activeTab === "warehouse" ? "คุณวรัญญู จันทร์ศิริ" : "คุณขวัญภิชา"}
+            </div>
+            <div className="text-[12px] text-text-muted">
+              {activeTab === "warehouse" ? "ผู้บริหารคลัง" : "Supply Planner"}
+            </div>
+          </div>
+          <ChevronDown size={12} className="text-text-muted" />
+        </div>
+      </header>
+
+      {/* ═══ MANUAL MODAL ═══ */}
+      {showManual && <ManualModal onClose={() => setShowManual(false)} />}
+    </>
+  );
+}
+
+/* ────────────────────────────────────────────── */
+/*  Manual Modal Component                        */
+/* ─────────────────────────────────────────────
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "dashboard",
+      icon: "📊",
+      title: "หน้า Dashboard",
+      content: (
+        <div className="space-y-4">
+          <ScreenshotPreview src="/manual/01_dashboard.png" alt="หน้า Overview Dashboard" />
+          <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+            <div className="text-[13px] font-bold text-indigo-800 mb-2">🎯 Hero Banner (ส่วนบนสุด)</div>
+            <div className="text-[12px] text-indigo-700 leading-relaxed">
+              แถบ Gradient สีม่วง-ทอง แสดงข้อมูลสรุปสำคัญ: มูลค่าความเสี่ยงรวม (VaR), สต็อกเฉลี่ย, ประสิทธิภาพ AI
+            </div>
+          </div>
+          <div className="text-[13px] font-bold text-slate-800">📊 KPI Cards (5 การ์ด)</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
+            {["📦 พัสดุ Critical", "⚠️ แจ้งเตือนทั้งหมด", "🕐 Lead Time เฉลี่ย", "💰 มูลค่าความเสี่ยง", "✅ แผนอนุมัติแล้ว"].map((k, i) => (

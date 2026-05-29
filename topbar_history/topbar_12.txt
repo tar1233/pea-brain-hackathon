@@ -1,0 +1,31 @@
+        <div className="mt-0.5 text-[11px] text-[#8a94ab]">{current.subtitle}</div>
+      </div>
+
+      <div className="flex-1" />
+
+      {/* Date */}
+      <span className="text-[11px] text-[#8a94ab]">{dateStr} • {timeStr} น.</span>
+
+
+      {/* Spacer */}
+
+      <div className="w-px h-5 bg-border" />
+
+      {/* Profile */}
+      <div className="flex items-center gap-2 cursor-pointer">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#d04ca6] to-[#9f2c80] border-2 border-[#f3d3e7] flex items-center justify-center text-[10px] font-bold text-white">
+          {activeTab === "warehouse" ? "วญ" : "ขภ"}
+        </div>
+        <div className="hidden lg:block">
+          <div className="text-[11px] font-semibold text-text-primary leading-tight">
+            {activeTab === "warehouse" ? "คุณวรัญญู จันทร์ศิริ" : "คุณขวัญภิชา"}
+          </div>
+          <div className="text-[9px] text-text-muted">
+            {activeTab === "warehouse" ? "ผู้บริหารคลัง" : "Supply Planner"}
+          </div>
+        </div>
+        <ChevronDown size={12} className="text-text-muted" />
+      </div>
+    </header>
+  );
+}

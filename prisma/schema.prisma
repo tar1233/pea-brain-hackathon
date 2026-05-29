@@ -46,3 +46,14 @@ model TimelineEvent {
   time String
   text String
 }
+
+model FeedbackPin {
+  id        String   @id @default(uuid())
+  x         Float
+  y         Float
+  role      String
+  name      String
+  text      String
+  timestamp String
+  tabId     String   @default("dashboard")
+}

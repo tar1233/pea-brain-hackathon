@@ -1,0 +1,39 @@
+      icon: "🎯",
+      title: "Case Study: พาเล่น",
+      content: (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-red-50 border border-red-200 p-4">
+            <div className="text-[14px] font-bold text-red-800">🚨 สถานการณ์: หม้อแปลง 160 kVA ใกล้หมดสต็อก!</div>
+            <div className="text-[12px] text-red-700 mt-1">สต็อกเหลือ 12 เครื่อง • Demand 339/เดือน • ใช้ได้อีก 1 วัน!</div>
+          </div>
+          <div className="space-y-4">
+            {[
+              { step: "1", title: "เปิด Dashboard", desc: "เห็น KPI \"พัสดุ Critical = 2\" และตารางแจ้งเตือนด่วนรายการ 10067", action: "กดปุ่ม \"ให้ AI สร้างแผนจัดซื้อด่วน\"", img: "02_risk.png" },
+              { step: "2", title: "AI วิเคราะห์ (5 วินาที)", desc: "เห็น Executive Summary + TCO เปรียบเทียบ: ซื้อทีเดียว ฿520M vs ทยอยซื้อ ฿492M → ประหยัด ฿28M/ปี", action: "กด \"เลือกแผน A → วางแผนจัดซื้อ\"", img: "08_ai_analysis.png" },
+              { step: "3", title: "ไปหน้า Tracking", desc: "เห็น Stepper: ✅ วิเ
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-purple-50 to-indigo-50 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+              <BookOpen size={20} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-[16px] font-extrabold text-slate-900 tracking-tight">📘 คู่มือการใช้งาน PEA Brain</h2>
+              <p className="text-[11px] text-slate-500 font-medium">ระบบสนับสนุนการตัดสินใจจัดซื้อพัสดุอัจฉริยะ</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-9 h-9 rounded-full hover:bg-white/80 flex items-center justify-center text-slate-400 hover:text-slate-600 transition cursor-pointer">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex flex-1 overflow-hidden min-h-0">
+          {/* Sidebar */}
+          <div className="w-[180px] md:w-[200px] border-r border-slate-100 bg-slate-50/50 overflow-y-auto shrink-0 hidden sm:block">
+            <div className="p-2 space-y-0.5">
+              {sections.map((s, i) => (
+                <button
+                  key={s.id}
+                  onClick={() => setActiveSection(i)}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl text-[12px] font-medium transition-all cursor-pointer ${

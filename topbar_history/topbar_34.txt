@@ -1,0 +1,60 @@
+"use client";
+
+import { ChevronDown, Menu, BookOpen, X, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useData } from "../context/DataContext";
+
+const tabConfig: Record<string, { title: string; subtitle: string }> = {
+  dashboard: {
+    title: "ภาพรวมการตัดสินใจ",
+    subtitle: "Executive command center",
+  },
+  forecast: {
+    title: "พยากรณ์ Demand",
+    subtitle: "Forecast and seasonality insight",
+  },
+  inventory: {
+    title: "วางแผนเติมสต็อก",
+    subtitle: "Stock planning workspace",
+  },
+  risk: {
+    title: "แจ้งเตือนความเสี่ยง",
+    subtitle: "Prioritized risk alerts",
+  },
+  procurement: {
+    title: "จัดซื้อจัดจ้างอัจฉริยะ",
+    subtitle: "Procurement action board",
+  },
+  warehouse: {
+    title: "ภาพรวมผู้บริหารคลัง",
+    subtitle: "Executive warehouse command center",
+  },
+  budget: {
+    title: "วิเคราะห์งบประมาณ",
+    subtitle: "Budget and exposure insight",
+  },
+  reports: {
+    title: "รายงานผู้บริหาร",
+    subtitle: "Presentation-ready summary",
+  },
+  activity: {
+    title: "ประวัติกิจกรรม (System Logs)",
+    subtitle: "AI recommendation audit trail & system timeline",
+  },
+  roadmap: {
+    title: "AI Training & แผนงานโครงสร้างระบบ",
+    subtitle: "Backtesting, Sprint Updates, Architecture & Timeline",
+  },
+};
+
+interface TopBarProps {
+  activeTab: string;
+  onMenuClick?: () => void;
+}
+
+export default function TopBar({ activeTab, onMenuClick }: TopBarProps) {
+  const { criticalAlerts } = useData();
+  const [now, setNow] = useState(new Date());
+  const [isMounted, setIsMounted] = useState(false);
+  const [showManual, setShowManual] = useState(false);
+  

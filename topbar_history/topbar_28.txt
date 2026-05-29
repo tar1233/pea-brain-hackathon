@@ -1,0 +1,39 @@
+
+  const sections = [
+    {
+      id: "overview",
+      icon: "🏠",
+      title: "ภาพรวมระบบ",
+      content: (
+        <div className="space-y-4">
+          <p className="text-[14px] text-slate-700 leading-relaxed">
+            <strong>PEA Brain</strong> คือระบบ AI อัจฉริยะที่ช่วย <strong>กองจัดหาพัสดุ</strong> ของ PEA ตัดสินใจจัดซื้อพัสดุอย่างมีประสิทธิภาพ ด้วยเทคโนโลยี Multi-Agent AI ที่ทำงานร่วมกัน 4 ตัว:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { agent: "🎯 Demand Planner", desc: "พยากรณ์ความต้องการใช้พัสดุ" },
+              { agent: "📦 Supply Chain", desc: "วิเคราะห์ห่วงโซ่อุปทาน + Lead Time" },
+              { agent: "🛡️ Risk Analyst", desc: "ประเมินความเสี่ยง + แจ้งเตือน" },
+              { agent: "💼 Procurement Strategist", desc: "วางแผนจัดซื้อ + TCO Optimization" },
+            ].map((a, i) => (
+              <div key={i} className="rounded-xl bg-gradient-to-br from-slate-50 to-purple-50/30 border border-slate-200/60 p-3">
+                <
+                  <div className="text-[12px] text-amber-700 mt-0.5 leading-relaxed">
+                    เปิด/ปิดโหมดเสนอแนะ (Feedback Mode) — เมื่อเปิด ปุ่มจะเปลี่ยนเป็นสีเหลือง สามารถกดที่ส่วนต่างๆ ของหน้าจอเพื่อส่งข้อเสนอแนะ/แจ้งปัญหาได้ ข้อมูลจะบันทึกในหน้า AI Training &amp; Roadmap → Feedback Log
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3 rounded-xl border border-red-200 bg-red-50/50 p-3">
+                <div className="text-[20px] shrink-0">🗑️</div>
+                <div>
+                  <div className="text-[13px] font-bold text-red-800">เคลียร์แผนทั้งหมด (Test)</div>
+                  <div className="text-[12px] text-red-700 mt-0.5 leading-relaxed">
+                    ล้างแผนจัดซื้อทั้งหมดที่อนุมัติไปแล้ว ใช้สำหรับ<strong>ทดสอบระบบใหม่ตั้งแต่ต้น</strong> — กดแล้วระบบจะถามยืนยันก่อน จากนั้นจะ Reload หน้าเว็บใหม่ รายการทั้งหมดจะกลับเป็น &quot;ยังไม่มีแผน&quot;
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },

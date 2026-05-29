@@ -1,0 +1,11 @@
+interface TopBarProps {
+  activeTab: string;
+}
+
+export default function TopBar({ activeTab }: TopBarProps) {
+  const { criticalAlerts } = useData();
+  const [now, setNow] = useState(new Date());
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    // eslint-disable-next-line

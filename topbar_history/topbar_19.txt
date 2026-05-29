@@ -1,0 +1,26 @@
+              <div>
+                <div className="text-[13px] font-bold text-slate-800">{m.name}</div>
+                <div className="text-[12px] text-slate-600 mt-0.5 leading-relaxed">{m.desc}</div>
+              </div>
+            </div>
+          ))}
+          <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-[12px] text-amber-800 mt-2">
+            💡 <strong>บนมือถือ:</strong> กดปุ่ม ☰ มุมบนซ้ายเพื่อเปิด Sidebar
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "dashboard",
+      icon: "📊",
+      title: "หน้า Dashboard",
+      content: (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+            <div className="text-[13px] font-bold text-indigo-800 mb-2">🎯 Hero Banner (ส่วนบนสุด)</div>
+            <div className="text-[12px] text-indigo-700 leading-relaxed">
+              แถบ Gradient สีม่วง-ทอง แสดงข้อมูลสรุปสำคัญ: มูลค่าความเสี่ยงรวม (VaR), สต็อกเฉลี่ย, ประสิทธิภาพ AI
+            </div>
+          </div>
+          <div className="text-[13px] font-bold text-slate-800">📊 KPI Cards (5 การ์ด)</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">

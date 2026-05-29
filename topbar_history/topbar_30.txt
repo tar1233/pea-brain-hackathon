@@ -1,0 +1,31 @@
+    </div>
+  );
+
+  const sections = [
+    {
+      id: "overview",
+      icon: "🏠",
+      title: "ภาพรวมระบบ",
+      content: (
+        <div className="space-y-4">
+          <ScreenshotPreview src="/manual/01_dashboard.png" alt="PEA Brain ภาพรวมระบบ" />
+          <p className="text-[14px] text-slate-700 leading-relaxed">
+            <strong>PEA Brain</strong> คือระบบ AI อัจฉริยะที่ช่วย <strong>กองจัดหาพัสดุ</strong> ของ PEA ตัดสินใจจัดซื้อพัสดุอย่างมีประสิทธิภาพ ด้วยเทคโนโลยี Multi-Agent AI ที่ทำงานร่วมกัน 4 ตัว:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { agent: "🎯 Demand Planner", desc: "พยากรณ์ความต้องการใช้พัสดุ" },
+              { agent: "📦 Supply Chain", desc: "วิเคราะห์ห่วงโซ่อุปทาน + Lead Time" },
+              { agent: "🛡️ Risk Analyst", desc: "ประเมินความเสี่ยง + แจ้งเตือน" },
+              { agent: "💼 Procurement Strategist", desc: "วางแผนจัดซื้อ + TCO Optimization" },
+            ].map((a, i) => (
+              <div key={i} className="rounded-xl bg-gradient-to-br from-slate-50 to-purple-50/30 border border-slate-200/60 p-3">
+                <div className="text-[13px] font-bold text-slate-800">{a.agent}</div>
+                <div className="text-[12px] text-slate-600 mt-0.5">{a.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div className="rounded-xl bg-purple-50 border border-purple-100 p-4 mt-3">
+            <div className="text-[13px] font-bold text-purple-800 mb-1">🔧 เทคโนโลยี</div>
+            <div className="text-[12px] text-purple-700">Next.js 15 • Amazon Bedrock (Nova Pro) • RAG Knowledge Base • DynamoDB • Lambda</div>
+          </div>

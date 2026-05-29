@@ -52,13 +52,22 @@ export default function FeedbackOverlay() {
     return mainElRef.current;
   }, []);
 
-  // Load from LocalStorage on mount
+  // Load from DB and LocalStorage on mount
   useEffect(() => {
+    // Load user and tab from local storage
     try {
-      const savedPins = localStorage.getItem("pea_feedback_comments");
-      if (savedPins) {
-        setPins(JSON.parse(savedPins));
-      }
+      const fetchPins = async () => {
+        try {
+          const res = await fetch("/api/feedback");
+          if (res.ok) {
+            const data = await res.json();
+            setPins(data);
+          }
+        } catch (err) {
+          console.error("Failed to fetch pins from DB", err);
+        }
+      };
+      fetchPins();
       
       const savedUser = localStorage.getItem("pea_feedback_user");
       if (savedUser) {
@@ -148,7 +157,7 @@ export default function FeedbackOverlay() {
     };
   }, [isModeOn, getMainEl]);
 
-  const handleSavePin = () => {
+  const handleSavePin = async () => {
     if (!activeDraft || !formText.trim()) return;
 
     const newPin: FeedbackPin = {
@@ -162,30 +171,49 @@ export default function FeedbackOverlay() {
       tabId: currentTab,
     };
 
+    // Optimistic UI update
     const newPins = [...pins, newPin];
     setPins(newPins);
-    localStorage.setItem("pea_feedback_comments", JSON.stringify(newPins));
-    
-    // Add to history log
-    const savedHistory = localStorage.getItem("pea_feedback_history");
-    const history = savedHistory ? JSON.parse(savedHistory) : [];
-    localStorage.setItem("pea_feedback_history", JSON.stringify([...history, newPin]));
-    window.dispatchEvent(new CustomEvent('feedback-history-updated'));
-    
-    // Remember user
-    localStorage.setItem("pea_feedback_user", JSON.stringify({ role: formRole, name: formName }));
-    
     setActiveDraft(null);
+
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPin),
+      });
+    } catch (e) {
+      console.error("Failed to save pin to DB", e);
+    }
+    
+    // Add to local history log (optional, but good for local tracking)
+    try {
+      const savedHistory = localStorage.getItem("pea_feedback_history");
+      const history = savedHistory ? JSON.parse(savedHistory) : [];
+      localStorage.setItem("pea_feedback_history", JSON.stringify([...history, newPin]));
+      window.dispatchEvent(new CustomEvent('feedback-history-updated'));
+      
+      // Remember user
+      localStorage.setItem("pea_feedback_user", JSON.stringify({ role: formRole, name: formName }));
+    } catch (e) {}
   };
 
   const handleCancelDraft = () => {
     setActiveDraft(null);
   };
 
-  const handleDeletePin = (id: string) => {
+  const handleDeletePin = async (id: string) => {
+    // Optimistic UI update
     const newPins = pins.filter(p => p.id !== id);
     setPins(newPins);
-    localStorage.setItem("pea_feedback_comments", JSON.stringify(newPins));
+    
+    try {
+      await fetch(`/api/feedback?id=${id}`, {
+        method: "DELETE",
+      });
+    } catch (e) {
+      console.error("Failed to delete pin from DB", e);
+    }
   };
 
   const formatDate = (isoString: string) => {
