@@ -12,6 +12,7 @@ interface FeedbackPin {
   text: string;
   timestamp: string;
   tabId?: string;
+  inMain?: boolean;
 }
 
 interface SavedUser {
@@ -22,7 +23,8 @@ interface SavedUser {
 export default function FeedbackOverlay() {
   const [isModeOn, setIsModeOn] = useState(false);
   const [pins, setPins] = useState<FeedbackPin[]>([]);
-  const [activeDraft, setActiveDraft] = useState<{ x: number; y: number; clientY: number } | null>(null);
+  const [activeDraft, setActiveDraft] = useState<{ x: number; y: number; clientY: number; inMain: boolean } | null>(null);
+  const [scrollY, setScrollY] = useState(0);
   const [formRole, setFormRole] = useState("คณะกรรมการ (Judge)");
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [formName, setFormName] = useState("");
@@ -59,6 +61,22 @@ export default function FeedbackOverlay() {
     return () => window.removeEventListener('toggle-feedback', handler);
   }, []);
 
+  // Track scroll position of main area
+  useEffect(() => {
+    const mainArea = document.getElementById("main-scroll-area");
+    if (!mainArea) return;
+    
+    const handleScroll = () => {
+      setScrollY(mainArea.scrollTop);
+    };
+    
+    // Initial check
+    handleScroll();
+    
+    mainArea.addEventListener("scroll", handleScroll);
+    return () => mainArea.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // Dispatch state change whenever isModeOn changes
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('feedback-state-change', { detail: { isOn: isModeOn } }));
@@ -79,7 +97,13 @@ export default function FeedbackOverlay() {
       e.preventDefault();
       e.stopPropagation();
       
-      setActiveDraft({ x: e.pageX, y: e.pageY, clientY: e.clientY });
+      const inMain = !!target.closest("#main-scroll-area");
+      const mainArea = document.getElementById("main-scroll-area");
+      const currentScroll = mainArea ? mainArea.scrollTop : 0;
+      
+      const contentY = inMain ? e.pageY + currentScroll : e.pageY;
+      
+      setActiveDraft({ x: e.pageX, y: contentY, clientY: e.clientY, inMain });
       setFormText("");
     };
 
@@ -103,6 +127,7 @@ export default function FeedbackOverlay() {
       text: formText,
       timestamp: new Date().toISOString(),
       tabId: localStorage.getItem("pea_active_tab") || "risk",
+      inMain: activeDraft.inMain,
     };
 
     const newPins = [...pins, newPin];
@@ -153,14 +178,16 @@ export default function FeedbackOverlay() {
       )}
 
       {/* Render existing pins */}
-      {isModeOn && pins.map((pin) => (
-        <div 
-          key={pin.id}
-          className="absolute z-[99998] feedback-ignore-click"
-          style={{ left: pin.x, top: pin.y, transform: "translate(-50%, -100%)" }}
-          onMouseEnter={() => setHoveredPin(pin.id)}
-          onMouseLeave={() => setHoveredPin(null)}
-        >
+      {isModeOn && pins.map((pin) => {
+        const visualY = pin.inMain ? pin.y - scrollY : pin.y;
+        return (
+          <div 
+            key={pin.id}
+            className="absolute z-[99998] feedback-ignore-click"
+            style={{ left: pin.x, top: visualY, transform: "translate(-50%, -100%)" }}
+            onMouseEnter={() => setHoveredPin(pin.id)}
+            onMouseLeave={() => setHoveredPin(null)}
+          >
           <div className="relative group cursor-pointer">
             <MapPin 
               size={32} 
@@ -197,7 +224,8 @@ export default function FeedbackOverlay() {
             )}
           </div>
         </div>
-      ))}
+        );
+      })}
 
       {/* Render Draft Popup */}
       {isModeOn && activeDraft && (
@@ -205,13 +233,13 @@ export default function FeedbackOverlay() {
           className="absolute z-[99999] feedback-ignore-click bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 w-72 animate-in zoom-in-95 duration-150"
           style={{ 
             left: activeDraft.x, 
-            top: activeDraft.y,
-            transform: (activeDraft.y - window.scrollY) < 450 ? "translate(-50%, 16px)" : "translate(-50%, -100%)",
-            marginTop: (activeDraft.y - window.scrollY) < 450 ? "0" : "-16px"
+            top: activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y,
+            transform: (activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y) < 450 ? "translate(-50%, 16px)" : "translate(-50%, -100%)",
+            marginTop: (activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y) < 450 ? "0" : "-16px"
           }}
         >
           {/* Triangle pointer */}
-          {(activeDraft.y - window.scrollY) < 450 ? (
+          {(activeDraft.inMain ? activeDraft.y - scrollY : activeDraft.y) < 450 ? (
             <>
               <div className="absolute -top-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-b-white z-10" />
               <div className="absolute -top-[9px] left-1/2 -translate-x-1/2 border-8 border-transparent border-b-amber-200 z-0" />
