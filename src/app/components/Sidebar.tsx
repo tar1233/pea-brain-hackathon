@@ -101,7 +101,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           const badgeValue = item.id === "risk" ? criticalAlerts.length : item.badge;
           return (
             <button key={item.id} onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-2xl text-[15px] transition-all duration-300 cursor-pointer
+              className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-2xl text-[14px] transition-all duration-300 cursor-pointer
                 ${isActive
                   ? "bg-white/20 text-white font-semibold shadow-[0_8px_30px_rgba(255,255,255,0.12)] border border-white/30 backdrop-blur-md"
                   : "text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent"
