@@ -387,28 +387,28 @@ function ManualModal({ onClose }: { onClose: () => void }) {
                 title: "AI วิเคราะห์ (5 วินาที)",
                 desc: "เห็น Executive Summary + TCO เปรียบเทียบ: ซื้อทีเดียว ฿520M vs ทยอยซื้อ ฿492M → ประหยัด ฿28M/ปี",
                 action: "กด \"เลือกแผน A → วางแผนจัดซื้อ\"",
-                img: "02_ai_analysis.png"
+                img: "08_ai_analysis.png"
               },
               {
                 step: "3",
                 title: "ไปหน้า Tracking",
                 desc: "เห็น Stepper: ✅ วิเคราะห์ → ✅ อนุมัติแผน → 🔵 จัดซื้อ PO → ⬜ ส่งมอบ",
                 action: "กดขยายรายการ 10067",
-                img: "03_tracking.png"
+                img: "11_cs_tracking.png"
               },
               {
                 step: "4",
                 title: "ดู Deep Analysis",
                 desc: "AI เฝ้าระวังการจัดส่งให้ด้วย หาก Supplier เสี่ยงส่งช้า AI จะสร้าง Decision Matrix",
                 action: "กดปุ่ม \"AI วิเคราะห์แผนสำรอง\"",
-                img: "04_ai_alert.png"
+                img: "09_plan_comparison.png"
               },
               {
                 step: "5",
                 title: "เปรียบเทียบ Emergency Decision",
                 desc: "AI เทียบให้ว่า จะยืมของจากคลังอื่น หรือจะเร่งรัด Supplier เดิม อันไหนคุ้มกว่ากัน",
                 action: "กด \"ยืนยันแผน A (ยืมคลังใกล้เคียง)\"",
-                img: "05_emergency.png"
+                img: "12_cs_emergency.png"
               }
             ].map((s, i) => (
               <div key={i} className="relative flex items-start gap-4 md:gap-6">
