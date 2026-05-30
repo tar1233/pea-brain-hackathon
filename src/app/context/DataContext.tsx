@@ -109,13 +109,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
         
         // Handle Lambda payload (which might not include computed fields)
         if (!json.riskAlerts) json.riskAlerts = [];
-        json.riskAlerts = json.riskAlerts.map((a: any) => ({
-          ...a,
-          confidence: a.confidence || 95,
-          recommendation: a.recommendation || "รอการตัดสินใจจากผู้ดูแลระบบ",
-          timestamp: a.timestamp || new Date().toISOString(),
-          materialName: a.materialName || "Unknown Material",
-        }));
+        json.riskAlerts = json.riskAlerts.map((a: any) => {
+          let foundName = a.materialName;
+          if (!foundName) {
+            const match = mockMaterials.find(m => m.sapCode === a.materialId || m.id === a.materialId || m.id === `MAT-${a.materialId}`);
+            if (match) foundName = match.name;
+          }
+          return {
+            ...a,
+            confidence: a.confidence || 95,
+            recommendation: a.recommendation || "รอการตัดสินใจจากผู้ดูแลระบบ",
+            timestamp: a.timestamp || new Date().toISOString(),
+            materialName: foundName || "Unknown Material",
+          };
+        });
         
         if (!json.materials) json.materials = [];
         // Ensure all material fields exist to prevent UI crashes, fallback to mockData if missing
@@ -163,8 +170,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
             },
             {
               id: "rec2",
-              title: "Demand ของปี 2569 คือกี่เครื่อง",
-              description: "วิเคราะห์แนวโน้มการใช้งานหม้อแปลงจากข้อมูลย้อนหลังและการขยายตัวของเขตพื้นที่",
+              title: "ตรวจสอบสัญญา VMI ผิดระเบียบไหม",
+              description: "AI ช่วยตรวจสอบเงื่อนไข พ.ร.บ. จัดซื้อจัดจ้างฯ สำหรับสัญญากรอบราคา (Frame Agreement) และ Lot Splitting",
               severity: "info"
             }
           ];
