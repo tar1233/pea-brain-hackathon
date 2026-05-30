@@ -114,6 +114,15 @@ export const materials: Material[] = [
     riskLevel: "info", eoq: 31, plan2569_rpm: 44,
     sparkline: [2, 485, 89, 45, 120, 200, 67, 156, 78, 34, 210, 100],
   },
+  {
+    id: "MAT-20045", name: "Drop Out Fuse Cutout 24kV", sapCode: "20045",
+    category: "อุปกรณ์ป้องกัน", unit: "ชุด",
+    currentStock: 120, safetyStock: 5000, reorderPoint: 8500,
+    avgMonthlyDemand: 4200, stdMonthlyDemand: 850, leadTimeWeeks: 6,
+    unitPrice: 4200, budgetPrice: 4500, annualDemand: 50400,
+    riskLevel: "critical", eoq: 12000, plan2569_rpm: 55000,
+    sparkline: [4100, 3900, 4500, 4800, 4200, 5100, 3800, 4400, 4600, 4300, 4900, 4100],
+  },
 ];
 
 // ===== Risk Alerts (Calculated from Real Data) =====
@@ -123,7 +132,7 @@ export const riskAlerts: RiskAlert[] = [
     type: "shortage", severity: "critical",
     message: "สต็อก 185 เครื่อง ต่ำกว่า Safety Stock 1,063 เครื่อง (83% ต่ำกว่าเกณฑ์)",
     detail: "Demand เฉลี่ย 339 เครื่อง/เดือน (σ=387) | Lead Time 12 สัปดาห์ | ROP=2,004 | แผน 2569 ต้องการ 2,454 เครื่อง มูลค่า ฿475.9 ล้าน",
-    recommendation: "สั่งซื้อเร่งด่วน 878 เครื่อง (EOQ-based) เพื่อเติม Safety Stock มูลค่าประมาณ ฿169.3 ล้าน",
+    recommendation: "เสนอทำ Lot Splitting แบบ VMI ทยอยส่งมอบ 4 งวด เพื่อลดความเสี่ยง Stockout และประหยัด Holding Cost",
     costImpact: 169268400, confidence: 92,
     timestamp: "2026-05-20T10:00:00",
   },
@@ -178,8 +187,8 @@ export const riskAlerts: RiskAlert[] = [
 export const aiRecommendations: AIRecommendation[] = [
   {
     id: "rec-1",
-    title: "🔴 เร่งจัดซื้อ 10067 (160 kVA) 878 เครื่อง",
-    description: "สต็อกต่ำกว่า SS 83% — Demand 339/เดือน\nมูลค่า ฿169.3 ล้าน • ลดเสี่ยง shortage ได้ 92%",
+    title: "🔴 เสนอใช้ VMI สั่งซื้อ 10067 (160 kVA)",
+    description: "สต็อกต่ำกว่า SS 83% • แบ่ง Lot Splitting (พ.ร.บ. จัดซื้อฯ)\nทยอยรับ 4 งวด • ประหยัด Holding Cost ฿28.4 ล้าน/ปี",
     severity: "critical",
     reduction: "92%",
   },
