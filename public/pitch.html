@@ -28,7 +28,7 @@
       font-family: 'Sarabun', sans-serif;
     }
     
-    /* Premium Corporate Geometric Background */
+    /* Premium Fluid Corporate Waves Background */
     .bg-graphics {
       position: fixed;
       top: 0;
@@ -38,93 +38,92 @@
       z-index: -2;
       overflow: hidden;
       pointer-events: none;
-      background-color: #f8f9fc;
+      background-color: #fbfbfc;
     }
 
-    .geo-shape {
+    .curve-shape {
       position: absolute;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-      animation: geo-float 15s ease-in-out infinite alternate;
+      animation: wave-breathe 20s ease-in-out infinite alternate;
     }
 
-    /* Top Right Elements */
-    .geo-tr-1 {
-      top: -30vw;
-      right: -10vw;
-      width: 60vw;
-      height: 60vw;
-      background: #FFCC00; /* PEA Yellow */
-      transform: rotate(35deg);
-      border-radius: 40px;
+    /* Top Wave Layer 1 (Yellow) */
+    .curve-top-1 {
+      top: -30vh;
+      right: -20vw;
+      width: 100vw;
+      height: 80vh;
+      background: #FFCC00;
+      border-radius: 40% 60% 70% 30% / 40% 50% 50% 60%;
+      transform: rotate(20deg);
+      opacity: 0.8;
       animation-delay: -5s;
     }
-    
-    .geo-tr-2 {
-      top: -35vw;
-      right: -15vw;
-      width: 60vw;
-      height: 60vw;
-      background: linear-gradient(135deg, #A80689, #7a0363); /* PEA Purple */
-      transform: rotate(35deg);
-      border-radius: 40px;
-      box-shadow: 0 20px 50px rgba(168, 6, 137, 0.25);
+
+    /* Top Wave Layer 2 (Purple) */
+    .curve-top-2 {
+      top: -40vh;
+      right: -10vw;
+      width: 90vw;
+      height: 80vh;
+      background: linear-gradient(135deg, #7a0363, #A80689);
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      transform: rotate(15deg);
+      box-shadow: -10px 20px 40px rgba(168, 6, 137, 0.2);
     }
 
-    /* Bottom Left Elements */
-    .geo-bl-1 {
-      bottom: -35vw;
-      left: -15vw;
-      width: 70vw;
-      height: 70vw;
-      background: #FFCC00;
-      transform: rotate(35deg);
-      border-radius: 60px;
+    /* Bottom Wave Layer 1 (Purple Shadow) */
+    .curve-bottom-1 {
+      bottom: -40vh;
+      left: -20vw;
+      width: 100vw;
+      height: 80vh;
+      background: linear-gradient(135deg, #A80689, #7a0363);
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+      transform: rotate(15deg);
+      opacity: 0.15;
       animation-delay: -10s;
     }
 
-    .geo-bl-2 {
-      bottom: -40vw;
-      left: -20vw;
-      width: 70vw;
-      height: 70vw;
-      background: linear-gradient(135deg, #7a0363, #A80689);
-      transform: rotate(35deg);
-      border-radius: 60px;
-      box-shadow: 0 -20px 50px rgba(168, 6, 137, 0.25);
+    /* Bottom Wave Layer 2 (Yellow) */
+    .curve-bottom-2 {
+      bottom: -50vh;
+      left: -10vw;
+      width: 90vw;
+      height: 80vh;
+      background: #FFCC00;
+      border-radius: 50% 50% 20% 80% / 50% 50% 80% 20%;
+      transform: rotate(10deg);
+      box-shadow: 10px -20px 40px rgba(255, 204, 0, 0.3);
     }
 
-    /* Floating Accents */
-    .geo-dot {
+    /* Extra floating dots for elegance */
+    .curve-dot-1 {
       position: absolute;
-      top: 20vh;
-      right: 40vw;
+      top: 25vh;
+      right: 15vw;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #A80689;
+      opacity: 0.4;
+      animation: wave-breathe 15s ease-in-out infinite alternate;
+    }
+    
+    .curve-dot-2 {
+      position: absolute;
+      bottom: 30vh;
+      left: 12vw;
       width: 25px;
       height: 25px;
       border-radius: 50%;
-      background: #A80689;
-      opacity: 0.2;
-      animation: geo-float-simple 10s ease-in-out infinite alternate;
-    }
-    .geo-ring {
-      position: absolute;
-      bottom: 25vh;
-      left: 45vw;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 6px solid #FFCC00;
-      opacity: 0.3;
-      animation: geo-float-simple 12s ease-in-out infinite alternate-reverse;
+      background: #FFCC00;
+      opacity: 0.6;
+      animation: wave-breathe 12s ease-in-out infinite alternate-reverse;
     }
 
-    @keyframes geo-float {
-      0% { transform: translateY(0) rotate(35deg); }
-      100% { transform: translateY(-3vh) rotate(35deg); }
-    }
-    
-    @keyframes geo-float-simple {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-3vh); }
+    @keyframes wave-breathe {
+      0% { transform: scale(1) rotate(10deg) translate(0, 0); }
+      100% { transform: scale(1.05) rotate(15deg) translate(-2vw, 2vh); }
     }
 
     /* Fixed Watermark */
@@ -272,14 +271,14 @@
 </head>
 <body>
 
-  <!-- Premium Corporate Geometric Background -->
+  <!-- Premium Fluid Corporate Waves Background -->
   <div class="bg-graphics">
-    <div class="geo-shape geo-tr-1"></div>
-    <div class="geo-shape geo-tr-2"></div>
-    <div class="geo-shape geo-bl-1"></div>
-    <div class="geo-shape geo-bl-2"></div>
-    <div class="geo-dot"></div>
-    <div class="geo-ring"></div>
+    <div class="curve-shape curve-top-1"></div>
+    <div class="curve-shape curve-top-2"></div>
+    <div class="curve-shape curve-bottom-1"></div>
+    <div class="curve-shape curve-bottom-2"></div>
+    <div class="curve-dot-1"></div>
+    <div class="curve-dot-2"></div>
   </div>
 
   <!-- Electricity Background Watermark -->
