@@ -156,21 +156,32 @@ function ManualModal({ onClose }: { onClose: () => void }) {
       title: "ภาพรวมระบบ",
       content: (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border-2 border-dashed border-purple-200 bg-purple-50/50 hover:bg-purple-50 transition-colors group">
-            <div className="w-14 h-14 shrink-0 rounded-full bg-white shadow-sm flex items-center justify-center text-[28px] group-hover:scale-110 transition-transform">
-              📺
+          <div className="rounded-2xl border-2 border-purple-200 bg-purple-50/50 overflow-hidden shadow-sm flex flex-col mb-2">
+            <div className="px-4 py-3 border-b border-purple-100 flex items-center justify-between bg-white/50">
+              <div className="flex items-center gap-2">
+                <span className="text-[18px]">📺</span>
+                <span className="text-[14px] font-bold text-purple-900">สไลด์นำเสนอ (Pitch Deck)</span>
+              </div>
+              <a 
+                href="/pitch.html" 
+                target="_blank" 
+                className="text-[12px] font-bold text-purple-600 hover:text-purple-800 bg-purple-100/50 hover:bg-purple-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+              >
+                <span>ขยายเต็มจอ</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </a>
             </div>
-            <div className="flex-1 text-center sm:text-left">
-              <div className="text-[15px] font-bold text-purple-900">สไลด์นำเสนอ (Pitch Deck)</div>
-              <div className="text-[13px] text-purple-700 mt-0.5">กดปุ่ม F11 เพื่อเข้าสู่โหมดเต็มจอเวลาพรีเซนต์</div>
+            <div className="w-full aspect-[16/9] relative bg-slate-900">
+              <iframe 
+                src="/pitch.html" 
+                className="absolute inset-0 w-full h-full border-0"
+                title="PEA Brain Pitch Deck"
+                allowFullScreen
+              ></iframe>
             </div>
-            <a 
-              href="/pitch.html" 
-              target="_blank" 
-              className="shrink-0 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-[13px] shadow-sm hover:shadow-md transition-all whitespace-nowrap"
-            >
-              เปิดสไลด์ (Full Screen)
-            </a>
+            <div className="px-4 py-2 bg-white/50 text-[12px] text-purple-700 flex justify-center items-center gap-2 border-t border-purple-100">
+              💡 <span>คลิกในกรอบด้านบน แล้วใช้ปุ่ม <kbd className="px-1.5 py-0.5 bg-white border border-purple-200 rounded text-[10px] shadow-sm font-sans mx-0.5">→</kbd> หรือคลิกที่ขอบขวาเพื่อเปลี่ยนสไลด์</span>
+            </div>
           </div>
           
           <p className="text-[14px] text-slate-700 leading-relaxed">
