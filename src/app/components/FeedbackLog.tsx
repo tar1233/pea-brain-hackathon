@@ -14,6 +14,36 @@ interface FeedbackPin {
   tabId?: string;
 }
 
+const DEMO_LOGS: FeedbackPin[] = [
+  {
+    id: "demo-1",
+    x: 450, y: 250,
+    role: "กรรมการ กฟภ.",
+    name: "ดร. สมชาย",
+    text: "โมเดล VMI น่าสนใจมาก สามารถช่วยลด Holding Cost ได้เยอะ แต่มีแผนรองรับกรณี Supplier ส่งของไม่ทันตามรอบไหม?",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+    tabId: "roadmap"
+  },
+  {
+    id: "demo-2",
+    x: 820, y: 550,
+    role: "Mentor",
+    name: "พี่ตาร์",
+    text: "หน้านี้เจ๋งมาก! ลองเพิ่ม Feature แจ้งเตือนผ่าน LINE Notify ส่งตรงเข้ามือถือผู้บริหารดู จะทำให้ระบบสมบูรณ์ขึ้น",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    tabId: "dashboard"
+  },
+  {
+    id: "demo-3",
+    x: 300, y: 700,
+    role: "Product Owner",
+    name: "ทีมจัดซื้อ",
+    text: "ขอเพิ่มคอลัมน์เปรียบเทียบราคากลางกับราคา e-Bidding ครั้งล่าสุดด้วยครับ จะได้รู้ว่าประหยัดไปเท่าไหร่",
+    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    tabId: "ebidding"
+  }
+];
+
 export default function FeedbackLog() {
   const [history, setHistory] = useState<FeedbackPin[]>([]);
   const [isLocalhost, setIsLocalhost] = useState(false);
@@ -37,11 +67,17 @@ export default function FeedbackLog() {
   }, []);
 
   const handleClearAll = () => {
-    if (confirm("ต้องการลบข้อเสนอแนะทั้งหมดใช่หรือไม่?")) {
+    if (confirm("ต้องการลบข้อเสนอแนะทั้งหมดใช่หรือไม่? (คุณสามารถกดกู้คืนได้ภายหลัง)")) {
       localStorage.removeItem("pea_feedback_history");
       setHistory([]);
       window.dispatchEvent(new CustomEvent('feedback-history-updated'));
     }
+  };
+
+  const handleRestoreDemo = () => {
+    localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
+    setHistory(DEMO_LOGS);
+    window.dispatchEvent(new CustomEvent('feedback-history-updated'));
   };
 
   const formatDate = (isoString: string) => {
@@ -84,7 +120,18 @@ export default function FeedbackLog() {
     }, 100);
   };
 
-  if (history.length === 0) return null;
+  if (history.length === 0) {
+    return (
+      <div className="w-full max-w-[1600px] mx-auto pt-6 px-6 lg:px-8 flex justify-center pb-8">
+        <button 
+          onClick={handleRestoreDemo}
+          className="text-sm text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-4 py-2 rounded-full transition-colors flex items-center gap-2 font-semibold shadow-sm"
+        >
+          <Clock size={16} /> กู้คืนข้อมูลตัวอย่างสำหรับการพรีเซนต์ (Restore Demo Data)
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 animate-fade-in w-full max-w-[1600px] mx-auto pt-6 px-6 lg:px-8 feedback-ignore-click">
@@ -96,12 +143,21 @@ export default function FeedbackLog() {
             ทั้งหมด {history.length} รายการ
           </span>
         </div>
-        <button 
-          onClick={handleClearAll}
-          className="text-xs text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
-        >
-          <Trash2 size={12} /> ล้างข้อมูลทั้งหมด
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={handleRestoreDemo}
+            className="text-xs text-purple-600 hover:text-white border border-purple-400 hover:bg-purple-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+            title="โหลดข้อมูลจำลองสำหรับการพรีเซนต์"
+          >
+            <Clock size={12} /> กู้คืนข้อมูล (Demo)
+          </button>
+          <button 
+            onClick={handleClearAll}
+            className="text-xs text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+          >
+            <Trash2 size={12} /> ล้างข้อมูลทั้งหมด
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
