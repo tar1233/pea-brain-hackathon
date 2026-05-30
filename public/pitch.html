@@ -454,6 +454,93 @@
       minScale: 0.2,
       maxScale: 1.5
     });
+
+    // === AUTO-PILOT AI PRESENTATION ===
+    const scripts = [
+      // Slide 1
+      "สวัสดีครับคณะกรรมการทุกท่าน ทราบไหมครับว่าการจัดซื้อพัสดุเพียงแค่ 1 รายการของ การไฟฟ้าส่วนภูมิภาค เราสูญเสียสิ่งที่เรียกว่า ต้นทุนจม หรือ โฮลดิ้งคอสต์ ไปมหาศาลขนาดไหน? ... คำตอบคือ 28.4 ล้านบาท ครับ! เงินจำนวนนี้จมอยู่กับสต็อกที่มากเกินความจำเป็น และการคาดการณ์ที่คลาดเคลื่อน นี่คือจุดเจ็บปวดระดับองค์กรที่เราปล่อยผ่านไม่ได้อีกต่อไปครับ",
+      // Slide 2
+      "เพื่ออุดรอยรั่วนี้ ทีมของเราจึงพัฒนาระบบ พีอีเอ เบรน อินเทลลิเจน โปรคิวเมนต์ ซิสเต็ม ขึ้นมาครับ. พีอีเอ เบรน ไม่ใช่แค่ แดชบอร์ด ดูข้อมูลทั่วไป แต่เราคือระบบ เอไอ ที่เปรียบเสมือน สมองกล ที่วิเคราะห์ข้อมูลมหาศาลในอดีต ผนวกกับการคาดการณ์ความต้องการในอนาคต เพื่อเปลี่ยนข้อมูลดิบ ให้กลายเป็น กลยุทธ์การจัดซื้อที่สั่งการได้จริง ในพริบตาครับ",
+      // Slide 3
+      "ระบบของเราออกแบบมาเพื่อ เอนเตอร์ไพรส์ อย่างแท้จริง ด้วย 5 ความเหนือกว่าแบบไร้รอยต่อ. หนึ่ง ทุบต้นทุน ด้วยระบบ วีเอ็มไอ เอไอ จะช่วยลดสต็อกและแนะนำการทยอยส่งมอบ. สอง เตือนก่อนเจ๊ง มีระบบแจ้งเตือนเมื่อซัพพลายเออร์มีแนวโน้มจะส่งของล่าช้า. สาม เอไอ โคไพลอต ผู้ช่วยอัจฉริยะที่ช่วยวิเคราะห์และตอบคำถามการจัดหาได้ทันที. สี่ อนุมัติฉับไว ตัดสินใจเร็วขึ้นด้วยข้อมูลที่ครอบคลุม. ห้า สร้างพีโออัตโนมัติ ลดขั้นตอนงานเอกสารด้วยระบบ เจนเนอเรเตอร์ ที่ลิงก์กับระบบ แซป",
+      // Slide 4
+      "และนี่คือผลลัพธ์เชิงประจักษ์ครับ หากเรานำ พีอีเอ เบรน มาใช้งานจริง ระบบจะสามารถลด โฮลดิ้งคอสต์ และ เซฟตี้สต็อก ลงได้อย่างมีนัยสำคัญ. จากเดิมที่เราเสียเงินจมไปเปล่าๆ ระบบนี้จะคืนทุนและสร้าง เซฟวิ่ง ให้องค์กรได้อย่างมหาศาลตั้งแต่วันแรกที่เริ่มรันระบบครับ",
+      // Slide 5
+      "ทฤษฎีอาจจะฟังดูดี แต่ของจริงดีกว่าครับ ขอเชิญทุกท่านเข้าสู่ พีอีเอ เบรน ตัว เดโม ของเราครับ! ด้วย พีอีเอ เบรน เราไม่ได้แค่วางแผน แต่เราลงมือทำจริง ขอบคุณครับ"
+    ];
+
+    let isAutoPilotOn = false;
+    let currentSpeech = null;
+
+    function speakSlide(slideIndex) {
+      if (!isAutoPilotOn) return;
+      if (slideIndex >= scripts.length) {
+        isAutoPilotOn = false;
+        document.getElementById('autoPilotBtn').innerHTML = "▶️ Auto-Pilot AI Demo";
+        return;
+      }
+      
+      // Stop any current speech
+      window.speechSynthesis.cancel();
+      
+      const text = scripts[slideIndex];
+      currentSpeech = new SpeechSynthesisUtterance(text);
+      currentSpeech.lang = 'th-TH';
+      currentSpeech.rate = 1.05; // Slightly faster for energy
+      currentSpeech.pitch = 1.0;
+      
+      // Attempt to use a good Thai voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang === 'th_TH');
+      if (thaiVoice) currentSpeech.voice = thaiVoice;
+
+      currentSpeech.onend = function() {
+        if (!isAutoPilotOn) return;
+        if (slideIndex < scripts.length - 1) {
+          Reveal.next(); // Go to next slide automatically
+        }
+      };
+
+      window.speechSynthesis.speak(currentSpeech);
+    }
+
+    // Add floating button
+    const btn = document.createElement('button');
+    btn.id = 'autoPilotBtn';
+    btn.innerHTML = "▶️ Auto-Pilot AI Demo";
+    btn.style.cssText = "position: fixed; bottom: 20px; left: 20px; z-index: 9999; padding: 12px 24px; background: linear-gradient(135deg, #A80689, #5c0049); color: white; border: none; border-radius: 50px; font-family: 'Sarabun', sans-serif; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(168,6,137,0.4); transition: all 0.3s ease;";
+    
+    btn.onmouseover = () => btn.style.transform = 'scale(1.05)';
+    btn.onmouseout = () => btn.style.transform = 'scale(1)';
+    
+    btn.onclick = function() {
+      if (isAutoPilotOn) {
+        // Turn OFF
+        isAutoPilotOn = false;
+        window.speechSynthesis.cancel();
+        btn.innerHTML = "▶️ Auto-Pilot AI Demo";
+        btn.style.background = "linear-gradient(135deg, #A80689, #5c0049)";
+      } else {
+        // Turn ON
+        isAutoPilotOn = true;
+        btn.innerHTML = "⏸️ Stop AI Presenter";
+        btn.style.background = "linear-gradient(135deg, #e11d48, #be123c)";
+        Reveal.slide(0); // Go to first slide
+        speakSlide(0); // Start speaking
+      }
+    };
+    document.body.appendChild(btn);
+
+    // Listen to manual slide changes to trigger speech if autopilot is on
+    Reveal.on('slidechanged', event => {
+      if (isAutoPilotOn) {
+        speakSlide(event.indexh);
+      }
+    });
+
+    // Load voices properly (some browsers load them asynchronously)
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+
   </script>
 </body>
 </html>
