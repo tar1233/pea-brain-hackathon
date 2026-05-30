@@ -156,6 +156,23 @@ function ManualModal({ onClose }: { onClose: () => void }) {
       title: "ภาพรวมระบบ",
       content: (
         <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border-2 border-dashed border-purple-200 bg-purple-50/50 hover:bg-purple-50 transition-colors group">
+            <div className="w-14 h-14 shrink-0 rounded-full bg-white shadow-sm flex items-center justify-center text-[28px] group-hover:scale-110 transition-transform">
+              📺
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <div className="text-[15px] font-bold text-purple-900">สไลด์นำเสนอ (Pitch Deck)</div>
+              <div className="text-[13px] text-purple-700 mt-0.5">กดปุ่ม F11 เพื่อเข้าสู่โหมดเต็มจอเวลาพรีเซนต์</div>
+            </div>
+            <a 
+              href="/pitch.html" 
+              target="_blank" 
+              className="shrink-0 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-[13px] shadow-sm hover:shadow-md transition-all whitespace-nowrap"
+            >
+              เปิดสไลด์ (Full Screen)
+            </a>
+          </div>
+          
           <p className="text-[14px] text-slate-700 leading-relaxed">
             <strong>PEA Brain (Multi-Agent Squad)</strong> ถูกออกแบบมาเพื่อให้ผู้บริหารและทีมจัดหา <strong>เห็นผลลัพธ์ที่เป็นรูปธรรมและตัดสินใจได้ทันที</strong> โดยมุ่งเน้นไปที่ประโยชน์หลัก 4 ด้าน:
           </p>
