@@ -30,22 +30,22 @@ interface BiddingPlanRow {
 const mockBiddingData: BiddingPlanRow[] = [
   {
     id: 1,
-    code: "00011",
-    bidNo: "กกก-AA-001.1-2568",
+    code: "10067",
+    bidNo: "VMI-Q1-2569",
     projectCode: "Z151A",
-    qty: 1150,
-    unitPrice: 87300,
-    standardPrice: 83950,
-    totalBudget: 100395000,
-    stockForecast: 5505,
+    qty: 614,
+    unitPrice: 150000,
+    standardPrice: 150000,
+    totalBudget: 92100000,
+    stockForecast: 12,
     biddingStage: "แจกแบบ-เสนอราคา",
     approvalStage: "อนุมัติ",
-    contractStage: "สัญญา",
+    contractStage: "สัญญา (Lot 1)",
     minCapacity: 300,
-    maxCapacity: "200 - 2,000",
-    monthlyDemand: 1000,
+    maxCapacity: "800 - 2,000",
+    monthlyDemand: 204,
     schedule: {
-      oct: 500, nov: 500, dec: 150,
+      oct: 204, nov: 205, dec: 205,
       jan: 0, feb: 0, mar: 0,
       apr: 0, may: 0, jun: 0,
       jul: 0, aug: 0, sep: 0,
@@ -53,25 +53,71 @@ const mockBiddingData: BiddingPlanRow[] = [
   },
   {
     id: 2,
-    code: "00011",
-    bidNo: "กกก-AA-001.2-2568",
-    projectCode: "Z152A",
-    qty: 1470,
-    unitPrice: 87300,
-    standardPrice: 83950,
-    totalBudget: 128331000,
-    stockForecast: 5505,
+    code: "10067",
+    bidNo: "VMI-Q2-2569",
+    projectCode: "Z151A",
+    qty: 614,
+    unitPrice: 150000,
+    standardPrice: 150000,
+    totalBudget: 92100000,
+    stockForecast: 12,
     biddingStage: "แจกแบบ-เสนอราคา",
     approvalStage: "อนุมัติ",
-    contractStage: "สัญญา",
+    contractStage: "สัญญา (Lot 2)",
     minCapacity: 300,
-    maxCapacity: "200 - 2,000",
-    monthlyDemand: 1000,
+    maxCapacity: "800 - 2,000",
+    monthlyDemand: 204,
     schedule: {
       oct: 0, nov: 0, dec: 0,
-      jan: 500, feb: 500, mar: 470,
+      jan: 204, feb: 205, mar: 205,
       apr: 0, may: 0, jun: 0,
       jul: 0, aug: 0, sep: 0,
+    }
+  },
+  {
+    id: 3,
+    code: "10067",
+    bidNo: "VMI-Q3-2569",
+    projectCode: "Z151A",
+    qty: 613,
+    unitPrice: 150000,
+    standardPrice: 150000,
+    totalBudget: 91950000,
+    stockForecast: 12,
+    biddingStage: "แจกแบบ-เสนอราคา",
+    approvalStage: "รออนุมัติ",
+    contractStage: "เตรียมจัดหา",
+    minCapacity: 300,
+    maxCapacity: "800 - 2,000",
+    monthlyDemand: 204,
+    schedule: {
+      oct: 0, nov: 0, dec: 0,
+      jan: 0, feb: 0, mar: 0,
+      apr: 204, may: 204, jun: 205,
+      jul: 0, aug: 0, sep: 0,
+    }
+  },
+  {
+    id: 4,
+    code: "10067",
+    bidNo: "VMI-Q4-2569",
+    projectCode: "Z151A",
+    qty: 613,
+    unitPrice: 150000,
+    standardPrice: 150000,
+    totalBudget: 91950000,
+    stockForecast: 12,
+    biddingStage: "แจกแบบ-เสนอราคา",
+    approvalStage: "รออนุมัติ",
+    contractStage: "เตรียมจัดหา",
+    minCapacity: 300,
+    maxCapacity: "800 - 2,000",
+    monthlyDemand: 204,
+    schedule: {
+      oct: 0, nov: 0, dec: 0,
+      jan: 0, feb: 0, mar: 0,
+      apr: 0, may: 0, jun: 0,
+      jul: 204, aug: 204, sep: 205,
     }
   }
 ];
@@ -124,18 +170,19 @@ export default function ProcurementPlanTable({
   };
 
   const dynamicBiddingData = material ? mockBiddingData.map((row) => {
-    // Total mock qty is 2620 (1150 + 1470)
-    const ratio = row.qty / 2620;
-    const newQty = Math.round((material.annualDemand || 2620) * ratio);
+    // Total mock qty is calculated dynamically
+    const totalMockQty = mockBiddingData.reduce((acc, r) => acc + r.qty, 0);
+    const globalScale = (material.annualDemand || totalMockQty) / totalMockQty;
+    const newQty = Math.round(row.qty * globalScale);
     const newUnitPrice = material.unitPrice || row.unitPrice;
     
     // adjust schedule proportionally
     const s = row.schedule;
     const newSchedule = {
-      oct: Math.round(s.oct * ratio), nov: Math.round(s.nov * ratio), dec: Math.round(s.dec * ratio),
-      jan: Math.round(s.jan * ratio), feb: Math.round(s.feb * ratio), mar: Math.round(s.mar * ratio),
-      apr: Math.round(s.apr * ratio), may: Math.round(s.may * ratio), jun: Math.round(s.jun * ratio),
-      jul: Math.round(s.jul * ratio), aug: Math.round(s.aug * ratio), sep: Math.round(s.sep * ratio),
+      oct: Math.round(s.oct * globalScale), nov: Math.round(s.nov * globalScale), dec: Math.round(s.dec * globalScale),
+      jan: Math.round(s.jan * globalScale), feb: Math.round(s.feb * globalScale), mar: Math.round(s.mar * globalScale),
+      apr: Math.round(s.apr * globalScale), may: Math.round(s.may * globalScale), jun: Math.round(s.jun * globalScale),
+      jul: Math.round(s.jul * globalScale), aug: Math.round(s.aug * globalScale), sep: Math.round(s.sep * globalScale),
     };
 
     return {
@@ -230,10 +277,10 @@ export default function ProcurementPlanTable({
                 
                 <td className="p-2 border-r border-slate-200 text-center">{formatCurrency(row.stockForecast)}</td>
                 <td className="p-2 border-r border-slate-200 text-center text-[13px]">
-                  <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{row.biddingStage}</span>
+                  <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded whitespace-nowrap inline-block">{row.biddingStage}</span>
                 </td>
                 <td className="p-2 border-r border-slate-200 text-center text-[13px]">
-                  <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">{row.contractStage}</span>
+                  <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded whitespace-nowrap inline-block">{row.contractStage}</span>
                 </td>
                 
                 <td className="p-2 border-r border-slate-200 text-center text-slate-500">{formatCurrency(row.minCapacity)}</td>
@@ -251,22 +298,22 @@ export default function ProcurementPlanTable({
             {/* Total Row */}
             <tr className="bg-slate-50 font-bold text-[15px] border-t-2 border-slate-300">
               <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมทั้งหมด:</td>
-              <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(2620)}</td>
+              <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.qty, 0))}</td>
               <td colSpan={2} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-              <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatCurrency(228726000)}</td>
+              <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
               <td colSpan={6} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">500</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">500</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">150</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">500</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">500</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">470</td>
-              <td className="p-2 border-r border-slate-300 text-center text-slate-400">-</td>
-              <td className="p-2 border-r border-slate-300 text-center text-slate-400">-</td>
-              <td className="p-2 border-r border-slate-300 text-center text-slate-400">-</td>
-              <td className="p-2 border-r border-slate-300 text-center text-slate-400">-</td>
-              <td className="p-2 border-r border-slate-300 text-center text-slate-400">-</td>
-              <td className="p-2 border-r border-slate-300 text-center text-slate-400">-</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.oct, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.nov, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.dec, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.jan, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.feb, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.mar, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.apr, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.may, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.jun, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.jul, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.aug, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.schedule.sep, 0))}</td>
             </tr>
           </tbody>
         </table>
