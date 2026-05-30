@@ -66,8 +66,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       <div className="px-5 pt-6 pb-5 relative z-10">
         <div className="flex items-center gap-3">
           <img
-            src="/pea-brain-logo-cropped-transparent.png"
-            alt="PEA Brain Logo"
+            src="/pea-official-logo.png"
+            alt="PEA Logo"
             className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
           />
           <div className="flex flex-col">

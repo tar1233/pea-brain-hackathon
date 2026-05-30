@@ -31,7 +31,7 @@ function Watermark() {
         style={{ opacity: 0.05 }}>
         <div className="flex flex-col items-center gap-5 select-none">
           <img
-            src="/pea-brain-logo-cropped-transparent.png"
+            src="/pea-official-logo.png"
             alt=""
             width={160}
             height={160}
@@ -409,7 +409,7 @@ export default function Home() {
                     {/* PO Header */}
                     <div className="flex items-start justify-between border-b border-slate-200 pb-4">
                       <div className="flex items-center gap-3">
-                        <img src="/pea-brain-logo-cropped-transparent.png" alt="PEA Brain Logo" className="w-12 h-12 object-contain" />
+                        <img src="/pea-official-logo.png" alt="PEA Logo" className="w-12 h-12 object-contain" />
                         <div>
                           <h5 className="font-extrabold text-[13px] text-slate-900">การไฟฟ้าส่วนภูมิภาค</h5>
                           <p className="text-[10px] text-slate-500">PROVINCIAL ELECTRICITY AUTHORITY</p>
