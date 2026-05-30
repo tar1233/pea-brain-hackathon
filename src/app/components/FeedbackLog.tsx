@@ -36,6 +36,14 @@ export default function FeedbackLog() {
     return () => window.removeEventListener('feedback-history-updated', loadHistory);
   }, []);
 
+  const handleClearAll = () => {
+    if (confirm("ต้องการลบข้อเสนอแนะทั้งหมดใช่หรือไม่?")) {
+      localStorage.removeItem("pea_feedback_history");
+      setHistory([]);
+      window.dispatchEvent(new CustomEvent('feedback-history-updated'));
+    }
+  };
+
   const formatDate = (isoString: string) => {
     const d = new Date(isoString);
     return `${d.toLocaleDateString('th-TH')} ${d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit'})}`;
@@ -80,12 +88,20 @@ export default function FeedbackLog() {
 
   return (
     <div className="space-y-4 animate-fade-in w-full max-w-[1600px] mx-auto pt-6 px-6 lg:px-8 feedback-ignore-click">
-      <div className="flex items-center gap-2 mb-4">
-        <MessageSquare size={18} className="text-[#A80689]" />
-        <h3 className="font-bold text-lg text-slate-800 tracking-tight">รายการข้อเสนอแนะ (Feedback Log)</h3>
-        <span className="bg-purple-100 text-[#A80689] px-2 py-0.5 rounded-full text-xs font-bold">
-          ทั้งหมด {history.length} รายการ
-        </span>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          <MessageSquare size={18} className="text-[#A80689]" />
+          <h3 className="font-bold text-lg text-slate-800 tracking-tight">รายการข้อเสนอแนะ (Feedback Log)</h3>
+          <span className="bg-purple-100 text-[#A80689] px-2 py-0.5 rounded-full text-xs font-bold">
+            ทั้งหมด {history.length} รายการ
+          </span>
+        </div>
+        <button 
+          onClick={handleClearAll}
+          className="text-xs text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+        >
+          <Trash2 size={12} /> ล้างข้อมูลทั้งหมด
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -110,15 +126,13 @@ export default function FeedbackLog() {
                 <div className="text-[10px] text-slate-400 flex items-center gap-1">
                   <Clock size={10} /> {formatDate(pin.timestamp)}
                 </div>
-                {isLocalhost && (
-                  <button 
-                    onClick={(e) => handleDelete(e, i)}
-                    className="text-red-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 z-10"
-                    title="ลบความคิดเห็น"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                )}
+                <button 
+                  onClick={(e) => handleDelete(e, i)}
+                  className="text-red-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 z-10"
+                  title="ลบความคิดเห็น"
+                >
+                  <Trash2 size={14} />
+                </button>
               </div>
             </div>
 
