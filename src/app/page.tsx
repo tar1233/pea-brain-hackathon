@@ -30,15 +30,17 @@ function Watermark() {
       <div className="absolute inset-0 flex items-center justify-center"
         style={{ opacity: 0.05 }}>
         <div className="flex flex-col items-center gap-5 select-none">
-          <div className="bg-white/90 p-4 rounded-3xl shadow-2xl backdrop-blur-sm">
-            <img
-              src="/pea-brain-logo-cropped-transparent.png"
-              alt="PEA Brain Logo"
-              className="h-24 w-auto object-contain drop-shadow-md"
-              style={{ filter: "grayscale(10%)" }}
-            />
-          </div>
-          <div className="flex flex-col items-center mt-2">
+          <img
+            src="/pea-brain-logo-cropped-transparent.png"
+            alt=""
+            width={160}
+            height={160}
+            style={{ filter: "grayscale(20%) opacity(0.8)" }}
+          />
+          <div className="flex flex-col items-center">
+            <div style={{ fontSize: 64, fontWeight: 800, letterSpacing: 2, color: "#A80689", lineHeight: 1 }}>
+              PEA Brain
+            </div>
             
             {/* Golden Heartbeat Line */}
             <div className="w-[120%] flex items-center justify-center mt-2 mb-2" style={{ color: "#EDC878" }}>
@@ -407,7 +409,7 @@ export default function Home() {
                     {/* PO Header */}
                     <div className="flex items-start justify-between border-b border-slate-200 pb-4">
                       <div className="flex items-center gap-3">
-                        <img src="/pea-brain-logo-cropped-transparent.png" alt="PEA Brain Logo" className="h-10 w-auto object-contain" />
+                        <img src="/pea-brain-logo-cropped-transparent.png" alt="PEA Brain Logo" className="w-12 h-12 object-contain" />
                         <div>
                           <h5 className="font-extrabold text-[13px] text-slate-900">การไฟฟ้าส่วนภูมิภาค</h5>
                           <p className="text-[10px] text-slate-500">PROVINCIAL ELECTRICITY AUTHORITY</p>

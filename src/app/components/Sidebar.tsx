@@ -64,19 +64,21 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
       {/* Logo */}
       <div className="px-5 pt-6 pb-5 relative z-10">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="bg-white px-3 py-2 rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
-              <img
-                src="/pea-brain-logo-cropped-transparent.png"
-                alt="PEA Brain Logo"
-                className="h-7 w-auto object-contain"
-              />
+        <div className="flex items-center gap-3">
+          <img
+            src="/pea-brain-logo-cropped-transparent.png"
+            alt="PEA Brain Logo"
+            className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+          />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1">
+              <span className="text-white font-extrabold text-[20px] tracking-tight">PEA</span>
+              <span className="text-[#EDC878] font-extrabold text-[20px]">Brain</span>
+              <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/10 text-white/80 border border-white/20 tracking-wider">v0.1.7</span>
             </div>
-            <span className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white/20 text-white border border-white/30 tracking-wider shadow-sm">v0.1.7</span>
-          </div>
-          <div className="text-[#EDC878]/90 text-[11px] font-semibold tracking-wide leading-tight">
-            ขับเคลื่อนการจัดซื้อพลังงานด้วย AI เพื่ออนาคตที่ยั่งยืน
+            <div className="text-[#EDC878]/80 text-[10px] font-medium tracking-wide mt-[-1px]">
+              ขับเคลื่อนการจัดซื้อพลังงานด้วย AI เพื่ออนาคตที่ยั่งยืน
+            </div>
           </div>
         </div>
       </div>
