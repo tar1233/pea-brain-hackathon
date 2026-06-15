@@ -386,15 +386,15 @@ export default function ProcurementPlanTable({
               {/* Left Col */}
               <div className="space-y-4">
                 <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
-                  <div className="text-indigo-200 text-[14px] font-medium">🎯 แนะนำเปิดประมูลเดือน (Optimal Month)</div>
+                  <div className="text-indigo-200 text-[14px] font-medium">🎯 จุดเข้าซื้อที่ดีที่สุดรอบถัดไป (Next Optimal Month)</div>
                   <div className="flex items-end gap-3 mt-1">
-                    <div className="text-2xl font-bold text-white">พฤษภาคม 2569</div>
-                    <div className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded text-[12px] font-bold mb-1">
-                      Win Rate 96.8%
+                    <div className="text-2xl font-bold text-white">กรกฎาคม 2569</div>
+                    <div className="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded text-[12px] font-bold mb-1">
+                      Action Required
                     </div>
                   </div>
-                  <div className="text-emerald-400 text-[14.5px] mt-2 font-semibold flex items-center gap-1">
-                    <TrendingDown size={14} /> คาดการณ์ราคาถูกกว่าปกติ 5-8% (ประหยัดงบได้มหาศาล)
+                  <div className="text-amber-400 text-[14.5px] mt-2 font-semibold flex items-center gap-1">
+                    <TrendingDown size={14} /> โอกาสสุดท้ายก่อนราคาดีดตัว 12-15% ในไตรมาส 4
                   </div>
                 </div>
                 
@@ -413,11 +413,11 @@ export default function ProcurementPlanTable({
               {/* Right Col */}
               <div className="space-y-4">
                 <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
-                  <div className="text-indigo-200 text-[14px] font-medium mb-2">💡 ทำไมต้องซื้อเดือนนี้? (Why This Month?)</div>
+                  <div className="text-indigo-200 text-[14px] font-medium mb-2">💡 ทำไมต้องเร่งซื้อในเดือน ก.ค.? (Why July?)</div>
                   <p className="text-[14.5px] text-white/90 leading-relaxed">
-                    หากเปิดประมูลในเดือน พ.ค. จะใช้เวลาผลิต 84 วัน (Lead Time) สินค้าจะมาส่งในเดือน ส.ค. 
-                    ซึ่งเป็นจุดที่สต็อกปัจจุบันลดลงไปแตะเส้น <strong>Safety Margin</strong> พอดี ทำให้ 
-                    <strong className="text-emerald-300 ml-1">"ไม่ต้องเก็บสต็อกนานเกินไป (Zero Dead-stock)"</strong>
+                    เราพลาดจุดที่ถูกที่สุด (พ.ค.) มาแล้ว หากเปิดประมูลใน <strong>ก.ค.</strong> จะใช้เวลาผลิต 84 วัน (Lead Time) 
+                    สินค้าจะมาส่งในเดือน <strong>ต.ค. (ต้นปีงบประมาณใหม่พอดี)</strong> ซึ่งสต็อกจะลดลงไปแตะเส้น <strong>Safety Margin</strong> 
+                    ทำให้ <strong className="text-emerald-300 ml-1">"ป้องกันปัญหาสต็อกขาด (Stockout) ได้ทันเวลา"</strong>
                   </p>
                 </div>
                 
@@ -427,7 +427,7 @@ export default function ProcurementPlanTable({
                   </div>
                   <p className="text-[14.5px] text-white/90 leading-relaxed">
                     สงครามการค้า (Trade War) ในช่วงปลายปีอาจทำให้กำแพงภาษีนำเข้าวัตถุดิบพุ่งสูงขึ้น 
-                    <strong className="text-red-300 ml-1">หากเลื่อนไปจัดซื้อในไตรมาส 4 (ก.ค.-ก.ย.) ต้นทุนอาจดีดตัวเพิ่มขึ้น 12-15% ทันที</strong>
+                    <strong className="text-red-300 ml-1">หากเลื่อนไปจัดซื้อในเดือน ส.ค. เป็นต้นไป ต้นทุนอาจดีดตัวเพิ่มขึ้น 12-15% ทันที</strong>
                   </p>
                 </div>
               </div>
