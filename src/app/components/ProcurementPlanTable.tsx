@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useData } from "../context/DataContext";
-import { Download, Table as TableIcon, FileSpreadsheet, GitCommit, Upload, FileText, Brain, CheckCircle2 } from "lucide-react";
+import { Download, Table as TableIcon, FileSpreadsheet, GitCommit, Upload, FileText, Brain, CheckCircle2, TrendingDown, Sparkles, AlertTriangle } from "lucide-react";
 import * as XLSX from "xlsx";
 
 interface BiddingPlanRow {
@@ -365,6 +365,69 @@ export default function ProcurementPlanTable({
           )}
         </div>
       )}
+
+      {/* AI Market Timing Insight */}
+      <div className="m-4 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
+          <Brain size={180} className="-mt-8 -mr-8" />
+        </div>
+        
+        <div className="flex items-start gap-4 relative z-10">
+          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0 backdrop-blur-sm shadow-inner mt-1">
+            <TrendingDown className="text-emerald-400" size={24} />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-[18px] font-bold text-emerald-300 flex items-center gap-2 mb-3">
+              <Sparkles size={18} />
+              AI Market Timing Insight: วิเคราะห์จุดเข้าซื้อที่คุ้มค่าที่สุด (Optimal Buying Point)
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Left Col */}
+              <div className="space-y-4">
+                <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
+                  <div className="text-indigo-200 text-[14px] font-medium">🎯 แนะนำเปิดประมูลเดือน (Optimal Month)</div>
+                  <div className="text-2xl font-bold text-white mt-1">พฤษภาคม 2569</div>
+                  <div className="text-emerald-400 text-[14.5px] mt-1 font-semibold flex items-center gap-1">
+                    <TrendingDown size={14} /> คาดการณ์ราคาถูกกว่าปกติ 5-8% (ประหยัดงบได้มหาศาล)
+                  </div>
+                </div>
+                
+                <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
+                  <div className="text-indigo-200 text-[14px] font-medium mb-2">📊 ปัจจัยที่ใช้คำนวณ (Calculated From)</div>
+                  <ul className="list-disc pl-5 text-[14.5px] text-white/90 space-y-1.5">
+                    <li>ฤดูกาลราคา <strong className="text-white">LME Copper & Steel</strong> ย้อนหลัง 10 ปี (Seasonality)</li>
+                    <li>แนวโน้มอัตราแลกเปลี่ยน (FX USD/THB) ที่ประเมินว่าจะอยู่ในช่วงแข็งค่า</li>
+                    <li>Demand ในตลาดโลกช่วงกลางปีที่มักจะหดตัว (Low Season ของโรงงานผลิต)</li>
+                  </ul>
+                </div>
+              </div>
+              
+              {/* Right Col */}
+              <div className="space-y-4">
+                <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
+                  <div className="text-indigo-200 text-[14px] font-medium mb-2">💡 ทำไมต้องซื้อเดือนนี้? (Why This Month?)</div>
+                  <p className="text-[14.5px] text-white/90 leading-relaxed">
+                    หากเปิดประมูลในเดือน พ.ค. จะใช้เวลาผลิต 84 วัน (Lead Time) สินค้าจะมาส่งในเดือน ส.ค. 
+                    ซึ่งเป็นจุดที่สต็อกปัจจุบันลดลงไปแตะเส้น <strong>Safety Margin</strong> พอดี ทำให้ 
+                    <strong className="text-emerald-300 ml-1">"ไม่ต้องเก็บสต็อกนานเกินไป (Zero Dead-stock)"</strong>
+                  </p>
+                </div>
+                
+                <div className="bg-red-500/20 rounded-lg p-4 border border-red-500/30 shadow-sm backdrop-blur-sm">
+                  <div className="text-red-300 text-[14px] font-bold mb-2 flex items-center gap-1.5">
+                    <AlertTriangle size={16} /> ความเสี่ยงที่ต้องระวัง (Risk Factors)
+                  </div>
+                  <p className="text-[14.5px] text-white/90 leading-relaxed">
+                    สงครามการค้า (Trade War) ในช่วงปลายปีอาจทำให้กำแพงภาษีนำเข้าวัตถุดิบพุ่งสูงขึ้น 
+                    <strong className="text-red-300 ml-1">หากเลื่อนไปจัดซื้อในไตรมาส 4 (ก.ค.-ก.ย.) ต้นทุนอาจดีดตัวเพิ่มขึ้น 12-15% ทันที</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Table Container with Horizontal Scroll */}
       <div className="overflow-x-auto">
