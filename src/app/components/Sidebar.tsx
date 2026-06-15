@@ -41,7 +41,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   ];
 
   return (
-    <aside className={`${isCollapsed ? "w-[80px]" : "w-[260px]"} shrink-0 sticky top-0 h-screen flex flex-col relative overflow-hidden transition-all duration-300 ease-in-out border-r border-white/10 shadow-[12px_0_40px_rgba(83,0,93,0.15)] z-[10000]`}
+    <aside className={`${isCollapsed ? "w-[80px]" : "w-[280px]"} shrink-0 sticky top-0 h-screen flex flex-col relative overflow-hidden transition-all duration-300 ease-in-out border-r border-white/10 shadow-[12px_0_40px_rgba(83,0,93,0.15)] z-[10000]`}
       style={{ background: "linear-gradient(180deg, #8c0aa8 0%, #6d108d 28%, #5b1f6b 58%, #7d365c 100%)" }}>
 
       {/* ── Power Grid Background Image ── */}
@@ -77,9 +77,9 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               <div className="flex items-center gap-1">
                 <span className="text-white font-extrabold text-[20px] tracking-tight">PEA</span>
                 <span className="text-[#EDC878] font-extrabold text-[20px]">Brain</span>
-                <span className="ml-1 px-1.5 py-0.5 rounded text-[16.5px] font-bold bg-white/10 text-white/80 border border-white/20 tracking-wider">v0.1.7</span>
+                <span className="ml-1 px-1.5 py-0.5 rounded text-[12px] font-bold bg-white/10 text-white/80 border border-white/20 tracking-wider">v0.1.7</span>
               </div>
-              <div className="text-[#EDC878]/80 text-[16.5px] font-medium tracking-wide mt-[-1px] whitespace-normal leading-tight">
+              <div className="text-[#EDC878]/80 text-[13px] font-medium tracking-wide mt-[-1px] whitespace-normal leading-tight">
                 ขับเคลื่อนการจัดซื้อพลังงานด้วย AI เพื่ออนาคตที่ยั่งยืน
               </div>
             </div>
@@ -94,9 +94,9 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         style={{ background: "linear-gradient(135deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.05) 100%)" }}>
         <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-2"}`}>
           <Sparkles size={16} className="text-purple-300 shrink-0" />
-          {!isCollapsed && <span className="text-[16.5px] font-bold text-white truncate">AI Copilot</span>}
+          {!isCollapsed && <span className="text-[15px] font-bold text-white truncate">AI Copilot</span>}
         </div>
-        {!isCollapsed && <div className="text-[16.5px] text-white/72 mt-1 truncate">วิเคราะห์ความเสี่ยงด้วย AI</div>}
+        {!isCollapsed && <div className="text-[13px] text-white/72 mt-1 truncate">วิเคราะห์ความเสี่ยงด้วย AI</div>}
       </div>
 
       <div className="mx-4 h-px bg-white/8 relative z-10" />
@@ -109,7 +109,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           const badgeValue = item.id === "risk" ? criticalAlerts.length : item.badge;
           return (
             <button key={item.id} onClick={() => setActiveTab(item.id)} title={isCollapsed ? item.label : undefined}
-              className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3.5" : "gap-3 px-3 py-3.5"} rounded-2xl text-[16.5px] transition-all duration-300 cursor-pointer relative
+              className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3.5" : "gap-3 px-3 py-3.5"} rounded-2xl text-[15px] transition-all duration-300 cursor-pointer relative
                 ${isActive
                   ? "bg-white/20 text-white font-semibold shadow-[0_8px_30px_rgba(255,255,255,0.12)] border border-white/30 backdrop-blur-md"
                   : "text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent"
@@ -120,7 +120,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 <span className="flex-1 text-left flex items-center gap-2 truncate transition-opacity duration-300">
                   <span className="truncate">{item.label}</span>
                   {item.badgeLabel && (
-                    <span className="text-[16.5px] font-bold tracking-wider bg-white/20 text-white px-1.5 py-0.5 rounded uppercase shrink-0">
+                    <span className="text-[11px] font-bold tracking-wider bg-white/20 text-white px-1.5 py-0.5 rounded uppercase shrink-0">
                       {item.badgeLabel}
                     </span>
                   )}
@@ -131,7 +131,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 isCollapsed ? (
                   <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 shadow-sm" />
                 ) : (
-                  <span className="min-w-[22px] h-[22px] px-1.5 rounded-full text-[16.5px] font-bold flex items-center justify-center bg-critical-600 text-white shrink-0">
+                  <span className="min-w-[22px] h-[22px] px-1.5 rounded-full text-[12px] font-bold flex items-center justify-center bg-critical-600 text-white shrink-0">
                     {badgeValue}
                   </span>
                 )
@@ -148,7 +148,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('toggle-feedback'))}
           title={isCollapsed ? (isFeedbackOn ? "ปิดโหมดเสนอแนะ" : "โหมดเสนอแนะ") : undefined}
-          className={`feedback-ignore-click w-full flex items-center ${isCollapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5"} rounded-xl text-[16.5px] font-bold transition-all cursor-pointer ${
+          className={`feedback-ignore-click w-full flex items-center ${isCollapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5"} rounded-xl text-[14px] font-bold transition-all cursor-pointer ${
             isFeedbackOn 
               ? "bg-amber-500 text-white shadow-md shadow-amber-500/20 border border-amber-400/30 hover:bg-amber-600" 
               : "bg-white/10 text-white hover:bg-white/20 border border-transparent hover:border-white/20"
@@ -169,7 +169,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             }
           }}
           title={isCollapsed ? "เคลียร์แผนทั้งหมด (Test)" : undefined}
-          className={`feedback-ignore-click mt-4 w-full flex items-center ${isCollapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5"} rounded-xl text-[16.5px] font-bold text-white bg-red-500/80 hover:bg-red-600 shadow-md shadow-red-500/20 border border-red-400/30 transition-all cursor-pointer`}
+          className={`feedback-ignore-click mt-4 w-full flex items-center ${isCollapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5"} rounded-xl text-[14px] font-bold text-white bg-red-500/80 hover:bg-red-600 shadow-md shadow-red-500/20 border border-red-400/30 transition-all cursor-pointer`}
         >
           <Trash2 size={14} className="shrink-0" />
           {!isCollapsed && <span className="truncate">เคลียร์แผนทั้งหมด (Test)</span>}
@@ -179,7 +179,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           title={isCollapsed ? "ขยายเมนู" : "ย่อเมนู"}
-          className={`mt-2 hidden md:flex w-full items-center ${isCollapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5"} rounded-xl text-[16.5px] font-bold text-white/50 hover:text-white hover:bg-white/10 border border-transparent transition-all cursor-pointer`}
+          className={`mt-2 hidden md:flex w-full items-center ${isCollapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5"} rounded-xl text-[14px] font-bold text-white/50 hover:text-white hover:bg-white/10 border border-transparent transition-all cursor-pointer`}
         >
           {isCollapsed ? <ChevronRight size={16} className="shrink-0" /> : <ChevronLeft size={16} className="shrink-0" />}
           {!isCollapsed && <span className="truncate">ย่อแถบเมนู</span>}
