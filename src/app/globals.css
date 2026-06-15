@@ -50,6 +50,8 @@ html, body {
   background: var(--color-surface);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
+  /* Big-Front UI: Increase base font size for 40-45 demographic */
+  font-size: 115%;
 }
 
 /* ===== Scrollbar ===== */

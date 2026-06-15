@@ -249,7 +249,7 @@ export default function FeedbackOverlay() {
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-1.5">
                 <div className={`w-2 h-2 rounded-full ${getRoleColor(pin.role)}`} />
-                <span className="text-[11px] font-bold text-slate-700">{pin.role}</span>
+                <span className="text-[16.5px] font-bold text-slate-700">{pin.role}</span>
               </div>
               <button 
                 onClick={(e) => { e.stopPropagation(); handleDeletePin(pin.id); }}
@@ -259,12 +259,12 @@ export default function FeedbackOverlay() {
               </button>
             </div>
             {pin.name && (
-              <div className="text-[12px] font-semibold text-slate-900 mb-1 flex items-center gap-1">
+              <div className="text-[16.5px] font-semibold text-slate-900 mb-1 flex items-center gap-1">
                 <User size={10} /> {pin.name}
               </div>
             )}
-            <p className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap">{pin.text}</p>
-            <div className="text-[9px] text-slate-400 mt-2 text-right">
+            <p className="text-[16.5px] text-slate-600 leading-relaxed whitespace-pre-wrap">{pin.text}</p>
+            <div className="text-[16.5px] text-slate-400 mt-2 text-right">
               {formatDate(pin.timestamp)}
             </div>
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white" />
@@ -304,7 +304,7 @@ export default function FeedbackOverlay() {
         )}
 
         <div className="flex justify-between items-center mb-3 relative z-20">
-          <h3 className="text-[13px] font-bold text-slate-800 flex items-center gap-1.5">
+          <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-1.5">
             <MessageSquare size={14} className="text-amber-500" />
             เพิ่มข้อเสนอแนะ
           </h3>
@@ -315,10 +315,10 @@ export default function FeedbackOverlay() {
 
         <div className="space-y-3">
           <div className="relative">
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">ตำแหน่ง (Role)</label>
+            <label className="block text-[16.5px] font-bold text-slate-500 mb-1">ตำแหน่ง (Role)</label>
             <div 
               onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-              className={`w-full text-[12px] p-2 rounded-lg bg-slate-50 border cursor-pointer flex justify-between items-center transition-colors ${
+              className={`w-full text-[16.5px] p-2 rounded-lg bg-slate-50 border cursor-pointer flex justify-between items-center transition-colors ${
                 isRoleDropdownOpen ? "border-amber-400 shadow-[0_0_0_2px_rgba(251,191,36,0.2)]" : "border-slate-200 hover:border-slate-300"
               }`}
             >
@@ -332,7 +332,7 @@ export default function FeedbackOverlay() {
                   <div 
                     key={r}
                     onClick={() => { setFormRole(r); setIsRoleDropdownOpen(false); }}
-                    className={`px-3 py-2.5 text-[12px] cursor-pointer transition-colors flex items-center ${
+                    className={`px-3 py-2.5 text-[16.5px] cursor-pointer transition-colors flex items-center ${
                       formRole === r 
                         ? 'bg-amber-50 text-amber-700 font-bold' 
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
@@ -346,24 +346,24 @@ export default function FeedbackOverlay() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">ชื่อ (ไม่บังคับ)</label>
+            <label className="block text-[16.5px] font-bold text-slate-500 mb-1">ชื่อ (ไม่บังคับ)</label>
             <input 
               type="text" 
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
               placeholder="เช่น อ.เอก, พี่หนุ่ม"
-              className="w-full text-[12px] p-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-400"
+              className="w-full text-[16.5px] p-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-400"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">ข้อเสนอแนะ</label>
+            <label className="block text-[16.5px] font-bold text-slate-500 mb-1">ข้อเสนอแนะ</label>
             <textarea 
               value={formText}
               onChange={(e) => setFormText(e.target.value)}
               placeholder="พิมพ์ข้อเสนอแนะที่นี่..."
               rows={3}
-              className="w-full text-[12px] p-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-400 resize-none"
+              className="w-full text-[16.5px] p-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-400 resize-none"
               autoFocus
             />
           </div>
@@ -371,14 +371,14 @@ export default function FeedbackOverlay() {
           <div className="flex gap-2 pt-2">
             <button 
               onClick={handleCancelDraft}
-              className="flex-1 py-2 rounded-xl text-[12px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer"
+              className="flex-1 py-2 rounded-xl text-[16.5px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer"
             >
               ยกเลิก
             </button>
             <button 
               onClick={handleSavePin}
               disabled={!formText.trim()}
-              className="flex-1 py-2 rounded-xl text-[12px] font-bold text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-1 cursor-pointer"
+              className="flex-1 py-2 rounded-xl text-[16.5px] font-bold text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-1 cursor-pointer"
             >
               <Send size={12} />
               บันทึก

@@ -21,7 +21,8 @@
     "react-markdown": "^10.1.0",
     "recharts": "^3.8.1",
     "rehype-raw": "^7.0.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

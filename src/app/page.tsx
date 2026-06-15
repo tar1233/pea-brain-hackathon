@@ -7,6 +7,7 @@ import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 import AICopilot from "./components/AICopilot";
 import Dashboard from "./components/Dashboard";
+import GovernanceView from "./components/GovernanceView";
 import ForecastView from "./components/ForecastView";
 import InventoryView from "./components/InventoryView";
 import AlertsView from "./components/AlertsView";
@@ -243,6 +244,8 @@ export default function Home() {
     switch (activeTab) {
       case "dashboard":
         return <Dashboard setActiveTab={setActiveTab} />;
+      case "governance":
+        return <GovernanceView />;
       case "forecast":
         return <ForecastView />;
       case "inventory":

@@ -22,7 +22,7 @@ type ChatMessage = {
 const DEFAULT_WELCOME: ChatMessage = {
   id: "welcome",
   role: "ai",
-  content: "สวัสดีครับ! พวกเราทีมงาน PEA Brain (Multi-Agent) ผู้ช่วยวิเคราะห์ข้อมูลจัดซื้อพัสดุ (เชื่อมต่อกับ Bedrock Knowledge Base เรียบร้อย)\n\nลองถามผมได้เลย เช่น:\n- สรุปสถานะหม้อแปลง 10067 หน่อย\n- Demand ของปี 2569 คือกี่เครื่อง",
+  content: "สวัสดีครับ! พวกเราทีมงาน PEA Brain (Multi-Agent) ผู้ช่วยวิเคราะห์ข้อมูลจัดซื้อพัสดุ (เชื่อมต่อกับ Bedrock Knowledge Base เรียบร้อย)\n\nลองถามผมได้เลย เช่น:\n- สรุปสถานะหม้อแปลง 10067 หน่อย\n- ตรวจสอบสัญญา VMI ผิดระเบียบไหม",
 };
 
 export default function AICopilot() {
@@ -81,10 +81,19 @@ export default function AICopilot() {
     setIsLoading(true);
 
     try {
+      // Inject context of the currently viewed material so the AI knows WHICH contract to check!
+      const currentMaterial = "หม้อแปลง 160 kVA (SAP: 10067)";
+      const contextMsg = {
+        role: "system",
+        content: `[System Context: The user is currently viewing the procurement plan and contract for "${currentMaterial}". If the user asks about checking a contract, assume they mean the VMI contract for this specific material.]`
+      };
+      
+      const payloadMessages = [contextMsg, ...newMessages.map(m => ({ role: m.role, content: m.content }))];
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: payloadMessages }),
       });
 
       const data = await response.json();
@@ -122,7 +131,7 @@ export default function AICopilot() {
       >
         <MessageCircle size={24} className="group-hover:scale-110 transition-transform" />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
-          <span className="text-[8px] font-bold text-white">AI</span>
+          <span className="text-[14px] font-bold text-white">AI</span>
         </span>
       </button>
     );
@@ -138,8 +147,8 @@ export default function AICopilot() {
             <Sparkles size={16} className="text-[#A80689]" />
           </div>
           <div className="min-w-0">
-            <div className="text-[13px] font-extrabold text-gray-900 tracking-tight truncate">PEA Brain Copilot</div>
-            <div className="text-[10px] text-gray-500 flex items-center gap-1 mt-0.5 font-semibold">
+            <div className="text-[16.5px] font-extrabold text-gray-900 tracking-tight truncate">PEA Brain Copilot</div>
+            <div className="text-[16.5px] text-gray-500 flex items-center gap-1 mt-0.5 font-semibold">
               <Bot size={10} className="shrink-0" /> <span className="truncate">Nova Pro Multi-Agent</span>
             </div>
           </div>
@@ -150,7 +159,7 @@ export default function AICopilot() {
             className="flex items-center gap-1.5 bg-white border border-slate-200 hover:border-red-200 hover:bg-red-50 text-slate-500 hover:text-red-600 px-3 h-7 rounded-full transition-all cursor-pointer shadow-sm shrink-0 group"
             title="ซ่อนหน้าต่างแชท"
           >
-            <span className="text-[11px] font-extrabold whitespace-nowrap">ปิดแชท</span>
+            <span className="text-[16.5px] font-extrabold whitespace-nowrap">ปิดแชท</span>
             <X size={14} className="stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
           </button>
         </div>
@@ -158,7 +167,7 @@ export default function AICopilot() {
 
       {/* Recommendations */}
       <div className="px-4 py-4 space-y-3 bg-gradient-to-b from-white/30 to-transparent shrink-0 border-b border-gray-100/30">
-        <div className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 ml-1">คำแนะนำด่วน (Auto-generated)</div>
+        <div className="text-[16.5px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 ml-1">คำแนะนำด่วน (Auto-generated)</div>
         {aiRecommendations.slice(0, 2).map((rec) => {
           const Icon = sevIcons[rec.severity];
           const colors = sevColors[rec.severity];
@@ -170,8 +179,8 @@ export default function AICopilot() {
               <div className="flex items-start gap-2.5">
                 <Icon size={14} style={{ color: colors.color }} className="mt-0.5 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-[11px] font-bold text-gray-900 leading-snug tracking-tight">{rec.title}</h4>
-                  <p className="text-[10px] text-gray-600 leading-relaxed mt-1 line-clamp-2">{rec.description}</p>
+                  <h4 className="text-[16.5px] font-bold text-gray-900 leading-snug tracking-tight">{rec.title}</h4>
+                  <p className="text-[16.5px] text-gray-600 leading-relaxed mt-1 line-clamp-2">{rec.description}</p>
                 </div>
               </div>
             </div>
@@ -183,12 +192,12 @@ export default function AICopilot() {
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[90%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed shadow-sm transition-all ${
+            <div className={`max-w-[90%] rounded-2xl px-4 py-3 text-[16.5px] leading-relaxed shadow-sm transition-all ${
               msg.role === "user" 
                 ? "bg-gradient-to-r from-[#A80689] to-[#7b0365] text-white rounded-br-sm shadow-purple-500/10" 
                 : "bg-white/70 backdrop-blur-md border border-white/60 text-gray-800 rounded-bl-sm"
             }`}>
-              <div className="flex items-center gap-1.5 mb-1 opacity-70 text-[10px] font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-1.5 mb-1 opacity-70 text-[16.5px] font-bold uppercase tracking-widest">
                 {msg.role === "user" ? <User size={10} /> : <Bot size={10} />}
                 {msg.role === "user" ? "คุณ" : "PEA Brain"}
               </div>
@@ -202,11 +211,11 @@ export default function AICopilot() {
                       strong: ({node, ...props}) => <strong className="font-extrabold text-gray-900" {...props} />,
                       ul: ({node, ...props}) => <ul className="list-disc pl-4 my-2 space-y-1.5" {...props} />,
                       ol: ({node, ...props}) => <ol className="list-decimal pl-4 my-2 space-y-1.5" {...props} />,
-                      li: ({node, ...props}) => <li className="leading-relaxed m-0 p-0 text-[13px]" {...props} />,
-                      p: ({node, ...props}) => <p className="mb-3 last:mb-0 leading-relaxed text-[13px]" {...props} />,
-                      h1: ({node, ...props}) => <h1 className="text-[15px] font-extrabold text-gray-900 mt-3 mb-1.5 border-b border-gray-200/60 pb-1" {...props} />,
-                      h2: ({node, ...props}) => <h2 className="text-[14px] font-extrabold text-gray-900 mt-3 mb-1.5" {...props} />,
-                      h3: ({node, ...props}) => <h3 className="text-[13px] font-bold text-gray-800 mt-2 mb-1" {...props} />,
+                      li: ({node, ...props}) => <li className="leading-relaxed m-0 p-0 text-[16.5px]" {...props} />,
+                      p: ({node, ...props}) => <p className="mb-3 last:mb-0 leading-relaxed text-[16.5px]" {...props} />,
+                      h1: ({node, ...props}) => <h1 className="text-[16.5px] font-extrabold text-gray-900 mt-3 mb-1.5 border-b border-gray-200/60 pb-1" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="text-[16.5px] font-extrabold text-gray-900 mt-3 mb-1.5" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="text-[16.5px] font-bold text-gray-800 mt-2 mb-1" {...props} />,
                       hr: ({node, ...props}) => <hr className="my-3 border-gray-200/60" {...props} />,
                     }}
                   >
@@ -219,7 +228,7 @@ export default function AICopilot() {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="max-w-[85%] rounded-2xl px-4 py-3 text-[12px] bg-white/70 backdrop-blur-md border border-white/60 text-gray-500 rounded-bl-sm shadow-sm flex items-center gap-2 font-bold">
+            <div className="max-w-[85%] rounded-2xl px-4 py-3 text-[16.5px] bg-white/70 backdrop-blur-md border border-white/60 text-gray-500 rounded-bl-sm shadow-sm flex items-center gap-2 font-bold">
               <Sparkles size={12} className="animate-pulse text-[#A80689]" /> กำลังค้นหาข้อมูลจาก RAG...
             </div>
           </div>
@@ -237,7 +246,7 @@ export default function AICopilot() {
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="ถาม PEA Brain..."
             disabled={isLoading}
-            className="flex-1 bg-transparent text-[13px] font-medium outline-none text-gray-800 placeholder:text-gray-400 disabled:opacity-50 min-w-0"
+            className="flex-1 bg-transparent text-[16.5px] font-medium outline-none text-gray-800 placeholder:text-gray-400 disabled:opacity-50 min-w-0"
           />
           <button 
             onClick={handleClearChat}

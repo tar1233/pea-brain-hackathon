@@ -15,7 +15,7 @@ function formatCurrency(value: number) {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-100 shadow-[0_12px_30px_rgba(0,0,0,0.08)] text-xs font-medium">
+      <div className="bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-100 shadow-[0_12px_30px_rgba(0,0,0,0.08)] text-[16.5px] font-medium">
         <p className="font-extrabold text-slate-800 mb-2">{payload[0].payload.name}</p>
         <div className="space-y-1.5">
           <p className="flex justify-between gap-6">
@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const renderCustomLegend = () => (
-  <div className="flex justify-end gap-6 text-[13px] font-bold text-slate-500 mb-5 mr-2">
+  <div className="flex justify-end gap-6 text-[16.5px] font-bold text-slate-500 mb-5 mr-2">
     <span className="flex items-center gap-1.5">
       <span className="w-2.5 h-2.5 rounded bg-gradient-to-b from-blue-500 to-blue-600"></span>
       สต๊อกปัจจุบัน
@@ -94,9 +94,9 @@ export default function InventoryView() {
         <article className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-2 border-l-4 border-purple-500 pl-3">
             <Sparkles size={16} className="text-purple-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">AI Stock Forecast (3 Months)</h2>
+            <h2 className="text-[16.5px] font-bold text-slate-900">AI Stock Forecast (3 Months)</h2>
           </div>
-          <p className="mt-2 text-[14px] text-slate-500 font-medium">
+          <p className="mt-2 text-[16.5px] text-slate-500 font-medium">
             AI จำลองสถานการณ์สต๊อกล่วงหน้า 3 เดือน หากไม่มีการรับของเข้า เพื่อช่วยวางแผนรับมือ
           </p>
           <div className="mt-4 h-[260px]">
@@ -131,7 +131,7 @@ export default function InventoryView() {
                   tickLine={false}
                   axisLine={{ stroke: '#e2e8f0' }}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148,163,184,0.04)' }} />
+                <Tooltip  contentStyle={{ fontSize: '13.5px' }} content={<CustomTooltip  />} cursor={{ fill: 'rgba(148,163,184,0.04)' }} />
                 <Legend verticalAlign="top" content={renderCustomLegend} />
                 <Bar dataKey="stock" fill="url(#colorStock)" radius={[4, 4, 0, 0]} maxBarSize={20} />
                 <Bar dataKey="forecast" fill="url(#colorForecast)" radius={[4, 4, 0, 0]} maxBarSize={20} />
@@ -144,7 +144,7 @@ export default function InventoryView() {
         <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm flex flex-col">
           <div className="flex items-center gap-2 border-l-4 border-red-500 pl-3">
             <Brain size={16} className="text-red-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">⚠️ AI Alert: ความเสี่ยงสต๊อกขาด</h2>
+            <h2 className="text-[16.5px] font-bold text-slate-900">⚠️ AI Alert: ความเสี่ยงสต๊อกขาด</h2>
           </div>
           <div className="mt-4 space-y-2.5">
             {atRiskMaterials.map((material) => {
@@ -154,20 +154,20 @@ export default function InventoryView() {
                 <div key={material.id} className="rounded-[16px] border border-red-100 bg-red-50/60 p-3">
                   <div className="flex flex-col gap-1.5 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <div className="text-[13px] font-bold text-slate-900">{material.id}</div>
-                      <div className="text-[13px] font-medium text-slate-500">{material.name}</div>
+                      <div className="text-[16.5px] font-bold text-slate-900">{material.id}</div>
+                      <div className="text-[16.5px] font-medium text-slate-500">{material.name}</div>
                     </div>
-                    <div className="rounded-full bg-red-500 px-2 py-0.5 text-[13px] font-bold text-white shadow-sm">
+                    <div className="rounded-full bg-red-500 px-2 py-0.5 text-[16.5px] font-bold text-white shadow-sm">
                       Coverage {coverage}%
                     </div>
                   </div>
-                  <div className="mt-2 grid gap-2 text-[13px] text-slate-600 md:grid-cols-3">
+                  <div className="mt-2 grid gap-2 text-[16.5px] text-slate-600 md:grid-cols-3">
                     <div>Gap: {gap.toLocaleString()}</div>
                     <div>LT: {material.leadTimeWeeks} สัปดาห์</div>
                     <div>ROP: {material.reorderPoint.toLocaleString()}</div>
                   </div>
                   <div className="mt-2 flex items-center justify-between border-t border-red-200/40 pt-2">
-                    <div className="flex-1 mr-2 text-[12px] text-red-800/80 leading-tight">
+                    <div className="flex-1 mr-2 text-[16.5px] text-red-800/80 leading-tight">
                       💡 แนะนำให้ AI วิเคราะห์แผนรับมือ
                     </div>
                     <button 
@@ -177,7 +177,7 @@ export default function InventoryView() {
                           detail: { materialId: material.id } 
                         }));
                       }}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-[13px] font-bold cursor-pointer transition shadow-sm whitespace-nowrap"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-[16.5px] font-bold cursor-pointer transition shadow-sm whitespace-nowrap"
                     >
                       <Sparkles size={14} className="text-blue-300" /> ให้ AI วางแผน
                     </button>
@@ -192,20 +192,20 @@ export default function InventoryView() {
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-[14px] font-bold text-slate-900 border-l-4 border-blue-500 pl-3">Material Drilldown</h2>
-            <p className="mt-1 text-[14px] text-slate-500 pl-3 font-medium">ค้นหารายการเพื่อดู stock, demand และมูลค่าคงคลังของแต่ละวัสดุ</p>
+            <h2 className="text-[16.5px] font-bold text-slate-900 border-l-4 border-blue-500 pl-3">Material Drilldown</h2>
+            <p className="mt-1 text-[16.5px] text-slate-500 pl-3 font-medium">ค้นหารายการเพื่อดู stock, demand และมูลค่าคงคลังของแต่ละวัสดุ</p>
           </div>
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="ค้นหา material id, SAP หรือชื่อรายการ..."
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-colors focus:border-primary-300 md:max-w-sm"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-[16.5px] outline-none transition-colors focus:border-primary-300 md:max-w-sm"
           />
         </div>
 
         <div className="mt-5 overflow-x-auto">
           <table className="min-w-full text-left">
-            <thead className="border-b border-slate-200 text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <thead className="border-b border-slate-200 text-[16.5px] uppercase tracking-[0.14em] text-slate-400">
               <tr>
                 <th className="px-3 py-3">Material</th>
                 <th className="px-3 py-3">Stock</th>
@@ -222,10 +222,10 @@ export default function InventoryView() {
                 const isExpanded = expandedId === material.id;
                 return (
                   <React.Fragment key={material.id}>
-                    <tr className={`border-b border-slate-100 text-sm text-slate-700 ${index % 2 === 1 ? 'bg-slate-50/60' : ''}`}>
+                    <tr className={`border-b border-slate-100 text-[16.5px] text-slate-700 ${index % 2 === 1 ? 'bg-slate-50/60' : ''}`}>
                       <td className="px-3 py-4">
                         <div className="font-bold text-slate-900">{material.id}</div>
-                        <div className="mt-1 text-xs text-slate-500">{material.name}</div>
+                        <div className="mt-1 text-[16.5px] text-slate-500">{material.name}</div>
                       </td>
                       <td className="px-3 py-4">{material.currentStock.toLocaleString()} {material.unit}</td>
                       <td className="px-3 py-4">{material.safetyStock.toLocaleString()} {material.unit}</td>
@@ -233,7 +233,7 @@ export default function InventoryView() {
                       <td className="px-3 py-4">{material.eoq.toLocaleString()} {material.unit}</td>
                       <td className="px-3 py-4">
                         <div className="font-semibold text-slate-900">{formatCurrency(material.currentStock * material.unitPrice)}</div>
-                        <div className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${coverage < 100 ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+                        <div className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[16.5px] font-semibold ${coverage < 100 ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
                           Coverage {coverage}%
                         </div>
                       </td>
@@ -241,7 +241,7 @@ export default function InventoryView() {
                         <button
                           type="button"
                           onClick={() => setExpandedId(isExpanded ? null : material.id)}
-                          className={`px-3 py-1.5 border border-slate-200 text-slate-700 rounded-lg text-[13px] font-bold cursor-pointer transition shadow-sm ${isExpanded ? 'bg-slate-100 ring-2 ring-slate-200' : 'hover:bg-slate-50'}`}
+                          className={`px-3 py-1.5 border border-slate-200 text-slate-700 rounded-lg text-[16.5px] font-bold cursor-pointer transition shadow-sm ${isExpanded ? 'bg-slate-100 ring-2 ring-slate-200' : 'hover:bg-slate-50'}`}
                         >
                           {isExpanded ? 'ซ่อน' : 'ดูรายละเอียด'}
                         </button>
@@ -256,30 +256,30 @@ export default function InventoryView() {
                               <div className="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center">
                                 <Sparkles size={14} className="text-purple-600" />
                               </div>
-                              <h4 className="text-[13px] font-bold text-gray-900">รายละเอียด {material.id} — {material.name}</h4>
+                              <h4 className="text-[16.5px] font-bold text-gray-900">รายละเอียด {material.id} — {material.name}</h4>
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                               <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[13px] text-gray-400 uppercase tracking-wider">สต๊อกปัจจุบัน</div>
-                                <div className="text-[14px] font-bold text-gray-900 mt-1">{material.currentStock.toLocaleString()} {material.unit}</div>
+                                <div className="text-[16.5px] text-gray-400 uppercase tracking-wider">สต๊อกปัจจุบัน</div>
+                                <div className="text-[16.5px] font-bold text-gray-900 mt-1">{material.currentStock.toLocaleString()} {material.unit}</div>
                               </div>
                               <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[13px] text-gray-400 uppercase tracking-wider">Safety Stock</div>
-                                <div className="text-[14px] font-bold text-gray-900 mt-1">{material.safetyStock.toLocaleString()} {material.unit}</div>
+                                <div className="text-[16.5px] text-gray-400 uppercase tracking-wider">Safety Stock</div>
+                                <div className="text-[16.5px] font-bold text-gray-900 mt-1">{material.safetyStock.toLocaleString()} {material.unit}</div>
                               </div>
                               <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[13px] text-gray-400 uppercase tracking-wider">EOQ ที่แนะนำ</div>
-                                <div className="text-[14px] font-bold text-purple-700 mt-1">{material.eoq.toLocaleString()} {material.unit}</div>
+                                <div className="text-[16.5px] text-gray-400 uppercase tracking-wider">EOQ ที่แนะนำ</div>
+                                <div className="text-[16.5px] font-bold text-purple-700 mt-1">{material.eoq.toLocaleString()} {material.unit}</div>
                               </div>
                               <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                <div className="text-[13px] text-gray-400 uppercase tracking-wider">ราคาต่อหน่วย</div>
-                                <div className="text-[14px] font-bold text-gray-900 mt-1">{formatCurrency(material.unitPrice)}</div>
+                                <div className="text-[16.5px] text-gray-400 uppercase tracking-wider">ราคาต่อหน่วย</div>
+                                <div className="text-[16.5px] font-bold text-gray-900 mt-1">{formatCurrency(material.unitPrice)}</div>
                               </div>
                             </div>
                             
                             <div className="bg-white rounded-xl p-4 border border-gray-100 mb-4 flex gap-3 items-start">
-                              <div className="text-[14px] text-gray-600">
+                              <div className="text-[16.5px] text-gray-600">
                                 <span className="font-bold text-gray-900 flex items-center gap-1.5 mb-1"><FileText size={14} className="text-amber-600"/> สถานะ</span>
                                 สต๊อก {material.currentStock.toLocaleString()} {material.unit} {material.currentStock < material.safetyStock ? `ต่ำกว่า Safety Stock ${material.safetyStock.toLocaleString()} ${material.unit} (${Math.round((material.safetyStock - material.currentStock)/material.safetyStock*100)}% ต่ำกว่าเกณฑ์)` : 'อยู่ในระดับปกติ'}
                               </div>
@@ -287,11 +287,11 @@ export default function InventoryView() {
                             
                             {material.currentStock < material.safetyStock && (
                               <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100 mb-4">
-                                <div className="flex items-center gap-1.5 mb-2 font-bold text-amber-700 text-[14px]">
+                                <div className="flex items-center gap-1.5 mb-2 font-bold text-amber-700 text-[16.5px]">
                                   <Sparkles size={14} className="text-amber-500" />
                                   คำแนะนำ AI Copilot
                                 </div>
-                                <div className="text-[14px] text-gray-700">
+                                <div className="text-[16.5px] text-gray-700">
                                   สั่งซื้อเร่งด่วน {material.eoq.toLocaleString()} {material.unit} (EOQ-based) เพื่อเติม Safety Stock มูลค่าประมาณ {formatCurrency(material.eoq * material.unitPrice)}
                                   <div className="mt-2 text-emerald-600 font-bold">Confidence: 92%</div>
                                 </div>
@@ -311,14 +311,14 @@ export default function InventoryView() {
                                     } 
                                   }));
                                 }}
-                                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[14px] font-bold transition-colors cursor-pointer shadow-sm"
+                                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[16.5px] font-bold transition-colors cursor-pointer shadow-sm"
                               >
                                 สร้างใบสั่งซื้อ (PO)
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setExpandedId(null)}
-                                className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-[14px] font-bold transition-colors cursor-pointer"
+                                className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-[16.5px] font-bold transition-colors cursor-pointer"
                               >
                                 ปิดรายละเอียด
                               </button>

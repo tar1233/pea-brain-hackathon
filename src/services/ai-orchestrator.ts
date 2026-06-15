@@ -3,7 +3,7 @@
  * Integrates with LLMs (e.g., AWS Bedrock) to coordinate intelligent agents.
  */
 import { PrismaClient } from '@prisma/client';
-import { aiRecommendations, dataSummary } from '../app/data/mockData'; // Fallback for static layout data
+import { aiRecommendations, dataSummary } from '../app/data/awsData'; // Fallback for static layout data
 
 export class AIOrchestrator {
   private prisma: PrismaClient;

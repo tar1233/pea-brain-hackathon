@@ -125,7 +125,7 @@ export default function FeedbackLog() {
       <div className="w-full max-w-[1600px] mx-auto pt-6 px-6 lg:px-8 flex justify-center pb-8">
         <button 
           onClick={handleRestoreDemo}
-          className="text-sm text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-4 py-2 rounded-full transition-colors flex items-center gap-2 font-semibold shadow-sm"
+          className="text-[16.5px] text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-4 py-2 rounded-full transition-colors flex items-center gap-2 font-semibold shadow-sm"
         >
           <Clock size={16} /> กู้คืนข้อมูลตัวอย่างสำหรับการพรีเซนต์ (Restore Demo Data)
         </button>
@@ -139,21 +139,21 @@ export default function FeedbackLog() {
         <div className="flex items-center gap-2">
           <MessageSquare size={18} className="text-[#A80689]" />
           <h3 className="font-bold text-lg text-slate-800 tracking-tight">รายการข้อเสนอแนะ (Feedback Log)</h3>
-          <span className="bg-purple-100 text-[#A80689] px-2 py-0.5 rounded-full text-xs font-bold">
+          <span className="bg-purple-100 text-[#A80689] px-2 py-0.5 rounded-full text-[16.5px] font-bold">
             ทั้งหมด {history.length} รายการ
           </span>
         </div>
         <div className="flex gap-2">
           <button 
             onClick={handleRestoreDemo}
-            className="text-xs text-purple-600 hover:text-white border border-purple-400 hover:bg-purple-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+            className="text-[16.5px] text-purple-600 hover:text-white border border-purple-400 hover:bg-purple-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
             title="โหลดข้อมูลจำลองสำหรับการพรีเซนต์"
           >
             <Clock size={12} /> กู้คืนข้อมูล (Demo)
           </button>
           <button 
             onClick={handleClearAll}
-            className="text-xs text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+            className="text-[16.5px] text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
           >
             <Trash2 size={12} /> ล้างข้อมูลทั้งหมด
           </button>
@@ -169,17 +169,17 @@ export default function FeedbackLog() {
           >
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${getRoleColor(pin.role)}`}>
+                <span className={`text-[16.5px] px-2 py-0.5 rounded-full font-bold ${getRoleColor(pin.role)}`}>
                   {pin.role}
                 </span>
                 {pin.name && (
-                  <span className="text-xs font-semibold text-slate-600 flex items-center gap-1">
+                  <span className="text-[16.5px] font-semibold text-slate-600 flex items-center gap-1">
                     <User size={12} /> {pin.name}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                <div className="text-[16.5px] text-slate-400 flex items-center gap-1">
                   <Clock size={10} /> {formatDate(pin.timestamp)}
                 </div>
                 <button 
@@ -192,11 +192,11 @@ export default function FeedbackLog() {
               </div>
             </div>
 
-            <p className="text-sm text-slate-700 leading-relaxed font-medium">
+            <p className="text-[16.5px] text-slate-700 leading-relaxed font-medium">
               "{pin.text}"
             </p>
 
-            <div className="mt-auto pt-2 flex justify-between items-center border-t border-slate-100 text-xs text-slate-500">
+            <div className="mt-auto pt-2 flex justify-between items-center border-t border-slate-100 text-[16.5px] text-slate-500">
               <div className="flex items-center gap-1">
                 <MapPin size={12} className="text-slate-400" />
                 <span>แท็บ: {pin.tabId === 'roadmap' ? 'Roadmap' : pin.tabId === 'dashboard' ? 'Overview' : pin.tabId === 'ebidding' ? 'e-Bidding' : pin.tabId || 'ไม่ระบุ'}</span>

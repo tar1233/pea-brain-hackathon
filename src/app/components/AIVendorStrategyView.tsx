@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Brain, ShieldCheck, Factory, TrendingUp, CheckCircle2, Copy, FileText, Sparkles } from "lucide-react";
+import { Brain, ShieldCheck, Factory, TrendingUp, CheckCircle2, Copy, FileText, Sparkles, DollarSign } from "lucide-react";
 import { useData } from "../context/DataContext";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from "recharts";
 
 export default function AIVendorStrategyView({ aiResult, material }: { aiResult?: any, material?: any }) {
   const { vendors } = useData();
@@ -150,7 +150,7 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                 <Factory size={18} className="text-indigo-500" />
                 ภาพรวมตลาด vs ความต้องการ ({annualDemand.toLocaleString()} {unit}/ปี = {quarterlyDemand.toLocaleString()} {unit}/รอบ)
               </div>
-              <span className="text-xs font-normal text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+              <span className="text-[16.5px] font-normal text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
                 (อ้างอิง: {getDemandSourceLabel()})
               </span>
             </h2>
@@ -160,10 +160,10 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                   <XAxis dataKey="month" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px' }}
+                  <Tooltip  contentStyle={{ fontSize: '13.5px' }} 
+                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px' , fontSize: '13.5px' }}
                     itemStyle={{ color: '#1e293b' }}
-                  />
+                   />
                   <Legend wrapperStyle={{ paddingTop: '10px' }} />
                   <Bar dataKey="demand" name="Demand ของ กฟภ. ต่อรอบ" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={50} />
                   <Bar dataKey="capacity" name="Available Capacity รวมต่อไตรมาส" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={50} />
@@ -171,11 +171,45 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 p-4 bg-indigo-50 border border-indigo-100 rounded-xl flex items-start gap-3">
-              <Brain size={20} className="text-indigo-600 mt-0.5 shrink-0" />
-              <p className="text-sm text-indigo-900 leading-relaxed">
-                <strong>AI Insight:</strong> {aiInsightText}
-              </p>
+            {/* TCO Comparison Section (Bulk vs VMI Staggered Delivery) */}
+            <div className="mt-6 border-t border-slate-200 pt-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2">
+                    <DollarSign size={18} className="text-emerald-500" />
+                    AI TCO Optimizer (Based on Historical Data)
+                  </h3>
+                  <p className="text-[16.5px] text-slate-500 mt-1">คำนวณความคุ้มค่าจากประวัติการเบิกจ่ายและราคาในอดีต (Historical Data): การสั่งซื้อครั้งเดียว (Bulk) vs การทยอยส่งมอบ (VMI)</p>
+                </div>
+                <div className="bg-emerald-50 border border-emerald-200 px-2 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm shrink-0">
+                  <Sparkles size={16} className="text-emerald-600 shrink-0" />
+                  <span className="text-[16.5px] font-bold text-emerald-800 whitespace-nowrap">ประหยัดทันที: ฿{(holdingSavings).toLocaleString()}</span>
+                </div>
+              </div>
+              
+              <div className="h-[200px] w-full pl-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={[
+                    { name: "Bulk Delivery (รับของงวดเดียว)", cost: singleHoldingCost, fill: "#94a3b8" },
+                    { name: "VMI Staggered (ทยอยรับ 4 งวด)", cost: phasedHoldingCost, fill: "#10b981" }
+                  ]} layout="vertical" margin={{ top: 10, right: 80, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="name" type="category" width={220} tick={{ fontSize: 13, fill: '#475569', fontWeight: 600 }} axisLine={false} tickLine={false} />
+                    <Tooltip cursor={{ fill: '#f8fafc' }} formatter={(val: any) => [`฿${Number(val).toLocaleString()}`, "Holding Cost"]} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                    <Bar dataKey="cost" radius={[0, 4, 4, 0]} barSize={32}>
+                      <LabelList dataKey="cost" position="right" formatter={(val: any) => `฿${Number(val).toLocaleString()}`} fill="#475569" fontSize={12} fontWeight={700} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="mt-4 p-4 bg-indigo-50 border border-indigo-100 rounded-xl flex items-start gap-3 shadow-inner">
+                <Brain size={20} className="text-indigo-600 mt-0.5 shrink-0" />
+                <p className="text-[13.5px] text-indigo-900 leading-relaxed font-medium">
+                  <strong>AI Strategy Insight:</strong> {aiInsightText}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -183,7 +217,7 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
             <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
               <div>
-                <h3 className="text-[16px] font-bold text-slate-800 flex items-center gap-2">
+                <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2">
                   <TrendingUp size={18} className="text-emerald-500" />
                   ข้อมูลศักยภาพผู้ผลิต (Vendor Reliability Database)
                 </h3>
@@ -192,7 +226,7 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
-                  <tr className="bg-slate-200 text-slate-700 text-[14px]">
+                  <tr className="bg-slate-200 text-slate-700 text-[16.5px]">
                     <th className="p-2 border border-slate-300 font-bold text-center">ชื่อผู้ผลิต (Vendor)</th>
                     <th className="p-2 border border-slate-300 font-bold text-center">กำลังผลิตจดทะเบียน<br/>(Capacity)</th>
                     <th className="p-2 border border-slate-300 font-bold text-center">ยอดค้างส่ง (Backlog)</th>
@@ -202,12 +236,12 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
                 </thead>
                 <tbody>
                   {processedVendors.map((v: any) => (
-                    <tr key={v.id} className="hover:bg-slate-50 text-[14px] bg-white">
+                    <tr key={v.id} className="hover:bg-slate-50 text-[16.5px] bg-white">
                       <td className="p-2 border border-slate-300 font-medium text-slate-800">{v.name}</td>
                       <td className="p-2 border border-slate-300 text-center text-slate-600">{v.registeredCapacity}</td>
                       <td className="p-2 border border-slate-300 text-center text-rose-500 font-medium">{v.outstandingPOs}</td>
                       <td className="p-2 border border-slate-300 text-center">
-                        <span className={`px-2 py-0.5 rounded text-[12px] font-bold ${v.reliabilityScore >= 0.9 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                        <span className={`px-2 py-0.5 rounded text-[16.5px] font-bold ${v.reliabilityScore >= 0.9 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                           {(v.reliabilityScore * 100).toFixed(0)}%
                         </span>
                       </td>
@@ -221,22 +255,26 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
 
           {/* AI Lot Allocation Table (Excel Style) */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
-            <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
-              <div>
-                <h3 className="text-[16px] font-bold text-slate-800 flex items-center gap-2">
+            <div className="flex flex-col p-4 border-b border-slate-200 bg-slate-50 gap-2">
+              <div className="flex justify-between items-center">
+                <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2">
                   <Brain size={18} className="text-indigo-600" />
-                  ตารางแผนกระจายการจัดสรรพัสดุ (AI Lot Allocation)
+                  จำลองโควตาสูงสุดที่แนะนำต่อผู้ผลิต (AI Call-off Quota Simulation)
                 </h3>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 text-[16.5px] px-3 py-2 rounded-lg font-medium flex items-start gap-2">
+                <span className="text-amber-500 font-bold shrink-0">⚠️ หมายเหตุ:</span>
+                <p>ตารางนี้เป็นการจำลองโควตาการสั่งซื้อ (Call-off) ล่วงหน้าภายใต้สัญญา <strong className="font-bold">Framework Agreement ที่ประมูลผ่าน e-Bidding เรียบร้อยแล้ว</strong> เพื่อกระจายความเสี่ยงตาม Capacity จริงและป้องกันผู้ชนะทิ้งงาน (ไม่ใช่การฮั้วประมูล)</p>
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
-                  <tr className="bg-slate-200 text-slate-700 text-[14px]">
+                  <tr className="bg-slate-200 text-slate-700 text-[16.5px]">
                     <th className="p-2 border border-slate-300 font-bold text-center">รอบจัดส่ง / Lot No.</th>
-                    <th className="p-2 border border-slate-300 font-bold text-center">ผู้ผลิตที่ได้งาน</th>
-                    <th className="p-2 border border-slate-300 font-bold text-center bg-emerald-100 text-emerald-800">จำนวนที่จัดสรร</th>
-                    <th className="p-2 border border-slate-300 font-bold text-center">เหตุผลการจัดสรร (AI Reason)</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">ผู้ผลิต (อ้างอิงจาก Framework Agreement)</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center bg-emerald-100 text-emerald-800">โควตาสูงสุดที่แนะนำ</th>
+                    <th className="p-2 border border-slate-300 font-bold text-center">เหตุผล (อิงตาม Capacity)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -276,11 +314,11 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
   };
 
   return (
-                      <tr key={idx} className="hover:bg-slate-50 text-[14px] bg-white">
+                      <tr key={idx} className="hover:bg-slate-50 text-[16.5px] bg-white">
                         <td className="p-2 border border-slate-300 text-center text-slate-600 font-medium bg-slate-50">{lot.lot}</td>
                         <td className="p-2 border border-slate-300 text-indigo-700 font-bold">{lot.vendor}</td>
                         <td className="p-2 border border-slate-300 text-center font-black text-slate-800 bg-emerald-50">{lot.qty.toLocaleString()}</td>
-                        <td className="p-2 border border-slate-300 text-slate-600 text-[13px]">{lot.reason}</td>
+                        <td className="p-2 border border-slate-300 text-slate-600 text-[16.5px]">{lot.reason}</td>
                       </tr>
                     );
                   })}
@@ -294,22 +332,22 @@ export default function AIVendorStrategyView({ aiResult, material }: { aiResult?
       <div className="mt-6 w-full bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
           <div>
-            <h3 className="text-[16px] font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2">
               <FileText size={18} className="text-amber-600" />
-              ร่างเงื่อนไขและข้อกำหนด TOR (Draft TOR Conditions)
+              AI ตรวจสอบและร่างข้อสัญญา TOR (AI Contract Review & Drafting)
             </h3>
-            <p className="text-[12px] text-slate-500 mt-1">ข้อกำหนดสำหรับการจัดสรรโควต้าตามความสามารถของผู้ผลิต</p>
+            <p className="text-[16.5px] text-slate-500 mt-1">ข้อกำหนดสำหรับการจัดสรรโควต้าตามความสามารถของผู้ผลิต</p>
           </div>
           <button onClick={copyToClipboard} className="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer bg-white p-2 rounded-lg border border-slate-200 shadow-sm" title="คัดลอกร่าง TOR">
             <Copy size={16} />
           </button>
         </div>
         <div className="p-5">
-          <p className="text-[13px] text-slate-800 leading-loose whitespace-pre-line font-medium">
+          <p className="text-[16.5px] text-slate-800 leading-loose whitespace-pre-line font-medium">
             {draftTOR}
           </p>
         </div>
-        <div className="px-5 pb-5 flex items-start gap-2 text-xs text-amber-700/80 font-medium">
+        <div className="px-5 pb-5 flex items-start gap-2 text-[16.5px] text-amber-700/80 font-medium">
           <ShieldCheck size={14} className="shrink-0 mt-0.5" />
           <p>เงื่อนไขนี้สอดคล้องกับระเบียบจัดซื้อฯ โดยเปิดโอกาสให้มีการแข่งขันราคาอย่างเป็นธรรม (Fair Competition) และปิดความเสี่ยงเรื่องผู้ชนะทิ้งงาน</p>
         </div>

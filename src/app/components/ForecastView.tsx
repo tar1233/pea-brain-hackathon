@@ -99,7 +99,7 @@ export default function ForecastView() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" />
         <div className="flex flex-col gap-6 xl:flex-row xl:items-stretch xl:justify-between relative z-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[13px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[16.5px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
               <TrendingUp size={14} />
               Demand Forecast Studio
             </div>
@@ -108,7 +108,7 @@ export default function ForecastView() {
               พยากรณ์ความต้องการและแรงขับด้านสภาพอากาศ
             </h1>
 
-            <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-slate-300 font-medium">
+            <p className="mt-3 max-w-3xl text-[16.5px] leading-relaxed text-slate-300 font-medium">
               ดูภาพคาดการณ์รายวัสดุพร้อมช่วงความเชื่อมั่น และเชื่อมโยงแรงขับหลักอย่างอุณหภูมิ
               เพื่อช่วยทีมวางแผนตัดสินใจเรื่อง safety stock และรอบจัดซื้อได้เร็วขึ้น
             </p>
@@ -124,8 +124,8 @@ export default function ForecastView() {
                 key={item.label}
                 className={`rounded-[20px] border p-4.5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${item.bg}`}
               >
-                <div className={`text-[13px] font-bold uppercase tracking-[0.14em] ${item.labelColor}`}>{item.label}</div>
-                <div className={`mt-2 text-[18px] font-bold leading-tight ${item.valueColor}`}>{item.value}</div>
+                <div className={`text-[16.5px] font-bold uppercase tracking-[0.14em] ${item.labelColor}`}>{item.label}</div>
+                <div className={`mt-2 text-[16.5px] font-bold leading-tight ${item.valueColor}`}>{item.value}</div>
               </div>
             ))}
           </div>
@@ -137,7 +137,7 @@ export default function ForecastView() {
           <button
             key={material.id}
             onClick={() => setSelectedMaterialId(material.id)}
-            className={`rounded-full border px-4 py-2 text-[13px] font-bold transition-all ${
+            className={`rounded-full border px-4 py-2 text-[16.5px] font-bold transition-all ${
               material.id === selectedMaterial.id
                 ? "border-fuchsia-300 bg-fuchsia-700 text-white shadow-[0_14px_30px_rgba(162,28,175,0.22)]"
                 : "border-slate-200 bg-white text-slate-700 hover:border-fuchsia-200 hover:text-fuchsia-700"
@@ -154,8 +154,8 @@ export default function ForecastView() {
             key={card.label}
             className={`rounded-[28px] border border-slate-200 border-l-4 ${card.border} bg-white p-6 shadow-[0_16px_32px_rgba(15,23,42,0.05)]`}
           >
-            <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">{card.label}</div>
-            <div className={`mt-3 text-[14px] font-bold leading-snug ${card.tone}`}>{card.value}</div>
+            <div className="text-[16.5px] font-bold uppercase tracking-[0.16em] text-slate-400">{card.label}</div>
+            <div className={`mt-3 text-[16.5px] font-bold leading-snug ${card.tone}`}>{card.value}</div>
           </article>
         ))}
       </section>
@@ -164,9 +164,9 @@ export default function ForecastView() {
         <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)]">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-fuchsia-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">Forecast Band</h2>
+            <h2 className="text-[16.5px] font-bold text-slate-900">80% CI Forecast Band</h2>
           </div>
-          <p className="mt-2 text-sm leading-7 text-slate-500">
+          <p className="mt-2 text-[16.5px] leading-7 text-slate-500">
             เปรียบเทียบข้อมูลจริงกับค่า forecast และขอบเขตความไม่แน่นอนของช่วงถัดไป
           </p>
 
@@ -186,7 +186,7 @@ export default function ForecastView() {
                 <CartesianGrid strokeDasharray="4 4" stroke="#dbe7f4" />
                 <XAxis dataKey="month" stroke="#94a3b8" />
                 <YAxis stroke="#94a3b8" />
-                <Tooltip />
+                <Tooltip  contentStyle={{ fontSize: '13.5px' }}  />
                 <Area dataKey="upper" stroke="none" fill="#f3e8ff" />
                 <Area dataKey="lower" stroke="none" fill="#ffffff" />
                 <Area type="monotone" dataKey="forecast" stroke="#7c3aed" fill="url(#forecastBand)" strokeWidth={3.5} />
@@ -199,9 +199,9 @@ export default function ForecastView() {
         <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)]">
           <div className="flex items-center gap-2">
             <CloudSun size={16} className="text-amber-500" />
-            <h2 className="text-[14px] font-bold text-slate-900">Weather Driver</h2>
+            <h2 className="text-[16.5px] font-bold text-slate-900">Weather Driver</h2>
           </div>
-          <p className="mt-2 text-sm leading-7 text-slate-500">
+          <p className="mt-2 text-[16.5px] leading-7 text-slate-500">
             จำลองความสัมพันธ์ระหว่างอุณหภูมิกับ demand index สำหรับการวางแผนฤดูกาล
           </p>
 
@@ -212,7 +212,7 @@ export default function ForecastView() {
                 <XAxis dataKey="month" stroke="#94a3b8" />
                 <YAxis yAxisId="left" stroke="#f59e0b" />
                 <YAxis yAxisId="right" orientation="right" stroke="#0ea5e9" />
-                <Tooltip />
+                <Tooltip  contentStyle={{ fontSize: '13.5px' }}  />
                 <Legend />
                 <Line
                   yAxisId="right"
@@ -242,28 +242,28 @@ export default function ForecastView() {
         <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)]">
           <div className="flex items-center gap-2">
             <Wind size={16} className="text-sky-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">Scenario Summary</h2>
+            <h2 className="text-[16.5px] font-bold text-slate-900">Scenario Summary</h2>
           </div>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="rounded-[20px] bg-gradient-to-br from-[#fffbeb] to-[#fef3c7]/50 border border-amber-100 p-5 shadow-[0_8px_20px_rgba(251,191,36,0.05)] transition-all hover:shadow-[0_8px_20px_rgba(251,191,36,0.1)]">
-              <div className="text-[13px] font-bold uppercase tracking-[0.16em] text-amber-700/80">Weather Peak</div>
+              <div className="text-[16.5px] font-bold uppercase tracking-[0.16em] text-amber-700/80">Weather Peak</div>
               <div className="mt-2 text-[24px] font-bold text-amber-600">{weatherPeak}°C</div>
-              <div className="mt-2 text-[14px] leading-relaxed text-amber-900/60 font-medium">อุณหภูมิสูงสุดในฉากจำลองปีนี้ที่ระบบใช้คาดการณ์ demand</div>
+              <div className="mt-2 text-[16.5px] leading-relaxed text-amber-900/60 font-medium">อุณหภูมิสูงสุดในฉากจำลองปีนี้ที่ระบบใช้คาดการณ์ demand</div>
             </div>
             <div className="rounded-[20px] bg-gradient-to-br from-[#faf5ff] to-[#f3e8ff]/50 border border-fuchsia-100 p-5 shadow-[0_8px_20px_rgba(192,38,211,0.05)] transition-all hover:shadow-[0_8px_20px_rgba(192,38,211,0.1)]">
-              <div className="text-[13px] font-bold uppercase tracking-[0.16em] text-fuchsia-700/80">Forecast Band</div>
+              <div className="text-[16.5px] font-bold uppercase tracking-[0.16em] text-fuchsia-700/80">80% CI Range</div>
               <div className="mt-2 text-[24px] font-bold text-fuchsia-600">{formatCompact(averageBand)}</div>
-              <div className="mt-2 text-[14px] leading-relaxed text-fuchsia-900/60 font-medium">ช่วงความไม่แน่นอนเฉลี่ยที่ planner ควรเผื่อ buffer เพิ่ม</div>
+              <div className="mt-2 text-[16.5px] leading-relaxed text-fuchsia-900/60 font-medium">ช่วงความไม่แน่นอนเฉลี่ยที่ planner ควรเผื่อ buffer เพิ่ม</div>
             </div>
           </div>
 
           <div className="mt-5 rounded-[24px] border border-sky-100 bg-gradient-to-br from-[#f0f9ff] to-[#e0f2fe]/60 p-5 shadow-[0_8px_20px_rgba(14,165,233,0.05)]">
-            <div className="text-[13px] font-bold uppercase tracking-[0.16em] text-sky-700">Planning Cue</div>
-            <div className="mt-2 text-[14px] font-bold text-sky-950">
+            <div className="text-[16.5px] font-bold uppercase tracking-[0.16em] text-sky-700">Planning Cue</div>
+            <div className="mt-2 text-[16.5px] font-bold text-sky-950">
               ควรเตรียม stock ก่อนจุดพีคของ {selectedMaterial.id} อย่างน้อย 1 lead time
             </div>
-            <div className="mt-2 text-[13px] leading-relaxed text-sky-800/80 font-medium">
+            <div className="mt-2 text-[16.5px] leading-relaxed text-sky-800/80 font-medium">
               เมื่อ forecast peak แตะ {formatCompact(peakForecast)} {selectedMaterial.unit} และ stock cover เหลือ {stockCover} เดือน
               ระบบจึงแนะนำให้ lock รอบจัดซื้อก่อนช่วงร้อนจัดเพื่อกัน shortage
             </div>
@@ -273,29 +273,29 @@ export default function ForecastView() {
         <article className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)]">
           <div className="flex items-center gap-2">
             <Waves size={16} className="text-primary-600" />
-            <h2 className="text-[14px] font-bold text-slate-900">Planner Notes</h2>
+            <h2 className="text-[16.5px] font-bold text-slate-900">Planner Notes</h2>
           </div>
 
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             <div className="rounded-[20px] bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] border border-slate-200/60 p-5 shadow-[0_8px_20px_rgba(15,23,42,0.02)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(15,23,42,0.06)]">
-              <div className="text-[13px] font-bold text-slate-800">ความผันผวนของสัญญาณ</div>
-              <div className="mt-2.5 text-[14px] leading-relaxed text-slate-600 font-medium">
+              <div className="text-[16.5px] font-bold text-slate-800">ความผันผวนของสัญญาณ</div>
+              <div className="mt-2.5 text-[16.5px] leading-relaxed text-slate-600 font-medium">
                 ค่าเฉลี่ยต่อเดือน {formatCompact(selectedMaterial.avgMonthlyDemand)} {selectedMaterial.unit}
                 เทียบกับ data history สะท้อนว่า demand ยังแกว่งตามฤดูกาลสูง
               </div>
             </div>
 
             <div className="rounded-[20px] bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] border border-slate-200/60 p-5 shadow-[0_8px_20px_rgba(15,23,42,0.02)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(15,23,42,0.06)]">
-              <div className="text-[13px] font-bold text-slate-800">จุดที่ต้องจับตา</div>
-              <div className="mt-2.5 text-[14px] leading-relaxed text-slate-600 font-medium">
+              <div className="text-[16.5px] font-bold text-slate-800">จุดที่ต้องจับตา</div>
+              <div className="mt-2.5 text-[16.5px] leading-relaxed text-slate-600 font-medium">
                 หากอุณหภูมิขึ้นเกิน {weatherPeak}°C ระบบจะมอง demand uplift ที่ {demandUplift > 0 ? "+" : ""}
                 {demandUplift}% และต้องเผื่อ stock เพิ่มสำหรับเดือนพีค
               </div>
             </div>
 
             <div className="rounded-[20px] bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] border border-slate-200/60 p-5 shadow-[0_8px_20px_rgba(15,23,42,0.02)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(15,23,42,0.06)]">
-              <div className="text-[13px] font-bold text-slate-800">เชื่อมกับ procurement</div>
-              <div className="mt-2.5 text-[14px] leading-relaxed text-slate-600 font-medium">
+              <div className="text-[16.5px] font-bold text-slate-800">เชื่อมกับ procurement</div>
+              <div className="mt-2.5 text-[16.5px] leading-relaxed text-slate-600 font-medium">
                 พบ {selectedAlerts.length} alert ที่โยงกับวัสดุนี้ ใช้หน้านี้ควบคู่กับหน้าจัดซื้อเพื่อเล่าเรื่องตั้งแต่ forecast
                 ไปถึงจำนวนที่ควรอนุมัติ
               </div>

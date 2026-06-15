@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
-// --- MOCK DATA DICTIONARY ---
+// --- BACKTEST DATA DICTIONARY ---
 const TF_DATA = {
   'ปัจจุบัน': {
     label: 'ปัจจุบัน (เรียลไทม์ - พฤษภาคม 2569)',
@@ -655,14 +655,14 @@ export default function BacktestSimulator() {
         
         <div className="relative z-10 flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
           <div className="max-w-xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/20 px-3.5 py-1.5 text-[13px] font-bold uppercase tracking-widest text-blue-200 shadow-inner mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/20 px-3.5 py-1.5 text-[16.5px] font-bold uppercase tracking-widest text-blue-200 shadow-inner mb-4">
               <Activity size={14} className="text-blue-300" />
               Multi-Timeframe Backtesting
             </div>
             <h1 className="text-[26px] font-black tracking-tight text-white drop-shadow-md leading-tight mb-2">
               เจาะลึกสถิติแบบย้อนหลัง (Time Machine) <br/>
             </h1>
-            <p className="text-[14px] leading-relaxed text-slate-300 font-medium">
+            <p className="text-[16.5px] leading-relaxed text-slate-300 font-medium">
               วิเคราะห์ความแม่นยำ ปัญหา และการปรับแต่งโมเดล (Fine-tuning) ของ PEA Brain
             </p>
           </div>
@@ -674,7 +674,7 @@ export default function BacktestSimulator() {
                 <button
                   key={tf}
                   onClick={() => setActiveTF(tf)}
-                  className={`px-6 py-2 rounded-xl text-[13px] font-bold transition-all ${
+                  className={`px-6 py-2 rounded-xl text-[16.5px] font-bold transition-all ${
                     activeTF === tf 
                     ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
@@ -688,13 +688,13 @@ export default function BacktestSimulator() {
             {/* Status Card */}
             <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-4 w-full lg:w-72">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-[13px] font-bold text-slate-300 uppercase">Status: {data.label}</span>
+                <span className="text-[16.5px] font-bold text-slate-300 uppercase">Status: {data.label}</span>
                 {isRunning ? (
-                  <span className="flex items-center gap-1.5 text-[13px] font-bold text-amber-400 bg-amber-400/20 px-2 py-0.5 rounded-full">
+                  <span className="flex items-center gap-1.5 text-[16.5px] font-bold text-amber-400 bg-amber-400/20 px-2 py-0.5 rounded-full">
                     <RefreshCw size={13} className="animate-spin" /> RUNNING
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 text-[13px] font-bold text-emerald-400 bg-emerald-400/20 px-2 py-0.5 rounded-full">
+                  <span className="flex items-center gap-1.5 text-[16.5px] font-bold text-emerald-400 bg-emerald-400/20 px-2 py-0.5 rounded-full">
                     <CheckCircle2 size={13} /> DONE
                   </span>
                 )}
@@ -718,12 +718,12 @@ export default function BacktestSimulator() {
           <div className="w-12 h-12 rounded-2xl bg-fuchsia-100 flex items-center justify-center mb-4">
             <BrainCircuit size={24} className="text-fuchsia-600" />
           </div>
-          <div className="text-[14px] font-bold text-slate-500 uppercase tracking-wider mb-1">ความแม่นยำระบบ (Accuracy)</div>
+          <div className="text-[16.5px] font-bold text-slate-500 uppercase tracking-wider mb-1">ความแม่นยำระบบ (Accuracy)</div>
           <div className="text-[36px] font-black text-slate-800 flex items-baseline gap-2">
             {progress < 100 ? (progress * (data.kpi.accuracy/100)).toFixed(1) : data.kpi.accuracy.toFixed(1)}
-            <span className="text-[18px] text-fuchsia-500">%</span>
+            <span className="text-[16.5px] text-fuchsia-500">%</span>
           </div>
-          <div className="text-[14px] font-medium text-emerald-600 mt-2 flex items-center gap-1">
+          <div className="text-[16.5px] font-medium text-emerald-600 mt-2 flex items-center gap-1">
             <TrendingUp size={14} /> {data.kpi.growth} จาก Base Model
           </div>
         </div>
@@ -734,13 +734,13 @@ export default function BacktestSimulator() {
           <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
             <Calculator size={24} className="text-emerald-600" />
           </div>
-          <div className="text-[14px] font-bold text-slate-500 uppercase tracking-wider mb-1">งบที่ประหยัดได้ (Cost Saved)</div>
+          <div className="text-[16.5px] font-bold text-slate-500 uppercase tracking-wider mb-1">งบที่ประหยัดได้ (Cost Saved)</div>
           <div className="text-[36px] font-black text-slate-800 flex items-baseline gap-2">
             <span className="text-[20px] text-slate-400">฿</span>
             {progress < 100 ? (progress * (data.kpi.saved/100)).toFixed(1) : data.kpi.saved.toFixed(1)}
-            <span className="text-[18px] text-emerald-500">M</span>
+            <span className="text-[16.5px] text-emerald-500">M</span>
           </div>
-          <div className="text-[14px] font-medium text-emerald-600 mt-2 flex items-center gap-1">
+          <div className="text-[16.5px] font-medium text-emerald-600 mt-2 flex items-center gap-1">
             <TrendingUp size={14} /> เทียบกับการจัดซื้อปกติ
           </div>
         </div>
@@ -751,12 +751,12 @@ export default function BacktestSimulator() {
           <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center mb-4">
             <ShieldAlert size={24} className="text-amber-600" />
           </div>
-          <div className="text-[14px] font-bold text-slate-500 uppercase tracking-wider mb-1">ป้องกันวิกฤตของขาด (Prevented)</div>
+          <div className="text-[16.5px] font-bold text-slate-500 uppercase tracking-wider mb-1">ป้องกันวิกฤตของขาด (Prevented)</div>
           <div className="text-[36px] font-black text-slate-800 flex items-baseline gap-2">
             {progress < 100 ? Math.floor(progress * (data.kpi.prevented/100)) : data.kpi.prevented}
-            <span className="text-[18px] text-amber-500">ครั้ง</span>
+            <span className="text-[16.5px] text-amber-500">ครั้ง</span>
           </div>
-          <div className="text-[14px] font-medium text-amber-600 mt-2 flex items-center gap-1">
+          <div className="text-[16.5px] font-medium text-amber-600 mt-2 flex items-center gap-1">
             <AlertTriangle size={14} /> อิงจากประวัติปัญหาในระบบ
           </div>
         </div>
@@ -769,10 +769,10 @@ export default function BacktestSimulator() {
             <BrainCircuit size={18} />
           </div>
           <div>
-            <h2 className="text-[18px] font-black text-slate-800">
+            <h2 className="text-[16.5px] font-black text-slate-800">
               สถานะโมดูลสมอง AI ที่ได้รับการอัปเกรด (Fine-tuned AI Brain Modules)
             </h2>
-            <p className="text-[13px] text-slate-500">โมเดลปัญญาประดิษฐ์ระดับย่อยที่ผ่านการปรับแต่งชุดข้อมูลจัดซื้อและปัจจัยมหภาคในแต่ละรอบ</p>
+            <p className="text-[16.5px] text-slate-500">โมเดลปัญญาประดิษฐ์ระดับย่อยที่ผ่านการปรับแต่งชุดข้อมูลจัดซื้อและปัจจัยมหภาคในแต่ละรอบ</p>
           </div>
         </div>
         
@@ -802,8 +802,8 @@ export default function BacktestSimulator() {
                     <IconComponent size={18} />
                   </div>
                   <div className="flex flex-col items-end">
-                    <span className="text-[12px] font-extrabold text-slate-400 uppercase">{module.version}</span>
-                    <span className="inline-flex items-center gap-1 text-[13px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100/50 px-2 py-0.5 rounded-full mt-1">
+                    <span className="text-[16.5px] font-extrabold text-slate-400 uppercase">{module.version}</span>
+                    <span className="inline-flex items-center gap-1 text-[16.5px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100/50 px-2 py-0.5 rounded-full mt-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       {module.status}
                     </span>
@@ -812,19 +812,19 @@ export default function BacktestSimulator() {
 
                 <div className="space-y-2 relative z-10">
                   <div>
-                    <h4 className="text-[14px] font-black text-slate-800 group-hover:text-purple-700 transition-colors">
+                    <h4 className="text-[13.5px] font-black text-slate-800 group-hover:text-purple-700 transition-colors">
                       {module.title}
                     </h4>
                     {module.accuracy && (
-                      <p className="text-[13px] text-fuchsia-600 font-bold mt-0.5">
+                      <p className="text-[16.5px] text-fuchsia-600 font-bold mt-0.5">
                         Accuracy: {module.accuracy}
                       </p>
                     )}
                   </div>
-                  <div className="border-t border-slate-100 pt-2 text-[13px] text-slate-600 leading-relaxed">
+                  <div className="border-t border-slate-100 pt-2 text-[16.5px] text-slate-600 leading-relaxed">
                     <span className="font-semibold text-slate-700">เทรนจาก:</span> {module.trainedOn}
                   </div>
-                  <div className="text-[13px] text-slate-500 leading-relaxed">
+                  <div className="text-[16.5px] text-slate-500 leading-relaxed">
                     <span className="font-semibold text-slate-700">ภารกิจ:</span> {module.purpose}
                   </div>
                 </div>
@@ -840,16 +840,16 @@ export default function BacktestSimulator() {
         <div className="bg-white rounded-[24px] border border-slate-200 shadow-sm p-6 flex flex-col">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h2 className="text-[18px] font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-[16.5px] font-bold text-slate-900 flex items-center gap-2">
                 <Target className="text-blue-500" size={20} />
                 Analysis & Improvements
               </h2>
-              <p className="text-[12px] text-slate-500 mt-1">วิเคราะห์ผลลัพธ์และแนวทางการปรับปรุงระบบ (Feedback Loop)</p>
+              <p className="text-[16.5px] text-slate-500 mt-1">วิเคราะห์ผลลัพธ์และแนวทางการปรับปรุงระบบ (Feedback Loop)</p>
             </div>
             {['5Y', '7Y', '10Y'].includes(activeTF) && (
               <button 
                 onClick={() => setShowPolicyModal(true)}
-                className="flex items-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all shadow-sm"
+                className="flex items-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-lg text-[16.5px] font-bold transition-all shadow-sm"
               >
                 <FileText size={14} />
                 <span className="hidden sm:inline">Generate Policy Proposal</span>
@@ -863,11 +863,11 @@ export default function BacktestSimulator() {
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Database size={16} className="text-slate-600" />
-                <h4 className="text-[13px] font-bold text-slate-800">ชุดข้อมูลที่ใช้เทรนโมเดล (Training Datasets)</h4>
+                <h4 className="text-[16.5px] font-bold text-slate-800">ชุดข้อมูลที่ใช้เทรนโมเดล (Training Datasets)</h4>
               </div>
               <ul className="space-y-1">
                 {data.trainingData.map((item, i) => (
-                  <li key={i} className="text-[12px] text-slate-600 flex items-start gap-1.5">
+                  <li key={i} className="text-[16.5px] text-slate-600 flex items-start gap-1.5">
                     <span className="text-blue-500 font-bold mt-0.5">›</span> {item}
                   </li>
                 ))}
@@ -878,11 +878,11 @@ export default function BacktestSimulator() {
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <CheckCircle2 size={16} className="text-emerald-600" />
-                <h4 className="text-[13px] font-bold text-emerald-800">ปัญหาที่แก้ไขได้สำเร็จ (What went well)</h4>
+                <h4 className="text-[16.5px] font-bold text-emerald-800">ปัญหาที่แก้ไขได้สำเร็จ (What went well)</h4>
               </div>
               <ul className="space-y-1">
                 {data.improvements.solved.map((item, i) => (
-                  <li key={i} className="text-[12px] text-emerald-700 flex items-start gap-1.5">
+                  <li key={i} className="text-[16.5px] text-emerald-700 flex items-start gap-1.5">
                     <span className="text-emerald-500 mt-0.5">•</span> {item}
                   </li>
                 ))}
@@ -893,11 +893,11 @@ export default function BacktestSimulator() {
             <div className="bg-rose-50 border border-rose-100 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle size={16} className="text-rose-600" />
-                <h4 className="text-[13px] font-bold text-rose-800">จุดอ่อนที่พบในรอบนี้ (Areas for Improvement)</h4>
+                <h4 className="text-[16.5px] font-bold text-rose-800">จุดอ่อนที่พบในรอบนี้ (Areas for Improvement)</h4>
               </div>
               <ul className="space-y-1">
                 {data.improvements.issues.map((item, i) => (
-                  <li key={i} className="text-[12px] text-rose-700 flex items-start gap-1.5">
+                  <li key={i} className="text-[16.5px] text-rose-700 flex items-start gap-1.5">
                     <span className="text-rose-500 mt-0.5">•</span> {item}
                   </li>
                 ))}
@@ -908,9 +908,9 @@ export default function BacktestSimulator() {
             <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mt-auto">
               <div className="flex items-center gap-2 mb-2">
                 <Wrench size={16} className="text-indigo-600" />
-                <h4 className="text-[13px] font-bold text-indigo-800">แนวทางปรับปรุงโมเดล (Fine-tuning Action)</h4>
+                <h4 className="text-[16.5px] font-bold text-indigo-800">แนวทางปรับปรุงโมเดล (Fine-tuning Action)</h4>
               </div>
-              <p className="text-[12px] text-indigo-700 leading-relaxed font-medium">
+              <p className="text-[16.5px] text-indigo-700 leading-relaxed font-medium">
                 {data.improvements.action}
               </p>
             </div>
@@ -921,7 +921,7 @@ export default function BacktestSimulator() {
         <div className="flex flex-col gap-6">
           {/* Chart: Cost */}
           <div className="bg-white rounded-[24px] border border-slate-200 shadow-sm p-6">
-            <h2 className="text-[14px] font-bold text-slate-900 flex items-center gap-2 mb-4">
+            <h2 className="text-[16.5px] font-bold text-slate-900 flex items-center gap-2 mb-4">
               <BarChart3 className="text-emerald-500" size={16} /> เปรียบเทียบต้นทุน: การตัดสินใจมนุษย์ vs AI (Cost Optimization)
             </h2>
             <div className="h-[200px] w-full">
@@ -937,7 +937,7 @@ export default function BacktestSimulator() {
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#94a3b8' }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#94a3b8' }} tickFormatter={formatCurrency} domain={['dataMin - 5', 'dataMax + 5']} />
                   <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' , fontSize: '13.5px' }}
                     formatter={(value: any, name: any) => [
                       `฿${value}k`, 
                       name === 'human' ? 'ต้นทุนซื้อจริง (Human)' : name === 'ai' ? 'ต้นทุนจำลอง (AI)' : 'LME Index'
@@ -952,7 +952,7 @@ export default function BacktestSimulator() {
 
           {/* Chart: Learning */}
           <div className="bg-white rounded-[24px] border border-slate-200 shadow-sm p-6">
-            <h2 className="text-[14px] font-bold text-slate-900 flex items-center gap-2 mb-4">
+            <h2 className="text-[16.5px] font-bold text-slate-900 flex items-center gap-2 mb-4">
               <BrainCircuit className="text-fuchsia-500" size={16} /> พัฒนาการความแม่นยำของโมเดล (Accuracy & Loss)
             </h2>
             <div className="h-[200px] w-full">
@@ -961,7 +961,7 @@ export default function BacktestSimulator() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="epoch" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#94a3b8' }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#94a3b8' }} domain={[50, 100]} />
-                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' , fontSize: '13.5px' }} />
                   <Line type="monotone" dataKey="accuracy" name="ความแม่นยำ (%)" stroke="#d946ef" strokeWidth={3} dot={{ r: 4, fill: '#d946ef' }} />
                   <Line type="monotone" dataKey="loss" name="อัตราผิดพลาด (%)" stroke="#f43f5e" strokeWidth={2} strokeDasharray="4 4" dot={false} />
                 </LineChart>
@@ -976,13 +976,13 @@ export default function BacktestSimulator() {
       <div className="bg-white rounded-[24px] border border-slate-200 shadow-sm p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-[18px] font-bold text-slate-900 flex items-center gap-2 mb-1">
+            <h2 className="text-[16.5px] font-bold text-slate-900 flex items-center gap-2 mb-1">
               <ShieldAlert className="text-amber-500" size={20} />
               Crisis Prevention Log (บันทึกวิกฤตในช่วงเวลาที่เลือก)
             </h2>
-            <p className="text-[12px] text-slate-500">เจาะลึกสถานการณ์จริง (Human) เทียบกับการรับมือในโมเดล (AI Simulation)</p>
+            <p className="text-[16.5px] text-slate-500">เจาะลึกสถานการณ์จริง (Human) เทียบกับการรับมือในโมเดล (AI Simulation)</p>
           </div>
-          <div className="bg-amber-50/80 border border-amber-200/60 rounded-xl px-4 py-3 text-[13px] text-amber-800 max-w-lg flex items-start gap-2 shadow-sm">
+          <div className="bg-amber-50/80 border border-amber-200/60 rounded-xl px-4 py-3 text-[16.5px] text-amber-800 max-w-lg flex items-start gap-2 shadow-sm">
             <Sparkles size={14} className="text-amber-600 shrink-0 mt-0.5 animate-pulse" />
             <div>
               <span className="font-bold">หมายเหตุการพรีเซนต์:</span> แสดงเฉพาะ <span className="font-bold underline decoration-amber-500/50">Highlight Cases</span> (วิกฤตระดับรุนแรงสูงสุด / Black Swan) จากทั้งหมด <span className="font-bold text-amber-900 bg-amber-200/50 px-1 rounded">{data.kpi.prevented} เหตุการณ์</span> ที่ระบบปัญญาประดิษฐ์ตรวจพบและป้องกันได้สำเร็จ (เหตุการณ์ที่เหลือเป็นการรับมือกับความผิดปกติรายวัน เช่น ชิปเมนต์เลท 1-2 วัน หรือการสลับ Supplier ย่อย ซึ่ง AI จัดการเบื้องหลังโดยอัตโนมัติ)
@@ -999,11 +999,11 @@ export default function BacktestSimulator() {
                     <AlertTriangle size={18} className={crisis.status === 'success' ? 'text-amber-600' : 'text-rose-600'} />
                   </div>
                   <div>
-                    <h3 className="text-[14px] font-bold text-slate-800">{crisis.title}</h3>
-                    <p className="text-[13px] text-slate-500 font-medium">{crisis.date}</p>
+                    <h3 className="text-[16.5px] font-bold text-slate-800">{crisis.title}</h3>
+                    <p className="text-[16.5px] text-slate-500 font-medium">{crisis.date}</p>
                   </div>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-[13px] font-bold border ${
+                <div className={`px-3 py-1 rounded-full text-[16.5px] font-bold border ${
                   crisis.status === 'success' 
                   ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
                   : 'bg-amber-100 text-amber-700 border-amber-200'
@@ -1014,20 +1014,20 @@ export default function BacktestSimulator() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-lg p-3 border border-slate-200">
-                  <div className="text-[13px] font-bold text-slate-400 uppercase mb-1">เหตุการณ์จริง (Human)</div>
-                  <p className="text-[12px] text-slate-700 font-medium">{crisis.human}</p>
+                  <div className="text-[16.5px] font-bold text-slate-400 uppercase mb-1">เหตุการณ์จริง (Human)</div>
+                  <p className="text-[16.5px] text-slate-700 font-medium">{crisis.human}</p>
                 </div>
                 <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-100 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-1 bg-indigo-500 h-full" />
-                  <div className="text-[13px] font-bold text-indigo-400 uppercase mb-1 flex items-center gap-1"><Sparkles size={13}/> สิ่งที่ AI ทำในแบบจำลอง (AI Simulation)</div>
-                  <p className="text-[12px] text-indigo-900 font-medium">{crisis.ai}</p>
+                  <div className="text-[16.5px] font-bold text-indigo-400 uppercase mb-1 flex items-center gap-1"><Sparkles size={13}/> สิ่งที่ AI ทำในแบบจำลอง (AI Simulation)</div>
+                  <p className="text-[16.5px] text-indigo-900 font-medium">{crisis.ai}</p>
                 </div>
               </div>
               
               {/* Detailed Breakdown if available */}
               {crisis.details && (
                 <div className="mt-4 pt-4 border-t border-slate-200">
-                  <div className="text-[13px] font-bold text-slate-400 uppercase mb-3 flex items-center gap-1">
+                  <div className="text-[16.5px] font-bold text-slate-400 uppercase mb-3 flex items-center gap-1">
                     <Target size={12} className="text-slate-500" />
                     AI Action Details (เจาะลึกกลยุทธ์ของ AI)
                   </div>
@@ -1036,8 +1036,8 @@ export default function BacktestSimulator() {
                     <div className="bg-amber-50 rounded-lg p-3 mb-3 border border-amber-100 flex gap-2 items-start">
                       <Zap size={14} className="text-amber-500 shrink-0 mt-0.5" />
                       <div>
-                        <div className="text-[13px] font-bold text-amber-800 uppercase mb-0.5">Early Warning Signal (สัญญาณเตือนล่วงหน้าที่ AI ตรวจพบ)</div>
-                        <div className="text-[13px] text-amber-700 font-medium">{(crisis.details as any).earlySignal}</div>
+                        <div className="text-[16.5px] font-bold text-amber-800 uppercase mb-0.5">Early Warning Signal (สัญญาณเตือนล่วงหน้าที่ AI ตรวจพบ)</div>
+                        <div className="text-[16.5px] text-amber-700 font-medium">{(crisis.details as any).earlySignal}</div>
                       </div>
                     </div>
                   )}
@@ -1046,31 +1046,31 @@ export default function BacktestSimulator() {
                     <div className="bg-rose-50 rounded-lg p-3 mb-3 border border-rose-100 flex gap-2 items-start">
                       <ShieldAlert size={14} className="text-rose-500 shrink-0 mt-0.5" />
                       <div>
-                        <div className="text-[13px] font-bold text-rose-800 uppercase mb-0.5">System Limitation (ทำไมถึงป้องกันได้แค่บางส่วน?)</div>
-                        <div className="text-[13px] text-rose-700 font-medium">{(crisis.details as any).limitation}</div>
+                        <div className="text-[16.5px] font-bold text-rose-800 uppercase mb-0.5">System Limitation (ทำไมถึงป้องกันได้แค่บางส่วน?)</div>
+                        <div className="text-[16.5px] text-rose-700 font-medium">{(crisis.details as any).limitation}</div>
                       </div>
                     </div>
                   )}
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div className="bg-slate-100 rounded-lg p-2.5">
-                      <div className="text-[13px] text-slate-500 font-bold mb-1">กลยุทธ์ (Strategy)</div>
-                      <div className="text-[13px] text-slate-700 font-semibold">{(crisis.details as any).strategy}</div>
+                      <div className="text-[16.5px] text-slate-500 font-bold mb-1">กลยุทธ์ (Strategy)</div>
+                      <div className="text-[16.5px] text-slate-700 font-semibold">{(crisis.details as any).strategy}</div>
                     </div>
                     <div className="bg-slate-100 rounded-lg p-2.5">
-                      <div className="text-[13px] text-slate-500 font-bold mb-1">การซอยสัญญา (Lot Mgmt)</div>
-                      <div className="text-[13px] text-slate-700 font-semibold">{(crisis.details as any).lots}</div>
+                      <div className="text-[16.5px] text-slate-500 font-bold mb-1">การซอยสัญญา (Lot Mgmt)</div>
+                      <div className="text-[16.5px] text-slate-700 font-semibold">{(crisis.details as any).lots}</div>
                     </div>
                     <div className="bg-slate-100 rounded-lg p-2.5">
-                      <div className="text-[13px] text-slate-500 font-bold mb-1">ราคาเฉลี่ยที่ได้ (Price)</div>
-                      <div className="text-[13px] text-slate-700 font-semibold">{(crisis.details as any).price}</div>
+                      <div className="text-[16.5px] text-slate-500 font-bold mb-1">ราคาเฉลี่ยที่ได้ (Price)</div>
+                      <div className="text-[16.5px] text-slate-700 font-semibold">{(crisis.details as any).price}</div>
                     </div>
                   </div>
                   <div className="mt-3 bg-emerald-50 rounded-lg p-3 flex gap-2 items-start">
                     <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                     <div>
-                      <div className="text-[13px] font-bold text-emerald-800">ผลลัพธ์สุทธิ (Net Impact)</div>
-                      <div className="text-[13px] text-emerald-700">{(crisis.details as any).impact}</div>
+                      <div className="text-[16.5px] font-bold text-emerald-800">ผลลัพธ์สุทธิ (Net Impact)</div>
+                      <div className="text-[16.5px] text-emerald-700">{(crisis.details as any).impact}</div>
                     </div>
                   </div>
                 </div>
@@ -1091,8 +1091,8 @@ export default function BacktestSimulator() {
                   <FileText className="text-indigo-600" size={20} />
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-bold text-slate-800">AI-Generated Policy Proposal</h3>
-                  <p className="text-[12px] text-slate-500">ร่างหนังสือบันทึกข้อความถึงกรมบัญชีกลาง</p>
+                  <h3 className="text-[16.5px] font-bold text-slate-800">AI-Generated Policy Proposal</h3>
+                  <p className="text-[16.5px] text-slate-500">ร่างหนังสือบันทึกข้อความถึงกรมบัญชีกลาง</p>
                 </div>
               </div>
               <button 
@@ -1106,25 +1106,25 @@ export default function BacktestSimulator() {
             {/* Body */}
             <div className="p-8 overflow-y-auto bg-[#fafafa]">
               <div className="bg-white p-10 border border-slate-200 shadow-sm rounded-xl max-w-3xl mx-auto min-h-[500px] font-serif relative">
-                {/* Garuda Mock */}
+                {/* Garuda Component */}
                 <div className="w-16 h-16 mx-auto mb-6 bg-slate-200 rounded-full flex items-center justify-center opacity-30">
-                  <span className="text-[13px] font-sans">ครุฑ</span>
+                  <span className="text-[16.5px] font-sans">ครุฑ</span>
                 </div>
                 
-                <h1 className="text-center text-[18px] font-bold mb-8">บันทึกข้อความ</h1>
+                <h1 className="text-center text-[16.5px] font-bold mb-8">บันทึกข้อความ</h1>
                 
                 <div className="flex justify-between mb-2">
-                  <p className="text-[14px]"><strong>ส่วนราชการ</strong> การไฟฟ้าส่วนภูมิภาค (ฝ่ายบริหารห่วงโซ่อุปทาน)</p>
+                  <p className="text-[16.5px]"><strong>ส่วนราชการ</strong> การไฟฟ้าส่วนภูมิภาค (ฝ่ายบริหารห่วงโซ่อุปทาน)</p>
                 </div>
                 <div className="flex justify-between mb-6">
-                  <p className="text-[14px]"><strong>ที่</strong> มท ๕๓๐๐.๐/พิเศษ</p>
-                  <p className="text-[14px]"><strong>วันที่</strong> ๒๔ พฤษภาคม ๒๕๖๙</p>
+                  <p className="text-[16.5px]"><strong>ที่</strong> มท ๕๓๐๐.๐/พิเศษ</p>
+                  <p className="text-[16.5px]"><strong>วันที่</strong> ๒๔ พฤษภาคม ๒๕๖๙</p>
                 </div>
                 <div className="mb-8">
-                  <p className="text-[14px]"><strong>เรื่อง</strong> ขอเสนอทบทวนแนวทางการจัดซื้อแบบ "แยกสัญญา (Lot Strategy)" ในสภาวะวิกฤตซัพพลายเชน</p>
+                  <p className="text-[16.5px]"><strong>เรื่อง</strong> ขอเสนอทบทวนแนวทางการจัดซื้อแบบ "แยกสัญญา (Lot Strategy)" ในสภาวะวิกฤตซัพพลายเชน</p>
                 </div>
                 
-                <div className="space-y-4 text-[14px] leading-relaxed text-justify">
+                <div className="space-y-4 text-[16.5px] leading-relaxed text-justify">
                   <p><strong>เรียน</strong> อธิบดีกรมบัญชีกลาง</p>
                   <p>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ด้วยการไฟฟ้าส่วนภูมิภาค (PEA) ได้นำระบบปัญญาประดิษฐ์ (PEA Brain AI) มาใช้ในการวิเคราะห์ข้อมูลการจัดซื้อจัดจ้าง 
@@ -1147,12 +1147,12 @@ export default function BacktestSimulator() {
                   </p>
                 </div>
                 
-                <div className="mt-16 text-center text-[14px]">
+                <div className="mt-16 text-center text-[16.5px]">
                   <p>( ลงชื่อ .................................................... )</p>
                   <p className="mt-2">(ร่างโดย PEA Brain AI Copilot)</p>
                 </div>
                 
-                <div className="absolute top-8 right-8 border-2 border-red-500 text-red-500 font-sans font-bold text-[12px] px-3 py-1 rounded-md rotate-12 opacity-80">
+                <div className="absolute top-8 right-8 border-2 border-red-500 text-red-500 font-sans font-bold text-[16.5px] px-3 py-1 rounded-md rotate-12 opacity-80">
                   DRAFTED BY AI
                 </div>
               </div>
@@ -1162,7 +1162,7 @@ export default function BacktestSimulator() {
             <div className="p-5 border-t border-slate-100 bg-white flex justify-end gap-3">
               <button 
                 onClick={() => setShowPolicyModal(false)}
-                className="px-5 py-2 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-slate-100 transition-colors"
+                className="px-5 py-2 rounded-xl text-[16.5px] font-bold text-slate-600 hover:bg-slate-100 transition-colors"
               >
                 ปิด
               </button>
@@ -1171,7 +1171,7 @@ export default function BacktestSimulator() {
                   alert("ดาวน์โหลดไฟล์ PDF เรียบร้อยแล้ว (Demo)");
                   setShowPolicyModal(false);
                 }}
-                className="px-5 py-2 rounded-xl text-[13px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-colors flex items-center gap-2"
+                className="px-5 py-2 rounded-xl text-[16.5px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-colors flex items-center gap-2"
               >
                 <FileText size={14} /> ดาวน์โหลด PDF
               </button>

@@ -38,14 +38,14 @@ export default function KPICards() {
     },
     { 
       label: "รายการทั้งหมด", 
-      value: String(riskAlerts.length), 
+      value: String(materials.length), 
       sub: "ที่ต้องติดตามในระบบ", 
       icon: Package, 
       color: "text-blue-600", 
       bgIcon: "bg-blue-50", 
       border: "border-slate-200", 
       valueColor: "text-slate-800",
-      reference: "รายการความเสี่ยงทั้งหมด"
+      reference: "พัสดุในพอร์ตโฟลิโอทั้งหมด"
     },
     { 
       label: "มูลค่าความเสี่ยงรวม", 
@@ -82,15 +82,15 @@ export default function KPICards() {
               <div className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center shrink-0 ${k.bgIcon}`}>
                 <Icon size={18} className={k.color} />
               </div>
-              <span className="text-[13px] md:text-[15px] font-bold text-slate-600 leading-tight truncate">{k.label}</span>
+              <span className="text-[16.5px] md:text-[16.5px] font-bold text-slate-600 leading-tight truncate">{k.label}</span>
             </div>
             <div className="mt-auto">
-              <div className={`font-black tracking-tight leading-none ${k.isLarge ? "text-[20px] md:text-[24px]" : "text-[28px] md:text-[36px]"} ${k.valueColor}`}>
+              <div className={`font-black tracking-tight leading-none ${k.isLarge ? "text-[28px] md:text-[34px]" : "text-[36px] md:text-[46px]"} ${k.valueColor}`}>
                 {k.value}
               </div>
-              <div className="text-[11px] md:text-[13px] font-medium text-slate-500 mt-1.5 md:mt-2">{k.sub}</div>
+              <div className="text-[16.5px] md:text-[16.5px] font-medium text-slate-500 mt-1.5 md:mt-2">{k.sub}</div>
               {k.reference && (
-                <div className="text-[10px] md:text-[11px] font-medium text-slate-400 mt-1 md:mt-1.5 border-t border-slate-100 pt-1">
+                <div className="text-[16.5px] md:text-[16.5px] font-medium text-slate-400 mt-1 md:mt-1.5 border-t border-slate-100 pt-1">
                   *{k.reference}
                 </div>
               )}

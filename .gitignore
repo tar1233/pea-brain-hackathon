@@ -42,3 +42,9 @@ next-env.d.ts
 .env.local
 
 /src/generated/prisma
+
+scratch/
+*.mp3
+*.mp4
+*.py
+public/Sample_TOR_PEA.txt

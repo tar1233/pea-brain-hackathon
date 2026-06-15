@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
-import { materials } from "../../data/mockData";
+import { materials } from "../../data/awsData";
 
 export const dynamic = "force-dynamic";
 

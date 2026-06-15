@@ -63,7 +63,13 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
       return `${matchedMaterial.name}\nStock ${matchedMaterial.currentStock.toLocaleString()} / Safety ${matchedMaterial.safetyStock.toLocaleString()} ${matchedMaterial.unit}\nLead time ${matchedMaterial.leadTimeWeeks} สัปดาห์\nAverage demand ${matchedMaterial.avgMonthlyDemand.toLocaleString()} ${matchedMaterial.unit}/เดือน`;
     }
 
-    return "ผมช่วยได้ทั้งสรุปความเสี่ยง ค้นหาวัสดุรายรายการ และอธิบายเหตุผลของคำแนะนำ AI ลองถามด้วยรหัสวัสดุหรือคำว่า 'สรุปวันนี้' ได้ครับ";
+    if (normalized.includes("vmi") || normalized.includes("ทยอยส่งมอบ") || normalized.includes("lot") || normalized.includes("กฎหมาย") || normalized.includes("ระเบียบ")) {
+      return `กลยุทธ์ VMI (ทยอยส่งมอบ) และการแบ่ง Lot Splitting สามารถทำได้ตาม **พ.ร.บ. จัดซื้อจัดจ้าง พ.ศ. 2560** ภายใต้รูปแบบ "สัญญากรอบราคา (Frame Agreement)" 
+      
+วิธีนี้เปิดโอกาสให้แข่งขันราคาอย่างเป็นธรรม และ PEA สามารถเรียกของได้ตามความต้องการจริง (Call-off) ช่วยลดความเสี่ยงที่ผู้ชนะรายเดียวจะทิ้งงาน และประหยัด Holding Cost ได้มหาศาลครับ`;
+    }
+
+    return "ผมช่วยได้ทั้งสรุปความเสี่ยง, ค้นหาวัสดุ, และอธิบายข้อกฎหมายจัดซื้อ (เช่น VMI, Lot Splitting) ลองถามด้วยคำว่า 'สรุปวันนี้' หรือ 'VMI ผิดระเบียบไหม' ได้ครับ";
   };
 
   const handleSend = (preset?: string) => {
@@ -94,8 +100,8 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
             <Bot size={18} />
           </div>
           <div>
-            <div className="text-sm font-bold">PEA Brain Copilot</div>
-            <div className="text-xs text-white/55">ถามภาพรวมความเสี่ยงหรือ drill-down รายวัสดุ</div>
+            <div className="text-[16.5px] font-bold">PEA Brain Copilot</div>
+            <div className="text-[16.5px] text-white/55">ถามภาพรวมความเสี่ยงหรือ drill-down รายวัสดุ</div>
           </div>
         </div>
         <button onClick={onClose} className="rounded-xl p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white">
@@ -107,11 +113,11 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`rounded-2xl px-4 py-3 text-sm leading-6 ${
+            className={`rounded-2xl px-4 py-3 text-[16.5px] leading-6 ${
               message.role === "user" ? "bg-primary-600 text-white" : "bg-white/8 text-white/90"
             }`}
           >
-            <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-white/50">
+            <div className="mb-2 flex items-center gap-2 text-[16.5px] uppercase tracking-[0.14em] text-white/50">
               {message.role === "user" ? <User size={12} /> : message.role === "alert" ? <AlertTriangle size={12} /> : <Bot size={12} />}
               {message.role}
               <span className="ml-auto">{message.timestamp}</span>
@@ -121,7 +127,7 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
         ))}
 
         {isTyping && (
-          <div className="rounded-2xl bg-white/8 px-4 py-3 text-sm text-white/70">
+          <div className="rounded-2xl bg-white/8 px-4 py-3 text-[16.5px] text-white/70">
             PEA Brain กำลังสรุปข้อมูล...
           </div>
         )}
@@ -130,11 +136,11 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
 
       <div className="border-t border-white/10 px-4 py-3">
         <div className="mb-3 flex flex-wrap gap-2">
-          {["สรุปวันนี้", "วัสดุที่เสี่ยงที่สุด", materials[0]?.id ?? "MAT-10067"].map((question) => (
+          {["สรุปวันนี้", "วัสดุที่เสี่ยงที่สุด", "ตรวจสอบสัญญา VMI"].map((question) => (
             <button
               key={question}
               onClick={() => handleSend(question)}
-              className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/75 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[16.5px] font-semibold text-white/75 transition-colors hover:bg-white/10 hover:text-white"
             >
               {question}
             </button>
@@ -148,7 +154,7 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
               if (event.key === "Enter") handleSend();
             }}
             placeholder="ถามเกี่ยวกับความเสี่ยงหรือวัสดุ..."
-            className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/35"
+            className="flex-1 bg-transparent text-[16.5px] text-white outline-none placeholder:text-white/35"
           />
           <button onClick={() => handleSend()} className="rounded-xl bg-primary-600 p-2 text-white transition-colors hover:bg-primary-500">
             <Send size={16} />

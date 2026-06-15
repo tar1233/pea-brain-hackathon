@@ -86,7 +86,8 @@ export default function ActivityView({ approvedPlans = [] }: { approvedPlans?: A
       
       const dailyDemand = Math.ceil((mat?.avgMonthlyDemand || 0) / 30);
       const stockSurvivalDays = Math.floor((mat?.currentStock || 0) / (dailyDemand || 1));
-      const shortfallDays = Math.max(0, 15 - stockSurvivalDays);
+      // A 15-day delay on a Just-In-Time schedule means exactly 15 days of stockout
+      const shortfallDays = 15;
       const exactShortageQty = shortfallDays * dailyDemand;
       
       // Calculate realistic rush lead time (e.g. 20% of standard lead time, minimum 7 days)
@@ -128,6 +129,7 @@ ${vendorListText}
 1. **Impact Analysis (ผลกระทบ 15 วัน):** ให้ระบุความจริงว่าสต็อกจะอยู่ได้แค่ ${stockSurvivalDays} วัน และจะเกิดปัญหาของขาดจริง (Stockout) เป็นเวลา ${shortfallDays} วัน คิดเป็นจำนวน ${exactShortageQty} เครื่อง
 2. **Speed Comparison (เปรียบเทียบความเร็ว):** ประเมินเทียบกันให้เห็นชัดเจนว่า การรอเจ้าเก่า (มาส่งใน 15 วัน) กับการสั่งด่วนเจ้าใหม่ (ใช้เวลา ${rushLeadTimeDays} วัน) ฝั่งไหนไวกว่ากัน (ในกรณีนี้ ${isOldSupplierFaster ? "รอเจ้าเก่าไวกว่า!" : "สั่งเจ้าใหม่ไวกว่า!"}) 
 3. **Financial Impact (กำไร/ขาดทุน):** ประเมินต้นทุนส่วนต่างของการสั่ง ${exactShortageQty} เครื่องจากทางเลือกใหม่
+4. **Root Cause & Long-term Fix:** ระบุสาเหตุที่วิกฤตนี้เกิดเพราะจุดสั่งซื้อเดิม (ROP) ไม่สะท้อน Lead Time ผลิตลอตแรก (${standardLeadTimeDays} วัน) และสั่งให้ AI แนะนำการแก้ปัญหาด้วย Dynamic ROP ที่แจ้งเตือนล่วงหน้าที่สต็อก 100 วัน
 ${strategicActionPlan}
 - ห้ามตอบกว้างๆ ต้องใช้ตัวเลข ${exactShortageQty} เครื่องเป็นเป้าหมายหลักในการแก้ปัญหา
 
@@ -177,8 +179,8 @@ ${strategicActionPlan}
           <div className="bg-emerald-600 text-white px-5 py-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(5,150,105,0.5)] border border-emerald-500/50 flex items-start gap-3">
             <CheckCircle2 className="shrink-0 mt-0.5 text-emerald-100" size={20} />
             <div>
-              <div className="font-bold text-[14px] leading-tight">{toastMessage.title}</div>
-              <div className="text-[12px] text-emerald-100 mt-1">{toastMessage.desc}</div>
+              <div className="font-bold text-[16.5px] leading-tight">{toastMessage.title}</div>
+              <div className="text-[16.5px] text-emerald-100 mt-1">{toastMessage.desc}</div>
             </div>
           </div>
         </div>
@@ -189,12 +191,12 @@ ${strategicActionPlan}
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3 py-1 md:px-3.5 md:py-1.5 text-[11px] md:text-[13px] font-bold uppercase tracking-[0.16em] text-emerald-100 shadow-inner">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-md px-3 py-1 md:px-3.5 md:py-1.5 text-[16.5px] md:text-[16.5px] font-bold uppercase tracking-[0.16em] text-emerald-100 shadow-inner">
             <Brain size={14} className="text-emerald-300" />
             Procurement Planning
           </div>
-          <h1 className="mt-3 md:mt-4 text-[18px] md:text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนการจัดซื้อ (Procurement Planning)</h1>
-          <p className="mt-2 md:mt-3 text-[11px] md:text-[13px] leading-relaxed text-slate-300/90 font-medium">
+          <h1 className="mt-3 md:mt-4 text-[16.5px] md:text-[24px] font-black tracking-tight text-white drop-shadow-md">แผนการจัดซื้อ (Procurement Planning)</h1>
+          <p className="mt-2 md:mt-3 text-[16.5px] md:text-[16.5px] leading-relaxed text-slate-300/90 font-medium">
             ติดตามแผนจัดซื้อสินค้าแต่ละตัว • AI เฝ้าระวังความเสี่ยงอัตโนมัติ • วิเคราะห์แผนรับมือทันทีเมื่อเกิดปัญหา
           </p>
         </div>
@@ -234,10 +236,10 @@ ${strategicActionPlan}
                   {/* Material Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-slate-900 truncate">{mat.name}</h3>
-                      <span className="text-[12px] md:text-[14px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0">{mat.sapCode}</span>
+                      <h3 className="text-[16.5px] md:text-[16.5px] font-bold text-slate-900 truncate">{mat.name}</h3>
+                      <span className="text-[16.5px] md:text-[16.5px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0">{mat.sapCode}</span>
                       {plan && (
-                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[11px] md:text-[14px] font-bold shrink-0 flex items-center gap-1">
+                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[16.5px] md:text-[16.5px] font-bold shrink-0 flex items-center gap-1">
                           <CheckCircle2 size={12} /> มีแผนแล้ว
                         </span>
                       )}
@@ -247,7 +249,7 @@ ${strategicActionPlan}
                   {/* Mobile: Arrow + Risk Badge */}
                   <div className="flex items-center gap-2 md:hidden">
                     {alert && (
-                      <div className={`shrink-0 px-2 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 ${
+                      <div className={`shrink-0 px-2 py-1 rounded-lg text-[16.5px] font-bold flex items-center gap-1 ${
                         alert.severity === 'critical' ? 'bg-red-50 text-red-700 border border-red-100' : 
                         'bg-amber-50 text-amber-700 border border-amber-100'
                       }`}>
@@ -260,7 +262,7 @@ ${strategicActionPlan}
                 </div>
 
                 {/* Stats row — always visible */}
-                <div className="flex items-center gap-2 md:gap-3 text-[12px] md:text-[14px] text-slate-500 flex-wrap pl-[52px] md:pl-0 -mt-1 md:mt-0">
+                <div className="flex items-center gap-2 md:gap-3 text-[16.5px] md:text-[16.5px] text-slate-500 flex-wrap pl-[52px] md:pl-0 -mt-1 md:mt-0">
                   <span>สต็อก: <strong className={stockPercent < 30 ? 'text-red-600' : 'text-slate-700'}>{mat.currentStock.toLocaleString()} {mat.unit}</strong></span>
                   <span className="text-slate-300">•</span>
                   <span>ใช้ได้อีก <strong className={daysOfStock < 30 ? 'text-red-600' : 'text-slate-700'}>{daysOfStock} วัน</strong></span>
@@ -271,7 +273,7 @@ ${strategicActionPlan}
                 {/* Desktop-only elements */}
                 {/* Risk Badge */}
                 {alert && (
-                  <div className={`hidden md:flex shrink-0 px-3 py-1.5 rounded-lg text-[14px] font-bold items-center gap-1 ${
+                  <div className={`hidden md:flex shrink-0 px-3 py-1.5 rounded-lg text-[16.5px] font-bold items-center gap-1 ${
                     alert.severity === 'critical' ? 'bg-red-50 text-red-700 border border-red-100' : 
                     'bg-amber-50 text-amber-700 border border-amber-100'
                   }`}>
@@ -308,27 +310,27 @@ ${strategicActionPlan}
                       <div className="flex items-start gap-3">
                         <ShieldAlert className={alert.severity === 'critical' ? 'text-red-500' : 'text-amber-500'} size={20} />
                         <div className="flex-1">
-                          <div className="text-[12px] font-bold text-slate-800 mb-0.5">⚠️ AI เฝ้าระวัง: {alert.message}</div>
-                          <div className="text-[11px] text-slate-600 mb-3">{alert.detail}</div>
+                          <div className="text-[16.5px] font-bold text-slate-800 mb-0.5">⚠️ AI เฝ้าระวัง: {alert.message}</div>
+                          <div className="text-[16.5px] text-slate-600 mb-3">{alert.detail}</div>
 
                           {/* AI Auto Risk Mitigation */}
                           {!mitigation ? (
                             <button
                               onClick={(e) => { e.stopPropagation(); handleAIRiskAnalysis(mat.id, alert.message); }}
-                              className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-[13px] font-bold text-white cursor-pointer hover:bg-purple-700 transition shadow-sm"
+                              className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-[16.5px] font-bold text-white cursor-pointer hover:bg-purple-700 transition shadow-sm"
                             >
                               <Sparkles size={12} /> AI วิเคราะห์แผนรับมือทันที
                             </button>
                           ) : mitigation.isLoading ? (
-                            <div className="flex items-center gap-2 text-[13px] text-purple-600 font-bold">
+                            <div className="flex items-center gap-2 text-[16.5px] text-purple-600 font-bold">
                               <Loader2 size={14} className="animate-spin" /> AI กำลังวิเคราะห์แผนรับมือ...
                             </div>
                           ) : (
                             <div className="mt-2 rounded-xl bg-white border border-purple-100 p-3">
-                              <div className="flex items-center gap-1.5 mb-2 text-[13px] font-bold text-purple-700 uppercase tracking-wider">
+                              <div className="flex items-center gap-1.5 mb-2 text-[16.5px] font-bold text-purple-700 uppercase tracking-wider">
                                 <Brain size={12} /> AI แผนรับมือความเสี่ยง (Real-time)
                               </div>
-                              <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{mitigation.plan}</div>
+                              <div className="text-[16.5px] text-slate-700 leading-relaxed whitespace-pre-wrap">{mitigation.plan}</div>
                             </div>
                           )}
                         </div>
@@ -343,10 +345,10 @@ ${strategicActionPlan}
                             <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <FileText size={16} className="text-slate-600" />
-                                <h4 className="text-[14px] font-bold text-slate-800">สรุปแผนดำเนินการ (Approved Plan Summary)</h4>
+                                <h4 className="text-[16.5px] font-bold text-slate-800">สรุปแผนดำเนินการ (Approved Plan Summary)</h4>
                               </div>
                             </div>
-                            <div className="overflow-x-auto"><table className="w-full text-left text-[13px] border-collapse min-w-[700px]">
+                            <div className="overflow-x-auto"><table className="w-full text-left text-[16.5px] border-collapse min-w-[700px]">
                               <tbody className="divide-y divide-slate-100">
                                 {/* Original Plan Row */}
                                 <tr className="hover:bg-slate-50/50">
@@ -354,9 +356,9 @@ ${strategicActionPlan}
                                     แผนหลักเดิม
                                   </td>
                                   <td className="px-4 py-4 text-slate-700 align-top border-l border-slate-200">
-                                    <div className="font-bold mb-1 text-[14px]">{allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.planName || `รอส่งมอบ ${mat.name}`}</div>
+                                    <div className="font-bold mb-1 text-[16.5px]">{allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.planName || `รอส่งมอบ ${mat.name}`}</div>
                                     <div className="text-slate-600 mb-2.5 leading-relaxed">{allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.action || 'รอการส่งมอบตามกำหนดการเดิมจาก Supplier หลัก'}</div>
-                                    <div className="flex flex-wrap gap-2 text-[12px]">
+                                    <div className="flex flex-wrap gap-2 text-[16.5px]">
                                       <span className="bg-slate-100 px-2.5 py-1 rounded-md font-medium text-slate-700 border border-slate-200/60">📦 {(allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.qty || plan?.qty || Math.round(mat.avgMonthlyDemand / 30) * mat.safetyStock || 0).toLocaleString()} หน่วย</span>
                                       <span className="bg-slate-100 px-2.5 py-1 rounded-md font-medium text-slate-700 border border-slate-200/60">💰 {allPlansForMat.find((p: any) => !p.planName?.startsWith('[แผนใหม่]'))?.financial || 'เป็นไปตามงบประมาณเดิม'}</span>
                                     </div>
@@ -370,9 +372,9 @@ ${strategicActionPlan}
                                       <div className="flex items-center gap-1.5"><CheckCircle2 size={15} className="text-emerald-600"/> แผนรับมือฉุกเฉิน</div>
                                     </td>
                                     <td className="px-4 py-4 text-emerald-900 align-top border-l border-emerald-100 border-t">
-                                      <div className="font-bold mb-1 text-[14px]">{plan.planName}</div>
+                                      <div className="font-bold mb-1 text-[16.5px]">{plan.planName}</div>
                                       <div className="text-emerald-800 mb-2.5 leading-relaxed">{plan.action}</div>
-                                      <div className="flex flex-wrap gap-2 text-[12px]">
+                                      <div className="flex flex-wrap gap-2 text-[16.5px]">
                                         <span className="bg-emerald-100/80 px-2.5 py-1 rounded-md font-medium text-emerald-800 border border-emerald-200/60">📦 {plan.qty.toLocaleString()} หน่วย</span>
                                         <span className="bg-emerald-100/80 px-2.5 py-1 rounded-md font-medium text-emerald-800 border border-emerald-200/60">💰 {plan.financial}</span>
                                       </div>
@@ -387,18 +389,18 @@ ${strategicActionPlan}
                         <div className="flex items-start gap-3">
                           <Clock className="text-blue-500" size={20} />
                           <div className="flex-1">
-                            <div className="text-[14px] font-bold text-slate-800 mb-0.5">🚚 AI เฝ้าระวังการจัดส่ง (Tracking)</div>
-                            <div className="text-[14px] text-slate-600 mb-3">พบความเสี่ยง: ผู้ผลิตหลักแจ้งเตือนปัญหา Supply Chain อาจทำให้ส่งมอบล่าช้า 15 วัน เสี่ยงกระทบสต็อกที่จะหมดในอีก {daysOfStock} วัน</div>
+                            <div className="text-[16.5px] font-bold text-slate-800 mb-0.5">🚚 AI เฝ้าระวังการจัดส่ง (Tracking)</div>
+                            <div className="text-[16.5px] text-slate-600 mb-3">พบความเสี่ยง: ผู้ผลิตหลักแจ้งเตือนปัญหา Supply Chain อาจทำให้ส่งมอบล่าช้า 15 วัน เสี่ยงกระทบสต็อกที่จะหมดในอีก {daysOfStock} วัน</div>
 
                             {!trackingMitigations[mat.id] ? (
                               <button
                                 onClick={(e) => { e.stopPropagation(); handleAITrackingAnalysis(mat.id, plan.planName); }}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-[13px] font-bold text-white cursor-pointer hover:bg-blue-700 transition shadow-sm"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-[16.5px] font-bold text-white cursor-pointer hover:bg-blue-700 transition shadow-sm"
                               >
                                 <Sparkles size={12} /> ให้ AI วิเคราะห์แผนสำรอง
                               </button>
                             ) : trackingMitigations[mat.id].isLoading ? (
-                              <div className="flex items-center gap-2 text-[13px] text-blue-600 font-bold">
+                              <div className="flex items-center gap-2 text-[16.5px] text-blue-600 font-bold">
                                 <Loader2 size={14} className="animate-spin" /> AI กำลังวิเคราะห์แผนสำรอง...
                               </div>
                             ) : (
@@ -407,16 +409,16 @@ ${strategicActionPlan}
                                   <div className="mt-2 space-y-3">
                                     {trackingMitigations[mat.id].parsedPlan ? (
                                       <div className="rounded-xl border border-blue-100 bg-white p-4 shadow-sm animate-fade-in">
-                                        <div className="flex items-center gap-1.5 mb-4 text-[13px] font-bold text-blue-800 uppercase tracking-wider border-b border-blue-50 pb-2">
-                                          <Brain size={14} className="text-blue-600" /> AI แผนรับมือการจัดส่งล่าช้า
+                                        <div className="flex items-center gap-1.5 mb-4 text-[16.5px] font-bold text-blue-800 uppercase tracking-wider border-b border-blue-50 pb-2">
+                                          <Brain size={20} className="text-blue-600" /> AI แผนรับมือการจัดส่งล่าช้า
                                         </div>
                                         
                                         {/* Multi-Agent & Deep Analysis Summary Table */}
                                         <div className="rounded-xl border border-slate-200 bg-white mb-4 overflow-hidden">
                                           <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
-                                            <h4 className="text-[14px] font-bold text-slate-800 flex items-center gap-2"><Brain size={16} className="text-slate-600"/> สรุปข้อมูลวิเคราะห์เชิงลึก (Deep Analysis)</h4>
+                                            <h4 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2"><Brain size={20} className="text-slate-600"/> สรุปข้อมูลวิเคราะห์เชิงลึก (Deep Analysis)</h4>
                                           </div>
-                                          <div className="overflow-x-auto"><table className="w-full text-left text-[13px] min-w-[600px]">
+                                          <div className="overflow-x-auto"><table className="w-full text-left text-[16.5px] min-w-[600px]">
                                             <tbody className="divide-y divide-slate-100">
                                               {trackingMitigations[mat.id].parsedPlan.agents && (
                                                 <>
@@ -458,24 +460,24 @@ ${strategicActionPlan}
 
                                         {/* Executive Summary */}
                                         <div className="bg-slate-50 rounded-lg p-3 border border-slate-100 mb-4">
-                                          <div className="text-[13px] font-bold text-slate-700 mb-1">Executive Summary</div>
-                                          <div className="text-[12px] text-slate-800 font-medium leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.executiveSummary)}</div>
+                                          <div className="text-[16.5px] font-bold text-slate-700 mb-1">Executive Summary</div>
+                                          <div className="text-[16.5px] text-slate-800 font-medium leading-relaxed">{highlightNumbers(trackingMitigations[mat.id].parsedPlan.executiveSummary)}</div>
                                         </div>
 
                                         {/* Emergency Decision Matrix Table */}
                                         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm mb-4">
                                           <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2">
-                                            <Target size={16} className="text-slate-600" />
-                                            <h4 className="text-[14px] font-bold text-slate-800">ตารางเปรียบเทียบแผนฉุกเฉิน (Emergency Decision Matrix)</h4>
+                                            <Target size={20} className="text-slate-600" />
+                                            <h4 className="text-[16.5px] font-bold text-slate-800">ตารางเปรียบเทียบแผนฉุกเฉิน (Emergency Decision Matrix)</h4>
                                           </div>
                                           <div className="overflow-x-auto">
-                                            <table className="w-full text-left border-collapse text-[13px] min-w-[800px]">
+                                            <table className="w-full text-left border-collapse text-[16.5px] min-w-[800px]">
                                               <thead>
                                                 <tr className="bg-slate-100/50 border-b border-slate-200 text-slate-600">
                                                   <th className="px-4 py-3 font-bold w-1/4">หัวข้อการประเมิน</th>
                                                   <th className="px-4 py-3 font-bold w-[37.5%] border-l border-slate-200 bg-emerald-50/50">
                                                     <div className="flex items-center gap-2">
-                                                      <span className="bg-emerald-500 text-white px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm shrink-0">
+                                                      <span className="bg-emerald-500 text-white px-2 py-0.5 rounded text-[16.5px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm shrink-0">
                                                         <Sparkles size={10} /> AI แนะนำ
                                                       </span>
                                                       <span className="text-emerald-900">{trackingMitigations[mat.id].parsedPlan.option1?.title || 'ทางเลือกที่ 1'}</span>
@@ -488,7 +490,7 @@ ${strategicActionPlan}
                                               </thead>
                                               <tbody className="divide-y divide-slate-100">
                                                 <tr className="hover:bg-slate-50/50">
-                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">เหตุผลที่แนะนำ<br/><span className="text-[11px] font-normal text-slate-500">(AI Reasoning)</span></td>
+                                                  <td className="px-4 py-3 font-bold text-slate-700 bg-slate-50/30 align-top">เหตุผลที่แนะนำ<br/><span className="text-[16.5px] font-normal text-slate-500">(AI Reasoning)</span></td>
                                                   <td className="px-4 py-3 text-emerald-800 bg-emerald-50/30 border-l border-slate-200 font-medium leading-relaxed">{trackingMitigations[mat.id].parsedPlan.option1?.reason || 'แก้ปัญหา Stockout ได้ทันท่วงทีและมีประสิทธิภาพสูงสุดตามเงื่อนไขเวลา'}</td>
                                                   <td className="px-4 py-3 text-slate-600 border-l border-slate-200 leading-relaxed">{trackingMitigations[mat.id].parsedPlan.option2?.reason || 'เป็นแผนสำรองฉุกเฉินกรณีที่ไม่สามารถทำตามแผนหลักได้'}</td>
                                                 </tr>
@@ -542,7 +544,7 @@ ${strategicActionPlan}
                                                         }));
                                                         showToast('อัปเดตแผนรับมือสำเร็จ', `เลือกทางเลือกที่ 1: ${selectedOption?.title} เรียบร้อยแล้ว ระบบได้จัดเก็บข้อมูลลงประวัติ`);
                                                       }}
-                                                      className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white cursor-pointer transition shadow-sm ${
+                                                      className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[16.5px] font-bold text-white cursor-pointer transition shadow-sm ${
                                                         trackingMitigations[mat.id].selectedOptionId === 1 
                                                           ? 'bg-emerald-600 ring-2 ring-emerald-500 ring-offset-2' 
                                                           : 'bg-emerald-600 hover:bg-emerald-700'
@@ -572,7 +574,7 @@ ${strategicActionPlan}
                                                         }));
                                                         showToast('อัปเดตแผนรับมือสำเร็จ', `เลือกทางเลือกที่ 2: ${selectedOption?.title} เรียบร้อยแล้ว ระบบได้จัดเก็บข้อมูลลงประวัติ`);
                                                       }}
-                                                      className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold cursor-pointer transition shadow-sm ${
+                                                      className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[16.5px] font-bold cursor-pointer transition shadow-sm ${
                                                         trackingMitigations[mat.id].selectedOptionId === 2 
                                                           ? 'bg-blue-600 text-white ring-2 ring-blue-500 ring-offset-2' 
                                                           : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
@@ -590,8 +592,8 @@ ${strategicActionPlan}
 
                                         {/* Need to Know */}
                                         <div className="bg-amber-50 rounded-lg p-3 border border-amber-100 mb-4">
-                                          <div className="text-[13px] font-bold text-amber-800 mb-2 flex items-center gap-1"><AlertTriangle size={12} /> ข้อมูลสำคัญที่ควรรู้ (Need to Know)</div>
-                                          <ul className="list-disc pl-4 text-[13px] text-slate-700 leading-relaxed space-y-1">
+                                          <div className="text-[16.5px] font-bold text-amber-800 mb-2 flex items-center gap-1"><AlertTriangle size={12} /> ข้อมูลสำคัญที่ควรรู้ (Need to Know)</div>
+                                          <ul className="list-disc pl-4 text-[16.5px] text-slate-700 leading-relaxed space-y-1">
                                             {(trackingMitigations[mat.id].parsedPlan.needToKnow || []).map((item: string, i: number) => (
                                               <li key={i}>{item}</li>
                                             ))}
@@ -601,10 +603,10 @@ ${strategicActionPlan}
                                       </div>
                                     ) : (
                                       <div className="rounded-xl bg-white border border-blue-100 p-3">
-                                        <div className="flex items-center gap-1.5 mb-2 text-[13px] font-bold text-blue-700 uppercase tracking-wider">
+                                        <div className="flex items-center gap-1.5 mb-2 text-[16.5px] font-bold text-blue-700 uppercase tracking-wider">
                                           <Brain size={12} /> AI แผนรับมือการจัดส่งล่าช้า
                                         </div>
-                                        <div className="text-[12px] text-slate-700 leading-relaxed whitespace-pre-wrap">{trackingMitigations[mat.id].plan}</div>
+                                        <div className="text-[16.5px] text-slate-700 leading-relaxed whitespace-pre-wrap">{trackingMitigations[mat.id].plan}</div>
                                       </div>
                                     )}
                                   </div>
@@ -613,12 +615,12 @@ ${strategicActionPlan}
                                     <div className="flex items-start gap-2 max-w-[80%]">
                                       <CheckCircle2 className="text-emerald-600 shrink-0 mt-0.5" size={16} />
                                       <div className="flex flex-col">
-                                        <span className="text-[12px] font-bold text-emerald-800">
+                                        <span className="text-[16.5px] font-bold text-emerald-800">
                                           {trackingMitigations[mat.id].selectedOptionId === 1 
                                             ? trackingMitigations[mat.id].parsedPlan.option1?.title 
                                             : trackingMitigations[mat.id].parsedPlan.option2?.title}
                                         </span>
-                                        <span className="text-[13px] text-emerald-700 mt-0.5">
+                                        <span className="text-[16.5px] text-emerald-700 mt-0.5">
                                           {trackingMitigations[mat.id].selectedOptionId === 1 
                                             ? trackingMitigations[mat.id].parsedPlan.option1?.desc 
                                             : trackingMitigations[mat.id].parsedPlan.option2?.desc}
@@ -633,7 +635,7 @@ ${strategicActionPlan}
                                           [mat.id]: { ...prev[mat.id], selectedOptionId: undefined }
                                         }));
                                       }}
-                                      className="text-[13px] text-emerald-700 underline hover:text-emerald-900 font-bold"
+                                      className="text-[16.5px] text-emerald-700 underline hover:text-emerald-900 font-bold"
                                     >
                                       แก้ไขหรือดูทางเลือกอื่นอีกครั้ง
                                     </button>
@@ -653,7 +655,7 @@ ${strategicActionPlan}
                   <div className="flex items-center gap-2">
                     {steps.map((step, idx) => (
                       <div key={step.id} className="flex items-center gap-2">
-                        <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-bold transition ${
+                        <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[16.5px] font-bold transition ${
                           step.status === 'completed' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 
                           step.status === 'active' ? 'bg-blue-100 text-blue-700 border border-blue-200 ring-2 ring-blue-200' : 
                           'bg-slate-100 text-slate-400 border border-slate-200'
@@ -670,7 +672,7 @@ ${strategicActionPlan}
                   {/* No Plan Yet — CTA */}
                   {!plan && (
                     <div className="rounded-xl border-2 border-dashed border-slate-200 p-4 text-center">
-                      <p className="text-[12px] text-slate-400 font-medium">ยังไม่มีแผนจัดซื้อ — ไปที่หน้า <strong>Risk Management</strong> แล้วกด &ldquo;ให้ AI วิเคราะห์&rdquo; เพื่อเลือกแผน</p>
+                      <p className="text-[16.5px] text-slate-400 font-medium">ยังไม่มีแผนจัดซื้อ — ไปที่หน้า <strong>Risk Management</strong> แล้วกด &ldquo;ให้ AI วิเคราะห์&rdquo; เพื่อเลือกแผน</p>
                     </div>
                   )}
                 </div>

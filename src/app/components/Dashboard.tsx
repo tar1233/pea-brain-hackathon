@@ -201,6 +201,25 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
   const [approvedPlansCount, setApprovedPlansCount] = useState(0);
   const [activeTF, setActiveTF] = useState<TimeframeType>('ปัจจุบัน');
   const [isTFUpdating, setIsTFUpdating] = useState(false);
+  const [isFetchingAWS, setIsFetchingAWS] = useState(false);
+  const [hasFetchedAWS, setHasFetchedAWS] = useState(false);
+
+  const handleAWSFetch = () => {
+    setIsFetchingAWS(true);
+    setTimeout(() => {
+      setIsFetchingAWS(false);
+      setHasFetchedAWS(true);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("show-alert", {
+          detail: {
+            title: "อัปเดตข้อมูล Track 1 จาก AWS สำเร็จ",
+            content: "ระบบจำลองการดึงข้อมูลและประมวลผล Batch Analysis ทั้งหมดเสร็จสิ้น พร้อมนำเสนอให้ผู้บริหารพิจารณา",
+            type: "success"
+          }
+        }));
+      }
+    }, 1500);
+  };
 
   const criticalAlerts = riskAlerts.filter(a => a.severity === 'critical');
   const criticalVaR = criticalAlerts.reduce((sum, a) => sum + (a.costImpact || 0), 0);
@@ -237,7 +256,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center space-y-4">
         <BarChart3 size={32} className="animate-pulse text-purple-600" />
-        <div className="text-sm font-bold text-slate-500">กำลังโหลดข้อมูล Executive Dashboard...</div>
+        <div className="text-[16.5px] font-bold text-slate-500">กำลังโหลดข้อมูล Executive Dashboard...</div>
       </div>
     );
   }
@@ -259,18 +278,30 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 flex-1 w-full">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3 py-1.5 text-[13px] font-bold tracking-widest text-purple-100 border border-white/10 uppercase shadow-inner">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3 py-1.5 text-[16.5px] font-bold tracking-widest text-purple-100 border border-white/10 uppercase shadow-inner">
             <Briefcase size={16} className="text-purple-300" />
             {activeTF === 'ปัจจุบัน' ? "AI Executive Command Center" : `Backtest Simulation: ${activeTF}`}
           </div>
           <h1 className="text-[20px] md:text-[28px] font-black text-white leading-tight drop-shadow-md tracking-tight">
             ภาพรวมการทำงานของ PEA Brain (Multi-Agent Squad)
           </h1>
-          <p className="mt-2 text-[12px] md:text-[15px] text-purple-200/90 font-medium max-w-xl leading-relaxed">
+          <p className="mt-2 text-[16.5px] md:text-[16.5px] text-purple-200/90 font-medium max-w-xl leading-relaxed">
             {activeTF === 'ปัจจุบัน' 
               ? "สรุปข้อมูลการจัดการความเสี่ยงสต๊อกขาดแคลน การวางแผนจัดซื้อด้วย AI และผลประหยัดงบประมาณแบบเรียลไทม์"
               : `ประมวลผลประสิทธิภาพย้อนหลังของโมเดล AI ในช่วงเวลา ${activeTF} ที่ผ่านมา`}
           </p>
+
+          {/* PO Feedback: AWS S3 Batch Analysis Button */}
+          {activeTF === 'ปัจจุบัน' && (
+            <button
+              onClick={handleAWSFetch}
+              disabled={isFetchingAWS}
+              className="mt-4 flex items-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 text-blue-100 px-4 py-2 rounded-xl text-[16.5px] font-bold transition-all cursor-pointer backdrop-blur-md"
+            >
+              <Database size={16} className={isFetchingAWS ? "animate-pulse text-blue-300" : "text-blue-300"} />
+              {isFetchingAWS ? "กำลังดึงข้อมูล Track 1 จาก AWS S3..." : "ดึงข้อมูล Track 1 (AWS S3) เพื่อคำนวณ Batch"}
+            </button>
+          )}
 
           {/* Timeframe Selector */}
           <div className="mt-4 flex bg-purple-950/40 p-1 rounded-xl border border-white/10 backdrop-blur-sm self-start overflow-x-auto max-w-full w-fit">
@@ -278,7 +309,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
               <button
                 key={tf}
                 onClick={() => setActiveTF(tf)}
-                className={`px-2.5 py-1.5 md:px-4 md:py-2 rounded-lg text-[12px] md:text-[14px] font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2.5 py-1.5 md:px-4 md:py-2 rounded-lg text-[16.5px] md:text-[16.5px] font-extrabold transition-all cursor-pointer whitespace-nowrap ${
                   activeTF === tf 
                   ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30' 
                   : 'text-purple-300 hover:text-white hover:bg-white/5'
@@ -294,35 +325,35 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
           {activeTF === 'ปัจจุบัน' ? (
             <>
               <div className="bg-white rounded-2xl p-3 md:p-4 text-center min-w-[120px] md:min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("risk")}>
-                <div className="text-[11px] md:text-[13px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1">
+                <div className="text-[16.5px] md:text-[16.5px] font-extrabold text-red-600 uppercase flex justify-center items-center gap-1">
                   <AlertTriangle size={12} /> ความเสี่ยง
                 </div>
-                <div className="text-[26px] md:text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{criticalAlerts.length} <span className="text-[13px] md:text-[16px]">รายการ</span></div>
-                <div className="text-[11px] md:text-[13px] font-bold text-red-500 mt-1 md:mt-2">VaR {formatCurrency(criticalVaR)}</div>
+                <div className="text-[26px] md:text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{criticalAlerts.length} <span className="text-[16.5px] md:text-[16.5px]">รายการ</span></div>
+                <div className="text-[16.5px] md:text-[16.5px] font-bold text-red-500 mt-1 md:mt-2">VaR {formatCurrency(criticalVaR)}</div>
               </div>
               <div className="bg-white rounded-2xl p-3 md:p-4 text-center min-w-[120px] md:min-w-[150px] flex-1 md:flex-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.5)] transition-all shadow-xl" onClick={() => setActiveTab?.("activity")}>
-                <div className="text-[11px] md:text-[13px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1">
+                <div className="text-[16.5px] md:text-[16.5px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1">
                   <CheckCircle2 size={12} /> อนุมัติแผน
                 </div>
-                <div className="text-[26px] md:text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[13px] md:text-[16px]">แผน</span></div>
-                <div className="text-[11px] md:text-[13px] font-bold text-emerald-600 mt-1 md:mt-2">ติดตามสถานะจัดซื้อ</div>
+                <div className="text-[26px] md:text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{approvedPlansCount} <span className="text-[16.5px] md:text-[16.5px]">แผน</span></div>
+                <div className="text-[16.5px] md:text-[16.5px] font-bold text-emerald-600 mt-1 md:mt-2">ติดตามสถานะจัดซื้อ</div>
               </div>
             </>
           ) : (
             <>
               <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none shadow-xl">
-                <div className="text-[13px] font-extrabold text-amber-600 uppercase flex justify-center items-center gap-1.5">
+                <div className="text-[16.5px] font-extrabold text-amber-600 uppercase flex justify-center items-center gap-1.5">
                   <ShieldCheck size={14} /> ป้องกันวิกฤตสำเร็จ
                 </div>
                 <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{tfData.kpis[2].value}</div>
-                <div className="text-[13px] font-bold text-amber-600 mt-2">อิงจากสถิติช่วง {activeTF}</div>
+                <div className="text-[16.5px] font-bold text-amber-600 mt-2">อิงจากสถิติช่วง {activeTF}</div>
               </div>
               <div className="bg-white rounded-2xl p-4 text-center min-w-[150px] flex-1 md:flex-none shadow-xl">
-                <div className="text-[13px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1.5">
+                <div className="text-[16.5px] font-extrabold text-emerald-600 uppercase flex justify-center items-center gap-1.5">
                   <DollarSign size={14} /> งบประหยัดสะสม
                 </div>
                 <div className="text-[34px] font-black text-slate-900 mt-1 leading-none tracking-tight">{tfData.kpis[1].value}</div>
-                <div className="text-[13px] font-bold text-emerald-600 mt-2">สถิติช่วงย้อนหลัง {activeTF}</div>
+                <div className="text-[16.5px] font-bold text-emerald-600 mt-2">สถิติช่วงย้อนหลัง {activeTF}</div>
               </div>
             </>
           )}
@@ -333,7 +364,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
       {isTFUpdating ? (
         <div className="flex h-[40vh] flex-col items-center justify-center space-y-4">
           <BrainCircuit size={36} className="animate-spin text-purple-600" />
-          <div className="text-sm font-bold text-slate-500">PEA Brain กำลังประมวลผลฐานข้อมูลย้อนหลัง ({activeTF})...</div>
+          <div className="text-[16.5px] font-bold text-slate-500">PEA Brain กำลังประมวลผลฐานข้อมูลย้อนหลัง ({activeTF})...</div>
         </div>
       ) : (
         <div className="space-y-6 animate-fade-in">
@@ -347,9 +378,9 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                   </div>
                 </div>
                 <div>
-                  <div className="text-[13px] font-bold text-slate-400 uppercase tracking-wide">{kpi.title}</div>
+                  <div className="text-[16.5px] font-bold text-slate-400 uppercase tracking-wide">{kpi.title}</div>
                   <div className="text-[26px] font-extrabold text-slate-800 mt-1">{kpi.value}</div>
-                  <div className="text-[13px] font-medium text-slate-500 mt-1">{kpi.trend}</div>
+                  <div className="text-[16.5px] font-medium text-slate-500 mt-1">{kpi.trend}</div>
                 </div>
               </div>
             ))}
@@ -361,16 +392,16 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
               <div className="mb-6 flex justify-between items-start">
                 <div>
-                  <h3 className="text-[15px] font-bold text-slate-800">
+                  <h3 className="text-[16.5px] font-bold text-slate-800">
                     {activeTF === 'ปัจจุบัน' ? "งบประมาณ vs การเบิกจ่ายจริง (ล้านบาท)" : "เปรียบเทียบต้นทุนจัดซื้อ: ดำเนินการปกติ vs ใช้ AI (ล้านบาท)"}
                   </h3>
-                  <p className="text-[12px] text-slate-500">
+                  <p className="text-[16.5px] text-slate-500">
                     {activeTF === 'ปัจจุบัน' 
                       ? "เปรียบเทียบแผนงบประมาณจัดซื้อกับยอด PO ที่ออกจริงรายเดือน" 
                       : "แสดงผลกระทบความสูญเสียจากต้นทุนกรณีซื้อรูปแบบปกติ เทียบกับการล็อกและบริหารโดย AI"}
                   </p>
                 </div>
-                <span className="bg-slate-100 text-slate-500 text-[12px] px-2 py-1 rounded font-bold uppercase tracking-wider">
+                <span className="bg-slate-100 text-slate-500 text-[16.5px] px-2 py-1 rounded font-bold uppercase tracking-wider">
                   {activeTF === 'ปัจจุบัน' ? "Simulated Data" : "Historical Simulation"}
                 </span>
               </div>
@@ -380,7 +411,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                    <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' , fontSize: '13.5px' }} />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
                     <Bar dataKey="budget" name={activeTF === 'ปัจจุบัน' ? "งบประมาณ (Budget)" : "ต้นทุนจัดซื้อปกติ (Human)"} fill="#e2e8f0" radius={[4, 4, 0, 0]} barSize={20} />
                     <Bar dataKey="spend" name={activeTF === 'ปัจจุบัน' ? "ยอดใช้จ่าย (Spend)" : "ต้นทุนจัดซื้อจำลอง (AI)"} fill="#A80689" radius={[4, 4, 0, 0]} barSize={20} />
@@ -393,14 +424,19 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
               <div className="mb-6 flex justify-between items-start">
                 <div>
-                  <h3 className="text-[15px] font-bold text-slate-800">ผลการประหยัดงบประมาณด้วย AI (Cost Savings)</h3>
-                  <p className="text-[12px] text-slate-500">
+                  <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2">
+                    ผลการประหยัดงบประมาณ (Cost Savings)
+                    <span className="bg-emerald-100 text-emerald-700 text-[16.5px] px-2 py-0.5 rounded font-bold uppercase">
+                      PCO Risk Framework Drafted
+                    </span>
+                  </h3>
+                  <p className="text-[16.5px] text-slate-500">
                     {activeTF === 'ปัจจุบัน' 
                       ? "มูลค่าที่คาดว่าจะประหยัดได้ (Expected) จากการใช้ PEA Brain" 
                       : `สถิติงบสะสมที่ประหยัดได้ในช่วงเวลาย้อนหลัง ${activeTF}`}
                   </p>
                 </div>
-                <span className="bg-slate-100 text-slate-500 text-[12px] px-2 py-1 rounded font-bold uppercase tracking-wider">
+                <span className="bg-slate-100 text-slate-500 text-[16.5px] px-2 py-1 rounded font-bold uppercase tracking-wider">
                   {activeTF === 'ปัจจุบัน' ? "Projection" : "Historical Record"}
                 </span>
               </div>
@@ -418,19 +454,87 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
             </div>
           </section>
 
+          {/* Batch Analysis Table (AWS Data) */}
+          {hasFetchedAWS && activeTF === 'ปัจจุบัน' && (
+            <section className="bg-white rounded-3xl border border-blue-100 shadow-lg overflow-hidden animate-fade-in relative">
+              <div className="absolute inset-0 bg-blue-50/30 pointer-events-none"></div>
+              <div className="p-6 border-b border-blue-100 flex justify-between items-center relative z-10">
+                <div>
+                  <h3 className="text-[16.5px] font-bold text-blue-900 flex items-center gap-2">
+                    <Database size={18} className="text-blue-500" />
+                    ผลการวิเคราะห์การสั่งซื้อหลายรายการพร้อมกัน (Multi-Item Batch Analysis)
+                  </h3>
+                  <p className="text-[16.5px] text-blue-600 mt-1">
+                    ข้อมูลอ้างอิงจาก Track 1 S3 | ประมวลผลจาก {materials.length} รายการพัสดุ
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="bg-blue-100 text-blue-700 text-[16.5px] px-2 py-1 rounded font-bold uppercase tracking-wider shadow-sm hidden md:inline-block">
+                    Processed from AWS
+                  </span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: "BATCH-VMI" } }));
+                    }}
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white px-4 py-2 rounded-xl text-[16.5px] font-bold shadow-md shadow-blue-500/20 transition-all cursor-pointer"
+                  >
+                    <BrainCircuit size={16} />
+                    AI Batch Optimization (สร้างสัญญารวม)
+                  </button>
+                </div>
+              </div>
+              <div className="overflow-x-auto relative z-10">
+                <table className="w-full text-left">
+                  <tbody className="divide-y divide-blue-50">
+                    <tr className="bg-blue-500/5 text-[16.5px] uppercase tracking-wider text-blue-700 font-bold border-b border-blue-100">
+                      <td className="px-6 py-4">สถานะ (Status)</td>
+                      <td className="px-6 py-4">รหัส / ชื่อพัสดุ</td>
+                      <td className="px-6 py-4">Safety Stock</td>
+                      <td className="px-6 py-4">Reorder Point</td>
+                      <td className="px-6 py-4">EOQ (สั่งต่อครั้ง)</td>
+                    </tr>
+                    {materials.map((mat, idx) => (
+                      <tr key={idx} className="hover:bg-blue-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className={`w-3 h-3 rounded-full shadow-sm ${
+                            mat.riskLevel === 'critical' ? 'bg-red-500 animate-pulse' :
+                            mat.riskLevel === 'warning' ? 'bg-amber-400' : 'bg-emerald-500'
+                          }`} title={mat.riskLevel} />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-slate-800 text-[16.5px]">{mat.sapCode}</div>
+                          <div className="text-[16.5px] text-slate-500">{mat.name}</div>
+                        </td>
+                        <td className="px-6 py-4 font-bold text-slate-600">
+                          {mat.safetyStock.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 font-bold text-slate-600">
+                          {mat.reorderPoint.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 font-bold text-slate-600">
+                          {mat.eoq.toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
           {/* Top Suppliers Table */}
           <section className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
               <div>
-                <h3 className="text-[15px] font-bold text-slate-800">การติดตามพฤติกรรม Supplier ด้วย AI (AI Supplier Analytics)</h3>
-                <p className="text-[12px] text-slate-500 mt-1">ประเมินจากคุณภาพการส่งมอบตรงเวลา เพื่อช่วย AI คำนวณความเสี่ยงของขาดแคลน</p>
+                <h3 className="text-[16.5px] font-bold text-slate-800">การติดตามพฤติกรรม Supplier ด้วย AI (AI Supplier Analytics)</h3>
+                <p className="text-[16.5px] text-slate-500 mt-1">ประเมินจากคุณภาพการส่งมอบตรงเวลา เพื่อช่วย AI คำนวณความเสี่ยงของขาดแคลน</p>
               </div>
-              <span className="bg-slate-100 text-slate-500 text-[12px] px-2 py-1 rounded font-bold uppercase tracking-wider">Simulated Data</span>
+              <span className="bg-slate-100 text-slate-500 text-[16.5px] px-2 py-1 rounded font-bold uppercase tracking-wider">Simulated Data</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <tbody className="divide-y divide-slate-100">
-                  <tr className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 font-bold border-b border-slate-100">
+                  <tr className="bg-slate-50 text-[16.5px] uppercase tracking-wider text-slate-500 font-bold border-b border-slate-100">
                     <td className="px-6 py-4">ชื่อบริษัท (Supplier Name)</td>
                     <td className="px-6 py-4">Trust Score</td>
                     <td className="px-6 py-4">การส่งมอบตรงเวลา (On-Time)</td>
@@ -438,17 +542,17 @@ export default function Dashboard({ setActiveTab }: { setActiveTab?: (tab: strin
                   </tr>
                   {topSuppliers.map((sup, idx) => (
                     <tr key={idx} className="hover:bg-slate-50 transition">
-                      <td className="px-6 py-4 font-bold text-slate-800 text-[13px]">{sup.name}</td>
+                      <td className="px-6 py-4 font-bold text-slate-800 text-[16.5px]">{sup.name}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-full bg-slate-100 rounded-full h-2 max-w-[80px]">
                             <div className={`h-2 rounded-full ${sup.score >= 90 ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${sup.score}%` }}></div>
                           </div>
-                          <span className="text-[12px] font-bold text-slate-700">{sup.score}/100</span>
+                          <span className="text-[16.5px] font-bold text-slate-700">{sup.score}/100</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-700 text-[12px]">{sup.delivery}</td>
-                      <td className="px-6 py-4 font-bold text-[#A80689] text-[13px]">{formatCurrency(sup.volume)}</td>
+                      <td className="px-6 py-4 font-semibold text-slate-700 text-[16.5px]">{sup.delivery}</td>
+                      <td className="px-6 py-4 font-bold text-[#A80689] text-[16.5px]">{formatCurrency(sup.volume)}</td>
                     </tr>
                   ))}
                 </tbody>
