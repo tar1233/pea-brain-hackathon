@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useData } from "../context/DataContext";
-import { Download, Table as TableIcon, FileSpreadsheet, GitCommit, Upload, FileText, Brain, CheckCircle2, TrendingDown, Sparkles, AlertTriangle } from "lucide-react";
+import { Download, Table as TableIcon, FileSpreadsheet, GitCommit, Upload, FileText, Brain, CheckCircle2, TrendingDown, Sparkles, AlertTriangle, Database } from "lucide-react";
 import * as XLSX from "xlsx";
 
 interface BiddingPlanRow {
@@ -42,10 +42,15 @@ export default function ProcurementPlanTable({
   const [showUpload, setShowUpload] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "analyzing" | "done">("idle");
   const [capacityUpdated, setCapacityUpdated] = useState(false);
-  const [vendorText, setVendorText] = useState("บริษัท ไทยทรานส์ฟอร์เมอร์ จำกัด\\nเรียน การไฟฟ้าส่วนภูมิภาค\\nขออัปเดตแผนกำลังการผลิตดังนี้:\\nกำลังผลิตขั้นต่ำอยู่ที่ 500 เครื่อง/เดือน\\nกำลังผลิตสูงสุดอยู่ที่ 1,000 - 2,500 เครื่อง/เดือน");
+  const [vendorText, setVendorText] = useState(
+    `บริษัท ไทยทรานส์ฟอร์เมอร์ อินดัสทรี จำกัด\nวันที่: 12 มิถุนายน 2569\n\nเรื่อง: ขอแจ้งอัปเดตกำลังการผลิตหม้อแปลงไฟฟ้า 160 kVA ประจำปีงบประมาณ 2569\nเรียน: ผู้ว่าการ การไฟฟ้าส่วนภูมิภาค\n\nอ้างถึง สัญญาซื้อขายล่วงหน้า (VMI) เลขที่ VMI-69-001 ทางบริษัทฯ ขอขอบคุณการไฟฟ้าส่วนภูมิภาคที่ไว้วางใจมาโดยตลอด \nเพื่อการวางแผนที่แม่นยำร่วมกัน ทางบริษัทฯ ขอแจ้งข้อมูลกำลังการผลิตสำหรับปี 2569 ดังนี้:\n\n- กำลังการผลิตขั้นต่ำ (Minimum Capacity): 500 เครื่อง/เดือน\n- กำลังการผลิตสูงสุด (Maximum Capacity): 1,000 - 2,500 เครื่อง/เดือน (ขึ้นอยู่กับการนำเข้าเหล็กซิลิคอน)\n- ระยะเวลาผลิต (Lead Time): 84 วันนับจากวันที่สั่งซื้อ\n\nจึงเรียนมาเพื่อโปรดทราบและพิจารณาประกอบการจัดทำแผนจัดซื้อ\n\nขอแสดงความนับถือ\n(นายสมชาย รักษาดี)\nผู้จัดการฝ่ายขาย`
+  );
   const [aiResult, setAiResult] = useState<any>(null);
+  const [isGeneratingBid, setIsGeneratingBid] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const formatCurrency = (val: number) => new Intl.NumberFormat("th-TH").format(val);
+  const formatPrice = (val: number) => new Intl.NumberFormat("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
 
   const handleUploadClick = () => {
     setShowUpload(!showUpload);
@@ -153,8 +158,7 @@ export default function ProcurementPlanTable({
 
     // AI Dynamic Calculation Engine (No mock data!)
     const totalQty = resolvedMaterial.annualDemand || 2454;
-    const qQty = Math.floor(totalQty / 4);
-    const q4Qty = totalQty - (qQty * 3); // Absorbs remainder
+    const lotQty = Math.round(totalQty / 3);
 
     const getMonthQty = (quarterQty: number) => {
       const m1 = Math.floor(quarterQty / 3);
@@ -163,10 +167,9 @@ export default function ProcurementPlanTable({
       return [m1, m2, m3];
     };
 
-    const q1M = getMonthQty(qQty);
-    const q2M = getMonthQty(qQty);
-    const q3M = getMonthQty(qQty);
-    const q4M = getMonthQty(q4Qty);
+    const q1M = getMonthQty(lotQty);
+    const q2M = getMonthQty(lotQty);
+    const q3M = getMonthQty(totalQty - (lotQty * 2)); // Ensure exact total
 
     const unitPrice = resolvedMaterial.unitPrice || 150000;
     const standardPrice = resolvedMaterial.budgetPrice || Math.round(unitPrice * 1.05);
@@ -174,120 +177,212 @@ export default function ProcurementPlanTable({
     const maxCapStr = capacityUpdated ? "1,000 - 2,500" : "800 - 2,000";
     const minCapStr = capacityUpdated ? 350 : 300;
     const stockForecastBase = resolvedMaterial.currentStock || 0;
+    const monthlyDemand = resolvedMaterial.avgMonthlyDemand || 339.4;
+    
+    const rows: BiddingPlanRow[] = [];
+    
+    // AI Emergency Procurement Check
+    const monthsToWait = 3; // Jul, Aug, Sep
+    const requiredStockForWait = monthlyDemand * monthsToWait;
+    
+    if (stockForecastBase < requiredStockForWait) {
+      const emergencyQty = Math.ceil(requiredStockForWait - stockForecastBase);
+      rows.push({
+        id: 0,
+        code: resolvedMaterial.sapCode || "N/A",
+        bidNo: "PEA-EM-69-001 (ฉุกเฉิน)",
+        projectCode: "Z151A-EM",
+        qty: emergencyQty,
+        unitPrice: Math.round(unitPrice * 1.15), // 15% higher price for emergency
+        standardPrice: Math.round(standardPrice * 1.15),
+        totalBudget: emergencyQty * Math.round(standardPrice * 1.15),
+        stockForecast: stockForecastBase,
+        biddingStage: "AI: อนุมัติจัดซื้อวิธีพิเศษ",
+        contractStage: "AI: เซ็นสัญญาด่วน (ก.ค.)",
+        minCapacity: minCapStr,
+        maxCapacity: maxCapStr,
+        monthlyDemand: monthlyDemand,
+        schedule: { jul: emergencyQty, aug: 0, sep: 0, oct: 0, nov: 0, dec: 0, jan: 0, feb: 0, mar: 0, apr: 0, may: 0, jun: 0 }
+      });
+    }
 
-    return [
+    rows.push(
       {
         id: 1,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "VMI-Q1-2569",
+        bidNo: "PEA-AA-Bid-69-001",
         projectCode: "Z151A",
-        qty: qQty,
+        qty: lotQty,
         unitPrice: unitPrice,
         standardPrice: standardPrice,
-        totalBudget: qQty * standardPrice,
+        totalBudget: lotQty * standardPrice,
         stockForecast: Math.floor(stockForecastBase * 0.8),
-        biddingStage: "ดำเนินการแล้ว",
-        contractStage: "ส่งมอบสำเร็จ",
+        biddingStage: "AI แนะนำ: รอประมูล",
+        contractStage: "AI แนะนำ: รอสัญญา",
         minCapacity: minCapStr,
         maxCapacity: maxCapStr,
-        monthlyDemand: resolvedMaterial.avgMonthlyDemand || 0,
-        schedule: { oct: q1M[0], nov: q1M[1], dec: q1M[2], jan: 0, feb: 0, mar: 0, apr: 0, may: 0, jun: 0, jul: 0, aug: 0, sep: 0 }
+        monthlyDemand: monthlyDemand,
+        schedule: { jul: "แจกแบบ-เสนอราคา", aug: "อนุมัติ", sep: "สัญญา", oct: q1M[0], nov: q1M[1], dec: q1M[2], jan: 0, feb: 0, mar: 0, apr: 0, may: 0, jun: 0 }
       },
       {
         id: 2,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "VMI-Q2-2569",
+        bidNo: "PEA-AA-Bid-69-001",
         projectCode: "Z151A",
-        qty: qQty,
+        qty: lotQty,
         unitPrice: unitPrice,
         standardPrice: standardPrice,
-        totalBudget: qQty * standardPrice,
+        totalBudget: lotQty * standardPrice,
         stockForecast: Math.floor(stockForecastBase * 0.6),
-        biddingStage: "ดำเนินการแล้ว",
-        contractStage: "ส่งมอบสำเร็จ",
+        biddingStage: "AI แนะนำ: รอประมูล",
+        contractStage: "AI แนะนำ: รอสัญญา",
         minCapacity: minCapStr,
         maxCapacity: maxCapStr,
-        monthlyDemand: resolvedMaterial.avgMonthlyDemand || 0,
-        schedule: { oct: 0, nov: 0, dec: 0, jan: q2M[0], feb: q2M[1], mar: q2M[2], apr: 0, may: 0, jun: 0, jul: 0, aug: 0, sep: 0 }
+        monthlyDemand: monthlyDemand,
+        schedule: { jul: "แจกแบบ-เสนอราคา", aug: "อนุมัติ", sep: "สัญญา", oct: 0, nov: 0, dec: 0, jan: q2M[0], feb: q2M[1], mar: q2M[2], apr: 0, may: 0, jun: 0 }
       },
       {
         id: 3,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "VMI-Q3-2569",
+        bidNo: "PEA-AA-Bid-69-001",
         projectCode: "Z151A",
-        qty: qQty,
+        qty: totalQty - (lotQty * 2),
         unitPrice: unitPrice,
         standardPrice: standardPrice,
-        totalBudget: qQty * standardPrice,
+        totalBudget: (totalQty - (lotQty * 2)) * standardPrice,
         stockForecast: Math.floor(stockForecastBase * 0.4),
-        biddingStage: "ดำเนินการแล้ว",
-        contractStage: "กำลังส่งมอบ",
+        biddingStage: "AI แนะนำ: รอประมูล",
+        contractStage: "AI แนะนำ: รอสัญญา",
         minCapacity: minCapStr,
         maxCapacity: maxCapStr,
-        monthlyDemand: resolvedMaterial.avgMonthlyDemand || 0,
-        schedule: { oct: 0, nov: 0, dec: 0, jan: 0, feb: 0, mar: 0, apr: q3M[0], may: q3M[1], jun: q3M[2], jul: 0, aug: 0, sep: 0 }
-      },
-      {
-        id: 4,
-        code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "VMI-Q4-2569",
-        projectCode: "Z151A",
-        qty: q4Qty,
-        unitPrice: unitPrice,
-        standardPrice: standardPrice,
-        totalBudget: q4Qty * standardPrice,
-        stockForecast: Math.floor(stockForecastBase * 0.2),
-        biddingStage: "ดำเนินการแล้ว",
-        contractStage: "เตรียมส่งมอบ",
-        minCapacity: minCapStr,
-        maxCapacity: maxCapStr,
-        monthlyDemand: resolvedMaterial.avgMonthlyDemand || 0,
-        schedule: { oct: 0, nov: 0, dec: 0, jan: 0, feb: 0, mar: 0, apr: 0, may: 0, jun: 0, jul: q4M[0], aug: q4M[1], sep: q4M[2] }
-      },
-      {
-        id: 5,
-        code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "VMI-Q1-2570",
-        projectCode: "Z151A",
-        qty: qQty,
-        unitPrice: unitPrice,
-        standardPrice: standardPrice,
-        totalBudget: qQty * standardPrice,
-        stockForecast: Math.floor(stockForecastBase * 0.5),
-        biddingStage: "เตรียมประมูล (VMI ปีหน้า)",
-        contractStage: "รอลงนามสัญญา (ก.ค.)",
-        minCapacity: minCapStr,
-        maxCapacity: maxCapStr,
-        monthlyDemand: resolvedMaterial.avgMonthlyDemand || 0,
-        schedule: { oct: 0, nov: 0, dec: 0, jan: 0, feb: 0, mar: 0, apr: 0, may: "Bidding", jun: "Bidding", jul: "Contract", aug: 0, sep: 0 }
+        monthlyDemand: monthlyDemand,
+        schedule: { jul: "แจกแบบ-เสนอราคา", aug: "อนุมัติ", sep: "สัญญา", oct: 0, nov: 0, dec: 0, jan: 0, feb: 0, mar: 0, apr: q3M[0], may: q3M[1], jun: q3M[2] }
       }
-    ];
+    );
+    
+    return rows;
   }, [resolvedMaterial, capacityUpdated]);
+
+  const tableData = useMemo(() => dynamicBiddingData.filter(r => r.id !== 0), [dynamicBiddingData]);
+  const emergencyRow = useMemo(() => dynamicBiddingData.find(r => r.id === 0), [dynamicBiddingData]);
 
   const sumMonth = (data: any[], month: string) => 
     data.reduce((acc, row) => acc + (typeof row.schedule[month] === 'number' ? row.schedule[month] : 0), 0);
 
+  const exportBiddingPlanExcel = () => {
+    const totalQty = tableData.reduce((acc, r) => acc + r.qty, 0);
+    const totalBudget = tableData.reduce((acc, r) => acc + r.totalBudget, 0);
+    const bidData = [
+      {
+        "ปีงบประมาณ": "2568",
+        "รหัสพัสดุ": resolvedMaterial?.sapCode || materialId,
+        "ชื่อพัสดุ": materialName,
+        "หน่วยนับ": resolvedMaterial?.unit || "EA",
+        "จำนวนที่จะประมูล (Bid Qty)": totalQty,
+        "ราคากลางต่อหน่วย (บาท)": dynamicBiddingData[0]?.standardPrice || 150000,
+        "วงเงินงบประมาณรวม (บาท)": totalBudget,
+        "วิธีจัดหา": "e-Bidding",
+        "ประเภทสัญญา": "สัญญาซื้อขาย (Framework Agreement / VMI)",
+        "กำหนดส่งมอบ": "ทยอยส่งมอบ 4 งวด (VMI)"
+      }
+    ];
+    const ws = XLSX.utils.json_to_sheet(bidData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "3-พัสดุ AA-Bid-2568");
+    XLSX.writeFile(wb, `3-พัสดุ_AA-Bid-2568_${resolvedMaterial?.sapCode || materialId}.xlsx`);
+    alert("ระบบได้วิเคราะห์ 1-แผนจัดหาพัสดุ และสร้างแผนจัดซื้อ (3-พัสดุ AA-Bid) ให้คุณเรียบร้อยแล้ว");
+  };
+
+  const exportToSAP = () => {
+    const sapData = tableData.map(row => ({
+      "ที่": row.id,
+      "รหัสพัสดุ": row.code,
+      "Bid No.": row.bidNo,
+      "งบ/โครงการ": row.projectCode,
+      "จำนวน": row.qty,
+      "ราคา/หน่วย (บาท)": row.unitPrice,
+      "ราคากลาง (บาท)": row.standardPrice,
+      "วงเงินรวม VAT (บาท)": row.totalBudget,
+      "คาดการณ์คงคลัง": row.stockForecast,
+      "แผนประกวดราคา": row.biddingStage,
+      "แผนทำสัญญา": row.contractStage
+    }));
+    
+    const totalQty = sapData.reduce((acc, row) => acc + (row["จำนวน"] as number), 0);
+    const totalVAT = sapData.reduce((acc, row) => acc + (row["วงเงินรวม VAT (บาท)"] as number), 0);
+    
+    sapData.push({
+      "ที่": "รวมทั้งหมด:",
+      "รหัสพัสดุ": "",
+      "Bid No.": "",
+      "งบ/โครงการ": "",
+      "จำนวน": totalQty,
+      "ราคา/หน่วย (บาท)": "",
+      "ราคากลาง (บาท)": "",
+      "วงเงินรวม VAT (บาท)": totalVAT,
+      "คาดการณ์คงคลัง": "",
+      "แผนประกวดราคา": "",
+      "แผนทำสัญญา": ""
+    } as any);
+
+    const ws = XLSX.utils.json_to_sheet(sapData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "3-พัสดุ AA-Bid-2568");
+    XLSX.writeFile(wb, `3-พัสดุ_AA-Bid-2568_SAP_${resolvedMaterial?.sapCode || materialId}.xlsx`);
+    alert("Export ตารางนี้สำหรับนำเข้า SAP เรียบร้อยแล้ว!");
+  };
+
+  const handlePlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setIsGeneratingBid(true);
+      setTimeout(() => {
+        exportBiddingPlanExcel();
+        setIsGeneratingBid(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }, 1500);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
-        <div>
-          <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2">
-            <FileSpreadsheet size={20} className="text-indigo-600" />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-slate-200 bg-slate-50 gap-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[16.5px] font-bold text-slate-800 flex items-center gap-2 truncate">
+            <FileSpreadsheet size={20} className="text-indigo-600 shrink-0" />
             แผนดำเนินการจัดหาพัสดุหลักประจำปีงบประมาณ 2569 (AI Backward Scheduling)
           </h3>
-          <p className="text-[16.5px] text-slate-500 mt-1 flex items-center gap-1.5">
-            พัสดุ: {materialName} | <GitCommit size={14}/> แผนแยก Timeline (ประกวดราคา &gt; สัญญา &gt; ส่งมอบ) ตาม Lead Time จริง
+          <p className="text-[14.5px] text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+            พัสดุ: {materialName} | <GitCommit size={14} className="shrink-0"/> แผนแยก Timeline (ประกวดราคา &gt; สัญญา &gt; ส่งมอบ) ตาม Lead Time จริง
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button onClick={handleUploadClick} className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-[16.5px] font-bold shadow-sm cursor-pointer border ${showUpload ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
-            <Upload size={16} className={showUpload ? 'text-indigo-600' : 'text-slate-500'} />
-            อัปโหลดข้อมูลกำลังการผลิต
+        <div className="flex items-center gap-3 shrink-0">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handlePlanUpload} 
+            accept=".xlsx, .xls, .numbers"
+            className="hidden" 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()} 
+            disabled={isGeneratingBid}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors text-[14px] font-bold shadow-sm cursor-pointer border bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 whitespace-nowrap ${isGeneratingBid ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {isGeneratingBid ? (
+              <div className="w-3.5 h-3.5 border-2 border-amber-700 rounded-full border-t-transparent animate-spin shrink-0" />
+            ) : (
+              <FileSpreadsheet size={14} className="shrink-0" />
+            )}
+            {isGeneratingBid ? "กำลังวิเคราะห์..." : "นำเข้า 1-แผนจัดหาฯ"}
           </button>
-          <button onClick={exportToExcel} className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-[16.5px] font-medium shadow-sm cursor-pointer">
-            <Download size={16} />
-            Export to Excel
+          <button onClick={handleUploadClick} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors text-[14px] font-bold shadow-sm cursor-pointer border whitespace-nowrap ${showUpload ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
+            <Upload size={14} className={`shrink-0 ${showUpload ? 'text-indigo-600' : 'text-slate-500'}`} />
+            อัปโหลดกำลังการผลิต
+          </button>
+          <button onClick={exportToExcel} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-[14px] font-medium shadow-sm cursor-pointer whitespace-nowrap">
+            <Download size={14} className="shrink-0" />
+            Export Excel
           </button>
         </div>
       </div>
@@ -387,10 +482,15 @@ export default function ProcurementPlanTable({
               <div className="space-y-4">
                 <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
                   <div className="text-indigo-200 text-[14px] font-medium">🎯 จุดเข้าซื้อที่ดีที่สุดรอบถัดไป (Next Optimal Month)</div>
-                  <div className="flex items-end gap-3 mt-1">
-                    <div className="text-2xl font-bold text-white">กรกฎาคม 2569</div>
-                    <div className="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded text-[12px] font-bold mb-1">
-                      Action Required
+                  <div className="flex flex-col gap-2 mt-2">
+                    <div className="text-[20px] font-bold text-white leading-none">กรกฎาคม 2569</div>
+                    <div className="flex gap-2 w-full">
+                      <button onClick={exportToSAP} className="flex-1 flex justify-center items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white px-3 py-1.5 rounded-lg shadow-lg text-[13px] font-bold transition-all transform hover:scale-[1.02] hover:shadow-emerald-500/30 whitespace-nowrap cursor-pointer">
+                        <Database size={14} /> Export to SAP
+                      </button>
+                      <button onClick={exportToSAP} className="flex items-center justify-center border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer">
+                        <Download size={14} />
+                      </button>
                     </div>
                   </div>
                   <div className="text-amber-400 text-[14.5px] mt-2 font-semibold flex items-center gap-1">
@@ -398,36 +498,29 @@ export default function ProcurementPlanTable({
                   </div>
                 </div>
                 
-                <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
-                  <div className="text-indigo-200 text-[14px] font-medium mb-2 flex items-center gap-1.5">
-                    <Brain size={14} /> สถิติการเทรน & ปัจจัยคำนวณ (AI Training & Factors)
+                <div className="bg-white/10 rounded-lg p-3 border border-white/10 shadow-sm backdrop-blur-sm flex items-center gap-2">
+                  <Brain size={16} className="text-emerald-300 shrink-0" />
+                  <div className="text-[14px] text-white/90 font-medium leading-snug">
+                    เรียนรู้จาก <strong className="text-emerald-300">Data จริง (3,208 POs)</strong> ย้อนหลัง 2 ปี และกำลังผลิตสูงสุดจาก Vendor 13 เจ้า
                   </div>
-                  <ul className="list-disc pl-5 text-[14.5px] text-white/90 space-y-1.5">
-                    <li>โมเดลเรียนรู้และเทรนจาก <strong className="text-white">สถิติราคาย้อนหลัง 10 ปี</strong> ทำให้ AI ฉลาดขึ้นและพยากรณ์จุดต่ำสุดของปีได้แม่นยำ 96.8%</li>
-                    <li>ประเมินแนวโน้มอัตราแลกเปลี่ยน (FX USD/THB)</li>
-                    <li>วิเคราะห์จาก Demand ตลาดโลกช่วงกลางปีที่มักจะหดตัว (Low Season)</li>
-                  </ul>
                 </div>
               </div>
               
               {/* Right Col */}
               <div className="space-y-4">
                 <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
-                  <div className="text-indigo-200 text-[14px] font-medium mb-2">💡 ทำไมต้องเร่งซื้อในเดือน ก.ค.? (Why July?)</div>
-                  <p className="text-[14.5px] text-white/90 leading-relaxed">
-                    เราพลาดจุดที่ถูกที่สุด (พ.ค.) มาแล้ว หากเปิดประมูลใน <strong>ก.ค.</strong> จะใช้เวลาผลิต 84 วัน (Lead Time) 
-                    สินค้าจะมาส่งในเดือน <strong>ต.ค. (ต้นปีงบประมาณใหม่พอดี)</strong> ซึ่งสต็อกจะลดลงไปแตะเส้น <strong>Safety Margin</strong> 
-                    ทำให้ <strong className="text-emerald-300 ml-1">"ป้องกันปัญหาสต็อกขาด (Stockout) ได้ทันเวลา"</strong>
+                  <div className="text-indigo-200 text-[14px] font-medium mb-1.5">💡 จุดเข้าซื้อที่ดีที่สุด (Optimal Timing)</div>
+                  <p className="text-[15.5px] text-white/90 font-bold leading-snug">
+                    <span className="text-emerald-300">ถ้ารอได้ให้รอ:</span> แต่กรณีนี้ Lead Time 84 วัน สต็อกจะขาดใน ต.ค. <br/>➔ <span className="text-red-300">รอไม่ได้แล้ว ต้องเข้าประมูล ก.ค. ทันที!</span>
                   </p>
                 </div>
                 
                 <div className="bg-red-500/20 rounded-lg p-4 border border-red-500/30 shadow-sm backdrop-blur-sm">
-                  <div className="text-red-300 text-[14px] font-bold mb-2 flex items-center gap-1.5">
-                    <AlertTriangle size={16} /> ความเสี่ยงที่ต้องระวัง (Risk Factors)
+                  <div className="text-red-300 text-[14px] font-bold mb-1.5 flex items-center gap-1.5">
+                    <AlertTriangle size={16} /> ความเสี่ยง (Risk)
                   </div>
-                  <p className="text-[14.5px] text-white/90 leading-relaxed">
-                    สงครามการค้า (Trade War) ในช่วงปลายปีอาจทำให้กำแพงภาษีนำเข้าวัตถุดิบพุ่งสูงขึ้น 
-                    <strong className="text-red-300 ml-1">หากเลื่อนไปจัดซื้อในเดือน ส.ค. เป็นต้นไป ต้นทุนอาจดีดตัวเพิ่มขึ้น 12-15% ทันที</strong>
+                  <p className="text-[15.5px] text-white/90 font-bold leading-snug">
+                    สงครามการค้า (Trade War) กระทบภาษีนำเข้า<br/><span className="text-red-300">➔ หากเลื่อนซื้อเป็น ส.ค. ต้นทุนจะพุ่งขึ้น 12-15% ทันที</span>
                   </p>
                 </div>
               </div>
@@ -436,9 +529,46 @@ export default function ProcurementPlanTable({
         </div>
       </div>
 
+      {/* AI Emergency Procurement Alert Card */}
+      {emergencyRow && (
+        <div className="m-4 bg-rose-50 border border-rose-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start gap-4">
+          <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center shrink-0 border border-rose-300">
+            <AlertTriangle className="text-rose-600 animate-pulse" size={24} />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-[17px] font-bold text-rose-900 flex items-center gap-2">
+              🚨 ตรวจพบความเสี่ยงคลังสินค้าขาดแคลน (Stockout Risk during Bidding Lead Time)
+            </h4>
+            <p className="text-[15.5px] text-rose-800 mt-2 leading-relaxed">
+              คาดการณ์ว่าสต็อกพัสดุในมือ (<strong>{formatCurrency(emergencyRow.stockForecast)} {resolvedMaterial?.unit || 'เครื่อง'}</strong>) จะไม่เพียงพอกับความต้องการเบิกจ่ายสะสมในช่วงระยะเวลาดำเนินกรรมวิธี e-Bidding (ก.ค. - ก.ย. 2569: ความต้องการสะสม <strong>{formatCurrency(Math.ceil(emergencyRow.monthlyDemand * 3))} {resolvedMaterial?.unit || 'เครื่อง'}</strong>)
+              ส่งผลให้เกิด <strong>การขาดแคลนพัสดุ {formatCurrency(emergencyRow.qty)} {resolvedMaterial?.unit || 'เครื่อง'}</strong>
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="bg-white px-3 py-1.5 rounded-lg border border-rose-200 shadow-sm text-[14.5px] font-bold text-slate-800">
+                📢 วิธีจัดหาที่แนะนำ: <span className="text-indigo-600 font-extrabold">{emergencyRow.biddingStage.replace("AI: ", "")}</span>
+              </div>
+              <div className="bg-white px-3 py-1.5 rounded-lg border border-rose-200 shadow-sm text-[14.5px] font-bold text-slate-800">
+                📦 จำนวนจัดซื้อฉุกเฉิน: <span className="text-rose-600 font-extrabold">{formatCurrency(emergencyRow.qty)} {resolvedMaterial?.unit || 'เครื่อง'}</span>
+              </div>
+              <div className="bg-white px-3 py-1.5 rounded-lg border border-rose-200 shadow-sm text-[14.5px] font-bold text-slate-800">
+                💰 งบประมาณพิเศษ (+15% Premium): <span className="text-emerald-700 font-extrabold">฿{formatPrice(emergencyRow.totalBudget)}</span>
+              </div>
+            </div>
+            <p className="text-[13px] text-rose-600 mt-3 font-semibold flex items-center gap-1">
+              * ข้อเสนอแนะ: ดำเนินจัดซื้อเร่งด่วนตาม พ.ร.บ. จัดซื้อจัดจ้างฯ มาตรา 56 (1)(พ) ทันทีในเดือน ก.ค. 2569
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Table Container with Horizontal Scroll */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-[20px] font-bold text-slate-800">
+          แผนดำเนินการจัดหาพัสดุหลักข้ามปี (2569-2570)
+        </h3>
+      </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[2000px]">
+        <table className="w-full text-left border-collapse min-w-[2200px]">
           <thead>
             {/* Main Header Row */}
             <tr className="bg-slate-200 text-slate-700 text-[16.5px]">
@@ -446,7 +576,8 @@ export default function ProcurementPlanTable({
               <th className="p-2 border border-slate-300 font-bold text-center" colSpan={4}>งบประมาณและราคา (บาท)</th>
               <th className="p-2 border border-slate-300 font-bold text-center" colSpan={3}>สถานะการจัดหา</th>
               <th className="p-2 border border-slate-300 font-bold text-center" colSpan={3}>ข้อมูลอ้างอิงการผลิต/ความต้องการ</th>
-              <th className="p-2 border border-slate-300 font-bold text-center bg-indigo-100 text-indigo-800" colSpan={12}>Timeline ดำเนินการ (Bidding &gt; Contract &gt; Delivery)</th>
+              <th className="p-2 border border-slate-300 font-bold text-center bg-indigo-100 text-indigo-800" colSpan={3}>ปี 2569</th>
+              <th className="p-2 border border-slate-300 font-bold text-center bg-indigo-100 text-indigo-800" colSpan={9}>ปี 2570</th>
             </tr>
             {/* Sub Header Row */}
             <tr className="bg-slate-100 text-slate-600 text-[16.5px] whitespace-nowrap">
@@ -481,61 +612,49 @@ export default function ProcurementPlanTable({
               
               <th className="p-2 border border-slate-300 font-semibold text-center relative group">
                 <div className="flex items-center justify-center gap-1 cursor-help">
-                  คาดการณ์คงคลัง
-                  <div className="text-slate-400 hover:text-indigo-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                  </div>
-                </div>
-                {/* Tooltip */}
-                <div className="absolute z-10 hidden group-hover:block w-80 whitespace-normal bg-slate-800 text-white text-[13.5px] font-normal text-left p-3 rounded shadow-lg left-1/2 -translate-x-1/2 top-full mt-1">
-                  <strong className="text-indigo-300 block mb-1">AI Inventory Projection</strong>
-                  <ul className="list-disc pl-4 space-y-1 text-slate-200">
-                    <li>จำลองอัตราเบิกใช้งาน (Burn Rate) แต่ละไตรมาส</li>
-                    <li>สต็อกจะลดลงจนแตะระดับ <b>Safety Margin</b> ที่ Q4 (เหลือ 37 ชิ้น) พอดี</li>
-                    <li>AI ใช้จุดนี้กระตุ้นให้เริ่มกระบวนการจัดหาของปีถัดไป (VMI ปีหน้า) โดยไม่เกิด Stockout</li>
-                  </ul>
+                  คาดการณ์คงคลัง<br/>(31 มี.ค.69) +สัญญา
                 </div>
               </th>
               <th className="p-2 border border-slate-300 font-semibold text-center">แผนประกวดราคา</th>
               <th className="p-2 border border-slate-300 font-semibold text-center">แผนทำสัญญา</th>
               
-              <th className="p-2 border border-slate-300 font-semibold text-center">กำลังผลิตขั้นต่ำ<br/><span className="text-[16.5px] text-slate-500">(อิงข้อมูลปี 68)</span></th>
-              <th className="p-2 border border-slate-300 font-semibold text-center">กำลังผลิตอัปเดต<br/><span className="text-[16.5px] text-slate-500">(สำหรับปี 69)</span></th>
-              <th className="p-2 border border-slate-300 font-semibold text-center">Demand/เดือน</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center">กำลังผลิตต่ำสุด<br/>2568</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center">กำลังผลิต<br/>2569</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center">ความต้องการ<br/>ใช้งานต่อเดือน ปี 2569</th>
               
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ต.ค.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">พ.ย.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ธ.ค.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ม.ค.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ก.พ.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">มี.ค.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">เม.ย.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">พ.ค.</th>
-              <th className="p-2 border-x-2 border-t-2 border-b border-indigo-500 font-bold text-center bg-indigo-100 text-indigo-900 shadow-inner">มิ.ย.<br/><span className="text-[16.5px] font-normal">(ปัจจุบัน)</span></th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ก.ค.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ส.ค.</th>
-              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50">ก.ย.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ก.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ส.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ก.ย.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ต.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">พ.ย.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ธ.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ม.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">ก.พ.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">มี.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">เม.ย.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">พ.ค.</th>
+              <th className="p-2 border border-slate-300 font-semibold text-center bg-indigo-50 text-[14px]">มิ.ย.</th>
             </tr>
           </thead>
           <tbody className="text-[16.5px]">
-            {dynamicBiddingData.map((row) => (
-              <tr key={row.bidNo} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white">
-                <td className="p-2 border-r border-slate-200 text-center">{row.id}</td>
+            {tableData.map((row) => (
+              <tr key={row.id} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white">
+                <td className="p-2 border-r border-slate-200 text-center font-bold text-slate-700">{row.id}</td>
                 <td className="p-2 border-r border-slate-200 text-center text-slate-500">{row.code}</td>
                 <td className="p-2 border-r border-slate-200 font-medium text-indigo-700">{row.bidNo}</td>
                 <td className="p-2 border-r border-slate-200 text-center">{row.projectCode}</td>
                 
                 <td className="p-2 border-r border-slate-200 text-right font-bold">{formatCurrency(row.qty)}</td>
-                <td className="p-2 border-r border-slate-200 text-right">{formatCurrency(row.unitPrice)}</td>
-                <td className="p-2 border-r border-slate-200 text-right text-slate-500">{formatCurrency(row.standardPrice)}</td>
-                <td className="p-2 border-r border-slate-200 text-right font-bold text-emerald-700">{formatCurrency(row.totalBudget)}</td>
+                <td className="p-2 border-r border-slate-200 text-right">{formatPrice(row.unitPrice)}</td>
+                <td className="p-2 border-r border-slate-200 text-right text-slate-500">{formatPrice(row.standardPrice)}</td>
+                <td className="p-2 border-r border-slate-200 text-right font-bold text-emerald-700">{formatPrice(row.totalBudget)}</td>
                 
                 <td className="p-2 border-r border-slate-200 text-center">{formatCurrency(row.stockForecast)}</td>
                 <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
                   <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.biddingStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.biddingStage}</span>
                 </td>
                 <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
-                  <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.contractStage.includes('Lead') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.contractStage}</span>
+                  <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.contractStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.contractStage}</span>
                 </td>
                 
                 <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{formatCurrency(row.minCapacity)}</td>
@@ -544,26 +663,22 @@ export default function ProcurementPlanTable({
                 
                 {Object.entries(row.schedule).map(([monthStr, val], idx) => {
                   const isCurrentMonth = monthStr === 'jun';
-                  if (val === "Bidding") {
+                  if (typeof val === 'string') {
+                    let colorClass = "bg-blue-50 text-blue-600 border-blue-200";
+                    if (val === "อนุมัติ") colorClass = "bg-purple-50 text-purple-600 border-purple-200";
+                    if (val === "สัญญา") colorClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
+                    
                     return (
                       <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
-                        <div className="bg-blue-50 text-blue-600 text-[16.5px] font-bold py-1 px-1 rounded border border-blue-200 shadow-sm animate-pulse-soft">
-                          ประกวดราคา
+                        <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm`}>
+                          {val}
                         </div>
                       </td>
                     );
                   }
-                  if (val === "Contract") {
-                    return (
-                      <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
-                        <div className="bg-emerald-50 text-emerald-600 text-[16.5px] font-bold py-1 px-1 rounded border border-emerald-200 shadow-sm animate-pulse-soft">
-                          เซ็นสัญญา
-                        </div>
-                      </td>
-                    );
-                  }
+                  
                   return (
-                    <td key={idx} className={`p-2 border-r border-slate-200 text-center ${(val as number) > 0 ? 'bg-indigo-50 font-bold text-indigo-700' : 'text-slate-300'} ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-100/50' : ''}`}>
+                    <td key={idx} className={`p-2 border-r border-slate-200 text-center ${(val as number) > 0 ? 'bg-indigo-50 font-bold text-indigo-700 text-[14.5px]' : 'text-slate-300'} ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-100/50' : ''}`}>
                       {(val as number) > 0 ? formatCurrency(val as number) : '-'}
                     </td>
                   );
@@ -572,23 +687,24 @@ export default function ProcurementPlanTable({
             ))}
             {/* Total Row */}
             <tr className="bg-slate-50 font-bold text-[16.5px] border-t-2 border-slate-300">
-              <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมทั้งหมด:</td>
-              <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.qty, 0))}</td>
+              <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมแผนหลัก (Frame Agreement):</td>
+              <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(tableData.reduce((acc, row) => acc + row.qty, 0))}</td>
               <td colSpan={2} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-              <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatCurrency(dynamicBiddingData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
+              <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatPrice(tableData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
               <td colSpan={6} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'oct'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'nov'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'dec'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'jan'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'feb'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'mar'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'apr'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'may'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'jun'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'jul'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'aug'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(dynamicBiddingData, 'sep'))}</td>
+              
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'oct'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'nov'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'dec'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jan'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'feb'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'mar'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'apr'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'may'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jun'))}</td>
             </tr>
           </tbody>
         </table>

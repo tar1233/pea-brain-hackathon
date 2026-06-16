@@ -5,7 +5,6 @@ import {
   Search, ChevronLeft, ChevronRight, ChevronDown,
   SlidersHorizontal, Sparkles
 } from "lucide-react";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useData } from "../context/DataContext";
 import type { RiskLevel } from "../data/awsData";
 import EBiddingView from "./EBiddingView";
@@ -20,19 +19,6 @@ function formatCurrency(v: number) {
   if (v >= 1e9) return `฿${(v / 1e9).toFixed(2)} พันล้าน`;
   if (v >= 1e6) return `฿${(v / 1e6).toFixed(1)} ล้าน`;
   return `฿${v.toLocaleString()}`;
-}
-
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  const chartData = data.map((v, i) => ({ v, i }));
-  return (
-    <div style={{ width: 60, height: 24 }}>
-      <ResponsiveContainer width={60} height={24}>
-        <LineChart data={chartData} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
-          <Line type="monotone" dataKey="v" stroke={color} strokeWidth={1.5} dot={false} isAnimationActive={false} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
 }
 
 export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any[] }) {
@@ -170,7 +156,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
           <table className="w-full min-w-[900px] border-collapse">
             <thead>
               <tr className="bg-gray-50/80 border-b border-border">
-                <th className="w-[40px] px-3 py-3 text-center">
+                <th className="w-[40px] px-2 py-2 text-center">
                   <input 
                     type="checkbox" 
                     checked={paged.length > 0 && selectedItems.size === paged.length}
@@ -178,15 +164,13 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                     className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                   />
                 </th>
-                <th className="w-[36px] px-3 py-3 text-center text-[16.5px] font-bold text-text-muted uppercase tracking-wider">ลำดับ</th>
-                <th className="px-3 py-3 text-left text-[16.5px] font-bold text-text-muted uppercase tracking-wider">รายการแจ้งเตือน</th>
-                <th className="px-3 py-3 text-center text-[16.5px] font-bold text-text-muted uppercase tracking-wider">ระดับความเสี่ยง</th>
-                <th className="px-3 py-3 text-center text-[16.5px] font-bold text-text-muted uppercase tracking-wider">Stock / Safety</th>
-                <th className="px-3 py-3 text-center text-[16.5px] font-bold text-text-muted uppercase tracking-wider">Lead Time</th>
-                <th className="px-3 py-3 text-right text-[16.5px] font-bold text-text-muted uppercase tracking-wider">มูลค่าความเสี่ยง (VaR)</th>
-                <th className="px-3 py-3 text-center text-[16.5px] font-bold text-text-muted uppercase tracking-wider">แนวโน้ม</th>
-                <th className="px-3 py-3 text-left text-[16.5px] font-bold text-text-muted uppercase tracking-wider">อัปเดตล่าสุด</th>
-                <th className="px-3 py-3 text-center text-[16.5px] font-bold text-text-muted uppercase tracking-wider">การดำเนินการ</th>
+                <th className="w-[36px] px-2 py-2 text-center text-[14px] font-bold text-text-muted uppercase tracking-wider">ลำดับ</th>
+                <th className="px-2 py-2 text-left text-[14px] font-bold text-text-muted uppercase tracking-wider">รายการแจ้งเตือน</th>
+                <th className="px-2 py-2 text-center text-[14px] font-bold text-text-muted uppercase tracking-wider">ระดับความเสี่ยง</th>
+                <th className="px-2 py-2 text-center text-[14px] font-bold text-text-muted uppercase tracking-wider">Stock / Safety</th>
+                <th className="px-2 py-2 text-center text-[14px] font-bold text-text-muted uppercase tracking-wider">Lead Time</th>
+                <th className="px-2 py-2 text-right text-[14px] font-bold text-text-muted uppercase tracking-wider">มูลค่าความเสี่ยง (VaR)</th>
+                <th className="px-2 py-2 text-center text-[14px] font-bold text-text-muted uppercase tracking-wider">การดำเนินการ</th>
               </tr>
             </thead>
             <tbody>
@@ -220,7 +204,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                         }
                       }}
                     >
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-2 py-2 text-center">
                         <input 
                           type="checkbox" 
                           checked={selectedItems.has(alert.id)}
@@ -229,37 +213,37 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                           className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                         />
                       </td>
-                      <td className="px-3 py-3 text-center">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[16.5px] font-bold mx-auto
+                      <td className="px-2 py-2 text-center">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[14px] font-bold mx-auto
                           ${isCritical ? "bg-red-500 text-white" : alert.severity === "warning" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
                           {rank}
                         </div>
                       </td>
-                      <td className="px-3 py-3">
+                      <td className="px-2 py-2">
                         <div className="flex items-center gap-2.5">
                           <div className={`w-1 h-8 rounded-full ${isCritical ? "bg-critical-500" : alert.severity === "warning" ? "bg-warning-500" : "bg-info-500"}`} />
                           <div>
-                            <div className="font-bold text-[16.5px] text-primary-700">{alert.materialId}</div>
-                            <div className="text-[16.5px] text-text-muted">{alert.materialName}</div>
-                            {material && <div className="text-[16.5px] text-text-muted/60">SAP: {material.sapCode} • {material.category}</div>}
+                            <div className="font-bold text-[15px] text-primary-700">{alert.materialId}</div>
+                            <div className="text-[14px] text-text-muted">{alert.materialName}</div>
+                            {material && <div className="text-[13px] text-text-muted/60">SAP: {material.sapCode} • {material.category}</div>}
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-center">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[16.5px] font-bold"
+                      <td className="px-2 py-2 text-center">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-bold"
                           style={{ background: sev.bg, color: sev.color, border: `1px solid ${sev.border}` }}>
-                          <span className="w-2 h-2 rounded-full animate-pulse-soft" style={{ background: sev.color }} />
+                          <span className="w-1.5 h-1.5 rounded-full animate-pulse-soft" style={{ background: sev.color }} />
                           {sev.label}
                         </span>
                       </td>
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-2 py-2 text-center">
                         {material && (
                           <div>
-                            <span className="text-[16.5px] font-bold" style={{ color: stockPct < 50 ? "#DC2626" : "#0F172A" }}>
+                            <span className="text-[15px] font-bold" style={{ color: stockPct < 50 ? "#DC2626" : "#0F172A" }}>
                               {material.currentStock.toLocaleString()} / {material.safetyStock.toLocaleString()}
                             </span>
-                            <span className="text-[16.5px] text-text-muted ml-1">({stockPct}%)</span>
-                            <div className="w-[50px] h-[3px] rounded-full bg-gray-100 mt-1 mx-auto overflow-hidden">
+                            <span className="text-[13px] text-text-muted ml-1">({stockPct}%)</span>
+                            <div className="w-[40px] h-[3px] rounded-full bg-gray-100 mt-1 mx-auto overflow-hidden">
                               <div className="h-full rounded-full" style={{
                                 width: `${Math.min(stockPct, 100)}%`,
                                 background: stockPct < 30 ? "#DC2626" : stockPct < 60 ? "#F59E0B" : "#22C55E",
@@ -268,30 +252,22 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                           </div>
                         )}
                       </td>
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-2 py-2 text-center">
                         {material && (
                           <div>
-                            <span className="text-[16.5px] font-bold">{material.leadTimeWeeks}</span>
-                            <span className="text-[16.5px] text-text-muted ml-0.5">สัปดาห์</span>
-                            <div className="text-[16.5px] text-text-muted">ประมาณ {ltMonths} เดือน</div>
+                            <span className="text-[15px] font-bold">{material.leadTimeWeeks}</span>
+                            <span className="text-[13px] text-text-muted ml-0.5">สัปดาห์</span>
+                            <div className="text-[13px] text-text-muted">~{ltMonths} เดือน</div>
                           </div>
                         )}
                       </td>
-                      <td className="px-3 py-3 text-right">
-                        <span className="text-[19px] font-bold" style={{ color: isCritical ? "#DC2626" : "#0F172A" }}>
+                      <td className="px-2 py-2 text-right">
+                        <span className="text-[16px] font-bold" style={{ color: isCritical ? "#DC2626" : "#0F172A" }}>
                           {formatCurrency(alert.costImpact)}
                         </span>
-                        <div className="text-[16.5px] text-text-muted">ผลกระทบการขาดแคลน</div>
+                        <div className="text-[13px] text-text-muted">ผลกระทบ</div>
                       </td>
-                      <td className="px-3 py-3">
-                        {material && <Sparkline data={material.sparkline} color={sev.color} />}
-                      </td>
-                      <td className="px-3 py-3 text-left">
-                        <div className="text-[16.5px] text-text-secondary leading-snug">
-                          {dateStr}<br/>{timeStr} น.
-                        </div>
-                      </td>
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-2 py-2 text-center">
                         {(() => {
                           if (planData) {
                             return (
@@ -301,15 +277,15 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                                   e.stopPropagation();
                                   setExpandedId(prev => prev === alert.id ? null : alert.id);
                                 }}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[16.5px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[14px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-colors"
                               >
-                                <Sparkles size={16} /> มีแผนแล้ว {planUpdateCount > 1 ? `(อัปเดท ${planUpdateCount} ครั้ง)` : ''}
+                                <Sparkles size={14} /> มีแผนแล้ว {planUpdateCount > 1 ? `(${planUpdateCount})` : ''}
                                 {expandedId === alert.id ? <ChevronDown size={14} className="ml-1" /> : <ChevronRight size={14} className="ml-1" />}
                               </button>
                             );
                           }
                           return (
-                            <button type="button" className={`px-4 py-2 rounded-lg text-[16.5px] font-bold cursor-pointer transition-colors shadow-sm
+                            <button type="button" className={`px-3 py-1.5 rounded-lg text-[14px] font-bold cursor-pointer transition-colors shadow-sm
                               ${isCritical
                                 ? "text-white bg-critical-600 hover:bg-critical-700"
                                 : alert.severity === "warning"
@@ -321,8 +297,8 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                                 e.stopPropagation(); 
                                 window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } }));
                               }}>
-                              ให้ AI เข้าไปวิเคราะห์
-                              <ChevronRight size={16} className="ml-1 inline-block" />
+                              วิเคราะห์ AI
+                              <ChevronRight size={14} className="ml-1 inline-block" />
                             </button>
                           );
                         })()}
@@ -334,9 +310,9 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       <tr className="bg-primary-50/30">
                         <td></td>
                         <td></td>
-                        <td colSpan={8} className="px-3 py-3">
-                          <div className="flex items-center gap-2 text-[16.5px] flex-wrap">
-                            <Sparkles size={16} className="text-success-600 shrink-0" />
+                        <td colSpan={6} className="px-2 py-2">
+                          <div className="flex items-center gap-2 text-[14px] flex-wrap">
+                            <Sparkles size={14} className="text-success-600 shrink-0" />
                             <span className="text-text-muted">คำแนะนำ AI:</span>
                             <span className="font-semibold text-text-primary">{alert.recommendation}</span>
                             <span className="text-primary-600 font-semibold cursor-pointer hover:underline ml-1"
@@ -345,7 +321,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                                 e.stopPropagation(); 
                                 window.dispatchEvent(new CustomEvent("analyze-material", { detail: { materialId: alert.materialId } }));
                               }}>
-                              ดูเหตุผลและการคำนวณ →
+                              ดูรายละเอียด →
                             </span>
                           </div>
                         </td>
@@ -357,7 +333,7 @@ export default function AlertTable({ approvedPlans = [] }: { approvedPlans?: any
                       <tr>
                         <td></td>
                         <td></td>
-                        <td colSpan={8} className="px-3 py-2">
+                        <td colSpan={6} className="px-2 py-2">
                           <div className="animate-fade-in shadow-lg rounded-2xl">
                             <EBiddingView 
                               targetMaterialId={alert.materialId} 
