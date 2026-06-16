@@ -197,8 +197,8 @@ export default function ProcurementPlanTable({
         standardPrice: Math.round(standardPrice * 1.15),
         totalBudget: emergencyQty * Math.round(standardPrice * 1.15),
         stockForecast: stockForecastBase,
-        biddingStage: "AI: อนุมัติจัดซื้อวิธีพิเศษ",
-        contractStage: "AI: เซ็นสัญญาด่วน (ก.ค.)",
+        biddingStage: "AI Flag: แนะนำจัดซื้อวิธีพิเศษ (รออนุมัติ)",
+        contractStage: "ร่างสัญญาจัดหาด่วน (ก.ค.)",
         minCapacity: minCapStr,
         maxCapacity: maxCapStr,
         monthlyDemand: monthlyDemand,
@@ -364,22 +364,52 @@ export default function ProcurementPlanTable({
             accept=".xlsx, .xls, .numbers"
             className="hidden" 
           />
-          <button 
-            onClick={() => fileInputRef.current?.click()} 
-            disabled={isGeneratingBid}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors text-[14px] font-bold shadow-sm cursor-pointer border bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 whitespace-nowrap ${isGeneratingBid ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {isGeneratingBid ? (
-              <div className="w-3.5 h-3.5 border-2 border-amber-700 rounded-full border-t-transparent animate-spin shrink-0" />
-            ) : (
-              <FileSpreadsheet size={14} className="shrink-0" />
-            )}
-            {isGeneratingBid ? "กำลังวิเคราะห์..." : "นำเข้า 1-แผนจัดหาฯ"}
-          </button>
-          <button onClick={handleUploadClick} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors text-[14px] font-bold shadow-sm cursor-pointer border whitespace-nowrap ${showUpload ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
-            <Upload size={14} className={`shrink-0 ${showUpload ? 'text-indigo-600' : 'text-slate-500'}`} />
-            อัปโหลดกำลังการผลิต
-          </button>
+          {/* นำเข้า 1-แผนจัดหาฯ + ปุ่มดาวน์โหลดตัวอย่าง */}
+          <div className="flex items-center bg-amber-50 rounded-lg border border-amber-200 shadow-sm">
+            <button 
+              onClick={() => fileInputRef.current?.click()} 
+              disabled={isGeneratingBid}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-l-lg hover:bg-amber-100 transition-colors text-[14px] font-bold text-amber-700 whitespace-nowrap cursor-pointer ${isGeneratingBid ? 'opacity-50 cursor-not-allowed' : ''}`}
+              title="คลิกเพื่อเลือกไฟล์และนำเข้าแผนจัดหา"
+            >
+              {isGeneratingBid ? (
+                <div className="w-3.5 h-3.5 border-2 border-amber-700 rounded-full border-t-transparent animate-spin shrink-0" />
+              ) : (
+                <FileSpreadsheet size={14} className="shrink-0" />
+              )}
+              {isGeneratingBid ? "กำลังวิเคราะห์..." : "นำเข้า 1-แผนจัดหาฯ"}
+            </button>
+            <div className="w-px h-5 bg-amber-200" />
+            <a 
+              href="/1-แผนจัดหาพัสดุ ปี 2567-2569.xlsx" 
+              download="1-แผนจัดหาพัสดุ ปี 2567-2569.xlsx"
+              className="flex items-center justify-center p-1.5 rounded-r-lg text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer"
+              title="ดาวน์โหลดไฟล์ตัวอย่าง 1-แผนจัดหาพัสดุ ปี 2567-2569.xlsx"
+            >
+              <Download size={14} className="shrink-0" />
+            </a>
+          </div>
+
+          {/* อัปโหลดกำลังการผลิต + ปุ่มดาวน์โหลดตัวอย่าง */}
+          <div className="flex items-center bg-white rounded-lg border border-slate-200 shadow-sm">
+            <button 
+              onClick={handleUploadClick} 
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-l-lg transition-colors text-[14px] font-bold whitespace-nowrap cursor-pointer hover:bg-slate-50 ${showUpload ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'text-slate-700'}`}
+              title="คลิกเพื่อเปิดหน้าอัปโหลดกำลังการผลิต"
+            >
+              <Upload size={14} className={`shrink-0 ${showUpload ? 'text-indigo-600' : 'text-slate-500'}`} />
+              อัปโหลดกำลังการผลิต
+            </button>
+            <div className="w-px h-5 bg-slate-200" />
+            <a 
+              href="/2-พัสดุ AA -กำลังการผลิต 2567-2568.xlsx" 
+              download="2-พัสดุ AA -กำลังการผลิต 2567-2568.xlsx"
+              className="flex items-center justify-center p-1.5 rounded-r-lg text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer"
+              title="ดาวน์โหลดไฟล์ตัวอย่าง 2-พัสดุ AA -กำลังการผลิต 2567-2568.xlsx"
+            >
+              <Download size={14} className="shrink-0" />
+            </a>
+          </div>
           <button onClick={exportToExcel} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-[14px] font-medium shadow-sm cursor-pointer whitespace-nowrap">
             <Download size={14} className="shrink-0" />
             Export Excel
@@ -401,11 +431,44 @@ export default function ProcurementPlanTable({
                   <Upload className="text-indigo-600" size={24} />
                 </div>
                 <h4 className="text-[16.5px] font-bold text-indigo-900 mb-1">ลากไฟล์ PDF / Excel มาวาง</h4>
-                <p className="text-[16.5px] text-slate-500 mb-2">เพื่อความสะดวกรวดเร็วในการ Demo คุณสามารถพิมพ์ข้อความด้านขวาเพื่อจำลอง Text จากไฟล์ได้เลย</p>
+                <p className="text-[16.5px] text-slate-500 mb-2">
+                  เพื่อความสะดวกรวดเร็วในการ Demo คุณสามารถพิมพ์ข้อความด้านขวาเพื่อจำลอง Text จากไฟล์ได้เลย หรือ{" "}
+                  <a 
+                    href="/2-พัสดุ AA -กำลังการผลิต 2567-2568.xlsx" 
+                    download="2-พัสดุ AA -กำลังการผลิต 2567-2568.xlsx"
+                    className="text-indigo-600 hover:text-indigo-800 font-bold underline cursor-pointer"
+                  >
+                    ดาวน์โหลดไฟล์กำลังผลิต
+                  </a>
+                </p>
               </div>
 
               <div className="flex-[1.5] bg-white rounded-xl border border-indigo-200 p-4 shadow-sm flex flex-col">
-                <label className="text-[16.5px] font-bold text-indigo-900 mb-2 flex items-center gap-1.5"><FileText size={14}/> Text ที่แยกจากเอกสาร (ให้ AI อ่านของจริง)</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-[16.5px] font-bold text-indigo-900 flex items-center gap-1.5">
+                    <FileText size={14}/> Text ที่แยกจากเอกสาร (ให้ AI อ่านของจริง)
+                  </label>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setVendorText(
+                        `บริษัท ไทยทรานส์ฟอร์เมอร์ อินดัสทรี จำกัด\nวันที่: 12 มิถุนายน 2569\n\nเรื่อง: ขอแจ้งอัปเดตกำลังการผลิตหม้อแปลงไฟฟ้า 160 kVA ประจำปีงบประมาณ 2569\nเรียน: ผู้ว่าการ การไฟฟ้าส่วนภูมิภาค\n\nอ้างถึง สัญญาซื้อขายล่วงหน้า (VMI) เลขที่ VMI-69-001 ทางบริษัทฯ ขอขอบคุณการไฟฟ้าส่วนภูมิภาคที่ไว้วางใจมาโดยตลอด \nเพื่อการวางแผนที่แม่นยำร่วมกัน ทางบริษัทฯ ขอแจ้งข้อมูลกำลังการผลิตสำหรับปี 2569 ดังนี้:\n\n- กำลังการผลิตขั้นต่ำ (Minimum Capacity): 500 เครื่อง/เดือน\n- กำลังการผลิตสูงสุด (Maximum Capacity): 1,000 - 2,500 เครื่อง/เดือน (ขึ้นอยู่กับการนำเข้าเหล็กซิลิคอน)\n- ระยะเวลาผลิต (Lead Time): 84 วันนับจากวันที่สั่งซื้อ\n\nจึงเรียนมาเพื่อโปรดทราบและพิจารณาประกอบการจัดทำแผนจัดซื้อ\n\nขอแสดงความนับถือ\n(นายสมชาย รักษาดี)\nผู้จัดการฝ่ายขาย`
+                      )}
+                      className="text-[12px] bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 px-2 py-1 rounded text-indigo-600 font-bold transition-all cursor-pointer"
+                      title="กดเพื่อจำลองโหลดไฟล์ 01_Capacity_Update.txt"
+                    >
+                      📄 ใช้กำลังผลิต
+                    </button>
+                    <button 
+                      onClick={() => setVendorText(
+                        `บริษัท สายไฟฟ้าระดับโลก จำกัด (มหาชน)\nวันที่: 20 มิถุนายน 2569\n\nเรื่อง: แจ้งขอเลื่อนกำหนดการส่งมอบพัสดุ (สายอลูมิเนียมหุ้มฉนวน) ด่วนที่สุด\nเรียน: ผู้อำนวยการกองจัดหาพัสดุ การไฟฟ้าส่วนภูมิภาค\n\nเนื่องด้วยสถานการณ์ความขัดแย้งทางการค้าระหว่างประเทศ (Trade War) ทำให้การนำเข้าวัตถุดิบหลักในการผลิตสายอลูมิเนียมเกิดความล่าช้าที่ท่าเรือแหลมฉบัง \nทางบริษัทฯ จึงมีความจำเป็นต้องขอความอนุเคราะห์ "เลื่อนการส่งมอบพัสดุลอตที่ 3 ออกไปอีก 15 วัน" จากกำหนดเดิม\n\nทั้งนี้ บริษัทฯ กำลังเร่งดำเนินการแก้ไขปัญหาอย่างเต็มความสามารถ หากมีความคืบหน้าจะรีบแจ้งให้ทราบทันที\nจึงเรียนมาเพื่อโปรดพิจารณา และขออภัยในความไม่สะดวกมา ณ ที่นี้\n\nขอแสดงความนับถือ\n(นางสาวสายใจ มั่นคง)\nผู้อำนวยการฝ่ายซัพพลายเชน`
+                      )}
+                      className="text-[12px] bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 px-2 py-1 rounded text-red-600 font-bold transition-all cursor-pointer"
+                      title="กดเพื่อจำลองโหลดไฟล์ 02_Delay_Notice.txt"
+                    >
+                      ⚠️ ใช้แจ้งเตือนล่าช้า
+                    </button>
+                  </div>
+                </div>
                 <textarea 
                   className="w-full flex-1 min-h-[100px] border border-slate-200 rounded-lg p-3 text-[16.5px] text-slate-700 outline-none focus:border-indigo-500 font-mono resize-none bg-slate-50"
                   value={vendorText}

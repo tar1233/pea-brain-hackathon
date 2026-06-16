@@ -294,51 +294,69 @@
             },
             {
                 id: 3,
-                phase: "PHASE 2 - THE SOLUTION",
+                phase: "CONTEXT (WHY & FEATURES)",
                 time: "⏱️ 1:30 - 2:00 (30 วินาที)",
                 badgeColor: "from-purple-600 to-indigo-600",
                 title: "PEA Brain: คู่คิดจัดซื้ออัจฉริยะ",
                 subtitle: "ปฏิวัติการวิเคราะห์และวางแผนจัดซื้อเชิงกลยุทธ์",
                 cue: "น้ำเสียงตื่นเต้น มีความหวัง ปรับท่าทางให้กระฉับกระเฉง",
-                speech: `"เพื่อพลิกวิกฤตนี้... เราจึงสร้าง <strong>'PEA Brain'</strong> ขึ้นมาครับ! นี่ไม่ใช่แค่หน้าปัด Dashboard ธรรมดา... แต่เป็นระบบจัดซื้ออัจฉริยะ ที่จะเป็น <strong>'คู่คิด'</strong> ให้คนทำงาน ตัดสินใจได้เร็ว แม่นยำ และมี Data รองรับเสมอ"`,
-                notes: "เปิดตัว PEA Brain ในฐานะระบบที่ช่วยคำนวณ ดึงข้อมูล และแปลงเอกสารจากซัพพลายเออร์แบบเรียลไทม์",
+                speech: `"เพื่อพลิกวิกฤตนี้... เราจึงสร้าง <strong>'PEA Brain'</strong> ขึ้นมาครับ! นี่ไม่ใช่แชทบอทถามตอบทั่วไป และไม่ใช่แค่ Dashboard โชว์ตัวเลขสวยๆ แต่เป็นระบบจัดซื้ออัจฉริยะที่ทำหน้าที่เป็น <strong>'คู่คิด (Planner)'</strong> ทำงานผ่าน 3 ฟีเจอร์หลักคือ ช่วยวางแผนสัญญาจัดหา, ช่วยแจ้งเตือนป้องกันความเสี่ยง, และคงอำนาจตัดสินใจให้มนุษย์ 100% เสมอ"`,
+                notes: "เน้นย้ำ 3 Killing Features: ช่วยวางแผน VMI, ช่วยป้องกันความเสี่ยงดีเลย์/ราคาผันผวน, และการควบคุมโดยมนุษย์ (Human Decision) เพื่อป้องกันข้อผิดพลาด",
                 htmlContent: `
                     <div class="flex-1 flex flex-col justify-center">
                         <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold rounded-full mb-4 w-fit">
-                            ✨ INTRODUCING THE SOLUTION
+                            💡 CONTEXT: WHY PEA BRAIN?
                         </div>
                         <h2 class="text-3xl md:text-6xl font-black text-white leading-tight font-outfit mb-4">
                             PEA BRAIN
                         </h2>
                         <h3 class="text-xl md:text-2xl text-purple-300 font-extrabold">
-                            "ระบบจัดซื้ออัจฉริยะ คู่คิดบริหารจัดเก็บและวางแผน"
+                            "ระบบจัดซื้ออัจฉริยะ คู่คิดวิเคราะห์และวางแผนเชิงรุก"
                         </h3>
                         <p class="text-slate-300 mt-4 max-w-lg leading-relaxed">
-                            วิเคราะห์ข้อมูลการเบิกจ่ายจริง ROP, EOQ, Lead Time และประเมินสัญญาแบบ VMI ให้แบบเรียลไทม์ในปุ่มเดียว
+                            เปลี่ยนจัดซื้อจากระบบ 'ตั้งรับ' มาเป็น 'เชิงรุก' ผ่านการใช้ระบบแนะนำอัจฉริยะ (AI-Driven Planning)
                         </p>
                     </div>
-                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-72 glass p-6 rounded-3xl border-purple-500/20 glow-purple">
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-purple-500/20 glow-purple">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">AI Calculate Engine Active</span>
+                            <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">3 Killing Features Active</span>
                         </div>
-                        <ul class="space-y-3 text-sm text-slate-300">
-                            <li class="flex items-center gap-2">🟢 <strong class="text-white font-bold">Dynamic ROP</strong> คำนวณตามจริง</li>
-                            <li class="flex items-center gap-2">🟢 <strong class="text-white font-bold">TCO Optimizer</strong> ลดค่าจัดเก็บ</li>
-                            <li class="flex items-center gap-2">🟢 <strong class="text-white font-bold">Vendor Capacity</strong> วิเคราะห์เสี่ยง</li>
+                        <ul class="space-y-4 text-sm text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">1. ช่วยวางแผน (Plan)</strong>
+                                    <span class="text-xs text-slate-400">คำนวณ Dynamic ROP/VMI ล็อคยอดล่วงหน้า</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">2. ช่วยป้องกัน (Prevent)</strong>
+                                    <span class="text-xs text-slate-400">วิเคราะห์ดีเลย์/ผันผวนราคากลาง + บัฟเฟอร์ 5%</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">3. Human Decision (Control)</strong>
+                                    <span class="text-xs text-slate-400">AI แนะนำวิเคราะห์ มนุษย์อนุมัติ (SAP Integrated)</span>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 `
             },
             {
                 id: 4,
-                phase: "PHASE 3 - THE IMPACT",
+                phase: "CONCRETE EXAMPLE",
                 time: "⏱️ 2:00 - 3:00 (60 วินาที)",
                 badgeColor: "from-indigo-600 to-emerald-600",
-                title: "ประหยัด TCO ฿22.1 ล้าน ด้วยสัญญากรอบราคา VMI",
+                title: "ประหยัด TCO ฿28.4 ล้าน ด้วยสัญญากรอบราคา VMI",
                 subtitle: "ปิดความเสี่ยงเรื่องราคากลางแกว่งด้วย Risk Buffer 5%",
                 cue: "ผายมือไปที่หน้าจออ้างอิงข้อมูลคำนวณเชิงการเงิน",
-                speech: `"จากในวิดีโอ ทุกท่านจะเห็นความฉลาดของมันครับ... PEA Brain ไม่ได้คำนวณราคากลางแบบทื่อๆ แต่มันบวก <strong>'บัฟเฟอร์ความเสี่ยง 5%'</strong> เพื่อป้องกันการประมูลล้มเหลว และที่ว้าวที่สุดคือ... แนะนำให้ทำสัญญาจัดซื้อแบบ <strong>'ทยอยส่งมอบ' (VMI)</strong> สัญญานี้ช่วยให้เราได้ราคาถูกลงจากการซื้อลอตใหญ่ แต่ไม่ต้องเก็บพัสดุไว้เองทั้งหมด ประหยัดจัดเก็บได้ถึง <strong>22.1 ล้านบาททันที!</strong> ในพัสดุหลักกลุ่มหม้อแปลง"`,
+                speech: `"จากในวิดีโอ ทุกท่านจะเห็นความฉลาดของมันครับ... PEA Brain ไม่ได้คำนวณราคากลางแบบทื่อๆ แต่มันบวก <strong>'บัฟเฟอร์ความเสี่ยง 5%'</strong> เพื่อป้องกันการประมูลล้มเหลว และที่ว้าวที่สุดคือ... แนะนำให้ทำสัญญาจัดซื้อแบบ <strong>'ทยอยส่งมอบ' (VMI)</strong> สัญญานี้ช่วยให้เราได้ราคาถูกลงจากการซื้อลอตใหญ่ แต่ไม่ต้องเก็บพัสดุไว้เองทั้งหมด ประหยัดจัดเก็บได้ถึง <strong>28.4 ล้านบาททันที! (ลดต้นทุน 20%)</strong> ในพัสดุหลักกลุ่มหม้อแปลง"`,
                 notes: "อธิบายถึงความสัมพันธ์ของราคาและนโยบาย VMI ที่ฝากของได้ไม่เกิน 5 เดือน สอดคล้องกับการวางแผน 3 Lots",
                 htmlContent: `
                     <div class="flex-1 flex flex-col justify-center">
@@ -348,7 +366,7 @@
                         <div class="grid grid-cols-2 gap-6 max-w-lg">
                             <div class="glass p-5 rounded-2xl border-slate-800">
                                 <div class="text-xs text-slate-400 font-bold uppercase">Holding Cost Saving</div>
-                                <div class="text-4xl font-extrabold text-emerald-400 mt-1 font-outfit">฿22.1M</div>
+                                <div class="text-4xl font-extrabold text-emerald-400 mt-1 font-outfit">฿28.4M</div>
                                 <div class="text-xs text-slate-400 mt-1">จากพัสดุกลุ่มหม้อแปลงหลัก</div>
                             </div>
                             <div class="glass p-5 rounded-2xl border-slate-800">
@@ -385,7 +403,7 @@
             },
             {
                 id: 5,
-                phase: "PHASE 3 - THE IMPACT",
+                phase: "CONCRETE EXAMPLE",
                 time: "⏱️ 3:00 - 4:30 (90 วินาที)",
                 badgeColor: "from-indigo-600 to-emerald-600",
                 title: "วิเคราะห์จุดเข้าซื้อที่ดีที่สุด (Optimal Market Timing)",
@@ -426,7 +444,7 @@
             },
             {
                 id: 6,
-                phase: "PHASE 4 - RESILIENCE",
+                phase: "CONCRETE EXAMPLE",
                 time: "⏱️ 4:30 - 5:30 (60 วินาที)",
                 badgeColor: "from-pink-600 to-rose-600",
                 title: "แผนเผชิญเหตุฉุกเฉิน: ปรับ ROP สู้ปัญหาส่งมอบล่าช้า",
@@ -475,7 +493,7 @@
             },
             {
                 id: 7,
-                phase: "PHASE 5 - CALL TO ACTION",
+                phase: "CONCRETE EXAMPLE",
                 time: "⏱️ 5:30 - 6:00 (30 วินาที)",
                 badgeColor: "from-purple-600 to-pink-500",
                 title: "ลดขั้นตอนทำงานจาก 3 วัน เหลือเพียง 2 ชั่วโมง",
@@ -518,13 +536,13 @@
             },
             {
                 id: 8,
-                phase: "PHASE 5 - CALL TO ACTION",
+                phase: "CONCLUSION (TAG LINE)",
                 time: "⏱️ 6:00 (จบการพรีเซนต์)",
                 badgeColor: "from-purple-600 to-pink-500",
                 title: "ขับเคลื่อน กฟภ. สู่การเป็น Digital Utility",
                 subtitle: "จัดซื้ออัจฉริยะ แม่นยำ ทรงพลัง ปลอดภัย และลดต้นทุน",
                 cue: "ยิ้มกว้าง ก้าวหน้า โค้งคำนับกรรมการอย่างสง่างาม",
-                speech: `"มาร่วมกันเปลี่ยนการจัดซื้อแบบตั้งรับ... ให้เป็นการจัดซื้อเชิงรุกที่ทรงพลัง นำพาองค์กรสู่ Digital Utility ไปกับ PEA Brain ครับ... ขอบคุณครับ!"`,
+                speech: `"เปลี่ยนการจัดซื้อจากระบบ 'ตั้งรับ' สู่ 'ยุทธศาสตร์เชิงรุก' ที่แม่นยำ โปร่งใส ปลอดภัย และเกิดความคุ้มค่าสูงสุดในทุกขั้นตอนไปกับพวกเรา... PEA Brain ขอบคุณครับ!"`,
                 notes: "จบแบบทรงพลัง รณรงค์และชี้อนาคตที่ระบบนี้ขยายไปใช้งานกับพัสดุหมวดอื่นอีกกว่าหมื่นประเภทได้",
                 htmlContent: `
                     <div class="flex-1 flex flex-col justify-center items-center text-center">
