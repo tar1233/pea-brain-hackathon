@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEA Brain Pitch Deck & Presenter Guide (Championship Edition)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #0b0f19; 
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .cue { 
+            color: #38bdf8; 
+            font-weight: 700; 
+            background: rgba(56, 189, 248, 0.1); 
+            padding: 4px 12px; 
+            border-radius: 8px; 
+            font-size: 0.85em;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            display: inline-block;
+        }
+        .slide-gradient-1 {
+            background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.15) 0%, rgba(0, 0, 0, 0) 40%),
+                        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        #0f172a;
+        }
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-highlight {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.05) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+        .glow-purple {
+            box-shadow: 0 0 40px -10px rgba(168, 85, 247, 0.4);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.3);
+        }
+        .glow-rose {
+            box-shadow: 0 0 40px -10px rgba(244, 63, 94, 0.3);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            .print-card { 
+                background: white !important; 
+                color: black !important; 
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid;
+            }
+            .cue {
+                color: #0369a1;
+                background: #e0f2fe;
+                border: 1px solid #bae6fd;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="no-print w-full glass border-b border-slate-800 py-4 px-6 sticky top-0 z-50 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-purple-500/20 font-outfit">
+                ⚡
+            </div>
+            <div>
+                <h1 class="text-lg font-black tracking-tight bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    PEA Brain Pitch Companion
+                </h1>
+                <p class="text-xs text-slate-400">Championship Presenter System</p>
+            </div>
+        </div>
+
+        <!-- Mode Selectors -->
+        <div class="flex items-center gap-1 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800">
+            <button onclick="setMode('presenter')" id="btn-presenter" class="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer bg-purple-600 text-white shadow-md">
+                🖥️ Presenter Mode
+            </button>
+            <button onclick="setMode('slides')" id="btn-slides" class="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200">
+                🖼️ Slides Only
+            </button>
+            <button onclick="setMode('script')" id="btn-script" class="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200">
+                📄 Print Script
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-700 transition-all cursor-pointer text-sm">
+                🖨️ พิมพ์เอกสาร
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="flex-1 flex flex-col md:flex-row relative">
+
+        <!-- PRESENTER MODE (Split view) -->
+        <div id="view-presenter" class="flex-1 flex flex-col lg:flex-row">
+            
+            <!-- Left: Slide Preview -->
+            <div class="w-full lg:w-3/5 bg-slate-950 p-6 flex flex-col justify-center items-center border-r border-slate-900">
+                <!-- Outer Frame simulating slide aspect ratio -->
+                <div class="w-full max-w-4xl aspect-[16/9] slide-gradient-1 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative flex flex-col p-8 md:p-12 glow-purple" id="presenter-slide-frame">
+                    <!-- Slide Dynamic Content goes here -->
+                    <div id="presenter-slide-content" class="h-full flex flex-col justify-between">
+                        <!-- Content loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Slide Navigation Controls -->
+                <div class="flex items-center gap-4 mt-6">
+                    <button onclick="prevSlide()" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 flex items-center justify-center font-bold text-lg cursor-pointer transition">
+                        ←
+                    </button>
+                    <span class="text-slate-400 font-bold font-outfit text-sm" id="presenter-slide-counter">
+                        Slide 1 of 8
+                    </span>
+                    <button onclick="nextSlide()" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 flex items-center justify-center font-bold text-lg cursor-pointer transition">
+                        →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Presenter Script & Timing -->
+            <div class="w-full lg:w-2/5 glass p-6 overflow-y-auto flex flex-col justify-between max-h-[calc(100vh-80px)]">
+                <div>
+                    <!-- Progress & Timeline Bar -->
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs bg-purple-900/50 border border-purple-700 text-purple-300 font-bold px-3 py-1 rounded-full uppercase tracking-wider font-outfit" id="presenter-phase-badge">
+                            PHASE 1 - THE PAIN
+                        </span>
+                        <span class="text-sm font-bold text-pink-400 font-outfit" id="presenter-time-badge">
+                            ⏱️ 0:00 - 1:30
+                        </span>
+                    </div>
+
+                    <!-- Slide Speaking Script -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-extrabold text-slate-400 uppercase tracking-widest">คำพูดสำหรับหน้านี้:</h4>
+                        
+                        <div id="presenter-script-cue" class="mb-4">
+                            <!-- Cue badge -->
+                        </div>
+                        
+                        <div id="presenter-script-text" class="text-xl md:text-2xl text-slate-100 leading-relaxed font-medium bg-slate-900/40 p-5 rounded-2xl border border-slate-800/80">
+                            <!-- Speech text loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide Notes -->
+                <div class="mt-8 border-t border-slate-800 pt-4">
+                    <div class="flex items-center gap-2 mb-2 text-yellow-400 font-bold text-sm">
+                        <span>💡</span>
+                        <span>Key Highlight สำหรับหน้าจอนี้:</span>
+                    </div>
+                    <p id="presenter-slide-notes" class="text-sm text-slate-300 leading-relaxed">
+                        <!-- Key highlight notes loaded dynamically -->
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SLIDES ONLY MODE (Fullscreen-style) -->
+        <div id="view-slides" class="hidden flex-1 bg-slate-950 flex flex-col justify-center items-center p-6 min-h-[calc(100vh-80px)]">
+            <div class="w-full max-w-5xl aspect-[16/9] slide-gradient-1 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl relative flex flex-col p-12 glow-purple" id="slidesonly-frame">
+                <div id="slidesonly-content" class="h-full flex flex-col justify-between">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Floating Navigation Controls -->
+            <div class="flex items-center gap-6 mt-6">
+                <button onclick="prevSlide()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 flex items-center gap-2 font-bold cursor-pointer transition">
+                    <span>←</span> ก่อนหน้า
+                </button>
+                <span class="text-slate-400 font-bold font-outfit" id="slidesonly-counter">
+                    Slide 1 / 8
+                </span>
+                <button onclick="nextSlide()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 flex items-center gap-2 font-bold cursor-pointer transition">
+                    ถัดไป <span>→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- PRINT SCRIPT MODE -->
+        <div id="view-script" class="hidden flex-1 bg-slate-950 p-6 md:p-12 overflow-y-auto">
+            <div class="max-w-4xl mx-auto bg-slate-900/50 border border-slate-800 p-8 md:p-12 rounded-3xl print-card">
+                <div class="text-center mb-10 border-b border-slate-800 pb-6">
+                    <h2 class="text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                        PEA Brain Pitch Presentation Guide
+                    </h2>
+                    <p class="text-slate-400 text-sm">สคริปต์นำเสนอฉบับสมบูรณ์สำหรับเวทีชิงชนะเลิศ (Championship Script)</p>
+                </div>
+
+                <div id="script-print-list" class="space-y-12">
+                    <!-- Script items will be populated here dynamically -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER / SHORTCUTS -->
+    <footer class="no-print bg-slate-950/80 border-t border-slate-900 py-3 px-6 text-center text-xs text-slate-500 flex flex-wrap justify-between items-center gap-4">
+        <div>
+            กดปุ่ม <kbd class="px-1.5 py-0.5 bg-slate-800 text-slate-300 rounded border border-slate-700 font-mono text-[10px]">←</kbd> และ <kbd class="px-1.5 py-0.5 bg-slate-800 text-slate-300 rounded border border-slate-700 font-mono text-[10px]">→</kbd> บนคีย์บอร์ดเพื่อเปลี่ยนสไลด์ได้
+        </div>
+        <div class="font-outfit font-semibold text-slate-400">
+            PEA HACKATHON 2026 · TEAM PEA BRAIN 🏆
+        </div>
+    </footer>
+
+    <!-- SLIDE DATA & SYSTEM LOGIC -->
+    <script>
+        // Slide Data Definitions
+        const slides = [
+            {
+                id: 1,
+                phase: "PHASE 1 - THE PAIN",
+                time: "⏱️ 0:00 - 0:30 (30 วินาที)",
+                badgeColor: "from-purple-600 to-pink-500",
+                title: "วิกฤตพัสดุขาดแคลนในเช้าวันจันทร์",
+                subtitle: "เมื่อการรอพัสดุขัดขวางการบริการประชาชน",
+                cue: "เดินออกมา ยิ้มชวนคุย มองตากรรมการอย่างมั่นใจ",
+                speech: `"ทุกท่านครับ... ลองนึกภาพตามผมนะครับ เช้าวันจันทร์ พนักงานจัดซื้อเปิดหน้าจอขึ้นมา แล้วพบว่า <strong>'หม้อแปลง' ที่ทีมภาคสนามต้องใช้ด่วน... สต็อกหมดไปตั้งแต่สัปดาห์ที่แล้ว!</strong>"`,
+                notes: "สร้างอารมณ์ร่วม (Empathy) ให้ผู้ฟังเห็นภาพหน้างานของพนักงานไฟฟ้าที่เดือดร้อนเพราะพัสดุไม่พอ",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            🚨 THE CRITICAL PAIN POINT
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight font-outfit mb-4">
+                            วิกฤตพัสดุขาดแคลน<br/><span class="text-rose-500">สต็อกหมดโดยไม่รู้ตัว</span>
+                        </h2>
+                        <p class="text-lg text-slate-300 max-w-xl">
+                            หน้างานเดือดร้อน ประชาชนไฟดับรอนานขึ้น แต่จัดซื้อยังต้องใช้เวลาทำเอกสารด้วยมือ
+                        </p>
+                    </div>
+                    <div class="absolute bottom-12 right-12 w-64 glass p-6 rounded-2xl border-rose-500/20 glow-rose">
+                        <div class="text-xs text-rose-400 font-bold uppercase tracking-wider">Stock Status</div>
+                        <div class="text-4xl font-extrabold text-white mt-1 font-outfit">0 UNITS</div>
+                        <div class="text-xs text-rose-300/80 mt-1">หม้อแปลง 160 kVA 3 เฟส</div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                phase: "PHASE 1 - THE PAIN",
+                time: "⏱️ 0:30 - 1:30 (60 วินาที)",
+                badgeColor: "from-purple-600 to-pink-500",
+                title: "งานจัดซื้อแบบแมนนวล: ช้า ยาก เสี่ยง",
+                subtitle: "ใบสั่งซื้อกว่า 3,208 รายการ มูลค่า 4.87 พันล้านบาท",
+                cue: "ชี้ประเด็นความเสี่ยงในการคำนวณและประมวลผลข้อมูลมหาศาล",
+                speech: `"สิ่งที่เกิดขึ้นคือ เจ้าหน้าที่ต้องรีบโทรตามของ เช็ค Lead Time และต้องมานั่งงมหาข้อมูล <strong>ใบสั่งซื้อกว่า 3,208 รายการ (มูลค่ารวม 4.87 พันล้านบาท)</strong> จากประวัติจัดซื้อย้อนหลัง 2 ปี เพื่อทำเอกสารจัดซื้อใหม่... กระบวนการพวกนี้ กินเวลาถึง <strong>3 วันเต็มๆ</strong> ครับ! แต่ปัญหาคือ... <strong>คนหน้างานเขารอไม่ได้</strong> นี่ไม่ใช่แค่ความเหนื่อยของพนักงานครับ แต่มันคือ <strong>'ความเสี่ยงระดับองค์กร'</strong>"`,
+                notes: "ชี้ให้เห็นประสิทธิภาพที่ลดลงของการนั่งคัดลอกข้อมูลใบสั่งซื้อย้อนหลังและคำนวณ ROP/EOQ ด้วยมือ",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6">
+                            ข้อมูลมหาศาล<br/><span class="text-rose-400">กับชั่วโมงทำงานที่หายไป</span>
+                        </h2>
+                        <div class="grid grid-cols-3 gap-4 max-w-2xl">
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-semibold">ข้อมูลประวัติจัดซื้อ</div>
+                                <div class="text-3xl font-black text-white mt-1 font-outfit">3,208</div>
+                                <div class="text-xs text-slate-400">ใบสั่งซื้อ 2 ปี</div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-semibold">มูลค่าโครงการ</div>
+                                <div class="text-3xl font-black text-white mt-1 font-outfit">4.87B</div>
+                                <div class="text-xs text-slate-400">พันล้านบาท</div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-semibold">เวลาทำงานจัดซื้อ</div>
+                                <div class="text-3xl font-black text-rose-400 mt-1 font-outfit">3 DAYS</div>
+                                <div class="text-xs text-rose-300/80">จัดทำแผนจัดหา</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                phase: "CONTEXT (WHY & FEATURES)",
+                time: "⏱️ 1:30 - 2:00 (30 วินาที)",
+                badgeColor: "from-purple-600 to-indigo-600",
+                title: "PEA Brain: คู่คิดจัดซื้ออัจฉริยะ",
+                subtitle: "ปฏิวัติการวิเคราะห์และวางแผนจัดซื้อเชิงกลยุทธ์",
+                cue: "น้ำเสียงตื่นเต้น มีความหวัง ปรับท่าทางให้กระฉับกระเฉง",
+                speech: `"เพื่อพลิกวิกฤตนี้... เราจึงสร้าง <strong>'PEA Brain'</strong> ขึ้นมาครับ! นี่ไม่ใช่แชทบอทถามตอบทั่วไป และไม่ใช่แค่ Dashboard โชว์ตัวเลขสวยๆ แต่เป็นระบบจัดซื้ออัจฉริยะที่เป็น <strong>'คู่คิดวิเคราะห์ (Planner)'</strong> ภายใต้หลักการ <strong>Human-in-the-Loop</strong>... กระบวนการทำงานเดิมของมนุษย์ไม่ได้หายไปไหน แต่ AI จะเข้ามาช่วยไกด์ข้อมูล วางแผนสัญญาจัดหา และแจ้งเตือนป้องกันความเสี่ยง เพื่อให้มนุษย์สามารถตัดสินใจบริหารจัดการได้ดีและแม่นยำที่สุดครับ"`,
+                notes: "เน้นย้ำ 3 Killing Features: ช่วยวางแผน VMI, ช่วยป้องกันความเสี่ยงดีเลย์/ราคาผันผวน, และการควบคุมโดยมนุษย์ (Human-in-the-Loop) เพื่อป้องกันข้อผิดพลาดและเสริมสร้างความแม่นยำในการตัดสินใจ",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            💡 CONTEXT: WHY PEA BRAIN?
+                        </div>
+                        <h2 class="text-3xl md:text-6xl font-black text-white leading-tight font-outfit mb-4">
+                            PEA BRAIN
+                        </h2>
+                        <h3 class="text-xl md:text-2xl text-purple-300 font-extrabold">
+                            "ระบบจัดซื้ออัจฉริยะ คู่คิดวิเคราะห์และวางแผนเชิงรุก"
+                        </h3>
+                        <p class="text-slate-300 mt-4 max-w-lg leading-relaxed">
+                            เปลี่ยนจัดซื้อจากระบบ 'ตั้งรับ' มาเป็น 'เชิงรุก' ผ่านการใช้ระบบแนะนำอัจฉริยะ (AI-Driven Planning)
+                        </p>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-purple-500/20 glow-purple">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">3 Killing Features Active</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">1. ช่วยวางแผน (Plan)</strong>
+                                    <span class="text-xs text-slate-400">คำนวณ Dynamic ROP/VMI ล็อคยอดล่วงหน้า</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">2. ช่วยป้องกัน (Prevent)</strong>
+                                    <span class="text-xs text-slate-400">วิเคราะห์ดีเลย์/ผันผวนราคากลาง + บัฟเฟอร์ 5%</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">3. Human Decision (Control)</strong>
+                                    <span class="text-xs text-slate-400">AI ช่วยวิเคราะห์และไกด์ มนุษย์ตัดสินใจ 100% (SAP Integrated)</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                phase: "CONCRETE EXAMPLE",
+                time: "⏱️ 2:00 - 3:00 (60 วินาที)",
+                badgeColor: "from-indigo-600 to-emerald-600",
+                title: "กรณีศึกษา (Showcase): ประหยัด TCO ฿28.4 ล้าน",
+                subtitle: "ถอดแบบความสำเร็จจากกรณีศึกษาหม้อแปลง 160 kVA 3 เฟส",
+                cue: "ผายมือไปที่หน้าจออ้างอิงข้อมูลคำนวณเชิงการเงิน",
+                speech: `"จากในวิดีโอ ทุกท่านจะเห็นการทำงานจริงของ Prototype ครับ โดยเราได้ดึงกรณีศึกษา <strong>'หม้อแปลง 160 kVA 3 เฟส'</strong> มาเป็น Showcase โชว์ผลลัพธ์เชิงประจักษ์... เมื่อ AI เสนอแนะให้สลับมาทำแผน VMI แบบแบ่งส่งมอบ 3 ล็อต พร้อมบวกบัฟเฟอร์ความเสี่ยง 5% เพื่อปิดช่องว่างการประมูลล้มเหลว ทำให้เราลดต้นทุนรวม TCO ลงไปได้ทันทีถึง <strong>28.4 ล้านบาท หรือคิดเป็นการประหยัดต้นทุนการจัดเก็บ (Holding Cost) ลงถึง 20%!</strong>... และนี่เป็นเพียงพัสดุหลักแค่รายการเดียวเท่านั้นครับ ลองจินตนาการดูสิครับว่า ถ้าเราขยายผลไปใช้กับการจัดซื้อพัสดุรายการอื่นๆ ทั่วทั้ง กฟภ. จะประหยัดงบประมาณ OPEX ไปได้มหาศาลขนาดไหน แค่ Journey เดียวก็ส่งมอบมูลค่าได้ขนาดนี้แล้วครับ"`,
+                notes: "อธิบายถึงความสัมพันธ์ของราคาและนโยบาย VMI ที่ฝากของได้ไม่เกิน 5 เดือน สอดคล้องกับการวางแผน 3 Lots",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6 font-outfit">
+                            Showcase กรณีศึกษา:<br/><span class="text-emerald-400">TCO Optimization 28.4 ล้านบาท</span>
+                        </h2>
+                        <div class="grid grid-cols-2 gap-6 max-w-lg">
+                            <div class="glass p-5 rounded-2xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-bold uppercase">Holding Cost Saving</div>
+                                <div class="text-4xl font-extrabold text-emerald-400 mt-1 font-outfit">฿28.4M</div>
+                                <div class="text-xs text-slate-400 mt-1">จากพัสดุกลุ่มหม้อแปลงหลัก</div>
+                            </div>
+                            <div class="glass p-5 rounded-2xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-bold uppercase">Standard Price Buffer</div>
+                                <div class="text-4xl font-extrabold text-white mt-1 font-outfit">+5%</div>
+                                <div class="text-xs text-slate-400 mt-1">ป้องกันประมูลล้มเหลว (Material Risk)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-emerald-500/20 glow-emerald">
+                        <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">เปรียบเทียบแผนจัดหาหลัก</div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span>Bulk (ซื้อตู้เดียว)</span>
+                                    <span class="text-slate-400">Holding Cost สูงมาก</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2">
+                                    <div class="bg-slate-400 h-2 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-emerald-400 font-bold">VMI Frame Agreement (3 Lots)</span>
+                                    <span class="text-emerald-400 font-bold">ประหยัด 70%</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2">
+                                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                phase: "CONCRETE EXAMPLE",
+                time: "⏱️ 3:00 - 4:30 (90 วินาที)",
+                badgeColor: "from-indigo-600 to-emerald-600",
+                title: "วิเคราะห์จุดเข้าซื้อที่ดีที่สุด (Optimal Market Timing)",
+                subtitle: "หลบหลีกราคาดีดตัว 12-15% จากกำแพงภาษี Trade War",
+                cue: "เน้นย้ำถึงเรื่องทริกเกอร์การเร่งจัดหาในเดือนกรกฎาคม 2569",
+                speech: `"และที่ยอดเยี่ยมคือ ระบบหา <strong>'จุดเข้าซื้อที่ถูกที่สุด'</strong> ให้เราได้ด้วยครับ! จริงๆ จุดดีที่สุดผ่านไปแล้วคือเดือน พ.ค. แต่ AI ไม่ยอมแพ้ มันออกแผนสำรองให้ทันที โดยแนะนำให้เร่งประกวดราคาใน <strong>'เดือนกรกฎาคม 2569'</strong> ซึ่งเป็นโอกาสสุดท้ายก่อนที่ผลกระทบจาก Trade War จะทำราคาดีดตัว 12-15% ในปลายปีงบประมาณ ทำให้ กฟภ. ได้ราคาที่ดีที่สุดและส่งพัสดุได้ทันพอดีเป๊ะครับ"`,
+                notes: "เน้นการอัปเดตข้อมูลปัจจัยเสี่ยงจากภายนอกมาประกอบการกำหนดเดือนออกประกาศประมูล",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            📈 MARKET INTELLIGENCE
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-4 font-outfit">
+                            Optimal Timing:<br/><span class="text-amber-400">กรกฎาคม 2569</span>
+                        </h2>
+                        <p class="text-lg text-slate-300 max-w-lg leading-relaxed">
+                            ล็อคราคาสัญญาก่อนตลาดปรับตัวขึ้น <span class="text-rose-400 font-bold">12-15%</span> ในไตรมาส 4 (Trade War Effect)
+                        </p>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-slate-800">
+                        <div class="text-xs text-slate-400 font-bold uppercase mb-3">Timeline ข้อเสนอแนะจัดซื้อ</div>
+                        <div class="space-y-3 font-semibold text-sm">
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <span class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs">พ.ค.</span>
+                                <span>ดีที่สุด (ผ่านไปแล้ว)</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-amber-400">
+                                <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs border border-amber-500/30">ก.ค.</span>
+                                <span>โอกาสสุดท้าย (เร่งประมูล!)</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-rose-400">
+                                <span class="w-6 h-6 rounded-full bg-rose-500/25 text-rose-400 flex items-center justify-center text-xs border border-rose-500/30">ต.ค.</span>
+                                <span>เสี่ยงราคาพุ่ง 12-15%</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 6,
+                phase: "CONCRETE EXAMPLE",
+                time: "⏱️ 4:30 - 5:30 (60 วินาที)",
+                badgeColor: "from-pink-600 to-rose-600",
+                title: "แผนเผชิญเหตุฉุกเฉิน: ปรับ ROP สู้ปัญหาส่งมอบล่าช้า",
+                subtitle: "จัดซื้อวิธีพิเศษ 833 เครื่อง และปรับ ROP 100 วันล่วงหน้า",
+                cue: "น้ำเสียงขึงขัง จริงจัง แสดงความเป็นมืออาชีพด้านบริหารความเสี่ยง",
+                speech: `"และที่สำคัญที่สุดคือการตั้งรับวิกฤตครับ หากเกิดปัญหา Supplier ส่งมอบล่าช้า 15 วัน สต็อกที่เหลือจะขาดแคลนถึง 68 วันเต็ม! AI จะเข้าฉากช่วยดึง <strong>'แผนเผชิญเหตุจัดซื้อด่วนวิธีพิเศษ' จำนวน 833 เครื่อง</strong> เข้ามาอุดช่องว่างใน ก.ค. 2569 ทันที พร้อมสั่งปรับจุดสั่งซื้อ (ROP) ล่วงหน้าเป็น 100 วัน เพื่อให้สอดคล้องกับ Lead Time ผลิตจริง 84 วันแบบไร้รอยต่อ"`,
+                notes: "แสดงถึงตัวเลข 185 คลังคงเหลือ ปะทะความต้องการใช้งานสะสม 1018 ใน 3 เดือน จึงเคาะจัดซื้อพิเศษ 833 เครื่อง ได้อย่างสมเหตุสมผล",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            🛡️ RISK RESILIENCE & MITIGATION
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-4">
+                            แผนเผชิญเหตุฉุกเฉิน<br/><span class="text-rose-400">จัดซื้อพิเศษ 833 เครื่อง</span>
+                        </h2>
+                        <div class="grid grid-cols-2 gap-4 max-w-md">
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400">สต็อกฉุกเฉินที่ต้องการ</div>
+                                <div class="text-2xl font-bold text-rose-400 font-outfit">833 เครื่อง</div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400">จุดสั่งซื้อใหม่ (ROP)</div>
+                                <div class="text-2xl font-bold text-white font-outfit">100 วัน</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-rose-500/20 glow-rose">
+                        <div class="text-xs text-slate-400 font-bold uppercase mb-2">ประเมินช่องว่างวิกฤตคลัง (3 เดือน)</div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">ความต้องการสะสม (ก.ค.-ก.ย. 69)</span>
+                                <span class="font-bold text-white">1,018</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">สต็อกคงเหลือปัจจุบัน</span>
+                                <span class="font-bold text-white">185</span>
+                            </div>
+                            <div class="border-t border-slate-800 my-2"></div>
+                            <div class="flex justify-between text-rose-400 font-bold">
+                                <span>ส่วนขาดแคลน (Shortfall)</span>
+                                <span>-833 เครื่อง</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 7,
+                phase: "CONCRETE EXAMPLE",
+                time: "⏱️ 5:30 - 6:00 (30 วินาที)",
+                badgeColor: "from-purple-600 to-pink-500",
+                title: "โครงสร้างเทคโนโลยีและการเชื่อมต่อ (Technology & Enterprise Feasibility)",
+                subtitle: "ระบบสถาปัตยกรรมระดับองค์กรที่ปลอดภัยและเชื่อมต่อ SAP ERP ได้ทันที",
+                cue: "ยิ้มแย้ม สบตา แสดงถึงความน่าเชื่อถือและการรักษาความปลอดภัยข้อมูล",
+                speech: `"หลายท่านอาจจะสงสัยครับว่าระบบนี้จะใช้งานได้จริงและปลอดภัยไหม? PEA Brain ได้รับการออกแบบโครงสร้างเทคโนโลยีระดับ Enterprise ครับ! ตัวหน้าบ้านและหลังบ้านเราพัฒนาด้วย Next.js และ TypeScript ร่วมกับฐานข้อมูล PostgreSQL ผ่าน Prisma ORM ในส่วนของ AI สมองกลเราเรียกใช้บริการคลาวด์ผ่าน AWS Bedrock (Claude 3.5 Sonnet) ซึ่งมีความปลอดภัยสูงสุดและข้อมูลพัสดุของ กฟภ. จะไม่รั่วไหลออกสู่สาธารณะอย่างแน่นอน... ที่สำคัญระบบมี REST API พร้อมเชื่อมต่อกับระบบ SAP ERP หลังบ้านของ กฟภ. เพื่อให้เจ้าหน้าที่สามารถนำเสนอแผน อนุมัติ และ Export ส่งต่อไปยังระบบประมูลได้ทันที ถือเป็นการผสมผสานเทคโนโลยีที่จับต้องได้และใช้งานได้จริงแบบ 100% ครับ"`,
+                notes: "เน้นย้ำความมั่นใจในสถาปัตยกรรมระบบ (Next.js, PostgreSQL) ความปลอดภัยของข้อมูลระดับ Enterprise (AWS Bedrock) และการเชื่อมต่อ SAP ERP ได้ทันทีเพื่อพิสูจน์ความเป็นไปได้ในการใช้งานจริง (Feasibility) โดยไม่สับสนกับข้อมูลธุรกิจ",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6 font-outfit">
+                            Enterprise Tech Architecture<br/>& <span class="text-purple-400">Secure Integration</span>
+                        </h2>
+                        <div class="grid grid-cols-2 gap-4 max-w-md">
+                            <div class="glass p-4 rounded-xl border-slate-800 flex items-center gap-3">
+                                <span class="text-2xl">🧠</span>
+                                <div>
+                                    <div class="text-xs text-slate-400">Enterprise AI Engine</div>
+                                    <div class="text-sm font-bold text-purple-400 font-outfit">AWS Bedrock (Claude)</div>
+                                </div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800 flex items-center gap-3">
+                                <span class="text-2xl">⚙️</span>
+                                <div>
+                                    <div class="text-xs text-slate-400">Stack & ORM</div>
+                                    <div class="text-sm font-bold text-white font-outfit">Next.js / PostgreSQL</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-slate-800">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                            <span class="text-xs text-purple-400 font-bold uppercase tracking-wider">SAP ERP Connection Ready</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ระบบติดตั้ง API Gateway สำหรับเชื่อมโยงส่งมอบข้อมูลออก (Export Data) ไปยังระบบประมูลและคลังสินค้าของ SAP ERP เดิมของ กฟภ. ได้อย่างสะดวกรวดเร็วและปลอดภัยสูงสุด ป้องกันข้อมูลรั่วไหลอย่างสมบูรณ์แบบ
+                        </p>
+                    </div>
+                `
+            },
+            {
+                id: 8,
+                phase: "CONCLUSION (TAG LINE)",
+                time: "⏱️ 6:00 (จบการพรีเซนต์)",
+                badgeColor: "from-purple-600 to-pink-500",
+                title: "ขับเคลื่อน กฟภ. สู่การเป็น Digital Utility",
+                subtitle: "จัดซื้ออัจฉริยะ แม่นยำ ทรงพลัง ปลอดภัย และลดต้นทุน",
+                cue: "ยิ้มกว้าง ก้าวหน้า โค้งคำนับกรรมการอย่างสง่างาม",
+                speech: `"และท้ายที่สุดนี้... เราขอฝากวิสัยทัศน์ที่มุ่งมั่นของพวกเราครับ... <strong>'ให้ PEA Brain เป็นเพื่อนคู่คิด วางแผนและตัดสินใจ จัดการพัสดุง่ายๆ ใกล้ตัวคุณ'</strong> เปลี่ยนการจัดซื้อจากระบบตั้งรับ สู่ยุทธศาสตร์เชิงรุกที่ทรงพลัง ปลอดภัย และคุ้มค่าสูงสุด เพื่อร่วมขับเคลื่อน กฟภ. สู่การเป็น Digital Utility อย่างยั่งยืน... ขอบคุณครับ!"`,
+                notes: "จบแบบทรงพลัง รณรงค์และชี้อนาคตที่ระบบนี้ขยายไปใช้งานกับพัสดุหมวดอื่นอีกกว่าหมื่นประเภทได้",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center items-center text-center">
+                        <div class="w-16 h-16 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center font-bold text-3xl text-white shadow-xl shadow-purple-500/20 font-outfit mb-6">
+                            🏆
+                        </div>
+                        <h2 class="text-4xl md:text-6xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-emerald-400 bg-clip-text text-transparent leading-tight mb-4 font-outfit">
+                            Digital Strategic Utility
+                        </h2>
+                        <p class="text-xl text-slate-300 max-w-xl">
+                            ร่วมขับเคลื่อนการจัดซื้อเชิงรุกที่โปร่งใส แม่นยำ และปลอดภัยไปกับพวกเรา
+                        </p>
+                        <h3 class="text-2xl font-bold text-white mt-6 font-outfit">
+                            Thank You.
+                        </h3>
+                    </div>
+                `
+            }
+        ];
+
+        let activeSlideIndex = 0;
+        let currentMode = 'presenter'; // presenter, slides, script
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            renderActiveSlide();
+            renderScriptPrintList();
+            
+            // Register Keyboard Navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+        });
+
+        // Set Slide View Mode
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Hide all views
+            document.getElementById('view-presenter').classList.add('hidden');
+            document.getElementById('view-slides').classList.add('hidden');
+            document.getElementById('view-script').classList.add('hidden');
+            
+            // Remove active classes from buttons
+            document.getElementById('btn-presenter').className = "px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200";
+            document.getElementById('btn-slides').className = "px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200";
+            document.getElementById('btn-script').className = "px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200";
+
+            // Show active view and style active button
+            if (mode === 'presenter') {
+                document.getElementById('view-presenter').classList.remove('hidden');
+                document.getElementById('btn-presenter').className = "px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer bg-purple-600 text-white shadow-md";
+            } else if (mode === 'slides') {
+                document.getElementById('view-slides').classList.remove('hidden');
+                document.getElementById('btn-slides').className = "px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer bg-purple-600 text-white shadow-md";
+            } else if (mode === 'script') {
+                document.getElementById('view-script').classList.remove('hidden');
+                document.getElementById('btn-script').className = "px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 cursor-pointer bg-purple-600 text-white shadow-md";
+            }
+
+            renderActiveSlide();
+        }
+
+        // Render Slide elements
+        function renderActiveSlide() {
+            const slide = slides[activeSlideIndex];
+            
+            // Presenter Mode Updates
+            document.getElementById('presenter-slide-content').innerHTML = `
+                <!-- Slide Header -->
+                <div class="flex justify-between items-start no-print">
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest font-outfit">PEA Brain Strategy Pitch</div>
+                        <div class="text-sm font-bold text-slate-400 mt-1">${slide.title}</div>
+                    </div>
+                    <div class="text-[10px] font-bold text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full font-outfit">
+                        SLIDE ${slide.id} / ${slides.length}
+                    </div>
+                </div>
+
+                <!-- Slide Body -->
+                <div class="flex-1 flex flex-col justify-center relative">
+                    ${slide.htmlContent}
+                </div>
+
+                <!-- Slide Footer -->
+                <div class="flex justify-between items-center text-[10px] text-slate-500 pt-4 border-t border-slate-800/40 no-print">
+                    <div>© 2026 PEA Brain Team</div>
+                    <div class="font-outfit font-semibold tracking-wider uppercase text-purple-400">Strategic Decision Platform</div>
+                </div>
+            `;
+            
+            document.getElementById('presenter-slide-counter').innerText = `Slide ${slide.id} of ${slides.length}`;
+            document.getElementById('presenter-phase-badge').innerText = slide.phase;
+            document.getElementById('presenter-time-badge').innerText = slide.time;
+            
+            // Presenter script cues
+            document.getElementById('presenter-script-cue').innerHTML = `
+                <span class="cue">🎬 Stage Cue: ${slide.cue}</span>
+            `;
+            document.getElementById('presenter-script-text').innerHTML = slide.speech;
+            document.getElementById('presenter-slide-notes').innerText = slide.notes;
+
+            // Slides Only Mode Updates
+            document.getElementById('slidesonly-content').innerHTML = `
+                <!-- Slide Header -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xs text-slate-400 font-bold uppercase tracking-widest font-outfit">PEA Brain Strategy Pitch</div>
+                        <div class="text-md font-bold text-slate-400 mt-1">${slide.title}</div>
+                    </div>
+                    <div class="text-xs font-bold text-slate-400 bg-slate-900 border border-slate-800 px-3.5 py-1 rounded-full font-outfit">
+                        SLIDE ${slide.id} / ${slides.length}
+                    </div>
+                </div>
+
+                <!-- Slide Body -->
+                <div class="flex-1 flex flex-col justify-center relative">
+                    ${slide.htmlContent}
+                </div>
+
+                <!-- Slide Footer -->
+                <div class="flex justify-between items-center text-xs text-slate-500 pt-4 border-t border-slate-800/40">
+                    <div>© 2026 PEA Brain Team</div>
+                    <div class="font-outfit font-semibold tracking-wider uppercase text-purple-400">Strategic Decision Platform</div>
+                </div>
+            `;
+            document.getElementById('slidesonly-counter').innerText = `Slide ${slide.id} / ${slides.length}`;
+        }
+
+        // Navigate Slides
+        function nextSlide() {
+            if (activeSlideIndex < slides.length - 1) {
+                activeSlideIndex++;
+                renderActiveSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (activeSlideIndex > 0) {
+                activeSlideIndex--;
+                renderActiveSlide();
+            }
+        }
+
+        // Render full print script list
+        function renderScriptPrintList() {
+            const list = document.getElementById('script-print-list');
+            list.innerHTML = '';
+            
+            slides.forEach((slide) => {
+                const item = document.createElement('div');
+                item.className = 'border-b border-slate-800 pb-8 print-card';
+                item.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-center mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-purple-900/40 border border-purple-500/30 text-purple-400 flex items-center justify-center font-bold text-sm font-outfit">
+                                ${slide.id}
+                            </span>
+                            <h3 class="text-xl font-bold text-white print:text-black">${slide.title}</h3>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="px-2.5 py-1 bg-slate-800 rounded-md border border-slate-700 text-slate-300 font-bold uppercase tracking-wider font-outfit print:border-slate-300 print:text-slate-700">${slide.phase}</span>
+                            <span class="px-2.5 py-1 bg-pink-900/30 rounded-md border border-pink-500/20 text-pink-400 font-bold font-outfit print:border-slate-300 print:text-slate-700">${slide.time}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="cue print:bg-slate-100 print:text-slate-800">🎬 Stage Cue: ${slide.cue}</span>
+                    </div>
+
+                    <div class="text-xl text-slate-200 leading-relaxed font-medium bg-slate-900/30 p-4 rounded-xl border border-slate-800/80 mb-3 print:bg-white print:text-black print:border-slate-300">
+                        ${slide.speech}
+                    </div>
+
+                    <div class="text-sm text-slate-400 print:text-slate-600">
+                        <strong>💡 Key Insight:</strong> ${slide.notes}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEA Brain Pitch Deck (Championship Edition)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #0b0f19; 
+            color: #f3f4f6;
+            overflow: hidden;
+        }
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        .cue { 
+            color: #38bdf8; 
+            font-weight: 700; 
+            background: rgba(56, 189, 248, 0.1); 
+            padding: 4px 12px; 
+            border-radius: 8px; 
+            font-size: 0.85em;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            display: inline-block;
+        }
+        .slide-gradient-1 {
+            background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.15) 0%, rgba(0, 0, 0, 0) 40%),
+                        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        #0f172a;
+        }
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-highlight {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.05) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+        .glow-purple {
+            box-shadow: 0 0 45px -5px rgba(168, 85, 247, 0.35);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 45px -5px rgba(16, 185, 129, 0.25);
+        }
+        .glow-rose {
+            box-shadow: 0 0 45px -5px rgba(244, 63, 94, 0.25);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-6">
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full glass border-b border-slate-800 py-3 px-6 rounded-2xl flex justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-purple-500/20 font-outfit">
+                ⚡
+            </div>
+            <div>
+                <h1 class="text-sm font-black tracking-tight bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    PEA Brain Pitch Deck
+                </h1>
+                <p class="text-[10px] text-slate-400">Championship Presentation System</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400" id="slide-mode-label">📺 Fullscreen Mode</span>
+        </div>
+    </header>
+
+    <!-- SLIDES CONTAINER -->
+    <main class="flex-1 flex flex-col justify-center items-center my-6">
+        <div class="w-full max-w-5xl aspect-[16/9] slide-gradient-1 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl relative flex flex-col p-12 glow-purple" id="slidesonly-frame">
+            <div id="slidesonly-content" class="h-full flex flex-col justify-between">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER / SHORTCUTS -->
+    <footer class="bg-slate-950/80 border border-slate-900 py-3 px-6 rounded-xl text-center text-xs text-slate-500 flex justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <button onclick="prevSlide()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 font-bold transition flex items-center gap-1.5 cursor-pointer">
+                ← ก่อนหน้า
+            </button>
+            <span class="text-slate-400 font-bold font-outfit" id="slidesonly-counter">
+                Slide 1 / 8
+            </span>
+            <button onclick="nextSlide()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 font-bold transition flex items-center gap-1.5 cursor-pointer">
+                ถัดไป →
+            </button>
+        </div>
+        <div class="text-[10px] text-slate-400 hidden sm:block">
+            กดปุ่ม <kbd class="px-1 py-0.5 bg-slate-850 text-slate-300 rounded border border-slate-700 font-mono text-[9px]">←</kbd> และ <kbd class="px-1 py-0.5 bg-slate-850 text-slate-300 rounded border border-slate-700 font-mono text-[9px]">→</kbd> บนคีย์บอร์ดเพื่อเปลี่ยนสไลด์ได้
+        </div>
+        <div class="font-outfit font-semibold text-slate-400">
+            PEA HACKATHON 2026 · TEAM PEA BRAIN 🏆
+        </div>
+    </footer>
+
+    <!-- SLIDE DATA & SYSTEM LOGIC -->
+    <script>
+        const slides = [
+            {
+                id: 1,
+                title: "วิกฤตพัสดุขาดแคลนในเช้าวันจันทร์",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            🚨 THE CRITICAL PAIN POINT
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight font-outfit mb-4">
+                            วิกฤตพัสดุขาดแคลน<br/><span class="text-rose-500">สต็อกหมดโดยไม่รู้ตัว</span>
+                        </h2>
+                        <p class="text-lg text-slate-300 max-w-xl">
+                            หน้างานเดือดร้อน ประชาชนไฟดับรอนานขึ้น แต่จัดซื้อยังต้องใช้เวลาทำเอกสารด้วยมือ
+                        </p>
+                    </div>
+                    <div class="absolute bottom-12 right-12 w-64 glass p-6 rounded-2xl border-rose-500/20 glow-rose">
+                        <div class="text-xs text-rose-400 font-bold uppercase tracking-wider">Stock Status</div>
+                        <div class="text-4xl font-extrabold text-white mt-1 font-outfit">0 UNITS</div>
+                        <div class="text-xs text-rose-300/80 mt-1">หม้อแปลง 160 kVA 3 เฟส</div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "งานจัดซื้อแบบแมนนวล: ช้า ยาก เสี่ยง",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6">
+                            ข้อมูลมหาศาล<br/><span class="text-rose-400">กับชั่วโมงทำงานที่หายไป</span>
+                        </h2>
+                        <div class="grid grid-cols-3 gap-4 max-w-2xl">
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-semibold">ข้อมูลประวัติจัดซื้อ</div>
+                                <div class="text-3xl font-black text-white mt-1 font-outfit">3,208</div>
+                                <div class="text-xs text-slate-400">ใบสั่งซื้อ 2 ปี</div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-semibold">มูลค่าโครงการ</div>
+                                <div class="text-3xl font-black text-white mt-1 font-outfit">4.87B</div>
+                                <div class="text-xs text-slate-400">พันล้านบาท</div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-semibold">เวลาทำงานจัดซื้อ</div>
+                                <div class="text-3xl font-black text-rose-400 mt-1 font-outfit">3 DAYS</div>
+                                <div class="text-xs text-rose-300/80">จัดทำแผนจัดหา</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "PEA Brain: คู่คิดจัดซื้ออัจฉริยะ",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            💡 CONTEXT: WHY PEA BRAIN?
+                        </div>
+                        <h2 class="text-3xl md:text-6xl font-black text-white leading-tight font-outfit mb-4">
+                            PEA BRAIN
+                        </h2>
+                        <h3 class="text-xl md:text-2xl text-purple-300 font-extrabold">
+                            "ระบบจัดซื้ออัจฉริยะ คู่คิดวิเคราะห์และวางแผนเชิงรุก"
+                        </h3>
+                        <p class="text-slate-300 mt-4 max-w-lg leading-relaxed">
+                            เปลี่ยนจัดซื้อจากระบบ 'ตั้งรับ' มาเป็น 'เชิงรุก' ผ่านการใช้ระบบแนะนำอัจฉริยะ (AI-Driven Planning)
+                        </p>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-purple-500/20 glow-purple">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">3 Killing Features Active</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">1. ช่วยวางแผน (Plan)</strong>
+                                    <span class="text-xs text-slate-400">คำนวณ Dynamic ROP/VMI ล็อคยอดล่วงหน้า</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">2. ช่วยป้องกัน (Prevent)</strong>
+                                    <span class="text-xs text-slate-400">วิเคราะห์ดีเลย์/ผันผวนราคากลาง + บัฟเฟอร์ 5%</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-400">🟢</span>
+                                <div>
+                                    <strong class="text-white font-bold block">3. Human Decision (Control)</strong>
+                                    <span class="text-xs text-slate-400">AI ช่วยวิเคราะห์และไกด์ มนุษย์ตัดสินใจ 100% (SAP Integrated)</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                title: "กรณีศึกษา (Showcase): ประหยัด TCO ฿28.4 ล้าน",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6 font-outfit">
+                            Showcase กรณีศึกษา:<br/><span class="text-emerald-400">TCO Optimization 28.4 ล้านบาท</span>
+                        </h2>
+                        <div class="grid grid-cols-2 gap-6 max-w-lg">
+                            <div class="glass p-5 rounded-2xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-bold uppercase">Holding Cost Saving</div>
+                                <div class="text-4xl font-extrabold text-emerald-400 mt-1 font-outfit">฿28.4M</div>
+                                <div class="text-xs text-slate-400 mt-1">จากพัสดุกลุ่มหม้อแปลงหลัก</div>
+                            </div>
+                            <div class="glass p-5 rounded-2xl border-slate-800">
+                                <div class="text-xs text-slate-400 font-bold uppercase">Standard Price Buffer</div>
+                                <div class="text-4xl font-extrabold text-white mt-1 font-outfit">+5%</div>
+                                <div class="text-xs text-slate-400 mt-1">ป้องกันประมูลล้มเหลว (Material Risk)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-emerald-500/20 glow-emerald">
+                        <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">เปรียบเทียบแผนจัดหาหลัก</div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span>Bulk (ซื้อตู้เดียว)</span>
+                                    <span class="text-slate-400">Holding Cost สูงมาก</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2">
+                                    <div class="bg-slate-400 h-2 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-emerald-400 font-bold">VMI Frame Agreement (3 Lots)</span>
+                                    <span class="text-emerald-400 font-bold">ประหยัด 70%</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2">
+                                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                title: "วิเคราะห์จุดเข้าซื้อที่ดีที่สุด (Optimal Market Timing)",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            📈 MARKET INTELLIGENCE
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-4 font-outfit">
+                            Optimal Timing:<br/><span class="text-amber-400">กรกฎาคม 2569</span>
+                        </h2>
+                        <p class="text-lg text-slate-300 max-w-lg leading-relaxed">
+                            ล็อคราคาสัญญาก่อนตลาดปรับตัวขึ้น <span class="text-rose-400 font-bold">12-15%</span> ในไตรมาส 4 (Trade War Effect)
+                        </p>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-slate-800">
+                        <div class="text-xs text-slate-400 font-bold uppercase mb-3">Timeline ข้อเสนอแนะจัดซื้อ</div>
+                        <div class="space-y-3 font-semibold text-sm">
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <span class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs">พ.ค.</span>
+                                <span>ดีที่สุด (ผ่านไปแล้ว)</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-amber-400">
+                                <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs border border-amber-500/30">ก.ค.</span>
+                                <span>โอกาสสุดท้าย (เร่งประมูล!)</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-rose-400">
+                                <span class="w-6 h-6 rounded-full bg-rose-500/25 text-rose-400 flex items-center justify-center text-xs border border-rose-500/30">ต.ค.</span>
+                                <span>เสี่ยงราคาพุ่ง 12-15%</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 6,
+                title: "แผนเผชิญเหตุฉุกเฉิน: ปรับ ROP สู้ปัญหาส่งมอบล่าช้า",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold rounded-full mb-4 w-fit">
+                            🛡️ RISK RESILIENCE & MITIGATION
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-4">
+                            แผนเผชิญเหตุฉุกเฉิน<br/><span class="text-rose-400">จัดซื้อพิเศษ 833 เครื่อง</span>
+                        </h2>
+                        <div class="grid grid-cols-2 gap-4 max-w-md">
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400">สต็อกฉุกเฉินที่ต้องการ</div>
+                                <div class="text-2xl font-bold text-rose-400 font-outfit">833 เครื่อง</div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800">
+                                <div class="text-xs text-slate-400">จุดสั่งซื้อใหม่ (ROP)</div>
+                                <div class="text-2xl font-bold text-white font-outfit">100 วัน</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-rose-500/20 glow-rose">
+                        <div class="text-xs text-slate-400 font-bold uppercase mb-2">ประเมินช่องว่างวิกฤตคลัง (3 เดือน)</div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">ความต้องการสะสม (ก.ค.-ก.ย. 69)</span>
+                                <span class="font-bold text-white">1,018</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">สต็อกคงเหลือปัจจุบัน</span>
+                                <span class="font-bold text-white">185</span>
+                            </div>
+                            <div class="border-t border-slate-800 my-2"></div>
+                            <div class="flex justify-between text-rose-400 font-bold">
+                                <span>ส่วนขาดแคลน (Shortfall)</span>
+                                <span>-833 เครื่อง</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 7,
+                title: "โครงสร้างเทคโนโลยีและการเชื่อมต่อ (Technology & Enterprise Feasibility)",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center">
+                        <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6 font-outfit">
+                            Enterprise Tech Architecture<br/>& <span class="text-purple-400">Secure Integration</span>
+                        </h2>
+                        <div class="grid grid-cols-2 gap-4 max-w-md">
+                            <div class="glass p-4 rounded-xl border-slate-800 flex items-center gap-3">
+                                <span class="text-2xl">🧠</span>
+                                <div>
+                                    <div class="text-xs text-slate-400">Enterprise AI Engine</div>
+                                    <div class="text-sm font-bold text-purple-400 font-outfit">AWS Bedrock (Claude)</div>
+                                </div>
+                            </div>
+                            <div class="glass p-4 rounded-xl border-slate-800 flex items-center gap-3">
+                                <span class="text-2xl">⚙️</span>
+                                <div>
+                                    <div class="text-xs text-slate-400">Stack & ORM</div>
+                                    <div class="text-sm font-bold text-white font-outfit">Next.js / PostgreSQL</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 w-80 glass p-6 rounded-3xl border-slate-800">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                            <span class="text-xs text-purple-400 font-bold uppercase tracking-wider">SAP ERP Connection Ready</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ระบบติดตั้ง API Gateway สำหรับเชื่อมโยงส่งมอบข้อมูลออก (Export Data) ไปยังระบบประมูลและคลังสินค้าของ SAP ERP เดิมของ กฟภ. ได้อย่างสะดวกรวดเร็วและปลอดภัยสูงสุด ป้องกันข้อมูลรั่วไหลอย่างสมบูรณ์แบบ
+                        </p>
+                    </div>
+                `
+            },
+            {
+                id: 8,
+                title: "ขับเคลื่อน กฟภ. สู่การเป็น Digital Utility",
+                htmlContent: `
+                    <div class="flex-1 flex flex-col justify-center items-center text-center">
+                        <div class="w-16 h-16 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center font-bold text-3xl text-white shadow-xl shadow-purple-500/20 font-outfit mb-6">
+                            🏆
+                        </div>
+                        <h2 class="text-4xl md:text-6xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-emerald-400 bg-clip-text text-transparent leading-tight mb-4 font-outfit">
+                            Digital Strategic Utility
+                        </h2>
+                        <p class="text-xl text-slate-300 max-w-xl">
+                            ร่วมขับเคลื่อนการจัดซื้อเชิงรุกที่โปร่งใส แม่นยำ และปลอดภัยไปกับพวกเรา
+                        </p>
+                        <h3 class="text-2xl font-bold text-white mt-6 font-outfit">
+                            Thank You.
+                        </h3>
+                    </div>
+                `
+            }
+        ];
+
+        let activeSlideIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderActiveSlide();
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+        });
+
+        function renderActiveSlide() {
+            const slide = slides[activeSlideIndex];
+            
+            document.getElementById('slidesonly-content').innerHTML = `
+                <!-- Slide Header -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xs text-slate-400 font-bold uppercase tracking-widest font-outfit">PEA Brain Strategy Pitch</div>
+                        <div class="text-md font-bold text-slate-400 mt-1">${slide.title}</div>
+                    </div>
+                    <div class="text-xs font-bold text-slate-400 bg-slate-900 border border-slate-800 px-3.5 py-1 rounded-full font-outfit">
+                        SLIDE ${slide.id} / ${slides.length}
+                    </div>
+                </div>
+
+                <!-- Slide Body -->
+                <div class="flex-1 flex flex-col justify-center relative">
+                    ${slide.htmlContent}
+                </div>
+
+                <!-- Slide Footer -->
+                <div class="flex justify-between items-center text-xs text-slate-500 pt-4 border-t border-slate-800/40">
+                    <div>© 2026 PEA Brain Team</div>
+                    <div class="font-outfit font-semibold tracking-wider uppercase text-purple-400">Strategic Decision Platform</div>
+                </div>
+            `;
+            document.getElementById('slidesonly-counter').innerText = `Slide ${slide.id} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (activeSlideIndex < slides.length - 1) {
+                activeSlideIndex++;
+                renderActiveSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (activeSlideIndex > 0) {
+                activeSlideIndex--;
+                renderActiveSlide();
+            }
+        }
+    </script>
+</body>
+</html>
