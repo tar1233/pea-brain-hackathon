@@ -73,6 +73,10 @@ export default function ProcurementPlanTable({
       setUploadStatus("idle");
       setCapacityUpdated(false);
       setAiResult(null);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("vendor_capacity_updated");
+        window.dispatchEvent(new Event("vendorCapacityUpdated"));
+      }
     }
   };
 
@@ -92,6 +96,10 @@ export default function ProcurementPlanTable({
         setAiResult(data.data);
         setUploadStatus("done");
         setCapacityUpdated(true);
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("vendor_capacity_updated", "true");
+          window.dispatchEvent(new Event("vendorCapacityUpdated"));
+        }
       } else {
         setUploadStatus("idle");
         alert("Failed to analyze data");
@@ -227,7 +235,7 @@ export default function ProcurementPlanTable({
       {
         id: 1,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "PEA-AA-Bid-69-001",
+        bidNo: "PEA-AA-Bid-69-001.1",
         projectCode: "Z151A",
         qty: z151aQty,
         unitPrice: unitPrice,
@@ -244,7 +252,7 @@ export default function ProcurementPlanTable({
       {
         id: 2,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "PEA-AA-Bid-69-002",
+        bidNo: "PEA-AA-Bid-69-001.2",
         projectCode: "Z152A",
         qty: z152aQty,
         unitPrice: unitPrice,
@@ -261,7 +269,7 @@ export default function ProcurementPlanTable({
       {
         id: 3,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "PEA-AA-Bid-69-003",
+        bidNo: "PEA-AA-Bid-69-001.3",
         projectCode: "Z07MA",
         qty: z07maQty,
         unitPrice: unitPrice,
@@ -623,9 +631,6 @@ export default function ProcurementPlanTable({
                         <button onClick={exportToSAP} className="flex-1 flex justify-center items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white px-3 py-1.5 rounded-lg shadow-lg text-[13px] font-bold transition-all transform hover:scale-[1.02] hover:shadow-emerald-500/30 whitespace-nowrap cursor-pointer">
                           <Database size={14} /> Export to SAP
                         </button>
-                        <button onClick={exportToSAP} className="flex items-center justify-center border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer">
-                          <Download size={14} />
-                        </button>
                       </div>
                     </div>
                     <div className="text-amber-400 text-[14.5px] mt-2 font-semibold flex items-center gap-1">
@@ -776,7 +781,7 @@ export default function ProcurementPlanTable({
               <tr key={row.id} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white animate-in fade-in duration-500">
                 <td className="p-2 border-r border-slate-200 text-center font-bold text-slate-700">{row.id}</td>
                 <td className="p-2 border-r border-slate-200 text-center text-slate-500">{row.code}</td>
-                <td className="p-2 border-r border-slate-200 font-medium text-indigo-700">{row.bidNo}</td>
+                <td className="p-2 border-r border-slate-200 font-medium text-indigo-700 whitespace-nowrap">{row.bidNo}</td>
                 <td className="p-2 border-r border-slate-200 text-center">{row.projectCode}</td>
                 
                 <td className="p-2 border-r border-slate-200 text-right font-bold">{formatCurrency(row.qty)}</td>
@@ -805,7 +810,7 @@ export default function ProcurementPlanTable({
                     
                     return (
                       <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
-                        <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm`}>
+                        <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm whitespace-nowrap`}>
                           {val}
                         </div>
                       </td>

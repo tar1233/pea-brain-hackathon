@@ -7,12 +7,31 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 export default function AIVendorStrategyView({ aiResult, material }: { aiResult?: any, material?: any }) {
   const { vendors } = useData();
+  const [capacityUpdated, setCapacityUpdated] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const checkCapacity = () => {
+        setCapacityUpdated(sessionStorage.getItem("vendor_capacity_updated") === "true");
+      };
+      checkCapacity();
+      window.addEventListener("vendorCapacityUpdated", checkCapacity);
+      return () => window.removeEventListener("vendorCapacityUpdated", checkCapacity);
+    }
+  }, []);
 
   // Process Vendor Data
-  const processedVendors = (vendors || []).map((v: any) => ({
-    ...v,
-    availableCapacity: Math.floor((v.registeredCapacity - v.outstandingPOs) * v.reliabilityScore)
-  }));
+  const processedVendors = (vendors || []).map((v: any) => {
+    let registeredCapacity = v.registeredCapacity;
+    if (capacityUpdated && (v.name.includes("ไทยทรานสฟอร์มเมอร์") || v.name.includes("ไทยทรานส์ฟอร์เมอร์"))) {
+      registeredCapacity = 1000;
+    }
+    return {
+      ...v,
+      registeredCapacity,
+      availableCapacity: Math.floor((registeredCapacity - v.outstandingPOs) * v.reliabilityScore)
+    };
+  });
 
   const totalMonthlyMarketCapacity = processedVendors.reduce((acc: number, v: any) => acc + v.availableCapacity, 0);
 
