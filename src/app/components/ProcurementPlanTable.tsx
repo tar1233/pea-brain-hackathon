@@ -47,7 +47,22 @@ export default function ProcurementPlanTable({
   );
   const [aiResult, setAiResult] = useState<any>(null);
   const [isGeneratingBid, setIsGeneratingBid] = useState(false);
+  const [isPlanUploaded, setIsPlanUploaded] = useState(false);
+  const [uploadedData, setUploadedData] = useState<{
+    qty: number;
+    unitPrice: number;
+    budgetPrice: number;
+    unit: string;
+    z151aQty: number;
+    z152aQty: number;
+    z07maQty: number;
+  } | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    setIsPlanUploaded(false);
+    setUploadedData(null);
+  }, [materialId]);
 
   const formatCurrency = (val: number) => new Intl.NumberFormat("th-TH").format(val);
   const formatPrice = (val: number) => new Intl.NumberFormat("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
@@ -157,8 +172,10 @@ export default function ProcurementPlanTable({
     if (!resolvedMaterial) return [];
 
     // AI Dynamic Calculation Engine (No mock data!)
-    const totalQty = resolvedMaterial.annualDemand || 2454;
-    const lotQty = Math.round(totalQty / 3);
+    const totalQty = uploadedData ? uploadedData.qty : (resolvedMaterial.annualDemand || 2454);
+    const z151aQty = uploadedData ? uploadedData.z151aQty : Math.round(totalQty / 3);
+    const z152aQty = uploadedData ? uploadedData.z152aQty : Math.round(totalQty / 3);
+    const z07maQty = uploadedData ? uploadedData.z07maQty : (totalQty - z151aQty - z152aQty);
 
     const getMonthQty = (quarterQty: number) => {
       const m1 = Math.floor(quarterQty / 3);
@@ -167,12 +184,12 @@ export default function ProcurementPlanTable({
       return [m1, m2, m3];
     };
 
-    const q1M = getMonthQty(lotQty);
-    const q2M = getMonthQty(lotQty);
-    const q3M = getMonthQty(totalQty - (lotQty * 2)); // Ensure exact total
+    const q1M = getMonthQty(z151aQty);
+    const q2M = getMonthQty(z152aQty);
+    const q3M = getMonthQty(z07maQty);
 
-    const unitPrice = resolvedMaterial.unitPrice || 150000;
-    const standardPrice = resolvedMaterial.budgetPrice || Math.round(unitPrice * 1.05);
+    const unitPrice = uploadedData ? uploadedData.unitPrice : (resolvedMaterial.unitPrice || 150000);
+    const standardPrice = uploadedData ? uploadedData.budgetPrice : (resolvedMaterial.budgetPrice || Math.round(unitPrice * 1.05));
 
     const maxCapStr = capacityUpdated ? "1,000 - 2,500" : "800 - 2,000";
     const minCapStr = capacityUpdated ? 350 : 300;
@@ -212,10 +229,10 @@ export default function ProcurementPlanTable({
         code: resolvedMaterial.sapCode || "N/A",
         bidNo: "PEA-AA-Bid-69-001",
         projectCode: "Z151A",
-        qty: lotQty,
+        qty: z151aQty,
         unitPrice: unitPrice,
         standardPrice: standardPrice,
-        totalBudget: lotQty * standardPrice,
+        totalBudget: z151aQty * standardPrice,
         stockForecast: Math.floor(stockForecastBase * 0.8),
         biddingStage: "AI แนะนำ: รอประมูล",
         contractStage: "AI แนะนำ: รอสัญญา",
@@ -227,12 +244,12 @@ export default function ProcurementPlanTable({
       {
         id: 2,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "PEA-AA-Bid-69-001",
-        projectCode: "Z151A",
-        qty: lotQty,
+        bidNo: "PEA-AA-Bid-69-002",
+        projectCode: "Z152A",
+        qty: z152aQty,
         unitPrice: unitPrice,
         standardPrice: standardPrice,
-        totalBudget: lotQty * standardPrice,
+        totalBudget: z152aQty * standardPrice,
         stockForecast: Math.floor(stockForecastBase * 0.6),
         biddingStage: "AI แนะนำ: รอประมูล",
         contractStage: "AI แนะนำ: รอสัญญา",
@@ -244,12 +261,12 @@ export default function ProcurementPlanTable({
       {
         id: 3,
         code: resolvedMaterial.sapCode || "N/A",
-        bidNo: "PEA-AA-Bid-69-001",
-        projectCode: "Z151A",
-        qty: totalQty - (lotQty * 2),
+        bidNo: "PEA-AA-Bid-69-003",
+        projectCode: "Z07MA",
+        qty: z07maQty,
         unitPrice: unitPrice,
         standardPrice: standardPrice,
-        totalBudget: (totalQty - (lotQty * 2)) * standardPrice,
+        totalBudget: z07maQty * standardPrice,
         stockForecast: Math.floor(stockForecastBase * 0.4),
         biddingStage: "AI แนะนำ: รอประมูล",
         contractStage: "AI แนะนำ: รอสัญญา",
@@ -261,7 +278,7 @@ export default function ProcurementPlanTable({
     );
     
     return rows;
-  }, [resolvedMaterial, capacityUpdated]);
+  }, [resolvedMaterial, capacityUpdated, uploadedData]);
 
   const tableData = useMemo(() => dynamicBiddingData.filter(r => r.id !== 0), [dynamicBiddingData]);
   const emergencyRow = useMemo(() => dynamicBiddingData.find(r => r.id === 0), [dynamicBiddingData]);
@@ -333,14 +350,56 @@ export default function ProcurementPlanTable({
   };
 
   const handlePlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setIsGeneratingBid(true);
-      setTimeout(() => {
-        exportBiddingPlanExcel();
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsGeneratingBid(true);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = evt.target?.result;
+        if (!data) throw new Error("No data read");
+        
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames.includes("2569") ? "2569" : workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1 });
+        
+        const targetCode = resolvedMaterial?.sapCode || materialId;
+        const matchRow = rows.find(r => r && String(r[2]).trim() === String(targetCode).trim());
+        
+        if (matchRow) {
+          const parsedQty = Number(matchRow[12]) || 2454;
+          const parsedUnitPrice = Number(matchRow[4]) || 150000;
+          const parsedBudgetPrice = Number(matchRow[5]) || 198900;
+          const parsedUnit = String(matchRow[3]) || "EA";
+
+          setUploadedData({
+            qty: parsedQty,
+            unitPrice: parsedUnitPrice,
+            budgetPrice: parsedBudgetPrice,
+            unit: parsedUnit,
+            z151aQty: Number(matchRow[6]) || 0,
+            z152aQty: Number(matchRow[8]) || 0,
+            z07maQty: Number(matchRow[10]) || 0,
+          });
+
+          setIsPlanUploaded(true);
+          
+          alert(`นำเข้าแผนงานสำเร็จ!\nพัสดุ: ${materialName} (รหัส ${targetCode})\nจำนวนตามแผนจัดหา: ${parsedQty.toLocaleString()} ${parsedUnit}\nระบบได้วิเคราะห์แผนจัดหาและคำนวณการแบ่งลอตประมูล (e-Bidding) & ส่งมอบ (VMI) เรียบร้อยแล้ว`);
+        } else {
+          alert(`นำเข้าแผนงานสำเร็จ! แต่ไม่พบข้อมูลพัสดุรหัส ${targetCode} ในแผนจัดหา ปี 2569\nระบบจะใช้ข้อมูลความต้องการอ้างอิงในการแสดงผลแทน`);
+          setIsPlanUploaded(true);
+        }
+      } catch (err) {
+        console.error("Error parsing Excel:", err);
+        alert("เกิดข้อผิดพลาดในการอ่านไฟล์ Excel กรุณาตรวจสอบรูปแบบไฟล์");
+      } finally {
         setIsGeneratingBid(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
-      }, 1500);
-    }
+      }
+    };
+    reader.readAsArrayBuffer(file);
   };
 
   return (
@@ -525,76 +584,78 @@ export default function ProcurementPlanTable({
       )}
 
       {/* AI Market Timing Insight */}
-      <div className="m-4 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
-          <Brain size={180} className="-mt-8 -mr-8" />
-        </div>
-        
-        <div className="flex items-start gap-4 relative z-10">
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0 backdrop-blur-sm shadow-inner mt-1">
-            <TrendingDown className="text-emerald-400" size={24} />
+      {isPlanUploaded && (
+        <div className="m-4 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
+            <Brain size={180} className="-mt-8 -mr-8" />
           </div>
-          <div className="flex-1">
-            <h4 className="text-[18px] font-bold text-emerald-300 flex items-center gap-2 mb-3">
-              <Sparkles size={18} />
-              AI Market Timing Insight: วิเคราะห์จุดเข้าซื้อที่คุ้มค่าที่สุด (Optimal Buying Point)
-            </h4>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Left Col */}
-              <div className="space-y-4">
-                <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
-                  <div className="text-indigo-200 text-[14px] font-medium">🎯 จุดเข้าซื้อที่ดีที่สุดรอบถัดไป (Next Optimal Month)</div>
-                  <div className="flex flex-col gap-2 mt-2">
-                    <div className="text-[20px] font-bold text-white leading-none">กรกฎาคม 2569</div>
-                    <div className="flex gap-2 w-full">
-                      <button onClick={exportToSAP} className="flex-1 flex justify-center items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white px-3 py-1.5 rounded-lg shadow-lg text-[13px] font-bold transition-all transform hover:scale-[1.02] hover:shadow-emerald-500/30 whitespace-nowrap cursor-pointer">
-                        <Database size={14} /> Export to SAP
-                      </button>
-                      <button onClick={exportToSAP} className="flex items-center justify-center border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer">
-                        <Download size={14} />
-                      </button>
+          
+          <div className="flex items-start gap-4 relative z-10">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0 backdrop-blur-sm shadow-inner mt-1">
+              <TrendingDown className="text-emerald-400" size={24} />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[18px] font-bold text-emerald-300 flex items-center gap-2 mb-3">
+                <Sparkles size={18} />
+                AI Market Timing Insight: วิเคราะห์จุดเข้าซื้อที่คุ้มค่าที่สุด (Optimal Buying Point)
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Left Col */}
+                <div className="space-y-4">
+                  <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
+                    <div className="text-indigo-200 text-[14px] font-medium">🎯 จุดเข้าซื้อที่ดีที่สุดรอบถัดไป (Next Optimal Month)</div>
+                    <div className="flex flex-col gap-2 mt-2">
+                      <div className="text-[20px] font-bold text-white leading-none">กรกฎาคม 2569</div>
+                      <div className="flex gap-2 w-full">
+                        <button onClick={exportToSAP} className="flex-1 flex justify-center items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white px-3 py-1.5 rounded-lg shadow-lg text-[13px] font-bold transition-all transform hover:scale-[1.02] hover:shadow-emerald-500/30 whitespace-nowrap cursor-pointer">
+                          <Database size={14} /> Export to SAP
+                        </button>
+                        <button onClick={exportToSAP} className="flex items-center justify-center border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer">
+                          <Download size={14} />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-amber-400 text-[14.5px] mt-2 font-semibold flex items-center gap-1">
+                      <TrendingDown size={14} /> โอกาสสุดท้ายก่อนราคาดีดตัว 12-15% ในไตรมาส 4
                     </div>
                   </div>
-                  <div className="text-amber-400 text-[14.5px] mt-2 font-semibold flex items-center gap-1">
-                    <TrendingDown size={14} /> โอกาสสุดท้ายก่อนราคาดีดตัว 12-15% ในไตรมาส 4
+                  
+                  <div className="bg-white/10 rounded-lg p-3 border border-white/10 shadow-sm backdrop-blur-sm flex items-center gap-2">
+                    <Brain size={16} className="text-emerald-300 shrink-0" />
+                    <div className="text-[14px] text-white/90 font-medium leading-snug">
+                      เรียนรู้จาก <strong className="text-emerald-300">Data จริง (3,208 POs)</strong> ย้อนหลัง 2 ปี และกำลังผลิตสูงสุดจาก Vendor 13 เจ้า
+                    </div>
                   </div>
                 </div>
                 
-                <div className="bg-white/10 rounded-lg p-3 border border-white/10 shadow-sm backdrop-blur-sm flex items-center gap-2">
-                  <Brain size={16} className="text-emerald-300 shrink-0" />
-                  <div className="text-[14px] text-white/90 font-medium leading-snug">
-                    เรียนรู้จาก <strong className="text-emerald-300">Data จริง (3,208 POs)</strong> ย้อนหลัง 2 ปี และกำลังผลิตสูงสุดจาก Vendor 13 เจ้า
+                {/* Right Col */}
+                <div className="space-y-4">
+                  <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
+                    <div className="text-indigo-200 text-[14px] font-medium mb-1.5">💡 จุดเข้าซื้อที่ดีที่สุด (Optimal Timing)</div>
+                    <p className="text-[15.5px] text-white/90 font-bold leading-snug">
+                      <span className="text-emerald-300">ถ้ารอได้ให้รอ:</span> แต่กรณีนี้ Lead Time 84 วัน สต็อกจะขาดใน ต.ค. <br/>➔ <span className="text-red-300">รอไม่ได้แล้ว ต้องเข้าประมูล ก.ค. ทันที!</span>
+                    </p>
                   </div>
-                </div>
-              </div>
-              
-              {/* Right Col */}
-              <div className="space-y-4">
-                <div className="bg-white/10 rounded-lg p-4 border border-white/10 shadow-sm backdrop-blur-sm">
-                  <div className="text-indigo-200 text-[14px] font-medium mb-1.5">💡 จุดเข้าซื้อที่ดีที่สุด (Optimal Timing)</div>
-                  <p className="text-[15.5px] text-white/90 font-bold leading-snug">
-                    <span className="text-emerald-300">ถ้ารอได้ให้รอ:</span> แต่กรณีนี้ Lead Time 84 วัน สต็อกจะขาดใน ต.ค. <br/>➔ <span className="text-red-300">รอไม่ได้แล้ว ต้องเข้าประมูล ก.ค. ทันที!</span>
-                  </p>
-                </div>
-                
-                <div className="bg-red-500/20 rounded-lg p-4 border border-red-500/30 shadow-sm backdrop-blur-sm">
-                  <div className="text-red-300 text-[14px] font-bold mb-1.5 flex items-center gap-1.5">
-                    <AlertTriangle size={16} /> ความเสี่ยง (Risk)
+                  
+                  <div className="bg-red-500/20 rounded-lg p-4 border border-red-500/30 shadow-sm backdrop-blur-sm">
+                    <div className="text-red-300 text-[14px] font-bold mb-1.5 flex items-center gap-1.5">
+                      <AlertTriangle size={16} /> ความเสี่ยง (Risk)
+                    </div>
+                    <p className="text-[15.5px] text-white/90 font-bold leading-snug">
+                      สงครามการค้า (Trade War) กระทบภาษีนำเข้า<br/><span className="text-red-300">➔ หากเลื่อนซื้อเป็น ส.ค. ต้นทุนจะพุ่งขึ้น 12-15% ทันที</span>
+                    </p>
                   </div>
-                  <p className="text-[15.5px] text-white/90 font-bold leading-snug">
-                    สงครามการค้า (Trade War) กระทบภาษีนำเข้า<br/><span className="text-red-300">➔ หากเลื่อนซื้อเป็น ส.ค. ต้นทุนจะพุ่งขึ้น 12-15% ทันที</span>
-                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* AI Emergency Procurement Alert Card */}
-      {emergencyRow && (
-        <div className="m-4 bg-rose-50 border border-rose-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start gap-4">
+      {isPlanUploaded && emergencyRow && (
+        <div className="m-4 bg-rose-50 border border-rose-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start gap-4 animate-in fade-in duration-500">
           <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center shrink-0 border border-rose-300">
             <AlertTriangle className="text-rose-600 animate-pulse" size={24} />
           </div>
@@ -700,75 +761,99 @@ export default function ProcurementPlanTable({
             </tr>
           </thead>
           <tbody className="text-[16.5px]">
-            {tableData.map((row) => (
-              <tr key={row.id} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white">
-                <td className="p-2 border-r border-slate-200 text-center font-bold text-slate-700">{row.id}</td>
-                <td className="p-2 border-r border-slate-200 text-center text-slate-500">{row.code}</td>
-                <td className="p-2 border-r border-slate-200 font-medium text-indigo-700">{row.bidNo}</td>
-                <td className="p-2 border-r border-slate-200 text-center">{row.projectCode}</td>
-                
-                <td className="p-2 border-r border-slate-200 text-right font-bold">{formatCurrency(row.qty)}</td>
-                <td className="p-2 border-r border-slate-200 text-right">{formatPrice(row.unitPrice)}</td>
-                <td className="p-2 border-r border-slate-200 text-right text-slate-500">{formatPrice(row.standardPrice)}</td>
-                <td className="p-2 border-r border-slate-200 text-right font-bold text-emerald-700">{formatPrice(row.totalBudget)}</td>
-                
-                <td className="p-2 border-r border-slate-200 text-center">{formatCurrency(row.stockForecast)}</td>
-                <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
-                  <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.biddingStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.biddingStage}</span>
+            {!isPlanUploaded ? (
+              <tr>
+                <td colSpan={24} className="p-12 text-center bg-slate-50 text-slate-500 font-bold border border-slate-300">
+                  <div className="flex flex-col items-center justify-center gap-4 py-12">
+                    <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center border border-amber-200 shadow-sm animate-pulse">
+                      <FileSpreadsheet className="text-amber-600" size={28} />
+                    </div>
+                    <div>
+                      <h4 className="text-[18px] font-bold text-slate-800">ยังไม่มีข้อมูลแผนงานประมูล</h4>
+                      <p className="text-[14.5px] text-slate-500 font-normal mt-1">กรุณาคลิกปุ่ม "นำเข้า 1-แผนจัดหาฯ" ด้านขวาบน เพื่ออัปโหลดไฟล์แผนจัดหาพัสดุและเริ่มวิเคราะห์ e-Bidding</p>
+                    </div>
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-[14.5px] font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer mt-2"
+                    >
+                      <Upload size={16} /> นำเข้าแผนงานจัดหาพัสดุ
+                    </button>
+                  </div>
                 </td>
-                <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
-                  <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.contractStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.contractStage}</span>
-                </td>
-                
-                <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{formatCurrency(row.minCapacity)}</td>
-                <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{row.maxCapacity}</td>
-                <td className="p-2 border-r border-slate-200 text-center font-semibold">{formatCurrency(row.monthlyDemand)}</td>
-                
-                {Object.entries(row.schedule).map(([monthStr, val], idx) => {
-                  const isCurrentMonth = monthStr === 'jun';
-                  if (typeof val === 'string') {
-                    let colorClass = "bg-blue-50 text-blue-600 border-blue-200";
-                    if (val === "อนุมัติ") colorClass = "bg-purple-50 text-purple-600 border-purple-200";
-                    if (val === "สัญญา") colorClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
-                    
-                    return (
-                      <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
-                        <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm`}>
-                          {val}
-                        </div>
-                      </td>
-                    );
-                  }
-                  
-                  return (
-                    <td key={idx} className={`p-2 border-r border-slate-200 text-center ${(val as number) > 0 ? 'bg-indigo-50 font-bold text-indigo-700 text-[14.5px]' : 'text-slate-300'} ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-100/50' : ''}`}>
-                      {(val as number) > 0 ? formatCurrency(val as number) : '-'}
-                    </td>
-                  );
-                })}
               </tr>
-            ))}
-            {/* Total Row */}
-            <tr className="bg-slate-50 font-bold text-[16.5px] border-t-2 border-slate-300">
-              <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมแผนหลัก (Frame Agreement):</td>
-              <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(tableData.reduce((acc, row) => acc + row.qty, 0))}</td>
-              <td colSpan={2} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-              <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatPrice(tableData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
-              <td colSpan={6} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-              
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'oct'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'nov'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'dec'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jan'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'feb'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'mar'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'apr'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'may'))}</td>
-              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jun'))}</td>
-            </tr>
+            ) : (
+              <>
+                {tableData.map((row) => (
+                  <tr key={row.id} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white animate-in fade-in duration-500">
+                    <td className="p-2 border-r border-slate-200 text-center font-bold text-slate-700">{row.id}</td>
+                    <td className="p-2 border-r border-slate-200 text-center text-slate-500">{row.code}</td>
+                    <td className="p-2 border-r border-slate-200 font-medium text-indigo-700">{row.bidNo}</td>
+                    <td className="p-2 border-r border-slate-200 text-center">{row.projectCode}</td>
+                    
+                    <td className="p-2 border-r border-slate-200 text-right font-bold">{formatCurrency(row.qty)}</td>
+                    <td className="p-2 border-r border-slate-200 text-right">{formatPrice(row.unitPrice)}</td>
+                    <td className="p-2 border-r border-slate-200 text-right text-slate-500">{formatPrice(row.standardPrice)}</td>
+                    <td className="p-2 border-r border-slate-200 text-right font-bold text-emerald-700">{formatPrice(row.totalBudget)}</td>
+                    
+                    <td className="p-2 border-r border-slate-200 text-center">{formatCurrency(row.stockForecast)}</td>
+                    <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
+                      <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.biddingStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.biddingStage}</span>
+                    </td>
+                    <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
+                      <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.contractStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.contractStage}</span>
+                    </td>
+                    
+                    <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{formatCurrency(row.minCapacity)}</td>
+                    <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{row.maxCapacity}</td>
+                    <td className="p-2 border-r border-slate-200 text-center font-semibold">{formatCurrency(row.monthlyDemand)}</td>
+                    
+                    {Object.entries(row.schedule).map(([monthStr, val], idx) => {
+                      const isCurrentMonth = monthStr === 'jun';
+                      if (typeof val === 'string') {
+                        let colorClass = "bg-blue-50 text-blue-600 border-blue-200";
+                        if (val === "อนุมัติ") colorClass = "bg-purple-50 text-purple-600 border-purple-200";
+                        if (val === "สัญญา") colorClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
+                        
+                        return (
+                          <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
+                            <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm`}>
+                              {val}
+                            </div>
+                          </td>
+                        );
+                      }
+                      
+                      return (
+                        <td key={idx} className={`p-2 border-r border-slate-200 text-center ${(val as number) > 0 ? 'bg-indigo-50 font-bold text-indigo-700 text-[14.5px]' : 'text-slate-300'} ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-100/50' : ''}`}>
+                          {(val as number) > 0 ? formatCurrency(val as number) : '-'}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+                {/* Total Row */}
+                <tr className="bg-slate-50 font-bold text-[16.5px] border-t-2 border-slate-300 animate-in fade-in duration-500">
+                  <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมแผนหลัก (Frame Agreement):</td>
+                  <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(tableData.reduce((acc, row) => acc + row.qty, 0))}</td>
+                  <td colSpan={2} className="p-2 border-r border-slate-300 bg-slate-100"></td>
+                  <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatPrice(tableData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
+                  <td colSpan={6} className="p-2 border-r border-slate-300 bg-slate-100"></td>
+                  
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'oct'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'nov'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'dec'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jan'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'feb'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'mar'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'apr'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'may'))}</td>
+                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jun'))}</td>
+                </tr>
+              </>
+            )}
           </tbody>
         </table>
       </div>
