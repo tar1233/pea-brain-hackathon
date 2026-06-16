@@ -411,8 +411,21 @@ export default function ProcurementPlanTable({
             <FileSpreadsheet size={20} className="text-indigo-600 shrink-0" />
             แผนดำเนินการจัดหาพัสดุหลักประจำปีงบประมาณ 2569 (AI Backward Scheduling)
           </h3>
-          <p className="text-[14.5px] text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
-            พัสดุ: {materialName} | <GitCommit size={14} className="shrink-0"/> แผนแยก Timeline (ประกวดราคา &gt; สัญญา &gt; ส่งมอบ) ตาม Lead Time จริง
+          <p className="text-[14.5px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
+            พัสดุ: {materialName} | <GitCommit size={14} className="shrink-0"/> แผนแยก Timeline (ประกวดราคา &gt; สัญญา &gt; ส่งมอบ) ตาม Lead Time จริง | 
+            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[12px] font-bold ${isPlanUploaded ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}`}>
+              {isPlanUploaded ? (
+                <>
+                  <CheckCircle2 size={12} className="shrink-0 text-emerald-600" />
+                  วิเคราะห์จาก 1-แผนจัดหาฯ ที่นำเข้าแล้ว
+                </>
+              ) : (
+                <>
+                  <Brain size={12} className="shrink-0 text-indigo-600 animate-pulse" />
+                  🤖 AI คาดการณ์อัตโนมัติ
+                </>
+              )}
+            </span>
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -584,8 +597,7 @@ export default function ProcurementPlanTable({
       )}
 
       {/* AI Market Timing Insight */}
-      {isPlanUploaded && (
-        <div className="m-4 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="m-4 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
             <Brain size={180} className="-mt-8 -mr-8" />
           </div>
@@ -651,10 +663,9 @@ export default function ProcurementPlanTable({
             </div>
           </div>
         </div>
-      )}
 
       {/* AI Emergency Procurement Alert Card */}
-      {isPlanUploaded && emergencyRow && (
+      {emergencyRow && (
         <div className="m-4 bg-rose-50 border border-rose-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start gap-4 animate-in fade-in duration-500">
           <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center shrink-0 border border-rose-300">
             <AlertTriangle className="text-rose-600 animate-pulse" size={24} />
@@ -761,99 +772,75 @@ export default function ProcurementPlanTable({
             </tr>
           </thead>
           <tbody className="text-[16.5px]">
-            {!isPlanUploaded ? (
-              <tr>
-                <td colSpan={24} className="p-12 text-center bg-slate-50 text-slate-500 font-bold border border-slate-300">
-                  <div className="flex flex-col items-center justify-center gap-4 py-12">
-                    <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center border border-amber-200 shadow-sm animate-pulse">
-                      <FileSpreadsheet className="text-amber-600" size={28} />
-                    </div>
-                    <div>
-                      <h4 className="text-[18px] font-bold text-slate-800">ยังไม่มีข้อมูลแผนงานประมูล</h4>
-                      <p className="text-[14.5px] text-slate-500 font-normal mt-1">กรุณาคลิกปุ่ม "นำเข้า 1-แผนจัดหาฯ" ด้านขวาบน เพื่ออัปโหลดไฟล์แผนจัดหาพัสดุและเริ่มวิเคราะห์ e-Bidding</p>
-                    </div>
-                    <button 
-                      onClick={() => fileInputRef.current?.click()}
-                      className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-[14.5px] font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer mt-2"
-                    >
-                      <Upload size={16} /> นำเข้าแผนงานจัดหาพัสดุ
-                    </button>
-                  </div>
+            {tableData.map((row) => (
+              <tr key={row.id} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white animate-in fade-in duration-500">
+                <td className="p-2 border-r border-slate-200 text-center font-bold text-slate-700">{row.id}</td>
+                <td className="p-2 border-r border-slate-200 text-center text-slate-500">{row.code}</td>
+                <td className="p-2 border-r border-slate-200 font-medium text-indigo-700">{row.bidNo}</td>
+                <td className="p-2 border-r border-slate-200 text-center">{row.projectCode}</td>
+                
+                <td className="p-2 border-r border-slate-200 text-right font-bold">{formatCurrency(row.qty)}</td>
+                <td className="p-2 border-r border-slate-200 text-right">{formatPrice(row.unitPrice)}</td>
+                <td className="p-2 border-r border-slate-200 text-right text-slate-500">{formatPrice(row.standardPrice)}</td>
+                <td className="p-2 border-r border-slate-200 text-right font-bold text-emerald-700">{formatPrice(row.totalBudget)}</td>
+                
+                <td className="p-2 border-r border-slate-200 text-center">{formatCurrency(row.stockForecast)}</td>
+                <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
+                  <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.biddingStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.biddingStage}</span>
                 </td>
-              </tr>
-            ) : (
-              <>
-                {tableData.map((row) => (
-                  <tr key={row.id} className="hover:bg-amber-50/50 transition-colors border-b border-slate-200 bg-white animate-in fade-in duration-500">
-                    <td className="p-2 border-r border-slate-200 text-center font-bold text-slate-700">{row.id}</td>
-                    <td className="p-2 border-r border-slate-200 text-center text-slate-500">{row.code}</td>
-                    <td className="p-2 border-r border-slate-200 font-medium text-indigo-700">{row.bidNo}</td>
-                    <td className="p-2 border-r border-slate-200 text-center">{row.projectCode}</td>
+                <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
+                  <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.contractStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.contractStage}</span>
+                </td>
+                
+                <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{formatCurrency(row.minCapacity)}</td>
+                <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{row.maxCapacity}</td>
+                <td className="p-2 border-r border-slate-200 text-center font-semibold">{formatCurrency(row.monthlyDemand)}</td>
+                
+                {Object.entries(row.schedule).map(([monthStr, val], idx) => {
+                  const isCurrentMonth = monthStr === 'jun';
+                  if (typeof val === 'string') {
+                    let colorClass = "bg-blue-50 text-blue-600 border-blue-200";
+                    if (val === "อนุมัติ") colorClass = "bg-purple-50 text-purple-600 border-purple-200";
+                    if (val === "สัญญา") colorClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
                     
-                    <td className="p-2 border-r border-slate-200 text-right font-bold">{formatCurrency(row.qty)}</td>
-                    <td className="p-2 border-r border-slate-200 text-right">{formatPrice(row.unitPrice)}</td>
-                    <td className="p-2 border-r border-slate-200 text-right text-slate-500">{formatPrice(row.standardPrice)}</td>
-                    <td className="p-2 border-r border-slate-200 text-right font-bold text-emerald-700">{formatPrice(row.totalBudget)}</td>
-                    
-                    <td className="p-2 border-r border-slate-200 text-center">{formatCurrency(row.stockForecast)}</td>
-                    <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
-                      <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.biddingStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.biddingStage}</span>
-                    </td>
-                    <td className="p-2 border-r border-slate-200 text-center text-[16.5px]">
-                      <span className={`px-2 py-0.5 rounded whitespace-nowrap inline-block font-semibold ${row.contractStage.includes('AI') ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{row.contractStage}</span>
-                    </td>
-                    
-                    <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{formatCurrency(row.minCapacity)}</td>
-                    <td className={`p-2 border-r border-slate-200 text-center text-slate-500 font-semibold transition-all ${capacityUpdated ? 'text-emerald-600 bg-emerald-50' : ''}`}>{row.maxCapacity}</td>
-                    <td className="p-2 border-r border-slate-200 text-center font-semibold">{formatCurrency(row.monthlyDemand)}</td>
-                    
-                    {Object.entries(row.schedule).map(([monthStr, val], idx) => {
-                      const isCurrentMonth = monthStr === 'jun';
-                      if (typeof val === 'string') {
-                        let colorClass = "bg-blue-50 text-blue-600 border-blue-200";
-                        if (val === "อนุมัติ") colorClass = "bg-purple-50 text-purple-600 border-purple-200";
-                        if (val === "สัญญา") colorClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
-                        
-                        return (
-                          <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
-                            <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm`}>
-                              {val}
-                            </div>
-                          </td>
-                        );
-                      }
-                      
-                      return (
-                        <td key={idx} className={`p-2 border-r border-slate-200 text-center ${(val as number) > 0 ? 'bg-indigo-50 font-bold text-indigo-700 text-[14.5px]' : 'text-slate-300'} ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-100/50' : ''}`}>
-                          {(val as number) > 0 ? formatCurrency(val as number) : '-'}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-                {/* Total Row */}
-                <tr className="bg-slate-50 font-bold text-[16.5px] border-t-2 border-slate-300 animate-in fade-in duration-500">
-                  <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมแผนหลัก (Frame Agreement):</td>
-                  <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(tableData.reduce((acc, row) => acc + row.qty, 0))}</td>
-                  <td colSpan={2} className="p-2 border-r border-slate-300 bg-slate-100"></td>
-                  <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatPrice(tableData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
-                  <td colSpan={6} className="p-2 border-r border-slate-300 bg-slate-100"></td>
+                    return (
+                      <td key={idx} className={`p-1 border-r border-slate-200 text-center ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-50/30' : ''}`}>
+                        <div className={`${colorClass} text-[13px] font-bold py-1 px-1 rounded border shadow-sm`}>
+                          {val}
+                        </div>
+                      </td>
+                    );
+                  }
                   
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'oct'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'nov'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'dec'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jan'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'feb'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'mar'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'apr'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'may'))}</td>
-                  <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jun'))}</td>
-                </tr>
-              </>
-            )}
+                  return (
+                    <td key={idx} className={`p-2 border-r border-slate-200 text-center ${(val as number) > 0 ? 'bg-indigo-50 font-bold text-indigo-700 text-[14.5px]' : 'text-slate-300'} ${isCurrentMonth ? 'border-l-2 border-r-2 border-indigo-500 bg-indigo-100/50' : ''}`}>
+                      {(val as number) > 0 ? formatCurrency(val as number) : '-'}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+            {/* Total Row */}
+            <tr className="bg-slate-50 font-bold text-[16.5px] border-t-2 border-slate-300 animate-in fade-in duration-500">
+              <td colSpan={4} className="p-2 border-r border-slate-300 text-right text-slate-600">รวมแผนหลัก (Frame Agreement):</td>
+              <td className="p-2 border-r border-slate-300 text-right">{formatCurrency(tableData.reduce((acc, row) => acc + row.qty, 0))}</td>
+              <td colSpan={2} className="p-2 border-r border-slate-300 bg-slate-100"></td>
+              <td className="p-2 border-r border-slate-300 text-right text-emerald-700">{formatPrice(tableData.reduce((acc, row) => acc + row.totalBudget, 0))}</td>
+              <td colSpan={6} className="p-2 border-r border-slate-300 bg-slate-100"></td>
+              
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700"></td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'oct'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'nov'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'dec'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jan'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'feb'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'mar'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'apr'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'may'))}</td>
+              <td className="p-2 border-r border-slate-300 text-center text-indigo-700">{formatCurrency(sumMonth(tableData, 'jun'))}</td>
+            </tr>
           </tbody>
         </table>
       </div>
