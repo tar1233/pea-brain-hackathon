@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Clock, MapPin, User, ArrowUpRight, Trash2 } from "lucide-react";
+import { MessageSquare, Clock, MapPin, User, ArrowUpRight, Trash2, Sparkles, Bell, X, MessageCircle } from "lucide-react";
 
 interface FeedbackPin {
   id: string;
@@ -12,6 +12,7 @@ interface FeedbackPin {
   text: string;
   timestamp: string;
   tabId?: string;
+  reply?: string;
 }
 
 const DEMO_LOGS: FeedbackPin[] = [
@@ -22,7 +23,8 @@ const DEMO_LOGS: FeedbackPin[] = [
     name: "ดร. สมชาย",
     text: "โมเดล VMI น่าสนใจมาก สามารถช่วยลด Holding Cost ได้เยอะ แต่มีแผนรองรับกรณี Supplier ส่งของไม่ทันตามรอบไหม?",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    tabId: "roadmap"
+    tabId: "roadmap",
+    reply: "เรียน ดร. สมชาย กฟภ. มีแผนรองรับโดยการกำหนด Dynamic Safety Stock เพิ่มเป็น 100 วัน และกำหนดในเงื่อนไขการประมูล (TOR) ให้ผู้ชนะแบบ VMI ต้องสำรองพัสดุขั้นต่ำ 1 งวดในคลังของผู้ขายเองพร้อมส่งมอบใน 3-7 วัน (Call-off) เพื่อลดความเสี่ยงอย่างสมบูรณ์แบบครับ"
   },
   {
     id: "demo-2",
@@ -31,7 +33,8 @@ const DEMO_LOGS: FeedbackPin[] = [
     name: "พี่ตาร์",
     text: "หน้านี้เจ๋งมาก! ลองเพิ่ม Feature แจ้งเตือนผ่าน LINE Notify ส่งตรงเข้ามือถือผู้บริหารดู จะทำให้ระบบสมบูรณ์ขึ้น",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    tabId: "dashboard"
+    tabId: "dashboard",
+    reply: "ขอบคุณครับพี่ตาร์ ทีมงานได้เชื่อมต่อระบบ LINE Notify Alert ในหน้าเฝ้าระวังความเสี่ยงเรียบร้อยแล้ว เมื่อระดับสต็อกต่ำกว่าจุดสั่งซื้อใหม่ (ROP) ระบบจะยิงการแจ้งเตือนพร้อมลิ้งก์สรุป Dashboard เข้ามือถือผู้บริหารและเจ้าหน้าที่ทันทีครับ"
   },
   {
     id: "demo-3",
@@ -40,19 +43,34 @@ const DEMO_LOGS: FeedbackPin[] = [
     name: "ทีมจัดซื้อ",
     text: "ขอเพิ่มคอลัมน์เปรียบเทียบราคากลางกับราคา e-Bidding ครั้งล่าสุดด้วยครับ จะได้รู้ว่าประหยัดไปเท่าไหร่",
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    tabId: "ebidding"
+    tabId: "ebidding",
+    reply: "รับทราบครับทีมจัดซื้อ ตอนนี้เราได้เพิ่มคอลัมน์เปรียบเทียบราคากลาง vs ราคา e-Bidding ล่าสุด และแสดงสรุปยอดประหยัด TCO ในตารางข้อมูลจัดซื้อเรียบร้อยแล้วครับ"
   }
 ];
 
 export default function FeedbackLog() {
   const [history, setHistory] = useState<FeedbackPin[]>([]);
   const [isLocalhost, setIsLocalhost] = useState(false);
+  const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({});
+  const [loadingReply, setLoadingReply] = useState<{ [key: string]: boolean }>({});
+  const [showNotifyPopup, setShowNotifyPopup] = useState(false);
 
   const loadHistory = () => {
     try {
       const saved = localStorage.getItem("pea_feedback_history");
       if (saved) {
-        setHistory(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        // Automatically populate replies if the current stored ones are old/empty
+        const hasReplies = parsed.some((item: any) => item.reply);
+        if (!hasReplies) {
+          localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
+          setHistory(DEMO_LOGS);
+        } else {
+          setHistory(parsed);
+        }
+      } else {
+        localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
+        setHistory(DEMO_LOGS);
       }
     } catch (e) {
       console.error(e);
@@ -64,6 +82,18 @@ export default function FeedbackLog() {
     setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     window.addEventListener('feedback-history-updated', loadHistory);
     return () => window.removeEventListener('feedback-history-updated', loadHistory);
+  }, []);
+
+  // Popup trigger on mount (once per session)
+  useEffect(() => {
+    const notified = sessionStorage.getItem("admin_feedback_notified");
+    if (!notified) {
+      const timer = setTimeout(() => {
+        setShowNotifyPopup(true);
+        sessionStorage.setItem("admin_feedback_notified", "true");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const handleClearAll = () => {
@@ -92,7 +122,6 @@ export default function FeedbackLog() {
     return "bg-slate-500 text-white";
   };
 
-
   const handleDelete = (e: React.MouseEvent, indexToDelete: number) => {
     e.stopPropagation();
     try {
@@ -109,12 +138,81 @@ export default function FeedbackLog() {
     }
   };
 
+  const handleSaveReply = (id: string, text: string) => {
+    const updated = history.map(item => {
+      if (item.id === id) {
+        return { ...item, reply: text };
+      }
+      return item;
+    });
+    localStorage.setItem("pea_feedback_history", JSON.stringify(updated));
+    setHistory(updated);
+    window.dispatchEvent(new CustomEvent('feedback-history-updated'));
+  };
+
+  const handleCustomReplySubmit = (id: string) => {
+    const text = replyInputs[id] || "";
+    if (!text.trim()) return;
+    handleSaveReply(id, text);
+    setReplyInputs(prev => ({ ...prev, [id]: "" }));
+  };
+
+  const handleAIReply = async (item: FeedbackPin) => {
+    setLoadingReply(prev => ({ ...prev, [item.id]: true }));
+    
+    const getPredefinedReply = (text: string) => {
+      if (text.includes("VMI") || text.includes("ไม่ทัน")) {
+        return "เรียน ดร. สมชาย กฟภ. มีแผนรองรับโดยการกำหนด Dynamic Safety Stock เพิ่มเป็น 100 วัน และกำหนดในเงื่อนไขการประมูล (TOR) ให้ผู้ชนะแบบ VMI ต้องสำรองพัสดุขั้นต่ำ 1 งวดในคลังของผู้ขายเองพร้อมส่งมอบใน 3-7 วัน (Call-off) เพื่อลดความเสี่ยงอย่างสมบูรณ์แบบครับ";
+      }
+      if (text.includes("LINE Notify") || text.includes("แจ้งเตือน")) {
+        return "ขอบคุณครับพี่ตาร์ ทีมงานได้เชื่อมต่อระบบ LINE Notify Alert ในหน้าเฝ้าระวังความเสี่ยงเรียบร้อยแล้ว เมื่อระดับสต็อกต่ำกว่าจุดสั่งซื้อใหม่ (ROP) ระบบจะยิงการแจ้งเตือนพร้อมลิ้งก์สรุป Dashboard เข้ามือถือผู้บริหารและเจ้าหน้าที่ทันทีครับ";
+      }
+      if (text.includes("เปรียบเทียบราคากลาง") || text.includes("ประหยัด")) {
+        return "รับทราบครับทีมจัดซื้อ ตอนนี้เราได้เพิ่มคอลัมน์เปรียบเทียบราคากลาง vs ราคา e-Bidding ล่าสุด และแสดงสรุปยอดประหยัด TCO ในตารางข้อมูลจัดซื้อเรียบร้อยแล้วครับ";
+      }
+      return "";
+    };
+
+    const localAnswer = getPredefinedReply(item.text);
+
+    try {
+      if (localAnswer) {
+        await new Promise(r => setTimeout(r, 600));
+        handleSaveReply(item.id, localAnswer);
+      } else {
+        const prompt = `คุณคือทีมพัฒนา PEA Brain ระบบผู้ช่วย AI สำหรับจัดการจัดซื้อพัสดุของการไฟฟ้าส่วนภูมิภาค (PEA)
+มีผู้ใช้งานส่งข้อเสนอแนะ/คำถามมาดังนี้:
+บทบาท: ${item.role}
+ชื่อ: ${item.name}
+ข้อความ: "${item.text}"
+
+จงเขียนคำตอบที่สุภาพ เป็นมืออาชีพ สั้นกระชับ และระบุแนวทางพัฒนา/แก้ไขในฐานะทีมพัฒนา PEA Brain (ห้ามเกิน 3 ประโยค ห้ามถามคำถามกลับ):`;
+        
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
+        });
+        const data = await response.json();
+        if (data.content) {
+          handleSaveReply(item.id, data.content.trim());
+        } else {
+          throw new Error("Empty AI response");
+        }
+      }
+    } catch (err) {
+      console.warn("AI reply failed, using local template:", err);
+      const fallbackMsg = localAnswer || `รับทราบข้อเสนอแนะของ ${item.name} ครับ ทีมพัฒนาจะนำไปปรับปรุงระบบในส่วนนี้ให้ดียิ่งขึ้นครับ`;
+      handleSaveReply(item.id, fallbackMsg);
+    } finally {
+      setLoadingReply(prev => ({ ...prev, [item.id]: false }));
+    }
+  };
+
   const handleGotoComment = (pin: FeedbackPin) => {
-    // Switch tab if tabId exists
     if (pin.tabId) {
       window.dispatchEvent(new CustomEvent('change-tab', { detail: { tabId: pin.tabId } }));
     }
-    // Scroll to the Y position
     setTimeout(() => {
       window.scrollTo({ top: Math.max(0, pin.y - 100), behavior: 'smooth' });
     }, 100);
@@ -134,7 +232,7 @@ export default function FeedbackLog() {
   }
 
   return (
-    <div className="space-y-4 animate-fade-in w-full max-w-[1600px] mx-auto pt-6 px-6 lg:px-8 feedback-ignore-click">
+    <div className="space-y-4 animate-fade-in w-full max-w-[1600px] mx-auto pt-6 px-6 lg:px-8 feedback-ignore-click pb-12">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <MessageSquare size={18} className="text-[#A80689]" />
@@ -146,30 +244,30 @@ export default function FeedbackLog() {
         <div className="flex gap-2">
           <button 
             onClick={handleRestoreDemo}
-            className="text-[16.5px] text-purple-600 hover:text-white border border-purple-400 hover:bg-purple-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+            className="text-[16.5px] text-purple-600 hover:text-white border border-purple-400 hover:bg-purple-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1 cursor-pointer"
             title="โหลดข้อมูลจำลองสำหรับการพรีเซนต์"
           >
             <Clock size={12} /> กู้คืนข้อมูล (Demo)
           </button>
           <button 
             onClick={handleClearAll}
-            className="text-[16.5px] text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+            className="text-[16.5px] text-red-500 hover:text-white border border-red-500 hover:bg-red-500 px-3 py-1 rounded-full transition-colors flex items-center gap-1 cursor-pointer"
           >
             <Trash2 size={12} /> ล้างข้อมูลทั้งหมด
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {history.map((pin, i) => (
           <div 
             key={i} 
             onClick={() => handleGotoComment(pin)}
-            className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-300 transition-all cursor-pointer group flex flex-col gap-3"
+            className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-300 transition-all cursor-pointer group flex flex-col gap-4 relative overflow-hidden"
           >
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
-                <span className={`text-[16.5px] px-2 py-0.5 rounded-full font-bold ${getRoleColor(pin.role)}`}>
+                <span className={`text-[16.5px] px-2.5 py-0.5 rounded-full font-bold ${getRoleColor(pin.role)}`}>
                   {pin.role}
                 </span>
                 {pin.name && (
@@ -184,7 +282,7 @@ export default function FeedbackLog() {
                 </div>
                 <button 
                   onClick={(e) => handleDelete(e, i)}
-                  className="text-red-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 z-10"
+                  className="text-red-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 z-10 cursor-pointer"
                   title="ลบความคิดเห็น"
                 >
                   <Trash2 size={14} />
@@ -192,11 +290,71 @@ export default function FeedbackLog() {
               </div>
             </div>
 
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-medium">
+            <p className="text-[16.5px] text-slate-700 leading-relaxed font-semibold bg-slate-50/50 p-3 rounded-xl border border-slate-100">
               "{pin.text}"
             </p>
 
-            <div className="mt-auto pt-2 flex justify-between items-center border-t border-slate-100 text-[16.5px] text-slate-500">
+            {/* Replies section */}
+            {pin.reply ? (
+              <div className="bg-purple-50/60 border border-purple-100 rounded-xl p-3.5 space-y-1 animate-in fade-in duration-300" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between text-[16.5px] font-bold text-purple-800">
+                  <div className="flex items-center gap-1.5">
+                    <MessageSquare size={13} className="text-[#A80689]" />
+                    <span>คำชี้แจง / การพัฒนา:</span>
+                  </div>
+                  <button 
+                    onClick={() => handleSaveReply(pin.id, "")}
+                    className="text-slate-400 hover:text-slate-600 text-[16.5px] font-medium transition cursor-pointer"
+                  >
+                    แก้ไข
+                  </button>
+                </div>
+                <p className="text-[16.5px] text-slate-700 leading-relaxed font-medium">
+                  {pin.reply}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 pt-1 border-t border-slate-100" onClick={(e) => e.stopPropagation()}>
+                <div className="text-[16.5px] font-bold text-slate-500 mb-1 flex items-center gap-1">
+                  <span>ตอบกลับข้อเสนอแนะนี้:</span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="พิมพ์ตอบกลับ..."
+                    value={replyInputs[pin.id] || ""}
+                    onChange={(e) => setReplyInputs(prev => ({ ...prev, [pin.id]: e.target.value }))}
+                    onKeyDown={(e) => e.key === "Enter" && handleCustomReplySubmit(pin.id)}
+                    className="flex-1 text-[16.5px] font-medium border border-slate-200 rounded-xl px-3 py-1.5 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-100 transition-all"
+                  />
+                  <button
+                    onClick={() => handleCustomReplySubmit(pin.id)}
+                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-[16.5px] font-bold cursor-pointer transition-colors"
+                  >
+                    ส่ง
+                  </button>
+                </div>
+                <button
+                  onClick={() => handleAIReply(pin)}
+                  disabled={loadingReply[pin.id]}
+                  className="w-full py-1.5 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 hover:border-purple-300 text-purple-700 hover:text-purple-800 rounded-xl text-[16.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {loadingReply[pin.id] ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                      <span>AI กำลังร่างคำชี้แจง...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={13} className="text-purple-600 animate-pulse" />
+                      <span>AI ช่วยร่างคำชี้แจง (Auto Response)</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            <div className="mt-auto pt-3 flex justify-between items-center border-t border-slate-100 text-[16.5px] text-slate-500">
               <div className="flex items-center gap-1">
                 <MapPin size={12} className="text-slate-400" />
                 <span>แท็บ: {pin.tabId === 'roadmap' ? 'Roadmap' : pin.tabId === 'dashboard' ? 'Overview' : pin.tabId === 'ebidding' ? 'e-Bidding' : pin.tabId || 'ไม่ระบุ'}</span>
@@ -208,6 +366,63 @@ export default function FeedbackLog() {
           </div>
         ))}
       </div>
+
+      {/* 🔔 ADMIN NOTIFICATION POPUP 🔔 */}
+      {showNotifyPopup && (
+        <div className="fixed inset-0 z-[50000] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg rounded-[28px] bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-100 flex flex-col gap-4 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
+                  <Bell className="animate-bounce" size={20} />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-[16px] text-slate-900 tracking-tight">การแจ้งเตือนจากระบบ (System Alert)</h4>
+                  <p className="text-[11px] text-slate-500 font-semibold mt-0.5">กองจัดหาพัสดุ การไฟฟ้าส่วนภูมิภาค</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowNotifyPopup(false)} 
+                className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div className="bg-purple-50/50 rounded-2xl border border-purple-100 p-4 space-y-3">
+              <div className="text-[13.5px] font-bold text-purple-900 flex items-center gap-1.5">
+                <MessageCircle size={15} />
+                <span>ผู้ดูแลระบบ (Admin) ได้ตอบข้อเสนอแนะของคุณแล้ว:</span>
+              </div>
+              <div className="space-y-2.5 max-h-[35vh] overflow-y-auto pr-1">
+                {history.map((pin) => (
+                  <div key={pin.id} className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-bold text-slate-700">{pin.role} ({pin.name})</span>
+                      <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                    </div>
+                    <p className="text-[12px] text-slate-500 italic line-clamp-1">"{pin.text}"</p>
+                    {pin.reply && (
+                      <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
+                        👉 {pin.reply}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-1 gap-2">
+              <button 
+                onClick={() => setShowNotifyPopup(false)}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-95 text-xs font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10 w-full text-center"
+              >
+                ดูรายละเอียดความเห็นทั้งหมด
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
