@@ -39,23 +39,28 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              window.addEventListener('unhandledrejection', function(event) {
-                var reason = event.reason;
-                if (!reason) return;
-                var message = reason.message || (typeof reason === 'object' ? JSON.stringify(reason) : String(reason));
-                if (
-                  message.indexOf('MetaMask') !== -1 ||
-                  message.indexOf('metamask') !== -1 ||
-                  message.indexOf('extension') !== -1 ||
-                  message.indexOf('Failed to connect to') !== -1 ||
-                  message.indexOf('session') !== -1
-                ) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  event.stopImmediatePropagation();
-                  console.warn('PEA Brain (Safety Check): Suppressed extension unhandled rejection to prevent Next.js dev overlay crash.', reason);
-                }
-              }, true);
+              (function() {
+                var handler = function(event) {
+                  var reason = event.reason || event.error || event;
+                  if (!reason) return;
+                  var message = reason.message || (typeof reason === 'object' ? JSON.stringify(reason) : String(reason));
+                  var stack = reason.stack || '';
+                  if (
+                    message.indexOf('MetaMask') !== -1 ||
+                    message.indexOf('metamask') !== -1 ||
+                    message.indexOf('extension') !== -1 ||
+                    stack.indexOf('chrome-extension') !== -1 ||
+                    stack.indexOf('nkbihfbeogaeaoehlefnkodbefgpgknn') !== -1
+                  ) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                    console.warn('PEA Brain (Safety Check): Blocked browser extension crash.', message);
+                  }
+                };
+                window.addEventListener('unhandledrejection', handler, true);
+                window.addEventListener('error', handler, true);
+              })();
             `,
           }}
         />
