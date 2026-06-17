@@ -60,13 +60,17 @@ export default function FeedbackLog() {
       const saved = localStorage.getItem("pea_feedback_history");
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Automatically populate replies if the current stored ones are old/empty
-        const hasReplies = parsed.some((item: any) => item.reply);
-        if (!hasReplies) {
+        if (Array.isArray(parsed)) {
+          const hasReplies = parsed.some((item: any) => item && item.reply);
+          if (!hasReplies) {
+            localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
+            setHistory(DEMO_LOGS);
+          } else {
+            setHistory(parsed);
+          }
+        } else {
           localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
           setHistory(DEMO_LOGS);
-        } else {
-          setHistory(parsed);
         }
       } else {
         localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
@@ -74,6 +78,8 @@ export default function FeedbackLog() {
       }
     } catch (e) {
       console.error(e);
+      localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
+      setHistory(DEMO_LOGS);
     }
   };
 
