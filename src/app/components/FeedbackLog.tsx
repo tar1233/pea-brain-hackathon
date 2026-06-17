@@ -61,12 +61,13 @@ export default function FeedbackLog() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          const hasReplies = parsed.some((item: any) => item && item.reply);
-          if (!hasReplies) {
+          const validItems = parsed.filter((item: any) => item && typeof item === 'object' && item.id && item.role && item.text);
+          const hasReplies = validItems.some((item: any) => item.reply);
+          if (validItems.length === 0 || !hasReplies) {
             localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
             setHistory(DEMO_LOGS);
           } else {
-            setHistory(parsed);
+            setHistory(validItems);
           }
         } else {
           localStorage.setItem("pea_feedback_history", JSON.stringify(DEMO_LOGS));
