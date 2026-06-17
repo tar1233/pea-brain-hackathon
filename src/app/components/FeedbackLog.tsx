@@ -91,16 +91,12 @@ export default function FeedbackLog() {
     return () => window.removeEventListener('feedback-history-updated', loadHistory);
   }, []);
 
-  // Popup trigger on mount (once per session)
+  // Popup trigger on mount (every time for presentation demo)
   useEffect(() => {
-    const notified = sessionStorage.getItem("admin_feedback_notified");
-    if (!notified) {
-      const timer = setTimeout(() => {
-        setShowNotifyPopup(true);
-        sessionStorage.setItem("admin_feedback_notified", "true");
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => {
+      setShowNotifyPopup(true);
+    }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClearAll = () => {
