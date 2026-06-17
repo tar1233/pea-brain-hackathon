@@ -581,7 +581,7 @@ export default function Home() {
       {/* 🔔 ADMIN NOTIFICATION POPUP 🔔 */}
       {showNotifyPopup && (
         <div className="fixed inset-0 z-[50000] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg rounded-[28px] bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-100 flex flex-col gap-4 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-2xl rounded-[28px] bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-100 flex flex-col gap-4 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
@@ -600,56 +600,53 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="bg-purple-50/50 rounded-2xl border border-purple-100 p-4 space-y-3">
+            <div className="bg-purple-50/50 rounded-2xl border border-purple-100 p-5 space-y-3">
               <div className="text-[13.5px] font-bold text-purple-900 flex items-center gap-1.5">
                 <MessageCircle size={15} />
-                <span>ผู้ดูแลระบบ (Admin) ได้ตอบข้อเสนอแนะของคุณแล้ว:</span>
+                <span>ผู้ดูแลระบบ (Admin) ได้ตอบชี้แจงข้อเสนอแนะของคุณแล้ว:</span>
               </div>
-              <div className="space-y-2.5 max-h-[35vh] overflow-y-auto pr-1">
-                <div className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
-                  <div className="flex items-center justify-between text-[11px]">
+              <div className="space-y-3.5 max-h-[45vh] overflow-y-auto pr-1">
+                <div className="bg-white/80 p-4 rounded-xl border border-slate-100 space-y-2 shadow-sm">
+                  <div className="flex items-center justify-between text-[11.5px]">
                     <span className="font-bold text-slate-700">ดร. สมชาย (กรรมการ กฟภ.)</span>
-                    <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                    <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-md text-[10.5px]">ชี้แจงแล้ว</span>
                   </div>
-                  <p className="text-[12px] text-slate-500 italic line-clamp-1">"โมเดล VMI น่าสนใจมาก... มีแผนรองรับกรณีส่งของไม่ทันไหม?"</p>
-                  <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
-                    👉 เรียน ดร. สมชาย กฟภ. มีแผนรองรับโดยการกำหนด Dynamic Safety Stock เพิ่มเป็น 100 วัน...
+                  <p className="text-[12.5px] text-slate-600 italic">"โมเดล VMI น่าสนใจมาก สามารถช่วยลด Holding Cost ได้เยอะ แต่มีแผนรองรับกรณี Supplier ส่งของไม่ทันตามรอบไหม?"</p>
+                  <p className="text-[13px] text-purple-950 font-semibold border-t border-slate-100 pt-2 leading-relaxed">
+                    👉 เรียน ดร. สมชาย กฟภ. มีแผนรองรับโดยการกำหนด Dynamic Safety Stock เพิ่มเป็น 100 วัน และกำหนดในเงื่อนไขการ TOR ให้ผู้ชนะแบบ VMI ต้องสำรองพัสดุขั้นต่ำ 1 งวดในคลังของผู้ขายเองพร้อมส่งมอบใน 3-7 วัน (Call-off) เพื่อลดความเสี่ยงอย่างสมบูรณ์แบบครับ
                   </p>
                 </div>
 
-                <div className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
-                  <div className="flex items-center justify-between text-[11px]">
+                <div className="bg-white/80 p-4 rounded-xl border border-slate-100 space-y-2 shadow-sm">
+                  <div className="flex items-center justify-between text-[11.5px]">
                     <span className="font-bold text-slate-700">พี่ตาร์ (Mentor)</span>
-                    <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                    <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-md text-[10.5px]">ปรับปรุงแล้ว</span>
                   </div>
-                  <p className="text-[12px] text-slate-500 italic line-clamp-1">"ลองเพิ่ม Feature แจ้งเตือนผ่าน LINE Notify ส่งตรงหาผู้บริหารดู..."</p>
-                  <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
-                    👉 ขอบคุณครับพี่ตาร์ ทีมงานได้เชื่อมต่อระบบ LINE Notify Alert ในหน้าเฝ้าระวังความเสี่ยงเรียบร้อยแล้ว...
+                  <p className="text-[12.5px] text-slate-600 italic">"หน้านี้เจ๋งมาก! ลองเพิ่ม Feature แจ้งเตือนผ่าน LINE Notify ส่งตรงเข้ามือถือผู้บริหารดู จะทำให้ระบบสมบูรณ์ขึ้น"</p>
+                  <p className="text-[13px] text-purple-950 font-semibold border-t border-slate-100 pt-2 leading-relaxed">
+                    👉 ขอบคุณครับพี่ตาร์ ทีมงานได้เชื่อมต่อระบบ LINE Notify Alert ในหน้าเฝ้าระวังความเสี่ยงเรียบร้อยแล้ว เมื่อระดับสต็อกต่ำกว่าจุดสั่งซื้อใหม่ (ROP) ระบบจะยิงการแจ้งเตือนพร้อมลิ้งก์สรุป Dashboard เข้ามือถือผู้บริหารและเจ้าหน้าที่ทันทีครับ
                   </p>
                 </div>
 
-                <div className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
-                  <div className="flex items-center justify-between text-[11px]">
+                <div className="bg-white/80 p-4 rounded-xl border border-slate-100 space-y-2 shadow-sm">
+                  <div className="flex items-center justify-between text-[11.5px]">
                     <span className="font-bold text-slate-700">ทีมจัดซื้อ (Product Owner)</span>
-                    <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                    <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-md text-[10.5px]">เพิ่มคอลัมน์แล้ว</span>
                   </div>
-                  <p className="text-[12px] text-slate-500 italic line-clamp-1">"ขอเพิ่มคอลัมน์เปรียบเทียบราคากลางกับราคา e-Bidding ล่าสุด..."</p>
-                  <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
-                    👉 รับทราบครับทีมจัดซื้อ ตอนนี้เราได้เพิ่มคอลัมน์เปรียบเทียบและสรุปยอดประหยัดเรียบร้อยแล้ว...
+                  <p className="text-[12.5px] text-slate-600 italic">"ขอเพิ่มคอลัมน์เปรียบเทียบราคากลางกับราคา e-Bidding ครั้งล่าสุดด้วยครับ จะได้รู้ว่าประหยัดไปเท่าไหร่"</p>
+                  <p className="text-[13px] text-purple-950 font-semibold border-t border-slate-100 pt-2 leading-relaxed">
+                    👉 รับทราบครับทีมจัดซื้อ ตอนนี้เราได้เพิ่มคอลัมน์เปรียบเทียบราคากลาง vs ราคา e-Bidding ล่าสุด และแสดงสรุปยอดประหยัด TCO ในตารางข้อมูลจัดซื้อเรียบร้อยแล้วครับ
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end pt-1 gap-2">
+            <div className="flex justify-end pt-1">
               <button 
-                onClick={() => {
-                  setShowNotifyPopup(false);
-                  setActiveTab("roadmap");
-                }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-95 text-xs font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10 w-full text-center"
+                onClick={() => setShowNotifyPopup(false)}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-95 text-xs font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10 w-full text-center"
               >
-                ดูรายละเอียดและแผนงานทั้งหมด
+                รับทราบคำชี้แจง
               </button>
             </div>
           </div>
