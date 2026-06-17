@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Loader2, Printer, X, AlertCircle, CheckCircle2, Info, AlertTriangle } from "lucide-react";
+import { FileText, Loader2, Printer, X, AlertCircle, CheckCircle2, Info, AlertTriangle, Bell, MessageCircle } from "lucide-react";
 import { useData } from "./context/DataContext";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -86,6 +86,14 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const { materials, isLoading, error } = useData();
+  const [showNotifyPopup, setShowNotifyPopup] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowNotifyPopup(true);
+    }, 1500); // Trigger after 1.5 seconds on first load
+    return () => clearTimeout(timer);
+  }, []);
 
   // Approved plans — persisted at page level so they survive tab switches
   interface ApprovedPlanData {
@@ -565,6 +573,83 @@ export default function Home() {
                 className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-95 text-xs font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10"
               >
                 ตกลง
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 🔔 ADMIN NOTIFICATION POPUP 🔔 */}
+      {showNotifyPopup && (
+        <div className="fixed inset-0 z-[50000] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg rounded-[28px] bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-100 flex flex-col gap-4 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
+                  <Bell className="animate-bounce" size={20} />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-[16px] text-slate-900 tracking-tight">การแจ้งเตือนจากระบบ (System Alert)</h4>
+                  <p className="text-[11px] text-slate-500 font-semibold mt-0.5">กองจัดหาพัสดุ การไฟฟ้าส่วนภูมิภาค</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowNotifyPopup(false)} 
+                className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div className="bg-purple-50/50 rounded-2xl border border-purple-100 p-4 space-y-3">
+              <div className="text-[13.5px] font-bold text-purple-900 flex items-center gap-1.5">
+                <MessageCircle size={15} />
+                <span>ผู้ดูแลระบบ (Admin) ได้ตอบข้อเสนอแนะของคุณแล้ว:</span>
+              </div>
+              <div className="space-y-2.5 max-h-[35vh] overflow-y-auto pr-1">
+                <div className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-700">ดร. สมชาย (กรรมการ กฟภ.)</span>
+                    <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                  </div>
+                  <p className="text-[12px] text-slate-500 italic line-clamp-1">"โมเดล VMI น่าสนใจมาก... มีแผนรองรับกรณีส่งของไม่ทันไหม?"</p>
+                  <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
+                    👉 เรียน ดร. สมชาย กฟภ. มีแผนรองรับโดยการกำหนด Dynamic Safety Stock เพิ่มเป็น 100 วัน...
+                  </p>
+                </div>
+
+                <div className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-700">พี่ตาร์ (Mentor)</span>
+                    <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                  </div>
+                  <p className="text-[12px] text-slate-500 italic line-clamp-1">"ลองเพิ่ม Feature แจ้งเตือนผ่าน LINE Notify ส่งตรงหาผู้บริหารดู..."</p>
+                  <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
+                    👉 ขอบคุณครับพี่ตาร์ ทีมงานได้เชื่อมต่อระบบ LINE Notify Alert ในหน้าเฝ้าระวังความเสี่ยงเรียบร้อยแล้ว...
+                  </p>
+                </div>
+
+                <div className="bg-white/80 p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-sm">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-700">ทีมจัดซื้อ (Product Owner)</span>
+                    <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md">ตอบกลับแล้ว</span>
+                  </div>
+                  <p className="text-[12px] text-slate-500 italic line-clamp-1">"ขอเพิ่มคอลัมน์เปรียบเทียบราคากลางกับราคา e-Bidding ล่าสุด..."</p>
+                  <p className="text-[12px] text-purple-950 font-medium border-t border-slate-100 pt-1">
+                    👉 รับทราบครับทีมจัดซื้อ ตอนนี้เราได้เพิ่มคอลัมน์เปรียบเทียบและสรุปยอดประหยัดเรียบร้อยแล้ว...
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-1 gap-2">
+              <button 
+                onClick={() => {
+                  setShowNotifyPopup(false);
+                  setActiveTab("roadmap");
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#A80689] to-[#7b0365] hover:opacity-95 text-xs font-bold text-white transition cursor-pointer shadow-sm shadow-purple-500/10 w-full text-center"
+              >
+                ดูรายละเอียดและแผนงานทั้งหมด
               </button>
             </div>
           </div>
